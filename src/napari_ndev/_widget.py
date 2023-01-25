@@ -6,41 +6,39 @@ see: https://napari.org/stable/plugins/guides.html?#widgets
 
 Replace code below according to your needs.
 """
+import pathlib
 from typing import TYPE_CHECKING
 
 from magicgui import magic_factory
-from qtpy.QtWidgets import QHBoxLayout, QPushButton, QWidget
+from napari import layers
 
 if TYPE_CHECKING:
-    import napari
+    pass
 
 
-class ExampleQWidget(QWidget):
-    # your QWidget.__init__ can optionally request the napari viewer instance
-    # in one of two ways:
-    # 1. use a parameter called `napari_viewer`, as done here
-    # 2. use a type annotation of 'napari.viewer.Viewer' for any parameter
-    def __init__(self, napari_viewer):
-        super().__init__()
-        self.viewer = napari_viewer
+@magic_factory(
+    auto_call=False,
+    result_widget=True,
+    call_button="Create Output Folders",
+    file_directory=dict(
+        widget_type="FileEdit", mode="d", label="File Directory"
+    ),
+    output_folder_prefix=dict(widget_type="LineEdit", label="Output Folder"),
+)
+def batch_annotator(
+    labels: layers.Labels,
+    image: layers.Image,
+    file_directory=pathlib.Path(),
+    output_folder_prefix="Annotated",
+):
+    def saver(image_type, folder_suffix, save_suffix=".tif"):
+        save_folder = file_directory / str(
+            output_folder_prefix + folder_suffix
+        )
+        save_folder.mkdir(parents=False, exist_ok=True)
+        save_path = save_folder / str(image.name + save_suffix)
+        image_type.save(path=str(save_path))
 
-        btn = QPushButton("Click me!")
-        btn.clicked.connect(self._on_click)
-
-        self.setLayout(QHBoxLayout())
-        self.layout().addWidget(btn)
-
-    def _on_click(self):
-        print("napari has", len(self.viewer.layers), "layers")
-
-
-@magic_factory
-def example_magic_widget(img_layer: "napari.layers.Image"):
-    print(f"you have selected {img_layer}")
-
-
-# Uses the `autogenerate: true` flag in the plugin manifest
-# to indicate it should be wrapped as a magicgui to autogenerate
-# a widget.
-def example_function_widget(img_layer: "napari.layers.Image"):
-    print(f"you have selected {img_layer}")
+    saver(image, "_images", ".tif")
+    saver(labels, "_labels", ".tif")
+    return

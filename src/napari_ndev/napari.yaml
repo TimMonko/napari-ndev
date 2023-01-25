@@ -2,20 +2,10 @@ name: napari-ndev
 display_name: neuralDev
 contributions:
   commands:
-    - id: napari-ndev.make_qwidget
-      python_name: napari_ndev._widget:ExampleQWidget
-      title: Make example QWidget
-    - id: napari-ndev.make_magic_widget
-      python_name: napari_ndev._widget:example_magic_widget
-      title: Make example magic widget
-    - id: napari-ndev.make_func_widget
-      python_name: napari_ndev._widget:example_function_widget
-      title: Make example function widget
+    - id: napari-ndev.make_batch_annotator
+      python_name: napari_ndev._widget:batch_annotator
+      title: Make Batch Annotator
+
   widgets:
-    - command: napari-ndev.make_qwidget
-      display_name: Example QWidget
-    - command: napari-ndev.make_magic_widget
-      display_name: Example Magic Widget
-    - command: napari-ndev.make_func_widget
-      autogenerate: true
-      display_name: Example Function Widget
+    - command: napari-ndev.make_batch_annotator
+      display_name: Batch Annotator
