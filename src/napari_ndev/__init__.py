@@ -3,4 +3,8 @@ try:
 except ImportError:
     __version__ = "unknown"
 
-__all__ = "batch_annotator"
+from ._widget import batch_annotator
+
+__all__ = [
+    "batch_annotator",
+]
