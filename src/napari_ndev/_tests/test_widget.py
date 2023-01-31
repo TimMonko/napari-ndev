@@ -8,8 +8,10 @@ from napari_ndev import batch_annotator
 def test_batch_annotator(make_napari_viewer, capsys):
     # make viewer and add an image layer using our fixture
     viewer = make_napari_viewer()
-    viewer.add_image(np.random.random((100, 100)))
-    # viewer.add_labels(np.random.random((100, 100)))
+    test_image = np.random.random((100, 100))
+    viewer.add_image(test_image)
+    test_thresh = test_image > 1
+    viewer.add_labels(test_thresh)
 
     # create our widget, passing in the viewer
     my_widget = batch_annotator()
