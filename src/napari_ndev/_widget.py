@@ -5,6 +5,8 @@ import pathlib
 import string
 from typing import TYPE_CHECKING
 
+import napari
+import numpy as np
 from aicsimageio import AICSImage
 from magicgui import magic_factory
 from napari import layers
@@ -70,7 +72,10 @@ def batch_annotator(
             img = image_type.metadata["aicsimage"].xarray_data
         except KeyError:
             img = image_type.data
+        if type(image_type) == napari.layers.labels.labels.Labels:
+            img = img.astype(np.int32)
         AICSImage(img).save(uri=save_path)
+
         # image_type.save(path=str(save_path)) #napari layer save
         # If naive defaults of AICSImage.save are insufficient:
         # OmeTiffWriter.save(data = image_type.data, uri = str(save_path))
