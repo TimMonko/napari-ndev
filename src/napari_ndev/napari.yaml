@@ -4,8 +4,18 @@ contributions:
   commands:
     - id: napari-ndev.make_batch_annotator
       python_name: napari_ndev._widget:batch_annotator
-      title: Make Batch Annotator
+      title: Make Batch Annotator Widget
+    - id: napari-ndev.make_batch_training
+      python_name: napari_ndev._widget:batch_training
+      title: Make Batch Training Widget
+    - id: napari-ndev.make_batch_predict
+      python_name: napari_ndev._widget:batch_predict
+      title: Make Batch Predict Widget
 
   widgets:
     - command: napari-ndev.make_batch_annotator
       display_name: Batch Annotator
+    - command: napari-ndev.make_batch_training
+      display_name: Batch APOC Training
+    - command: napari-ndev.make_batch_predict
+      display_name: Batch APOC Predict
