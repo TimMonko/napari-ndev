@@ -7,4 +7,6 @@ from ._widget import batch_annotator
 
 __all__ = [
     "batch_annotator",
+    "batch_training",
+    "batch_predict",
 ]
