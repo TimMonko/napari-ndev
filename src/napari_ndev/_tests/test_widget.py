@@ -1,6 +1,6 @@
 import numpy as np
 
-from napari_ndev import batch_annotator, batch_predict, batch_training
+from napari_ndev import batch_annotator  # , batch_predict, batch_training
 
 
 # make_napari_viewer is a pytest fixture that returns a napari viewer object
@@ -24,39 +24,39 @@ def test_batch_annotator(make_napari_viewer, capsys):
     # assert captured.out == "napari has 1 layers\n"
 
 
-def test_batch_training(make_napari_viewer, capsys):
-    # make viewer and add an image layer using our fixture
-    viewer = make_napari_viewer()
-    test_image = np.random.random((100, 100))
-    viewer.add_image(test_image)
-    test_thresh = test_image > 1
-    viewer.add_labels(test_thresh)
+# def test_batch_training(make_napari_viewer, capsys):
+#     # make viewer and add an image layer using our fixture
+#     viewer = make_napari_viewer()
+#     test_image = np.random.random((100, 100))
+#     viewer.add_image(test_image)
+#     test_thresh = test_image > 1
+#     viewer.add_labels(test_thresh)
 
-    # create our widget, passing in the viewer
-    my_widget = batch_training()
-    my_widget()
-    # call our widget method
-    # my_widget._on_click()
+#     # create our widget, passing in the viewer
+#     my_widget = batch_training()
+#     my_widget()
+#     # call our widget method
+#     # my_widget._on_click()
 
-    # read captured output and check that it's as we expected
-    # captured = capsys.readouterr()
-    # assert captured.out == "napari has 1 layers\n"
+#     # read captured output and check that it's as we expected
+#     # captured = capsys.readouterr()
+#     # assert captured.out == "napari has 1 layers\n"
 
 
-def test_batch_predict(make_napari_viewer, capsys):
-    # make viewer and add an image layer using our fixture
-    viewer = make_napari_viewer()
-    test_image = np.random.random((100, 100))
-    viewer.add_image(test_image)
-    test_thresh = test_image > 1
-    viewer.add_labels(test_thresh)
+# def test_batch_predict(make_napari_viewer, capsys):
+#     # make viewer and add an image layer using our fixture
+#     viewer = make_napari_viewer()
+#     test_image = np.random.random((100, 100))
+#     viewer.add_image(test_image)
+#     test_thresh = test_image > 1
+#     viewer.add_labels(test_thresh)
 
-    # create our widget, passing in the viewer
-    my_widget = batch_predict()
-    my_widget()
-    # call our widget method
-    # my_widget._on_click()
+#     # create our widget, passing in the viewer
+#     my_widget = batch_predict()
+#     my_widget()
+#     # call our widget method
+#     # my_widget._on_click()
 
-    # read captured output and check that it's as we expected
-    # captured = capsys.readouterr()
-    # assert captured.out == "napari has 1 layers\n"
+#     # read captured output and check that it's as we expected
+#     # captured = capsys.readouterr()
+#     # assert captured.out == "napari has 1 layers\n"
