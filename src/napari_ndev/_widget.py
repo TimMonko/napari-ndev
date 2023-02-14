@@ -14,10 +14,30 @@ import numpy as np
 import pyclesperanto_prototype as cle
 from aicsimageio import AICSImage
 from magicgui import magic_factory
+from magicgui.tqdm import tqdm
 from napari import layers
 
 if TYPE_CHECKING:
     pass
+
+
+def _channel_image(img, dims: str, channel: str or int):
+    if isinstance(channel, str):
+        channel_index = img.channel_names.index(channel)
+    elif isinstance(channel, int):
+        channel_index = channel
+    channel_img = img.get_image_data(dims, C=channel_index)
+    return channel_img
+
+
+def _img_dims(img):
+    endstring = ""
+    for d in img.dims.order:
+        if d == "C":
+            continue
+        if img.dims._dims_shape[d] > 1:
+            endstring = endstring + d
+    return endstring
 
 
 @magic_factory(
@@ -35,7 +55,7 @@ def batch_annotator(
     image: layers.Image,
     file_directory=pathlib.Path(),
     output_folder_prefix="Annotated",
-    save_suffix=".ome.tiff",
+    save_suffix=".ome.tif",
 ):
     """Batch Annotation
 
@@ -90,18 +110,37 @@ def batch_annotator(
     return "Saved Successfully"
 
 
-channel_nums = [0, 1, 2, 3, 4]
 PDFS = Enum("PDFS", apoc.PredefinedFeatureSet._member_names_)
 
 
+def init_training(batch_training):
+    @batch_training.image_directory.changed.connect
+    def _image_info():
+        image_list = os.listdir(batch_training.image_directory.value)
+        img = AICSImage(batch_training.image_directory.value / image_list[0])
+
+        img_dims = _img_dims(img)
+        batch_training.img_dims.value = img_dims
+        batch_training.channel_list.choices = img.channel_names
+
+    @batch_training.label_directory.changed.connect
+    def _label_info():
+        label_list = os.listdir(batch_training.label_directory.value)
+        lbl = AICSImage(batch_training.label_directory.value / label_list[0])
+
+        lbl_dims = _img_dims(lbl)
+        batch_training.label_dims.value = lbl_dims
+
+
 @magic_factory(
+    widget_init=init_training,
     auto_call=False,
     call_button="Batch Train",
     result_widget=True,
     image_directory=dict(widget_type="FileEdit", mode="d"),
     label_directory=dict(widget_type="FileEdit", mode="d"),
     predefined_features=dict(widget_type="ComboBox", choices=PDFS),
-    channel_list=dict(widget_type="Select", choices=channel_nums),
+    channel_list=dict(widget_type="Select", choices=[]),
 )
 def batch_training(
     image_directory=pathlib.Path(),
@@ -109,36 +148,28 @@ def batch_training(
     cl_filename: str = "classifier.cl",
     predefined_features=PDFS(1),
     custom_features: str = None,
-    channel_list: int = 0,
-    img_dims: str = "TYX",
-    label_dims: str = "ZYX",
+    channel_list: str = [],
+    img_dims: str = None,
+    label_dims: str = None,
 ):
     image_list = os.listdir(image_directory)
 
     apoc.erase_classifier(cl_filename)
     custom_classifier = apoc.PixelClassifier(opencl_filename=cl_filename)
 
-    for file in image_list:
+    for file in tqdm(image_list, label="progress"):
 
         image_stack = []
         img = AICSImage(image_directory / file)
 
-        def channel_image(img, dims: str, channel: str or int):
-            if isinstance(channel, str):
-                channel_index = img.channel_names.index(channel)
-            elif isinstance(channel, int):
-                channel_index = channel
-            channel_img = img.get_image_data(dims, C=channel_index)
-            return channel_img
-
         for channels in channel_list:
-            ch_img = channel_image(img=img, dims=img_dims, channel=channels)
+            ch_img = _channel_image(img=img, dims=img_dims, channel=channels)
             image_stack.append(ch_img)
 
         dask_stack = da.stack(image_stack, axis=0)
 
         lbl = AICSImage(label_directory / file)
-        labels = channel_image(img=lbl, dims=label_dims, channel=0)
+        labels = _channel_image(img=lbl, dims=label_dims, channel=0)
 
         if predefined_features.value == 1:
             print("custom")
@@ -164,39 +195,43 @@ def batch_training(
     return feature_importances
 
 
+def init_predict(batch_predict):
+    @batch_predict.image_directory.changed.connect
+    def _image_info():
+        image_list = os.listdir(batch_predict.image_directory.value)
+        img = AICSImage(batch_predict.image_directory.value / image_list[0])
+
+        img_dims = _img_dims(img)
+        batch_predict.img_dims.value = img_dims
+        batch_predict.channel_list.choices = img.channel_names
+
+
 @magic_factory(
+    widget_init=init_predict,
     auto_call=False,
     call_button="Batch Predict",
     image_directory=dict(widget_type="FileEdit", mode="d"),
     result_directory=dict(widget_type="FileEdit", mode="d"),
     classifier_path=dict(widget_type="FileEdit", mode="r"),
-    channel_list=dict(widget_type="Select", choices=channel_nums),
+    channel_list=dict(widget_type="Select", choices=[]),
 )
 def batch_predict(
     image_directory=pathlib.Path(),
     result_directory=pathlib.Path(),
     classifier_path=pathlib.Path(),
-    channel_list: int = 0,
-    img_dims: str = "TYX",
+    channel_list: str = [],
+    img_dims: str = None,
 ):
     image_list = os.listdir(image_directory)
     custom_classifier = apoc.PixelClassifier(opencl_filename=classifier_path)
 
-    for file in image_list:
-        # print('started predicting: ', file)
+    for file in tqdm(image_list, label="progress"):
+
         image_stack = []
         img = AICSImage(image_directory / file)
 
-        def channel_image(img, dims: str, channel: str or int):
-            if isinstance(channel, str):
-                channel_index = img.channel_names.index(channel)
-            elif isinstance(channel, int):
-                channel_index = channel
-            channel_img = img.get_image_data(dims, C=channel_index)
-            return channel_img
-
         for channels in channel_list:
-            ch_img = channel_image(img=img, dims=img_dims, channel=channels)
+            ch_img = _channel_image(img=img, dims=img_dims, channel=channels)
             image_stack.append(ch_img)
 
         dask_stack = da.stack(image_stack, axis=0)
