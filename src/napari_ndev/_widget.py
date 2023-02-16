@@ -9,10 +9,10 @@ from typing import TYPE_CHECKING
 
 import apoc
 import dask.array as da
-import napari
 import numpy as np
 import pyclesperanto_prototype as cle
 from aicsimageio import AICSImage
+from aicsimageio.writers import OmeTiffWriter
 from magicgui import magic_factory
 from magicgui.tqdm import tqdm
 from napari import layers
@@ -21,7 +21,14 @@ if TYPE_CHECKING:
     pass
 
 
-def _channel_image(img, dims: str, channel: str or int):
+def _get_channel_image(img, dims: str, channel: str or int):
+    """From an AICSImage object (img), get image data for a particular
+    channel whether from the channels name (str) or the channel's index
+    (int)
+
+    The index method is useful for labels layer, which have no name but
+    do have index = 0
+    """
     if isinstance(channel, str):
         channel_index = img.channel_names.index(channel)
     elif isinstance(channel, int):
@@ -30,7 +37,17 @@ def _channel_image(img, dims: str, channel: str or int):
     return channel_img
 
 
-def _img_dims(img):
+def _get_img_dims(img):
+    """Extracts actual dimenions, except for C (color) of an AICSImage
+    object (img), that are greater than 1. Ignores C because C is split
+    into layers in napari and also because Labels layers have no C.
+
+    Especially useful for saving the dim order of Label layers as
+    relevant to the original matching AICSImage file. Because data.shape
+    is effectively squeezed by napari, this can recapture the actual
+    dims of the original image and make both the image and label layers
+    comparable.
+    """
     endstring = ""
     for d in img.dims.order:
         if d == "C":
@@ -51,65 +68,73 @@ def _img_dims(img):
     save_suffix=dict(widget_type="LineEdit", label="Save Suffix"),
 )
 def batch_annotator(
-    labels: layers.Labels,
     image: layers.Image,
+    labels: layers.Labels,
     file_directory=pathlib.Path(),
     output_folder_prefix="Annotated",
     save_suffix=".ome.tif",
 ):
     """Batch Annotation
 
-    Used for annotating images and saving images of interest into a folder
-    for the image and a folder for the labels. The GUI allows selecting of the
-    intended label layer and image layer, as well as the prefix for the output
-    folders. This output folder can already exist: mkdir(exist_ok=True), so
-    should be used to save multiple images within the same folder group. The
-    images are saved as .tif files though this can be adjusted in the saver
-    function, and could be added as a GUI element.
+    Used for annotating images and saving images of interest into a
+    folder for the image and a folder for the labels. The GUI allows
+    selecting of the intended label layer and image layer, as well as
+    the prefix for the output folders. This output folder can already
+    exist: mkdir(exist_ok=True), so should be used to save multiple
+    images within the same folder group. The images are saved as .tif
+    files though this can be adjusted in the saver function, and could
+    be added as a GUI element.
 
-    napari.layers. is event connected, so labels and image selection will
-    update as new labels and images are added.
+    napari.layers. is event connected, so labels and image selection
+    will update as new labels and images are added.
     """
 
-    def format_filename(char_string):
+    def _format_filename(char_string):
         """convert strings to valid file names"""
         valid_chars = f"-_.() {string.ascii_letters}{string.digits}"
         filename = "".join(char for char in char_string if char in valid_chars)
         filename = filename.replace(" ", "_")
         return filename
 
-    def saver(image_type, folder_suffix, save_suffix_str):
-        """selects layers to save into a specified folder
-        uses aicsimageio to save, because this has better control over metadata
-        """
+    def _save_path(folder_suffix, save_suffix_str):
+        """Create save directories and return the path to save a file"""
         folder_name = str(output_folder_prefix + folder_suffix)
         save_directory = file_directory / folder_name
         save_directory.mkdir(parents=False, exist_ok=True)
 
         image_name = str(image.name + save_suffix_str)
-        save_name = format_filename(image_name)
+        save_name = _format_filename(image_name)
         save_path = save_directory / save_name
+        return save_path
 
-        """use the current scene of the original aicsimage object, unless
-        object does not exist (such as label layer), then just use layer data
-        """
-        try:
-            img = image_type.metadata["aicsimage"].xarray_data
-        except KeyError:
-            img = image_type.data
-        if type(image_type) == napari.layers.labels.labels.Labels:
-            img = img.astype(np.int32)
-        AICSImage(img).save(uri=save_path)
+    """save image"""
+    img_path = _save_path("_images", save_suffix)
+    img = image.metadata["aicsimage"]
+    OmeTiffWriter.save(
+        data=img.data,
+        uri=img_path,
+        dim_order=img.dims.order,
+        channel_names=img.channel_names,
+        physical_pixel_sizes=img.physical_pixel_sizes,
+    )
 
-        # image_type.save(path=str(save_path)) #napari layer save
-        # If naive defaults of AICSImage.save are insufficient:
-        # OmeTiffWriter.save(data = image_type.data, uri = str(save_path))
+    """save label"""
+    lbl_path = _save_path("_labels", save_suffix)
+    lbl_dims = _get_img_dims(img)
+    lbl = labels.data
+    lbl = lbl.astype(np.int32)
+    OmeTiffWriter.save(
+        data=lbl,
+        uri=lbl_path,
+        dim_order=lbl_dims,
+        channel_names=["Labels"],
+        physical_pixel_sizes=img.physical_pixel_sizes,
+    )
 
-    saver(image, "_images", save_suffix)
-    saver(labels, "_labels", save_suffix)
     return "Saved Successfully"
 
 
+# Predefined feature sets extract from apoc and put in an Enum
 PDFS = Enum("PDFS", apoc.PredefinedFeatureSet._member_names_)
 
 
@@ -119,17 +144,9 @@ def init_training(batch_training):
         image_list = os.listdir(batch_training.image_directory.value)
         img = AICSImage(batch_training.image_directory.value / image_list[0])
 
-        img_dims = _img_dims(img)
+        img_dims = _get_img_dims(img)
         batch_training.img_dims.value = img_dims
         batch_training.channel_list.choices = img.channel_names
-
-    @batch_training.label_directory.changed.connect
-    def _label_info():
-        label_list = os.listdir(batch_training.label_directory.value)
-        lbl = AICSImage(batch_training.label_directory.value / label_list[0])
-
-        lbl_dims = _img_dims(lbl)
-        batch_training.label_dims.value = lbl_dims
 
 
 @magic_factory(
@@ -150,8 +167,19 @@ def batch_training(
     custom_features: str = None,
     channel_list: str = [],
     img_dims: str = None,
-    label_dims: str = None,
 ):
+    """Batch APOC Training
+
+    Train APOC (Accelerated-Pixel-Object-Classifiers) on a folder of
+    images and labels. See documentation here:
+    https://github.com/haesleinhuepf/apoc
+
+    Predefined features allow selection of apoc.PredefinedFeatureSets
+    https://github.com/haesleinhuepf/apoc/blob/main/demo/feature_stacks.ipynb
+
+    Creates the classifier.cl file in your current directory, which is
+    usually where you launch python from.
+    """
     image_list = os.listdir(image_directory)
 
     apoc.erase_classifier(cl_filename)
@@ -163,13 +191,15 @@ def batch_training(
         img = AICSImage(image_directory / file)
 
         for channels in channel_list:
-            ch_img = _channel_image(img=img, dims=img_dims, channel=channels)
+            ch_img = _get_channel_image(
+                img=img, dims=img_dims, channel=channels
+            )
             image_stack.append(ch_img)
 
         dask_stack = da.stack(image_stack, axis=0)
 
         lbl = AICSImage(label_directory / file)
-        labels = _channel_image(img=lbl, dims=label_dims, channel=0)
+        labels = _get_channel_image(img=lbl, dims=img_dims, channel=0)
 
         if predefined_features.value == 1:
             print("custom")
@@ -191,7 +221,6 @@ def batch_training(
     feature_importances = custom_classifier.feature_importances()
     print("success")
     # return pd.Series(feature_importances).plot.bar()
-
     return feature_importances
 
 
@@ -201,7 +230,7 @@ def init_predict(batch_predict):
         image_list = os.listdir(batch_predict.image_directory.value)
         img = AICSImage(batch_predict.image_directory.value / image_list[0])
 
-        img_dims = _img_dims(img)
+        img_dims = _get_img_dims(img)
         batch_predict.img_dims.value = img_dims
         batch_predict.channel_list.choices = img.channel_names
 
@@ -222,24 +251,41 @@ def batch_predict(
     channel_list: str = [],
     img_dims: str = None,
 ):
+    """Batch APOC Predict
+
+    Use any APOC (Accelerated-Pixel-Object-Classifiers)-trained
+    classifier on a folder of images. See documentation here:
+    https://github.com/haesleinhuepf/apoc
+
+    Produces an output folder with results label images.
+    """
     image_list = os.listdir(image_directory)
     custom_classifier = apoc.PixelClassifier(opencl_filename=classifier_path)
 
     for file in tqdm(image_list, label="progress"):
-
         image_stack = []
         img = AICSImage(image_directory / file)
 
         for channels in channel_list:
-            ch_img = _channel_image(img=img, dims=img_dims, channel=channels)
+            ch_img = _get_channel_image(
+                img=img, dims=img_dims, channel=channels
+            )
             image_stack.append(ch_img)
 
         dask_stack = da.stack(image_stack, axis=0)
-
         result = custom_classifier.predict(
             image=dask_stack,
         )
 
-        AICSImage(cle.pull(result)).save(uri=result_directory / file)
+        lbl = cle.pull(result)
+        lbl = lbl.astype(np.int32)
+        OmeTiffWriter.save(
+            data=lbl,
+            uri=result_directory / file,
+            dim_order=img_dims,
+            channel_names=["Labels"],
+            physical_pixel_sizes=img.physical_pixel_sizes,
+        )
+        # AICSImage(cle.pull(result)).save(uri=result_directory / file)
 
     return result
