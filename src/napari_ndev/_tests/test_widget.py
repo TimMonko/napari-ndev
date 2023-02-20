@@ -1,3 +1,4 @@
+import napari
 import numpy as np
 from aicsimageio import AICSImage
 
@@ -9,50 +10,13 @@ from aicsimageio import AICSImage
 def test_batch_annotator(make_napari_viewer, capsys):
     # make viewer and add an image layer using our fixture
     viewer = make_napari_viewer()
+    viewer = napari.Viewer()
     test_image = np.random.random((3, 2, 4, 100, 100))
     test_aics = AICSImage(test_image)
     viewer.add_image(test_aics.data)
-    test_thresh = test_image > 1
+    test_thresh = test_image > 0.5
     viewer.add_labels(test_thresh)
 
     # create our widget, passing in the viewer
     # my_widget = batch_annotator()
     # my_widget()
-
-
-# def test_batch_training(make_napari_viewer, capsys):
-#     # make viewer and add an image layer using our fixture
-#     viewer = make_napari_viewer()
-#     test_image = np.random.random((100, 100))
-#     viewer.add_image(test_image)
-#     test_thresh = test_image > 1
-#     viewer.add_labels(test_thresh)
-
-#     # create our widget, passing in the viewer
-#     my_widget = batch_training()
-#     my_widget()
-#     # call our widget method
-#     # my_widget._on_click()
-
-#     # read captured output and check that it's as we expected
-#     # captured = capsys.readouterr()
-#     # assert captured.out == "napari has 1 layers\n"
-
-
-# def test_batch_predict(make_napari_viewer, capsys):
-#     # make viewer and add an image layer using our fixture
-#     viewer = make_napari_viewer()
-#     test_image = np.random.random((100, 100))
-#     viewer.add_image(test_image)
-#     test_thresh = test_image > 1
-#     viewer.add_labels(test_thresh)
-
-#     # create our widget, passing in the viewer
-#     my_widget = batch_predict()
-#     my_widget()
-#     # call our widget method
-#     # my_widget._on_click()
-
-#     # read captured output and check that it's as we expected
-#     # captured = capsys.readouterr()
-#     # assert captured.out == "napari has 1 layers\n"
