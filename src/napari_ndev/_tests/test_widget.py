@@ -2,7 +2,7 @@ import napari
 import numpy as np
 from aicsimageio import AICSImage
 
-# from napari_ndev import batch_annotator  # , batch_predict, batch_training
+from napari_ndev import batch_annotator  # , batch_predict, batch_training
 
 
 # make_napari_viewer is a pytest fixture that returns a napari viewer object
@@ -18,5 +18,5 @@ def test_batch_annotator(make_napari_viewer, capsys):
     viewer.add_labels(test_thresh)
 
     # create our widget, passing in the viewer
-    # my_widget = batch_annotator()
-    # my_widget()
+    my_widget = batch_annotator()
+    my_widget()
