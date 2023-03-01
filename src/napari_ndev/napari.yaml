@@ -5,6 +5,9 @@ contributions:
     - id: napari-ndev.make_batch_annotator
       python_name: napari_ndev._widget:batch_annotator
       title: Make Batch Annotator Widget
+    - id: napari-ndev.make_batch_workflow
+      python_name: napari_ndev._widget:batch_workflow
+      title: Make Batch Workflow Widget
     - id: napari-ndev.make_batch_training
       python_name: napari_ndev._widget:batch_training
       title: Make Batch Training Widget
@@ -15,6 +18,8 @@ contributions:
   widgets:
     - command: napari-ndev.make_batch_annotator
       display_name: Batch Annotator
+    - command: napari-ndev.make_batch_workflow
+      display_name: Batch Workflow
     - command: napari-ndev.make_batch_training
       display_name: Batch APOC Training
     - command: napari-ndev.make_batch_predict
