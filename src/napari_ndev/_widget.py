@@ -5,6 +5,7 @@ import os
 import pathlib
 import string
 from enum import Enum
+from functools import reduce
 from typing import TYPE_CHECKING
 
 import apoc
@@ -16,6 +17,7 @@ from aicsimageio.writers import OmeTiffWriter
 from magicgui import magic_factory
 from magicgui.tqdm import tqdm
 from napari import layers
+from napari_workflows._io_yaml_v1 import load_workflow
 
 if TYPE_CHECKING:
     pass
@@ -132,6 +134,116 @@ def batch_annotator(
     )
 
     return "Saved Successfully"
+
+
+def init_workflow(batch_workflow):
+    @batch_workflow.image_directory.changed.connect
+    def _image_info():
+        image_list = os.listdir(batch_workflow.image_directory.value)
+        img = AICSImage(batch_workflow.image_directory.value / image_list[0])
+
+        img_dims = _get_img_dims(img)
+        batch_workflow.img_dims.value = img_dims
+
+        batch_workflow.root_0.choices = img.channel_names
+        batch_workflow.root_1.choices = img.channel_names
+        batch_workflow.root_2.choices = img.channel_names
+        batch_workflow.root_3.choices = img.channel_names
+        batch_workflow.root_4.choices = img.channel_names
+
+    @batch_workflow.workflow_path.changed.connect
+    def _workflow_info():
+        wf = load_workflow(batch_workflow.workflow_path.value)
+        batch_workflow.workflow_roots.value = wf.roots()
+
+
+@magic_factory(
+    widget_init=init_workflow,
+    auto_call=False,
+    call_button="Batch Workflow",
+    result_widget=True,
+    image_directory=dict(widget_type="FileEdit", mode="d"),
+    result_directory=dict(widget_type="FileEdit", mode="d"),
+    workflow_path=dict(widget_type="FileEdit", mode="r"),
+    workflow_roots=dict(widget_type="Label", label="Roots:"),
+    root_0=dict(widget_type="ComboBox", choices=[], nullable=True),
+    root_1=dict(widget_type="ComboBox", choices=[], nullable=True),
+    root_2=dict(widget_type="ComboBox", choices=[], nullable=True),
+    root_3=dict(widget_type="ComboBox", choices=[], nullable=True),
+    root_4=dict(widget_type="ComboBox", choices=[], nullable=True),
+)
+def batch_workflow(
+    image_directory=pathlib.Path(),
+    result_directory=pathlib.Path(),
+    workflow_path=pathlib.Path(),
+    workflow_roots: list = None,
+    root_0: str = None,
+    root_1: str = None,
+    root_2: str = None,
+    root_3: str = None,
+    root_4: str = None,
+    img_dims: str = None,
+):
+    """Batch Workflow
+
+    Load a napari-workflow metadata file and show the original roots.
+    Select an image directory to populate the root dropdowns with channels
+    from the image. Then, select these channels in the dropdown to match the
+    Roots in the proper order. If there are less roots than displayed, leave
+    dropdown as '-----' which represents python None.
+    Image dim order can be changed, if necessary, but this is unlikely because
+    images used for batch processing should closely resemble the original
+    images used. The dims only matter in scenarios such as with an without a Z.
+
+    TO-DO: add option to combine result stack with original image stack
+
+    """
+    image_list = os.listdir(image_directory)
+
+    wf = load_workflow(workflow_path)
+
+    roots = []
+    roots.append(root_0)
+    roots.append(root_1)
+    roots.append(root_2)
+    roots.append(root_3)
+    roots.append(root_4)
+
+    root_list = [i for i in roots if i is not None]
+
+    for file in tqdm(image_list, label="progress"):
+        image_stack = []
+        img = AICSImage(image_directory / file)
+
+        for idx, root in enumerate(root_list):
+            ch_img = _get_channel_image(img=img, dims=img_dims, channel=root)
+
+            wf.set(name=wf.roots()[idx], func_or_data=ch_img)
+
+            image_stack.append(ch_img)
+
+        # dask_stack = da.stack(image_stack, axis=0)
+        result = wf.get(name=wf.leafs())
+        result_pull = cle.pull(result)
+
+        result_names = reduce(
+            lambda res, lst: res + [lst[0] + "_" + lst[1]],
+            zip(root_list, wf.leafs()),
+            [],
+        )
+
+        save_name = str(file + ".ome.tiff")
+        save_uri = result_directory / save_name
+
+        OmeTiffWriter.save(
+            data=result_pull,
+            uri=save_uri,
+            # dim_order=img.dims.order,
+            channel_names=result_names,
+            physical_pixel_sizes=img.physical_pixel_sizes,
+        )
+
+    return
 
 
 # Predefined feature sets extract from apoc and put in an Enum
