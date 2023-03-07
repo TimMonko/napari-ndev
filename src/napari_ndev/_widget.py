@@ -183,6 +183,7 @@ def batch_workflow(
     root_3: str = None,
     root_4: str = None,
     img_dims: str = None,
+    keep_original_images: bool = True,
 ):
     """Batch Workflow
 
@@ -223,20 +224,30 @@ def batch_workflow(
             image_stack.append(ch_img)
 
         # dask_stack = da.stack(image_stack, axis=0)
-        result = wf.get(name=wf.leafs())
-        result_pull = cle.pull(result)
 
+        result = wf.get(name=wf.leafs())
+        result_stack = cle.pull(result)
+
+        """extract the leaf name corresponding to each root to save into
+        channel names
+        """
         result_names = reduce(
             lambda res, lst: res + [lst[0] + "_" + lst[1]],
             zip(root_list, wf.leafs()),
             [],
         )
 
+        if keep_original_images is True:
+            dask_images = da.stack(image_stack, axis=0)
+            dask_result = da.stack(result_stack, axis=0)
+            result_stack = da.concatenate([dask_images, dask_result], axis=0)
+            result_names = root_list + result_names
+
         save_name = str(file + ".ome.tiff")
         save_uri = result_directory / save_name
 
         OmeTiffWriter.save(
-            data=result_pull,
+            data=result_stack,
             uri=save_uri,
             # dim_order=img.dims.order,
             channel_names=result_names,
@@ -268,12 +279,14 @@ def init_training(batch_training):
     result_widget=True,
     image_directory=dict(widget_type="FileEdit", mode="d"),
     label_directory=dict(widget_type="FileEdit", mode="d"),
+    cl_directory=dict(widget_type="FileEdit", mode="d"),
     predefined_features=dict(widget_type="ComboBox", choices=PDFS),
     channel_list=dict(widget_type="Select", choices=[]),
 )
 def batch_training(
     image_directory=pathlib.Path(),
     label_directory=pathlib.Path(),
+    cl_directory=pathlib.Path(),
     cl_filename: str = "classifier.cl",
     predefined_features=PDFS(1),
     custom_features: str = None,
@@ -294,8 +307,10 @@ def batch_training(
     """
     image_list = os.listdir(image_directory)
 
-    apoc.erase_classifier(cl_filename)
-    custom_classifier = apoc.PixelClassifier(opencl_filename=cl_filename)
+    cl_path = str(cl_directory / cl_filename)
+
+    apoc.erase_classifier(cl_path)
+    custom_classifier = apoc.PixelClassifier(opencl_filename=cl_path)
 
     for file in tqdm(image_list, label="progress"):
 
