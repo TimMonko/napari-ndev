@@ -133,7 +133,7 @@ def batch_annotator(
         physical_pixel_sizes=img.physical_pixel_sizes,
     )
 
-    return "Saved Successfully"
+    return "Saved: " + image.name
 
 
 def init_workflow(batch_workflow):
@@ -259,7 +259,7 @@ def batch_workflow(
 
 # Predefined feature sets extract from apoc and put in an Enum
 PDFS = Enum("PDFS", apoc.PredefinedFeatureSet._member_names_)
-
+cl_types = ["Pixel", "Object"]
 
 def init_training(batch_training):
     @batch_training.image_directory.changed.connect
@@ -280,17 +280,23 @@ def init_training(batch_training):
     image_directory=dict(widget_type="FileEdit", mode="d"),
     label_directory=dict(widget_type="FileEdit", mode="d"),
     cl_directory=dict(widget_type="FileEdit", mode="d"),
+    cl_type=dict(widget_type="RadioButtons", choices=cl_types),
     predefined_features=dict(widget_type="ComboBox", choices=PDFS),
     channel_list=dict(widget_type="Select", choices=[]),
+    cl_label_id=dict(widget_type="SpinBox", min=1),
 )
 def batch_training(
     image_directory=pathlib.Path(),
     label_directory=pathlib.Path(),
     cl_directory=pathlib.Path(),
     cl_filename: str = "classifier.cl",
+    cl_type: str = cl_types[0],
+    cl_forests: int = 2,
+    cl_trees: int = 100,
     predefined_features=PDFS(1),
     custom_features: str = None,
     channel_list: str = [],
+    cl_label_id: int = 2,
     img_dims: str = None,
 ):
     """Batch APOC Training
@@ -310,7 +316,12 @@ def batch_training(
     cl_path = str(cl_directory / cl_filename)
 
     apoc.erase_classifier(cl_path)
-    custom_classifier = apoc.PixelClassifier(opencl_filename=cl_path)
+
+    if cl_type == "Pixel":
+        custom_classifier = apoc.PixelClassifier(opencl_filename=cl_path,max_depth=cl_forests, num_ensembles=cl_trees)
+
+    if cl_type == "Object":
+        custom_classifier = apoc.ObjectSegmenter(opencl_filename=cl_path, positive_class_identifier=cl_label_id, max_depth=cl_forests, num_ensembles=cl_trees)
 
     for file in tqdm(image_list, label="progress"):
 
@@ -368,13 +379,15 @@ def init_predict(batch_predict):
     call_button="Batch Predict",
     image_directory=dict(widget_type="FileEdit", mode="d"),
     result_directory=dict(widget_type="FileEdit", mode="d"),
-    classifier_path=dict(widget_type="FileEdit", mode="r"),
+    cl_path=dict(widget_type="FileEdit", mode="r"),
+    cl_type=dict(widget_type="RadioButtons", choices=cl_types),
     channel_list=dict(widget_type="Select", choices=[]),
 )
 def batch_predict(
     image_directory=pathlib.Path(),
     result_directory=pathlib.Path(),
-    classifier_path=pathlib.Path(),
+    cl_path=pathlib.Path(),
+    cl_type: str = cl_types[0],
     channel_list: str = [],
     img_dims: str = None,
 ):
@@ -387,7 +400,9 @@ def batch_predict(
     Produces an output folder with results label images.
     """
     image_list = os.listdir(image_directory)
-    custom_classifier = apoc.PixelClassifier(opencl_filename=classifier_path)
+
+    if cl_type == "Pixel": custom_classifier = apoc.PixelClassifier(opencl_filename=cl_path)
+    if cl_type == "Object": custom_classifier = apoc.ObjectSegmenter(opencl_filename=cl_path)
 
     for file in tqdm(image_list, label="progress"):
         image_stack = []
