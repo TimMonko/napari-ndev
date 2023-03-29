@@ -59,24 +59,63 @@ def _get_img_dims(img):
     return endstring
 
 
+def init_quick(batch_quick_adjustments):
+    @batch_quick_adjustments.image_directory.changed.connect
+    def _image_info():
+        image_list = os.listdir(batch_quick_adjustments.image_directory.value)
+        img = AICSImage(
+            batch_quick_adjustments.image_directory.value / image_list[0]
+        )
+
+        batch_quick_adjustments.channel_list.choices = img.channel_names
+
+
+@magic_factory(
+    widget_init=init_quick,
+    auto_call=False,
+    call_button="Batch Adjust",
+    result_widget=True,
+    image_directory=dict(widget_type="FileEdit", mode="d"),
+    output_directory=dict(widget_type="FileEdit", mode="d"),
+    channel_list=dict(widget_type="Select", choices=[]),
+)
+def batch_quick_adjustments(
+    image_directory=pathlib.Path(),
+    output_directory=pathlib.Path(),
+    channel_list: str = [],
+    project_bool: bool = False,
+    crop_bool: bool = False,
+):
+    """Batch Quick Adjustments
+
+    Quick adjustments to apply to a batch of images and save the resulting
+    images in an output folder. Intended for adjustments either too simple
+    (e.g. max projection, saving only certain channels) or not possible
+    (e.g. cropping) with napari-workflows / batch-workflow widgets.
+    """
+    return
+
+
 @magic_factory(
     auto_call=False,
     result_widget=True,
     call_button="Save Layers to Output Folders",
+    # image=dict(widget_type="Select", choices=[]),
+    # layer=dict(widgwet_type="Select", choices=[]),
     file_directory=dict(
         widget_type="FileEdit", mode="d", label="File Directory"
     ),
     output_folder_prefix=dict(widget_type="LineEdit", label="Output Folder"),
     save_suffix=dict(widget_type="LineEdit", label="Save Suffix"),
 )
-def batch_annotator(
+def annotation_saver(
     image: layers.Image,
     labels: layers.Labels,
     file_directory=pathlib.Path(),
     output_folder_prefix="Annotated",
     save_suffix=".ome.tif",
 ):
-    """Batch Annotation
+    """Annotation Saver
 
     Used for annotating images and saving images of interest into a
     folder for the image and a folder for the labels. The GUI allows
@@ -261,6 +300,7 @@ def batch_workflow(
 PDFS = Enum("PDFS", apoc.PredefinedFeatureSet._member_names_)
 cl_types = ["Pixel", "Object"]
 
+
 def init_training(batch_training):
     @batch_training.image_directory.changed.connect
     def _image_info():
@@ -318,10 +358,19 @@ def batch_training(
     apoc.erase_classifier(cl_path)
 
     if cl_type == "Pixel":
-        custom_classifier = apoc.PixelClassifier(opencl_filename=cl_path,max_depth=cl_forests, num_ensembles=cl_trees)
+        custom_classifier = apoc.PixelClassifier(
+            opencl_filename=cl_path,
+            max_depth=cl_forests,
+            num_ensembles=cl_trees,
+        )
 
     if cl_type == "Object":
-        custom_classifier = apoc.ObjectSegmenter(opencl_filename=cl_path, positive_class_identifier=cl_label_id, max_depth=cl_forests, num_ensembles=cl_trees)
+        custom_classifier = apoc.ObjectSegmenter(
+            opencl_filename=cl_path,
+            positive_class_identifier=cl_label_id,
+            max_depth=cl_forests,
+            num_ensembles=cl_trees,
+        )
 
     for file in tqdm(image_list, label="progress"):
 
@@ -401,8 +450,10 @@ def batch_predict(
     """
     image_list = os.listdir(image_directory)
 
-    if cl_type == "Pixel": custom_classifier = apoc.PixelClassifier(opencl_filename=cl_path)
-    if cl_type == "Object": custom_classifier = apoc.ObjectSegmenter(opencl_filename=cl_path)
+    if cl_type == "Pixel":
+        custom_classifier = apoc.PixelClassifier(opencl_filename=cl_path)
+    if cl_type == "Object":
+        custom_classifier = apoc.ObjectSegmenter(opencl_filename=cl_path)
 
     for file in tqdm(image_list, label="progress"):
         image_stack = []

@@ -2,9 +2,12 @@ name: napari-ndev
 display_name: neuralDev
 contributions:
   commands:
-    - id: napari-ndev.make_batch_annotator
-      python_name: napari_ndev._widget:batch_annotator
-      title: Make Batch Annotator Widget
+    - id: napari-ndev.make_batch_quick_adjustments
+      python_name: napari_ndev._widget:batch_quick_adjustments
+      title: Make Batch Quick Adjustments Widget
+    - id: napari-ndev.make_annotation_saver
+      python_name: napari_ndev._widget:annotation_saver
+      title: Make Annotation Saver Widget
     - id: napari-ndev.make_batch_workflow
       python_name: napari_ndev._widget:batch_workflow
       title: Make Batch Workflow Widget
@@ -16,8 +19,10 @@ contributions:
       title: Make Batch Predict Widget
 
   widgets:
-    - command: napari-ndev.make_batch_annotator
-      display_name: Batch Annotator
+    - command: napari-ndev.make_batch_quick_adjustments
+      display_name: Batch Quick Adjustments
+    - command: napari-ndev.make_annotation_saver
+      display_name: Annotation Saver
     - command: napari-ndev.make_batch_workflow
       display_name: Batch Workflow
     - command: napari-ndev.make_batch_training
