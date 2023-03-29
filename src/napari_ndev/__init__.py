@@ -6,13 +6,13 @@ except ImportError:
 from ._widget import (
     annotation_saver,
     batch_predict,
-    batch_quick_adjustments,
     batch_training,
+    batch_utilities,
     batch_workflow,
 )
 
 __all__ = [
-    "batch_quick_adjustments",
+    "batch_utilities",
     "annotation_saver",
     "batch_workflow",
     "batch_predict",
