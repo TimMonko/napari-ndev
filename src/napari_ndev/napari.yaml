@@ -4,7 +4,7 @@ contributions:
   commands:
     - id: napari-ndev.make_batch_utilities
       python_name: napari_ndev._widget:batch_utilities
-      title: Make Batch Quick Adjustments Widget
+      title: Make Batch Utilities Widget
     - id: napari-ndev.make_annotation_saver
       python_name: napari_ndev._widget:annotation_saver
       title: Make Annotation Saver Widget
@@ -20,7 +20,7 @@ contributions:
 
   widgets:
     - command: napari-ndev.make_batch_utilities
-      display_name: Batch Quick Adjustments
+      display_name: Batch Utilities
     - command: napari-ndev.make_annotation_saver
       display_name: Annotation Saver
     - command: napari-ndev.make_batch_workflow
