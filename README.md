@@ -7,7 +7,11 @@
 [![codecov](https://codecov.io/gh/TimMonko/napari-ndev/branch/main/graph/badge.svg)](https://codecov.io/gh/TimMonko/napari-ndev)
 [![napari hub](https://img.shields.io/endpoint?url=https://api.napari-hub.org/shields/napari-ndev)](https://napari-hub.org/plugins/napari-ndev)
 
-A collection of plugins by Tim Monko while in the Bastian lab -- focused on neural development.
+A collection of widgets intended to serve any person seeking to process microscopy images from start to finish. The wide breadth of this plugin's scope is only made possible by the amazing libraries and plugins from the napari community, especially Robert Haase. Currently, the plugin supports the following goals:
+
+1. **Batch-workflow:** Batch pre-processing/processing images using [napari-workflows].
+2. **Annotation-saver:** A quick and easy way to save annotations (a napari labels layer) and corresponding images to corresponding folders.
+3. **Batch-training/prediction:** Utilizes the excellent accelerated-pixel-and-object-classification ([apoc]) in a similar fashion to [napari-apoc], but intended for batch training and prediction with a napari widget instead of scripting.
 
 ----------------------------------
 
@@ -27,8 +31,25 @@ You can install `napari-ndev` via [pip]:
 
     pip install napari-ndev
 
+----------------------------------
 
+## Further Info
 
+### 1. Batch-workflow
+Batch pre-processing/processing images using [napari-workflows].  Images are processed outside the napari-viewer using [aicsimageio] as both reader and writer. Prior to passing the images to napari-workflows, the user selects the correct images as the roots (inputs) and thus napari-workflows matches the processing to create the outputs. The advantage of using napari-workflows for batch processing is that it provides an incredibly flexible processing interface without writing a novel widget for small changes to processing steps like specific filters, segmentation, or measurements. Currently only intended for use with images as inputs and images as outputs from napari-workflows, though there is future potential to have other outputs possible, such as .csv measurement arrays.
+
+### 2. Annotation-saver
+A quick and easy way to save annotations (a napari labels layer) and corresponding images to corresponding folders. *Requires* that images are opened with [napari-aicsimageio]--which can be as simple as drag and drop opening by setting the appropriate default reader for each file type in Preferences -> Plugins--in order to utilize the metadata present for saving the image-label pairs. (See Note about AICSImageIO)
+
+Intended to be used with apoc batch-training/prediction, but can be used for any napari widget or other script intended to grab corresponding images from folders for batch processing.
+
+### 3. Batch-training/prediction
+Utilizes the excellent accelerated-pixel-and-object-classification ([apoc]) in a similar fashion to [napari-apoc], but intended for batch training and prediction with a napari widget instead of scripting. Recognizes pre established
+
+### A Note about AICSImageIO
+[AICSImageIO] is a convenient, multi-format file reader which also has the complimentary [napari-aicsimageio] reader plugin. By default, napari-aicsimageio installs all reader dependencies. Because napari-aicsimageio is not technically required for this plugin to work (you could build your own metadata for the annotation-saver) and just napari-aicsimage is required, the former is not an install requirement. This is to avoid using the GPL liscence and to stick with BSD-3. However, you should install napari-aicsimageio if you want the smoothest operation of the annotation-saver.
+
+----------------------------------
 
 ## Contributing
 
@@ -59,3 +80,9 @@ If you encounter any problems, please [file an issue] along with a detailed desc
 [tox]: https://tox.readthedocs.io/en/latest/
 [pip]: https://pypi.org/project/pip/
 [PyPI]: https://pypi.org/
+
+[napari-workflows]: https://github.com/haesleinhuepf/napari-workflows
+[apoc]: https://github.com/haesleinhuepf/apoc
+[napari-apoc]: https://github.com/haesleinhuepf/napari-accelerated-pixel-and-object-classification
+[napari-aicsimageio]: https://github.com/AllenCellModeling/napari-aicsimageio
+[AICSImageIO]: https://allencellmodeling.github.io/aicsimageio/
