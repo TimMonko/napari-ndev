@@ -82,6 +82,7 @@ def batch_utilities(
     image_directory=pathlib.Path(),
     result_directory=pathlib.Path(),
     channel_list: str = [],
+    keep_scenes: str = [],
     project_bool: bool = False,
     X_range: slice = slice(0, 2, 1),
     Y_range: slice = slice(0, 2, 1),
@@ -105,34 +106,43 @@ def batch_utilities(
 
         img = AICSImage(image_directory / file)
 
-        for idx, channel in enumerate(channel_list):
-            ch_img = _get_channel_image(
-                img=img, dims=img.dims.order, channel=channel
+        # Create kept scene list, if applicable. By using the else statement, will work for single scene images
+        if keep_scenes != []: 
+            scene_list = np.array(keep_scenes) - 1 # may be confusing if not using ZEN/czi
+        else: scene_list = img.scenes
+
+        for scene in scene_list:
+            print(scene)
+            img.set_scene(scene)
+
+            for idx, channel in enumerate(channel_list):
+                ch_img = _get_channel_image(
+                    img=img, dims=img.dims.order, channel=channel
+                )
+
+                #  T C Z Y X be default from aicsimageio
+                ch_img = ch_img[:, :, Z_range, Y_range, X_range]
+
+                # project along the Z axis (2)
+                if project_bool:
+                    ch_img = np.max(ch_img, axis=2, keepdims=True)
+
+                # concatenate images, to keep proper dims stack along C (1)
+                try:
+                    result_stack = np.concatenate([result_stack, ch_img], axis=1)
+                except ValueError:
+                    result_stack = ch_img
+
+            # save the image
+            save_name = str(file + "ome.tif")
+            save_uri = result_directory / save_name
+            OmeTiffWriter.save(
+                data=result_stack,
+                uri=save_uri,
+                dim_order=img.dims.order,
+                channel_names=channel_list,
+                physical_pixel_sizes=img.physical_pixel_sizes,
             )
-
-            #  T C Z Y X be default from aicsimageio
-            ch_img = ch_img[:, :, Z_range, Y_range, X_range]
-
-            # project along the Z axis (2)
-            if project_bool:
-                ch_img = np.max(ch_img, axis=2, keepdims=True)
-
-            # concatenate images, to keep proper dims stack along C (1)
-            try:
-                result_stack = np.concatenate([result_stack, ch_img], axis=1)
-            except ValueError:
-                result_stack = ch_img
-
-        # save the image
-        save_name = str(file + "ome.tif")
-        save_uri = result_directory / save_name
-        OmeTiffWriter.save(
-            data=result_stack,
-            uri=save_uri,
-            dim_order=img.dims.order,
-            channel_names=channel_list,
-            physical_pixel_sizes=img.physical_pixel_sizes,
-        )
     return
 
 
