@@ -1,0 +1,4 @@
+site_name: My Docs
+site_url: https://timmonko.github.io/napari-ndev
+
+theme: readthedocs
