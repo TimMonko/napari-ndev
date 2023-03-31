@@ -77,14 +77,16 @@ def init_utilities(batch_utilities):
     image_directory=dict(widget_type="FileEdit", mode="d"),
     result_directory=dict(widget_type="FileEdit", mode="d"),
     channel_list=dict(widget_type="Select", choices=[]),
+    keep_scenes=dict(widget_type="LineEdit"),
 )
 def batch_utilities(
     image_directory=pathlib.Path(),
     result_directory=pathlib.Path(),
     channel_list: str = [],
+    keep_scenes: str = "",
     project_bool: bool = False,
-    X_range: slice = slice(0, 2, 1),
-    Y_range: slice = slice(0, 2, 1),
+    X_range: slice = slice(0, 1, 1),
+    Y_range: slice = slice(0, 1, 1),
     Z_range: slice = slice(0, 1, 1),
 ):
     """Batch Quick Adjustments
@@ -97,42 +99,57 @@ def batch_utilities(
 
     image_list = os.listdir(image_directory)
 
-    for file in tqdm(image_list, label="progress"):
-
-        # remove Remove the value of this stack on each loop so that
-        # try/ except concatenation initially throws ValueError
+    for file in tqdm(image_list, label="file"):
         result_stack = None
-
         img = AICSImage(image_directory / file)
 
-        for idx, channel in enumerate(channel_list):
-            ch_img = _get_channel_image(
-                img=img, dims=img.dims.order, channel=channel
-            )
-
-            #  T C Z Y X be default from aicsimageio
-            ch_img = ch_img[:, :, Z_range, Y_range, X_range]
-
-            # project along the Z axis (2)
-            if project_bool:
-                ch_img = np.max(ch_img, axis=2, keepdims=True)
-
-            # concatenate images, to keep proper dims stack along C (1)
-            try:
-                result_stack = np.concatenate([result_stack, ch_img], axis=1)
+        # Create kept scene list, if applicable. By using the else statement,
+        # will work for single scene images
+        if keep_scenes == "":
+            scene_list = img.scenes
+        else:
+            scene_list = keep_scenes.split(",")
+            try:  # for converting numeric keep_scenes to a list of indexes
+                # convert to np array, subtract 1-index
+                # (at least for ZEN/czi naming) and convert back to python list
+                scene_list = np.array(scene_list).astype("int") - 1
+                scene_list = scene_list.tolist()
             except ValueError:
-                result_stack = ch_img
+                pass
 
-        # save the image
-        save_name = str(file + "ome.tif")
-        save_uri = result_directory / save_name
-        OmeTiffWriter.save(
-            data=result_stack,
-            uri=save_uri,
-            dim_order=img.dims.order,
-            channel_names=channel_list,
-            physical_pixel_sizes=img.physical_pixel_sizes,
-        )
+        for scene in tqdm(scene_list, label="scene"):
+            img.set_scene(scene)
+
+            for idx, channel in enumerate(channel_list):
+                ch_img = _get_channel_image(
+                    img=img, dims=img.dims.order, channel=channel
+                )
+
+                #  T C Z Y X default from aicsimageio
+                ch_img = ch_img[:, :, Z_range, Y_range, X_range]
+
+                # project along the Z axis (2)
+                if project_bool:
+                    ch_img = np.max(ch_img, axis=2, keepdims=True)
+
+                # concatenate images, to keep proper dims stack along C (1)
+                try:
+                    result_stack = np.concatenate(
+                        [result_stack, ch_img], axis=1
+                    )
+                except ValueError:
+                    result_stack = ch_img
+
+            # save the image
+            save_name = str(file + "ome.tif")
+            save_uri = result_directory / save_name
+            OmeTiffWriter.save(
+                data=result_stack,
+                uri=save_uri,
+                dim_order=img.dims.order,
+                channel_names=channel_list,
+                physical_pixel_sizes=img.physical_pixel_sizes,
+            )
     return
 
 
@@ -140,8 +157,6 @@ def batch_utilities(
     auto_call=False,
     result_widget=True,
     call_button="Save Layers to Output Folders",
-    # image=dict(widget_type="Select", choices=[]),
-    # layer=dict(widgwet_type="Select", choices=[]),
     file_directory=dict(
         widget_type="FileEdit", mode="d", label="File Directory"
     ),
