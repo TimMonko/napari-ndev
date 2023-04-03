@@ -89,7 +89,7 @@ def batch_utilities(
     Y_range: slice = slice(0, 1, 1),
     Z_range: slice = slice(0, 1, 1),
 ):
-    """Batch Quick Adjustments
+    """Batch Utilities
 
     Quick adjustments to apply to a batch of images and save the resulting
     images in an output folder. Intended for adjustments either too simple
