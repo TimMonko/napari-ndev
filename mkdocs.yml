@@ -1,4 +1,9 @@
-site_name: My Docs
+site_name: napari-ndev
 site_url: https://timmonko.github.io/napari-ndev
 
-theme: readthedocs
+theme: 
+  name: material
+
+plugins:
+  - search
+  - mkdocstrings
