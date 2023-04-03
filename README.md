@@ -48,7 +48,7 @@ A quick and easy way to save annotations (a napari labels layer) and correspondi
 Intended to be used with apoc batch-training/prediction, but can be used for any napari widget or other script intended to grab corresponding images from folders for batch processing.
 
 ### 4. Batch-training/prediction
-Utilizes the excellent accelerated-pixel-and-object-classification ([apoc]) in a similar fashion to [napari-apoc], but intended for batch training and prediction with a napari widget instead of scripting. Recognizes pre established
+Utilizes the excellent accelerated-pixel-and-object-classification ([apoc]) in a similar fashion to [napari-apoc], but intended for batch training and prediction with a napari widget instead of scripting. Recognizes pre established feature sets.
 
 ### A Note about AICSImageIO
 [AICSImageIO] is a convenient, multi-format file reader which also has the complimentary [napari-aicsimageio] reader plugin. By default, napari-aicsimageio installs all reader dependencies. Because napari-aicsimageio is not technically required for this plugin to work (you could build your own metadata for the annotation-saver) and just napari-aicsimage is required, the former is not an install requirement. This is to avoid using the GPL liscence and to stick with BSD-3. However, you should install napari-aicsimageio if you want the smoothest operation of the annotation-saver.
