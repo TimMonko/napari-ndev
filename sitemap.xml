@@ -6,7 +6,32 @@
          <changefreq>daily</changefreq>
     </url>
     <url>
-         <loc>https://timmonko.github.io/napari-ndev/about/</loc>
+         <loc>https://timmonko.github.io/napari-ndev/installation/</loc>
+         <lastmod>2023-04-03</lastmod>
+         <changefreq>daily</changefreq>
+    </url>
+    <url>
+         <loc>https://timmonko.github.io/napari-ndev/widget_reference/annotation_saver/</loc>
+         <lastmod>2023-04-03</lastmod>
+         <changefreq>daily</changefreq>
+    </url>
+    <url>
+         <loc>https://timmonko.github.io/napari-ndev/widget_reference/batch_predict/</loc>
+         <lastmod>2023-04-03</lastmod>
+         <changefreq>daily</changefreq>
+    </url>
+    <url>
+         <loc>https://timmonko.github.io/napari-ndev/widget_reference/batch_training/</loc>
+         <lastmod>2023-04-03</lastmod>
+         <changefreq>daily</changefreq>
+    </url>
+    <url>
+         <loc>https://timmonko.github.io/napari-ndev/widget_reference/batch_utilities/</loc>
+         <lastmod>2023-04-03</lastmod>
+         <changefreq>daily</changefreq>
+    </url>
+    <url>
+         <loc>https://timmonko.github.io/napari-ndev/widget_reference/batch_workflow/</loc>
          <lastmod>2023-04-03</lastmod>
          <changefreq>daily</changefreq>
     </url>
