@@ -95,6 +95,26 @@ def batch_utilities(
     images in an output folder. Intended for adjustments either too simple
     (e.g. max projection, saving only certain channels) or not possible
     (e.g. cropping) with napari-workflows / batch-workflow widgets.
+
+   Parameters
+   ----------
+    image_directory : pathlib.Path
+        Directory of files to be processed.
+    result_directory : pathlib.Path
+        Directory to save output images to. Often created by user in OS GUI.
+    channel_list : list
+        Channels to process. Extracted from aicsimageio metadata.
+    keep_scenes : str, optional
+        Comma separated string of scene indexes or scene names.
+    project_bool : bool
+        If True, then do a maximum project along Z axis
+    X_range, Y_range, Z_range : slice
+        Dimension of respective axis to crop between. Use step to downsample.
+
+    Returns
+    -------
+    None
+        Processed images are saved in result directory
     """
 
     image_list = os.listdir(image_directory)
@@ -175,14 +195,31 @@ def annotation_saver(
     Used for annotating images and saving images of interest into a
     folder for the image and a folder for the labels. The GUI allows
     selecting of the intended label layer and image layer, as well as
-    the prefix for the output folders. This output folder can already
+    the prefix for the output folders. These output folders can already
     exist: mkdir(exist_ok=True), so should be used to save multiple
-    images within the same folder group. The images are saved as .tif
-    files though this can be adjusted in the saver function, and could
-    be added as a GUI element.
+    images within the same folder group. Images are saved as ome.tif 
+    with aicsimageio.OmeTiffWriter
 
-    napari.layers. is event connected, so labels and image selection
-    will update as new labels and images are added.
+    Parameters
+    ----------
+    image : napari.layers.layers.Image
+        Image layer to save
+    labels : napari.layers.layers.Labels
+        Labels layer (annotation) to save
+    file_directory : pathlib.Path
+        Top-level folder where separate image and labels folders are present
+    output_folder_prefix : str
+        Prefix to _images or _labels folder created in `file_directory`,
+        by default "Annotated"
+    save_suffix : str 
+        File ending can be changed if needed for interoperability, but still 
+        saves as an OME-TIFF with aicsimageio.OmeTiffWriter,
+        by default "ome.tif"
+
+    Returns
+    -------
+    str
+        Message of "saved" and the respective image name
     """
 
     def _format_filename(char_string):
@@ -279,19 +316,36 @@ def batch_workflow(
     img_dims: str = None,
     keep_original_images: bool = True,
 ):
-    """Batch Workflow
+    """Batch Workflow widget using napari-workflow metadata file
 
-    Load a napari-workflow metadata file and show the original roots.
-    Select an image directory to populate the root dropdowns with channels
-    from the image. Then, select these channels in the dropdown to match the
-    Roots in the proper order. If there are less roots than displayed, leave
-    dropdown as '-----' which represents python None.
-    Image dim order can be changed, if necessary, but this is unlikely because
-    images used for batch processing should closely resemble the original
-    images used. The dims only matter in scenarios such as with an without a Z.
+    Load a napari-workflow metadata file and show the original roots. 
+    Select an image directory to populate the root dropdowns with
+    channels from the first image read by aicsimageio. Then, select these 
+    channels in the dropdown to match the Roots in the proper order. 
+    If there are less roots than displayed, leave dropdown as 
+    '-----' which represents python None. 
 
-    TO-DO: add option to combine result stack with original image stack
+    Parameters
+    ----------
+    image_directory : pathlib.Path
+        Location of image files to process, by default pathlib.Path()
+    result_directory : pathlib.Path
+        Location to save output images, by default pathlib.Path()
+    workflow_path : pathlib.Path
+        Location of workflow _metadata_.yaml file, by default pathlib.Path()
+    workflow_roots : list, optional
+        Roots extracted from , by default None
+    root_0, root_1, root_2, root_3, root_4 : str, optional
+        _description_, by default None
+    img_dims : str, optional
+        Can be changed, if necessary, to account for different image shapes by default None
+    keep_original_images : bool, optional
+        Stack original images with result images prior to saving, by default True
 
+    Returns
+    -------
+    None
+        Resulting image stacks are saved to result_directory after workflow processing
     """
     image_list = os.listdir(image_directory)
 
@@ -394,17 +448,46 @@ def batch_training(
     cl_label_id: int = 2,
     img_dims: str = None,
 ):
-    """Batch APOC Training
+    """Train APOC (Accelerated-Pixel-Object-Classifiers) on a folder of
+    images and labels.
 
-    Train APOC (Accelerated-Pixel-Object-Classifiers) on a folder of
-    images and labels. See documentation here:
-    https://github.com/haesleinhuepf/apoc
+    Parameters
+    ----------
+    image_directory : pathlib.Path
+        Location of images
+    label_directory : pathlib.Path
+        Location of labels (annotations)
+    cl_directory : pathlib.Path
+        Location to save apoc classifier ".cl" file
+    cl_filename : str, optional
+        Filename to save apoc classifier, end with ".cl", by default "classifier.cl"
+    cl_type : str, optional
+        Choose between Pixel or Object Classifier, by default Pixel Classifier
+    cl_forests : int, optional
+        Number of random forests, by default 2
+    cl_trees : int, optional
+        Number of trees, by default 100
+    predefined_features : str, optional
+        Allows selection of `apoc.PredefinedFeatureSets`, by default custom, requires input of `custom_features`
+    custom_features : str, optional
+        Space-separated string of pyclesperanto filters, by default None
+    channel_list : list
+        Select channels to pass into the classifier to serve as bases for features, by default []
+    cl_label_id : int, optional
+        Label id number if using Object Classifier for `cl_type`, by default 2
+    img_dims : str, optional
+        Image dimensions read from aicsimageio metadata, by default None
 
-    Predefined features allow selection of apoc.PredefinedFeatureSets
-    https://github.com/haesleinhuepf/apoc/blob/main/demo/feature_stacks.ipynb
+    Returns
+    -------
+    str
+        String of feature importances returned in classifier file
 
-    Creates the classifier.cl file in your current directory, which is
-    usually where you launch python from.
+    Notes
+    -----
+    Accelerated pixel object classifier information from: 
+        https://github.com/haesleinhuepf/apoc
+    Predefined features from https://github.com/haesleinhuepf/apoc/blob/main/demo/feature_stacks.ipynb
     """
     image_list = os.listdir(image_directory)
 
@@ -495,13 +578,35 @@ def batch_predict(
     channel_list: str = [],
     img_dims: str = None,
 ):
-    """Batch APOC Predict
+    """Train APOC (Accelerated-Pixel-Object-Classifiers) on a folder of
+    images and labels.
 
-    Use any APOC (Accelerated-Pixel-Object-Classifiers)-trained
-    classifier on a folder of images. See documentation here:
-    https://github.com/haesleinhuepf/apoc
+    Parameters
+    ----------
+    image_directory : pathlib.Path
+        Location of images
+    result_directory : pathlib.Path
+        Location to save output labels
+    cl_path : pathlib.Path
+        Location of apoc classifier ".cl" file
+    cl_type : str, optional
+        Choose between Pixel or Object Classifier, by default Pixel Classifier
+    channel_list : list
+        Select channels to pass into the classifier to serve as bases for features, by default []
+    cl_label_id : int, optional
+        Label id number if using Object Classifier for `cl_type`, by default 2
+    img_dims : str, optional
+        Image dimensions read from aicsimageio metadata, by default None
 
-    Produces an output folder with results label images.
+    Returns
+    -------
+    None
+        Predicted labels saved to `result_directory`
+
+    Notes
+    -----
+    Accelerated pixel object classifier information from:
+        https://github.com/haesleinhuepf/apoc
     """
     image_list = os.listdir(image_directory)
 
@@ -534,6 +639,4 @@ def batch_predict(
             channel_names=["Labels"],
             physical_pixel_sizes=img.physical_pixel_sizes,
         )
-        # AICSImage(cle.pull(result)).save(uri=result_directory / file)
-
-    return result
+    return
