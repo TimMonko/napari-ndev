@@ -1,5 +1,8 @@
 site_name: napari-ndev
 site_url: https://timmonko.github.io/napari-ndev
+repo_name: timmonko/napari-ndev
+repo_url: https://github.com/timmonko/napari-ndev
+copyright: Copyright &copy; 2023 Tim Monko
 
 theme: 
   name: material
@@ -7,3 +10,14 @@ theme:
 plugins:
   - search
   - mkdocstrings
+  - autorefs
+
+nav:
+  - Overview: index.md
+  - Installation: installation.md
+  - Widget Reference:
+    - batch_utilities: widget_reference/batch_utilities.md
+    - batch_workflow: widget_reference/batch_workflow.md
+    - annotation_saver: widget_reference/annotation_saver.md
+    - batch_training: widget_reference/batch_training.md
+    - batch_predict: widget_reference/batch_predict.md

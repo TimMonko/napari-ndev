@@ -91,13 +91,10 @@ def batch_utilities(
 ):
     """Batch Utilities
 
-    Quick adjustments to apply to a batch of images and save the resulting
-    images in an output folder. Intended for adjustments either too simple
-    (e.g. max projection, saving only certain channels) or not possible
-    (e.g. cropping) with napari-workflows / batch-workflow widgets.
+    Quick adjustments to apply to a batch of images and save the resulting images in an output folder. Intended for adjustments either too simple (e.g. max projection, saving only certain channels) or not possible (e.g. cropping) with napari-workflows / batch-workflow widgets.
 
-   Parameters
-   ----------
+    Parameters
+    ----------
     image_directory : pathlib.Path
         Directory of files to be processed.
     result_directory : pathlib.Path
