@@ -361,9 +361,13 @@ def batch_workflow(
         image_stack = []
         img = AICSImage(image_directory / file)
 
+        """for each root selected in the root list, extract the channel image
+        and set the workflow root names, this will be used later for workflow.get
+        """
         for idx, root in enumerate(root_list):
-            ch_img = _get_channel_image(img=img, dims=img_dims, channel=root)
-
+            ch_img = _get_channel_image(
+                img=img, dims=img_dims, channel=root)
+            print(ch_img.shape)
             wf.set(name=wf.roots()[idx], func_or_data=ch_img)
 
             image_stack.append(ch_img)
@@ -371,7 +375,7 @@ def batch_workflow(
         # dask_stack = da.stack(image_stack, axis=0)
 
         result = wf.get(name=wf.leafs())
-        result_stack = cle.pull(result)
+        result_stack = cle.pull(result)  # adds a new dim at 0th axis, as "C"
 
         """extract the leaf name corresponding to each root to save into
         channel names
@@ -388,13 +392,15 @@ def batch_workflow(
             result_stack = da.concatenate([dask_images, dask_result], axis=0)
             result_names = root_list + result_names
 
+        # print(result_stack.shape)
+
         save_name = str(file + ".ome.tif")
         save_uri = result_directory / save_name
 
         OmeTiffWriter.save(
             data=result_stack,
             uri=save_uri,
-            # dim_order=img.dims.order,
+            dim_order="C"+img_dims,
             channel_names=result_names,
             physical_pixel_sizes=img.physical_pixel_sizes,
         )
