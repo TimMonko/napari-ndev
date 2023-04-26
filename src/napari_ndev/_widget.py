@@ -487,6 +487,7 @@ def batch_training(
     Predefined features from https://github.com/haesleinhuepf/apoc/blob/main/demo/feature_stacks.ipynb
     """
     image_list = os.listdir(image_directory)
+    label_list = os.listdir(label_directory)
 
     cl_path = str(cl_directory / cl_filename)
 
@@ -507,7 +508,9 @@ def batch_training(
             num_ensembles=cl_trees,
         )
 
-    for file in tqdm(image_list, label="progress"):
+    # use an enumerate so that the index of the file can be used to extract the proper label file, in case the image and label files do not have matching names
+    # This could be problematic if the images aren't sorted the same way, but should generally be ok
+    for idx, file in enumerate(tqdm(image_list, label="progress")):
 
         image_stack = []
         img = AICSImage(image_directory / file)
@@ -520,7 +523,7 @@ def batch_training(
 
         dask_stack = da.stack(image_stack, axis=0)
 
-        lbl = AICSImage(label_directory / file)
+        lbl = AICSImage(label_directory / label_list[idx])
         labels = _get_channel_image(img=lbl, dims=img_dims, channel=0)
 
         if predefined_features.value == 1:
