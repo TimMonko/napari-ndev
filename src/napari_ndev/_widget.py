@@ -116,6 +116,16 @@ def batch_utilities(
 
     image_list = os.listdir(image_directory)
 
+    img = AICSImage(image_directory / image_list[0])
+
+    all_x, all_y, all_z = False, False, False
+    if X_range == slice(0, img.dims.X, 1):
+        all_x = True
+    if Y_range == slice(0, img.dims.Y, 1):
+        all_y = True
+    if Z_range == slice(0, img.dims.Z, 1):
+        all_z = True
+
     for file in tqdm(image_list, label="file"):
         result_stack = None
         img = AICSImage(image_directory / file)
@@ -143,6 +153,13 @@ def batch_utilities(
                 )
 
                 #  T C Z Y X default from aicsimageio
+                if all_x is True:
+                    X_range = slice(0, img.dims.X, 1)
+                if all_y is True:
+                    Y_range = slice(0, img.dims.Y, 1)
+                if all_z is True:
+                    Z_range = slice(0, img.dims.Z, 1)
+
                 ch_img = ch_img[:, :, Z_range, Y_range, X_range]
 
                 # project along the Z axis (2)
