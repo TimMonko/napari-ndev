@@ -78,13 +78,15 @@ def init_utilities(batch_utilities):
     result_directory=dict(widget_type="FileEdit", mode="d"),
     channel_list=dict(widget_type="Select", choices=[]),
     keep_scenes=dict(widget_type="LineEdit"),
+    project_combo=dict(widget_type="ComboBox", choices=["No Projection","np.max","np.sum"]),
 )
 def batch_utilities(
     image_directory=pathlib.Path(),
     result_directory=pathlib.Path(),
     channel_list: str = [],
     keep_scenes: str = "",
-    project_bool: bool = False,
+    #project_bool: bool = False,
+    project_combo: str = "No Projection",
     X_range: slice = slice(0, 1, 1),
     Y_range: slice = slice(0, 1, 1),
     Z_range: slice = slice(0, 1, 1),
@@ -146,8 +148,13 @@ def batch_utilities(
                 ch_img = ch_img[:, :, Z_range, Y_range, X_range]
 
                 # project along the Z axis (2)
-                if project_bool:
+                if project_combo == "np.max":
                     ch_img = np.max(ch_img, axis=2, keepdims=True)
+                if project_combo == "np.sum":
+                    ch_img = np.sum(ch_img, axis=2, keepdims=True)
+                # if project_combo == "cle.sum_z_projection":
+                #     cle_z = cle.sum_z_projection(ch_img)
+                #     ch_img = cle.pull(cle_z)
 
                 # concatenate images, to keep proper dims stack along C (1)
                 try:
