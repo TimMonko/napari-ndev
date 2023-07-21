@@ -152,9 +152,6 @@ def batch_utilities(
                     ch_img = np.max(ch_img, axis=2, keepdims=True)
                 if project_combo == "np.sum":
                     ch_img = np.sum(ch_img, axis=2, keepdims=True)
-                # if project_combo == "cle.sum_z_projection":
-                #     cle_z = cle.sum_z_projection(ch_img)
-                #     ch_img = cle.pull(cle_z)
 
                 # concatenate images, to keep proper dims stack along C (1)
                 try:
@@ -163,6 +160,9 @@ def batch_utilities(
                     )
                 except ValueError:
                     result_stack = ch_img
+
+                if np.max(result_stack) > 65535:
+                    result_stack = result_stack.astype(np.float32)
 
             # save the image
             save_name = str(file + "ome.tif")
