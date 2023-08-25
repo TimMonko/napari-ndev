@@ -78,14 +78,16 @@ def init_utilities(batch_utilities):
     result_directory=dict(widget_type="FileEdit", mode="d"),
     channel_list=dict(widget_type="Select", choices=[]),
     keep_scenes=dict(widget_type="LineEdit"),
-    project_combo=dict(widget_type="ComboBox", choices=["No Projection","np.max","np.sum"]),
+    project_combo=dict(
+        widget_type="ComboBox", choices=["No Projection", "np.max", "np.sum"]
+    ),
 )
 def batch_utilities(
     image_directory=pathlib.Path(),
     result_directory=pathlib.Path(),
     channel_list: str = [],
     keep_scenes: str = "",
-    #project_bool: bool = False,
+    # project_bool: bool = False,
     project_combo: str = "No Projection",
     X_range: slice = slice(0, 1, 1),
     Y_range: slice = slice(0, 1, 1),
@@ -93,7 +95,10 @@ def batch_utilities(
 ):
     """Batch Utilities
 
-    Quick adjustments to apply to a batch of images and save the resulting images in an output folder. Intended for adjustments either too simple (e.g. max projection, saving only certain channels) or not possible (e.g. cropping) with napari-workflows / batch-workflow widgets.
+    Quick adjustments to apply to a batch of images and save the resulting
+        images in an output folder. Intended for adjustments either too simple
+        (e.g. max projection, saving only certain channels) or not possible
+        (e.g. cropping) with napari-workflows / batch-workflow widgets.
 
     Parameters
     ----------
@@ -167,6 +172,7 @@ def batch_utilities(
             # save the image
             save_name = str(file + "ome.tif")
             save_uri = result_directory / save_name
+
             OmeTiffWriter.save(
                 data=result_stack,
                 uri=save_uri,
@@ -201,7 +207,7 @@ def annotation_saver(
     selecting of the intended label layer and image layer, as well as
     the prefix for the output folders. These output folders can already
     exist: mkdir(exist_ok=True), so should be used to save multiple
-    images within the same folder group. Images are saved as ome.tif 
+    images within the same folder group. Images are saved as ome.tif
     with aicsimageio.OmeTiffWriter
 
     Parameters
@@ -215,8 +221,8 @@ def annotation_saver(
     output_folder_prefix : str
         Prefix to _images or _labels folder created in `file_directory`,
         by default "Annotated"
-    save_suffix : str 
-        File ending can be changed if needed for interoperability, but still 
+    save_suffix : str
+        File ending can be changed if needed for interoperability, but still
         saves as an OME-TIFF with aicsimageio.OmeTiffWriter,
         by default "ome.tif"
 
@@ -322,12 +328,12 @@ def batch_workflow(
 ):
     """Batch Workflow widget using napari-workflow metadata file
 
-    Load a napari-workflow metadata file and show the original roots. 
+    Load a napari-workflow metadata file and show the original roots.
     Select an image directory to populate the root dropdowns with
-    channels from the first image read by aicsimageio. Then, select these 
-    channels in the dropdown to match the Roots in the proper order. 
-    If there are less roots than displayed, leave dropdown as 
-    '-----' which represents python None. 
+    channels from the first image read by aicsimageio. Then, select these
+    channels in the dropdown to match the Roots in the proper order.
+    If there are less roots than displayed, leave dropdown as
+    '-----' which represents python None.
 
     Parameters
     ----------
@@ -342,14 +348,17 @@ def batch_workflow(
     root_0, root_1, root_2, root_3, root_4 : str, optional
         _description_, by default None
     img_dims : str, optional
-        Can be changed, if necessary, to account for different image shapes by default None
+        Can be changed, if necessary, to account for different image
+        shapes by default None
     keep_original_images : bool, optional
-        Stack original images with result images prior to saving, by default True
+        Stack original images with result images prior to saving,
+        by default True
 
     Returns
     -------
     None
-        Resulting image stacks are saved to result_directory after workflow processing
+        Resulting image stacks are saved to result_directory after workflow
+            processing
     """
     image_list = os.listdir(image_directory)
 
@@ -398,10 +407,17 @@ def batch_workflow(
         save_name = str(file + ".ome.tif")
         save_uri = result_directory / save_name
 
+        # Need to explicitly order CYX if dims are just XY else the stack
+        # will be in the order of TZCYX but the saver won't know
+        if img_dims == "YX":
+            save_dim_order = "CYX"
+        else:
+            save_dim_order = None
+
         OmeTiffWriter.save(
             data=result_stack,
             uri=save_uri,
-            # dim_order=img.dims.order,
+            dim_order=save_dim_order,  # this was previously commented out
             channel_names=result_names,
             physical_pixel_sizes=img.physical_pixel_sizes,
         )
@@ -464,7 +480,8 @@ def batch_training(
     cl_directory : pathlib.Path
         Location to save apoc classifier ".cl" file
     cl_filename : str, optional
-        Filename to save apoc classifier, end with ".cl", by default "classifier.cl"
+        Filename to save apoc classifier, end with ".cl", by default
+        "classifier.cl"
     cl_type : str, optional
         Choose between Pixel or Object Classifier, by default Pixel Classifier
     cl_forests : int, optional
@@ -472,13 +489,16 @@ def batch_training(
     cl_trees : int, optional
         Number of trees, by default 100
     predefined_features : str, optional
-        Allows selection of `apoc.PredefinedFeatureSets`, by default custom, requires input of `custom_features`
+        Allows selection of `apoc.PredefinedFeatureSets`, by default custom,
+        requires input of `custom_features`
     custom_features : str, optional
         Space-separated string of pyclesperanto filters, by default None
     channel_list : list
-        Select channels to pass into the classifier to serve as bases for features, by default []
+        Select channels to pass into the classifier to serve as bases for
+        features, by default []
     cl_label_id : int, optional
-        Label id number if using Object Classifier for `cl_type`, by default 2
+        Label id number if using Object Classifier for `cl_type`,
+        by default 2
     img_dims : str, optional
         Image dimensions read from aicsimageio metadata, by default None
 
@@ -489,9 +509,10 @@ def batch_training(
 
     Notes
     -----
-    Accelerated pixel object classifier information from: 
+    Accelerated pixel object classifier information from:
         https://github.com/haesleinhuepf/apoc
-    Predefined features from https://github.com/haesleinhuepf/apoc/blob/main/demo/feature_stacks.ipynb
+    Predefined features from
+    https://github.com/haesleinhuepf/apoc/blob/main/demo/feature_stacks.ipynb
     """
     image_list = os.listdir(image_directory)
     label_list = os.listdir(label_directory)
@@ -515,8 +536,11 @@ def batch_training(
             num_ensembles=cl_trees,
         )
 
-    # use an enumerate so that the index of the file can be used to extract the proper label file, in case the image and label files do not have matching names
-    # This could be problematic if the images aren't sorted the same way, but should generally be ok
+    # use an enumerate so that the index of the file can be used to extract
+    # the proper label file, in case the image and label files do not have
+    # matching names
+    # This could be problematic if the images aren't sorted the same way,
+    # but should generally be ok
     for idx, file in enumerate(tqdm(image_list, label="progress")):
 
         image_stack = []
@@ -585,7 +609,7 @@ def batch_predict(
     channel_list: str = [],
     img_dims: str = None,
 ):
-    """Train APOC (Accelerated-Pixel-Object-Classifiers) on a folder of
+    """Predict APOC (Accelerated-Pixel-Object-Classifiers) on a folder of
     images and labels.
 
     Parameters
@@ -599,7 +623,8 @@ def batch_predict(
     cl_type : str, optional
         Choose between Pixel or Object Classifier, by default Pixel Classifier
     channel_list : list
-        Select channels to pass into the classifier to serve as bases for features, by default []
+        Select channels to pass into the classifier to serve as bases for
+        features, by default []
     cl_label_id : int, optional
         Label id number if using Object Classifier for `cl_type`, by default 2
     img_dims : str, optional
