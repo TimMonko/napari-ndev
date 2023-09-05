@@ -170,7 +170,10 @@ def batch_utilities(
                     result_stack = result_stack.astype(np.float32)
 
             # save the image
-            save_name = str(file + "ome.tif")
+            if len(scene_list) > 1:
+                save_name = str(file + "_scene_" + scene + ".ome.tif")
+            else:
+                save_name = str(file + ".ome.tif")
             save_uri = result_directory / save_name
 
             OmeTiffWriter.save(
@@ -180,6 +183,8 @@ def batch_utilities(
                 channel_names=channel_list,
                 physical_pixel_sizes=img.physical_pixel_sizes,
             )
+
+            result_stack = None
     return
 
 
