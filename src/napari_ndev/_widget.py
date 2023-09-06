@@ -170,10 +170,11 @@ def batch_utilities(
                     result_stack = result_stack.astype(np.float32)
 
             # save the image
+            file_stem = os.path.splitext(os.path.basename(file))[0]
             if len(scene_list) > 1:
-                save_name = str(file + "_scene_" + scene + ".ome.tif")
+                save_name = str(file_stem + "_scene_" + scene + ".tif")
             else:
-                save_name = str(file + ".ome.tif")
+                save_name = str(file_stem + ".tif")
             save_uri = result_directory / save_name
 
             OmeTiffWriter.save(
@@ -203,7 +204,7 @@ def annotation_saver(
     labels: layers.Labels,
     file_directory=pathlib.Path(),
     output_folder_prefix="Annotated",
-    save_suffix=".ome.tif",
+    save_suffix=".tif",
 ):
     """Annotation Saver
 
@@ -229,7 +230,7 @@ def annotation_saver(
     save_suffix : str
         File ending can be changed if needed for interoperability, but still
         saves as an OME-TIFF with aicsimageio.OmeTiffWriter,
-        by default "ome.tif"
+        by default ".tif"
 
     Returns
     -------
@@ -250,8 +251,9 @@ def annotation_saver(
         save_directory = file_directory / folder_name
         save_directory.mkdir(parents=False, exist_ok=True)
 
-        image_name = str(image.name + save_suffix_str)
-        save_name = _format_filename(image_name)
+        image_name = _format_filename(str(image.name))
+        name_stem = os.path.splitext(os.path.basename(image_name))[0]
+        save_name = name_stem + save_suffix_str
         save_path = save_directory / save_name
         return save_path
 
@@ -409,7 +411,8 @@ def batch_workflow(
             result_stack = da.concatenate([dask_images, dask_result], axis=0)
             result_names = root_list + result_names
 
-        save_name = str(file + ".ome.tif")
+        file_stem = os.path.splitext(os.path.basename(file))[0]
+        save_name = file_stem + ".tif"
         save_uri = result_directory / save_name
 
         # Need to explicitly order CYX if dims are just XY else the stack
