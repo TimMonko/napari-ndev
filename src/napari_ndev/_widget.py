@@ -50,13 +50,11 @@ def _get_img_dims(img):
     dims of the original image and make both the image and label layers
     comparable.
     """
-    endstring = ""
-    for d in img.dims.order:
-        if d == "C":
-            continue
-        if img.dims._dims_shape[d] > 1:
-            endstring = endstring + d
-    return endstring
+
+    dims = "".join(
+        [d for d in img.dims.order if d != "C" and img.dims._dims_shape[d] > 1]
+    )
+    return dims
 
 
 def init_utilities(batch_utilities):
