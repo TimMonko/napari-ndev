@@ -3,9 +3,8 @@ try:
 except ImportError:
     __version__ = "unknown"
 
-from ._napari_utilities import rescale_by
+from ._napari_utilities import annotation_saver, rescale_by
 from ._widget import (
-    annotation_saver,
     batch_predict,
     batch_training,
     batch_utilities,

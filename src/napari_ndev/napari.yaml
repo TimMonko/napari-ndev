@@ -6,7 +6,7 @@ contributions:
       python_name: napari_ndev._widget:batch_utilities
       title: Make Batch Utilities Widget
     - id: napari-ndev.make_annotation_saver
-      python_name: napari_ndev._widget:annotation_saver
+      python_name: napari_ndev._napari_utilities:annotation_saver
       title: Make Annotation Saver Widget
     - id: napari-ndev.make_batch_workflow
       python_name: napari_ndev._widget:batch_workflow
