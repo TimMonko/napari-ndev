@@ -50,13 +50,11 @@ def _get_img_dims(img):
     dims of the original image and make both the image and label layers
     comparable.
     """
-    endstring = ""
-    for d in img.dims.order:
-        if d == "C":
-            continue
-        if img.dims._dims_shape[d] > 1:
-            endstring = endstring + d
-    return endstring
+
+    dims = "".join(
+        [d for d in img.dims.order if d != "C" and img.dims._dims_shape[d] > 1]
+    )
+    return dims
 
 
 def init_utilities(batch_utilities):
@@ -123,6 +121,16 @@ def batch_utilities(
 
     image_list = os.listdir(image_directory)
 
+    img = AICSImage(image_directory / image_list[0])
+
+    all_x, all_y, all_z = False, False, False
+    if X_range == slice(0, img.dims.X, 1):
+        all_x = True
+    if Y_range == slice(0, img.dims.Y, 1):
+        all_y = True
+    if Z_range == slice(0, img.dims.Z, 1):
+        all_z = True
+
     for file in tqdm(image_list, label="file"):
         result_stack = None
         img = AICSImage(image_directory / file)
@@ -150,6 +158,13 @@ def batch_utilities(
                 )
 
                 #  T C Z Y X default from aicsimageio
+                if all_x is True:
+                    X_range = slice(0, img.dims.X, 1)
+                if all_y is True:
+                    Y_range = slice(0, img.dims.Y, 1)
+                if all_z is True:
+                    Z_range = slice(0, img.dims.Z, 1)
+
                 ch_img = ch_img[:, :, Z_range, Y_range, X_range]
 
                 # project along the Z axis (2)
@@ -384,9 +399,13 @@ def batch_workflow(
         image_stack = []
         img = AICSImage(image_directory / file)
 
+        """for each root selected in the root list, extract the channel image
+        and set the workflow root names, this will be used later for workflow.get
+        """
         for idx, root in enumerate(root_list):
-            ch_img = _get_channel_image(img=img, dims=img_dims, channel=root)
-
+            ch_img = _get_channel_image(
+                img=img, dims=img_dims, channel=root)
+            print(ch_img.shape)
             wf.set(name=wf.roots()[idx], func_or_data=ch_img)
 
             image_stack.append(ch_img)
@@ -394,7 +413,7 @@ def batch_workflow(
         # dask_stack = da.stack(image_stack, axis=0)
 
         result = wf.get(name=wf.leafs())
-        result_stack = cle.pull(result)
+        result_stack = cle.pull(result)  # adds a new dim at 0th axis, as "C"
 
         """extract the leaf name corresponding to each root to save into
         channel names
@@ -411,8 +430,12 @@ def batch_workflow(
             result_stack = da.concatenate([dask_images, dask_result], axis=0)
             result_names = root_list + result_names
 
+
         file_stem = os.path.splitext(os.path.basename(file))[0]
         save_name = file_stem + ".tif"
+
+        # print(result_stack.shape)
+
         save_uri = result_directory / save_name
 
         # Need to explicitly order CYX if dims are just XY else the stack
