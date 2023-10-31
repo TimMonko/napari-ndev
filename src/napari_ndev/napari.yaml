@@ -6,7 +6,7 @@ contributions:
       python_name: napari_ndev._widget:batch_utilities
       title: Make Batch Utilities Widget
     - id: napari-ndev.make_annotation_saver
-      python_name: napari_ndev._widget:annotation_saver
+      python_name: napari_ndev._napari_utilities:annotation_saver
       title: Make Annotation Saver Widget
     - id: napari-ndev.make_batch_workflow
       python_name: napari_ndev._widget:batch_workflow
@@ -17,6 +17,9 @@ contributions:
     - id: napari-ndev.make_batch_predict
       python_name: napari_ndev._widget:batch_predict
       title: Make Batch Predict Widget
+    - id: napari-ndev.make_rescale_by
+      python_name: napari_ndev._napari_utilities:rescale_by
+      title: Make Rescale By Widget
 
   widgets:
     - command: napari-ndev.make_batch_utilities
@@ -29,3 +32,5 @@ contributions:
       display_name: Batch APOC Training
     - command: napari-ndev.make_batch_predict
       display_name: Batch APOC Predict
+    - command: napari-ndev.make_rescale_by
+      display_name: Rescale By
