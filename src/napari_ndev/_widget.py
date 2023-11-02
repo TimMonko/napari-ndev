@@ -184,10 +184,11 @@ def batch_utilities(
                     result_stack = result_stack.astype(np.float32)
 
             # save the image
+            file_stem = os.path.splitext(os.path.basename(file))[0]
             if len(scene_list) > 1:
-                save_name = str(file + "_scene_" + scene + ".ome.tif")
+                save_name = str(file_stem + "_scene_" + scene + ".tif")
             else:
-                save_name = str(file + ".ome.tif")
+                save_name = str(file_stem + ".tif")
             save_uri = result_directory / save_name
 
             OmeTiffWriter.save(
@@ -333,9 +334,12 @@ def batch_workflow(
             result_stack = da.concatenate([dask_images, dask_result], axis=0)
             result_names = root_list + result_names
 
+
+        file_stem = os.path.splitext(os.path.basename(file))[0]
+        save_name = file_stem + ".tif"
+
         # print(result_stack.shape)
 
-        save_name = str(file + ".ome.tif")
         save_uri = result_directory / save_name
 
         # Need to explicitly order CYX if dims are just XY else the stack
