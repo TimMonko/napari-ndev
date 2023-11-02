@@ -1,12 +1,33 @@
 import numpy as np
 from magicgui import magic_factory
-from napari.layers import Layer
+from napari import layers
 from napari.types import LayerDataTuple
 
 
-@magic_factory()
+def init_rescale_by(rescale_by):
+    @rescale_by.inherit_from.changed.connect
+    @rescale_by.scale_in_z.changed.connect
+    def _inherit_from():
+        print("changed")
+        if rescale_by.scale_in_z.value is False:
+            rescale_by.scale_y.value = rescale_by.inherit_from.value.scale[0]
+            rescale_by.scale_x.value = rescale_by.inherit_from.value.scale[1]
+            print(rescale_by.scale_x.value)
+        if rescale_by.scale_in_z.value is True:
+            rescale_by.scale_z.value = rescale_by.inherit_from.value.scale[0]
+            rescale_by.scale_y.value = rescale_by.inherit_from.value.scale[1]
+            rescale_by.scale_x.value = rescale_by.inherit_from.value.scale[2]
+
+
+@magic_factory(
+    widget_init=init_rescale_by,
+    scale_x=dict(widget_type="FloatSpinBox", step=0.00000001),
+    scale_y=dict(widget_type="FloatSpinBox", step=0.00000001),
+    scale_z=dict(widget_type="FloatSpinBox", step=0.00000001),
+)
 def rescale_by(
-    layer: Layer,
+    layer: layers.Layer,
+    inherit_from: layers.Layer = None,
     scale_x: float = 1.0,
     scale_y: float = 1.0,
     scale_z: float = 1.0,
