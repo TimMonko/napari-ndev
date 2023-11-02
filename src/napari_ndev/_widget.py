@@ -3,7 +3,6 @@ neural development (nDev) widget collection
 """
 import os
 import pathlib
-import string
 from enum import Enum
 from functools import reduce
 from typing import TYPE_CHECKING
@@ -16,7 +15,6 @@ from aicsimageio import AICSImage
 from aicsimageio.writers import OmeTiffWriter
 from magicgui import magic_factory
 from magicgui.tqdm import tqdm
-from napari import layers
 from napari_workflows._io_yaml_v1 import load_workflow
 
 if TYPE_CHECKING:
@@ -143,7 +141,8 @@ def batch_utilities(
             scene_list = keep_scenes.split(",")
             try:  # for converting numeric keep_scenes to a list of indexes
                 # convert to np array, subtract 1-index
-                # (at least for ZEN/czi naming) and convert back to python list
+                # (at least for ZEN/czi naming) and
+                # convert back to python list
                 scene_list = np.array(scene_list).astype("int") - 1
                 scene_list = scene_list.tolist()
             except ValueError:
@@ -201,100 +200,6 @@ def batch_utilities(
 
             result_stack = None
     return
-
-
-@magic_factory(
-    auto_call=False,
-    result_widget=True,
-    call_button="Save Layers to Output Folders",
-    file_directory=dict(
-        widget_type="FileEdit", mode="d", label="File Directory"
-    ),
-    output_folder_prefix=dict(widget_type="LineEdit", label="Output Folder"),
-    save_suffix=dict(widget_type="LineEdit", label="Save Suffix"),
-)
-def annotation_saver(
-    image: layers.Image,
-    labels: layers.Labels,
-    file_directory=pathlib.Path(),
-    output_folder_prefix="Annotated",
-    save_suffix=".ome.tif",
-):
-    """Annotation Saver
-
-    Used for annotating images and saving images of interest into a
-    folder for the image and a folder for the labels. The GUI allows
-    selecting of the intended label layer and image layer, as well as
-    the prefix for the output folders. These output folders can already
-    exist: mkdir(exist_ok=True), so should be used to save multiple
-    images within the same folder group. Images are saved as ome.tif
-    with aicsimageio.OmeTiffWriter
-
-    Parameters
-    ----------
-    image : napari.layers.layers.Image
-        Image layer to save
-    labels : napari.layers.layers.Labels
-        Labels layer (annotation) to save
-    file_directory : pathlib.Path
-        Top-level folder where separate image and labels folders are present
-    output_folder_prefix : str
-        Prefix to _images or _labels folder created in `file_directory`,
-        by default "Annotated"
-    save_suffix : str
-        File ending can be changed if needed for interoperability, but still
-        saves as an OME-TIFF with aicsimageio.OmeTiffWriter,
-        by default "ome.tif"
-
-    Returns
-    -------
-    str
-        Message of "saved" and the respective image name
-    """
-
-    def _format_filename(char_string):
-        """convert strings to valid file names"""
-        valid_chars = f"-_.() {string.ascii_letters}{string.digits}"
-        filename = "".join(char for char in char_string if char in valid_chars)
-        filename = filename.replace(" ", "_")
-        return filename
-
-    def _save_path(folder_suffix, save_suffix_str):
-        """Create save directories and return the path to save a file"""
-        folder_name = str(output_folder_prefix + folder_suffix)
-        save_directory = file_directory / folder_name
-        save_directory.mkdir(parents=False, exist_ok=True)
-
-        image_name = str(image.name + save_suffix_str)
-        save_name = _format_filename(image_name)
-        save_path = save_directory / save_name
-        return save_path
-
-    """save image"""
-    img_path = _save_path("_images", save_suffix)
-    img = image.metadata["aicsimage"]
-    OmeTiffWriter.save(
-        data=img.data,
-        uri=img_path,
-        dim_order=img.dims.order,
-        channel_names=img.channel_names,
-        physical_pixel_sizes=img.physical_pixel_sizes,
-    )
-
-    """save label"""
-    lbl_path = _save_path("_labels", save_suffix)
-    lbl_dims = _get_img_dims(img)
-    lbl = labels.data
-    lbl = lbl.astype(np.int32)
-    OmeTiffWriter.save(
-        data=lbl,
-        uri=lbl_path,
-        dim_order=lbl_dims,
-        channel_names=["Labels"],
-        physical_pixel_sizes=img.physical_pixel_sizes,
-    )
-
-    return "Saved: " + image.name
 
 
 def init_workflow(batch_workflow):
@@ -398,11 +303,11 @@ def batch_workflow(
         img = AICSImage(image_directory / file)
 
         """for each root selected in the root list, extract the channel image
-        and set the workflow root names, this will be used later for workflow.get
+        and set the workflow root names,
+        this will be used later for workflow.get
         """
         for idx, root in enumerate(root_list):
-            ch_img = _get_channel_image(
-                img=img, dims=img_dims, channel=root)
+            ch_img = _get_channel_image(img=img, dims=img_dims, channel=root)
             print(ch_img.shape)
             wf.set(name=wf.roots()[idx], func_or_data=ch_img)
 
