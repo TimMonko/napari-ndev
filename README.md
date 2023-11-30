@@ -15,7 +15,8 @@ A collection of widgets intended to serve any person seeking to process microsco
 4. **Batch-training/prediction:** Utilizes the excellent accelerated-pixel-and-object-classification ([apoc]) in a similar fashion to [napari-apoc], but intended for batch training and prediction with a napari widget instead of scripting.
 
 ----------------------------------
-![Plugin-Abstract](/Plugin-abstract.png)
+
+![Plugin-Abstract](/Plugin-Abstract.png)
 
 
 This [napari] plugin was generated with [Cookiecutter] using [@napari]'s [cookiecutter-napari-plugin] template.
