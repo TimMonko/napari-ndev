@@ -4,6 +4,7 @@ except ImportError:
     __version__ = "unknown"
 
 from ._napari_utilities import annotation_saver, rescale_by
+from ._utilities_container import MetaImg
 from ._widget import (
     batch_predict,
     batch_training,
@@ -18,4 +19,5 @@ __all__ = [
     "batch_predict",
     "batch_training",
     "rescale_by",
+    "MetaImg",
 ]
