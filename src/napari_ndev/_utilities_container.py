@@ -259,8 +259,13 @@ class MetaImg(Container):
     def save_shapes_as_labels(self):
         shapes = self._shapes_layer.value
 
-        # inherit shape from selected image layer
-        label_dim = self._image_layer.value[0].data.shape
+        # inherit shape from selected image layer or else a default
+        if self._image_layer.value:
+            label_dim = self._image_layer.value[0].data.shape
+            print("image layer:", self._image_layer.value[0])
+        else:
+            label_dim = self._image_layer.choices[0].data.shape
+
         shapes_as_labels = shapes.to_labels(labels_shape=label_dim)
 
         self._get_p_sizes()
@@ -273,6 +278,19 @@ class MetaImg(Container):
             channel_names=["Shapes"],
             physical_pixel_sizes=self._p_sizes,
         )
-        self._results.value = "Saved shapes as labels: " + str(
-            self._save_name.value
-        )
+
+        try:
+            self._results.value = (
+                "Saved shapes as labels: "
+                + str(self._save_name.value)
+                + "\nwith dimensions inherited from: "
+                + str(self._image_layer.value[0])
+            )
+        except IndexError:
+            self._results.value = (
+                "Saved shapes as labels: "
+                + str(self._save_name.value)
+                + "\nWarning: no image layer selected "
+                + "so inherited dimensions from: "
+                + str(self._image_layer.choices[0])
+            )
