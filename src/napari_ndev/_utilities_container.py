@@ -258,7 +258,9 @@ class MetaImg(Container):
 
     def save_shapes_as_labels(self):
         shapes = self._shapes_layer.value
-        label_dim = self._image_layer.value.data.shape
+        label_dim = self._image_layer.value[
+            0
+        ].data.shape  # inherit shape from selected image layer
         shapes_as_labels = shapes.to_labels(labels_shape=label_dim)
 
         self._get_p_sizes()
