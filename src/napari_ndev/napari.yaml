@@ -23,6 +23,9 @@ contributions:
     - id: napari-ndev.make_utilities_container
       python_name: napari_ndev._utilities_container:MetaImg
       title: Image Utilities
+    - id: napari-ndev.make_apoc_container
+      python_name: napari_ndev._apoc_container:SegmentImg
+      title: Batch APOC
 
   widgets:
     - command: napari-ndev.make_batch_utilities
@@ -39,3 +42,5 @@ contributions:
       display_name: Rescale By
     - command: napari-ndev.make_utilities_container
       display_name: Image Utilities
+    - command: napari-ndev.make_apoc_container
+      display_name: Batch APOC
