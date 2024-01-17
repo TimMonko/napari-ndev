@@ -124,6 +124,32 @@ class SegmentImg(Container):
             self._image_channels.value
         )
 
+    def _set_value_from_pattern(self, pattern, content):
+        match = re.search(pattern, content)
+        return match.group(1) if match else None
+
+    def _process_classifier_metadata(self, content):
+        self._classifier_type.value = self._set_value_from_pattern(
+            r"classifier_class_name\s*=\s*([^\n]+)", content
+        )
+        self._classifier_channels.value = (
+            "Trained on "
+            + self._set_value_from_pattern(r"num_classes\s*=\s*(\d+)", content)
+            + " Channels"
+        )
+        self._max_depth.value = self._set_value_from_pattern(
+            r"max_depth\s*=\s*(\d+)", content
+        )
+        self._num_trees.value = self._set_value_from_pattern(
+            r"num_trees\s*=\s*(\d+)", content
+        )
+        self._positive_class_id.value = (
+            self._set_value_from_pattern(
+                r"positive_class_identifier\s*=\s*(\d+)", content
+            )
+            or 2
+        )
+
     def _update_classifier_metadata(self):
         with open(self._classifier_file.value) as file:
             content = file.read()
@@ -134,38 +160,7 @@ class SegmentImg(Container):
             self._classifier_channels.value = "New Classifier"
             return
 
-        pattern_classifier = re.search(
-            pattern=r"classifier_class_name\s*=\s*([^\n]+)", string=content
-        )
-        self._classifier_type.value = (
-            pattern_classifier.group(1) if pattern_classifier else None
-        )
-
-        pattern_classes = re.search(
-            pattern=r"num_classes\s*=\s*(\d+)", string=content
-        )
-        self._classifier_channels.value = (
-            "Trained on " + pattern_classes.group(1) + " Channels"
-            if pattern_classes
-            else None
-        )
-
-        pattern_max_depth = re.search(r"max_depth\s*=\s*(\d+)", content)
-        self._max_depth.value = (
-            pattern_max_depth.group(1) if pattern_max_depth else None
-        )
-
-        pattern_num_trees = re.search(r"num_trees\s*=\s*(\d+)", content)
-        self._num_trees.value = (
-            pattern_num_trees.group(1) if pattern_num_trees else None
-        )
-
-        pattern_class_id = re.search(
-            r"positive_class_identifier\s*=\s*(\d+)", content
-        )
-        self._positive_class_id.value = (
-            pattern_class_id.group(1) if pattern_class_id else 2
-        )
+        self._process_classifier_metadata(content)
 
     def batch_train(self):
         image_files = os.listdir(self._image_directory.value)
