@@ -203,7 +203,7 @@ class SegmentImg(Container):
             channel_index_list.append(channel_index)
 
         self._progress_label.value = (
-            "Starting Training on " + str(len(image_files)) + " Images"
+            f"Starting Training on {len(image_files)} Images"
         )
 
         for idx, file in enumerate(image_files):
@@ -220,17 +220,13 @@ class SegmentImg(Container):
                 ground_truth=np.squeeze(label),
                 continue_training=True,
             )
+
             self._progress_label.value = (
-                "Image: "
-                + str(idx)
-                + " of "
-                + str(len(image_files))
-                + " : "
-                + file
+                f"Image: {idx} of {len(image_files)} : {file}"
             )
 
         self._progress_label.value = (
-            "Training Completed on " + str(len(image_files)) + " Images"
+            f"Training Completed on {len(image_files)} Images"
         )
 
     def batch_predict(self):
@@ -261,7 +257,7 @@ class SegmentImg(Container):
         )
 
         self._progress_label.value = (
-            "Starting Prediction on " + str(len(image_files)) + " Images"
+            f"Starting Prediction on {len(image_files)} Images"
         )
 
         for idx, file in enumerate(image_files):
@@ -279,14 +275,9 @@ class SegmentImg(Container):
             )
 
             self._progress_label.value = (
-                "Image: "
-                + str(idx)
-                + " of "
-                + str(len(image_files))
-                + " : "
-                + file
+                f"Image: {idx} of {len(image_files)} : {file}"
             )
 
         self._progress_label.value = (
-            "Prediction Completed on " + str(len(image_files)) + " Images"
+            f"Prediction Completed on {len(image_files)} Images"
         )
