@@ -1,18 +1,23 @@
 import os
 import re
+from enum import Enum
 from pathlib import Path
 from typing import TYPE_CHECKING, List, Union
 
 import apoc
 import dask.array as da
 import numpy as np
+import pyclesperanto_prototype as cle
 import xarray as xr
 from aicsimageio import AICSImage
+from aicsimageio.writers import OmeTiffWriter
 from magicgui.widgets import (
     CheckBox,
+    ComboBox,
     Container,
     FileEdit,
     Label,
+    LineEdit,
     PushButton,
     RadioButtons,
     Select,
@@ -42,7 +47,7 @@ class SegmentImg(Container):
         self._label_directory = FileEdit(label="Label Directory", mode="d")
         self._output_directory = FileEdit(label="Output Directory", mode="d")
         self._classifier_file = FileEdit(
-            label="Classifier File (.cl)", mode="r", filter="*.cl"
+            label="Classifier File (.cl)", mode="r"
         )
         self._classifier_channels = Label(value="Trained on [#] Channels")
 
@@ -61,6 +66,15 @@ class SegmentImg(Container):
 
         self._image_channels = Select(label="Image Channels", choices=[])
         self._channel_order_label = Label(value="Selected Channel Order: []")
+
+        self._PDFS = Enum("PDFS", apoc.PredefinedFeatureSet._member_names_)
+        self._predefined_features = ComboBox(
+            label="Features", choices=self._PDFS
+        )
+        self._custom_features = LineEdit(
+            label="Custom Feature String", value=None
+        )
+
         self._continue_training = CheckBox(
             label="Continue Training?", value=True
         )
@@ -85,6 +99,8 @@ class SegmentImg(Container):
                 self._positive_class_id,
                 self._image_channels,
                 self._channel_order_label,
+                self._predefined_features,
+                self._custom_features,
                 self._continue_training,
                 self._batch_train_button,
                 self._batch_predict_button,
@@ -96,7 +112,7 @@ class SegmentImg(Container):
         self._image_channels.changed.connect(self._update_channel_order)
         self._classifier_file.changed.connect(self._update_classifier_metadata)
         self._batch_train_button.clicked.connect(self.batch_train)
-        # self._batch_predict_button.clicked.connect(self.batch_predict)
+        self._batch_predict_button.clicked.connect(self.batch_predict)
 
     def _update_metadata(self):
         files = os.listdir(self._image_directory.value)
@@ -161,16 +177,73 @@ class SegmentImg(Container):
         if self._classifier_type.value == "PixelClassifier":
             custom_classifier = apoc.PixelClassifier(
                 opencl_filename=self._classifier_file.value,
-                max_depth=int(self._max_depth.value),
-                num_ensembles=int(self._num_trees.value),
+                max_depth=self._max_depth.value,
+                num_ensembles=self._num_trees.value,
             )
 
         if self._classifier_type.value == "ObjectSegmenter":
             custom_classifier = apoc.ObjectSegmenter(
                 opencl_filename=self._classifier_file.value,
                 positive_class_identifier=self._positive_class_id.value,
-                max_depth=int(self._max_depth.value),
-                num_ensembles=int(self._num_trees.value),
+                max_depth=self._max_depth.value,
+                num_ensembles=self._num_trees.value,
+            )
+
+        if self._predefined_features.value == 1:
+            feature_set = self._custom_features.value
+        else:
+            feature_set = apoc.PredefinedFeatureSet[
+                self._predefined_features.value.name
+            ].value
+
+        img = AICSImage(self._image_directory.value / image_files[0])
+        channel_index_list = []
+        for channel in self._image_channels.value:
+            channel_index = img.channel_names.index(channel)
+            channel_index_list.append(channel_index)
+
+        self._progress_label.value = (
+            "Starting Training on " + str(len(image_files)) + " Images"
+        )
+
+        for idx, file in enumerate(image_files):
+
+            img = AICSImage(self._image_directory.value / image_files[idx])
+            channel_img = img.get_image_data("TCZYX", C=channel_index_list)
+
+            lbl = AICSImage(self._label_directory.value / label_files[idx])
+            label = lbl.get_image_data("TCZYX", C=0)
+
+            custom_classifier.train(
+                features=feature_set,
+                image=np.squeeze(channel_img),
+                ground_truth=np.squeeze(label),
+                continue_training=True,
+            )
+            self._progress_label.value = (
+                "Image: "
+                + str(idx)
+                + " of "
+                + str(len(image_files))
+                + " : "
+                + file
+            )
+
+        self._progress_label.value = (
+            "Training Completed on " + str(len(image_files)) + " Images"
+        )
+
+    def batch_predict(self):
+        image_files = os.listdir(self._image_directory.value)
+
+        if self._classifier_type.value == "PixelClassifier":
+            custom_classifier = apoc.PixelClassifier(
+                opencl_filename=self._classifier_file.value,
+            )
+
+        if self._classifier_type.value == "ObjectSegmenter":
+            custom_classifier = apoc.ObjectSegmenter(
+                opencl_filename=self._classifier_file.value,
             )
 
         img = AICSImage(self._image_directory.value / image_files[0])
@@ -179,36 +252,41 @@ class SegmentImg(Container):
             channel_index = img.channel_names.index(channel)
             channel_index_list.append(channel_index)
 
+        img_dims = "".join(
+            [
+                d
+                for d in img.dims.order
+                if d != "C" and img.dims._dims_shape[d] > 1
+            ]
+        )
+
+        self._progress_label.value = (
+            "Starting Prediction on " + str(len(image_files)) + " Images"
+        )
+
         for idx, file in enumerate(image_files):
-            # image_stack = []
             img = AICSImage(self._image_directory.value / image_files[idx])
+            channel_img = img.get_image_data("TCZYX", C=channel_index_list)
 
-            # for idx in channel_index_list:
-            #     channel_img = img.get_image_data("YX", C=[channel_index])
-            #     image_stack.append(channel_img)
-            #     # image_stack.append(img.data[:, [idx], :, :, :])
+            result = custom_classifier.predict(image=np.squeeze(channel_img))
 
-            channel_img = img.get_image_data("CYX", C=channel_index_list)
-            print(channel_img.shape)
-
-            # img_stack = np.concatenate(image_stack, axis=0)
-            # print(img_stack.shape)
-            # dask_stack = da.stack(img_stack, axis=0)
-            # print(dask_stack.shape)
-            # print(dask_stack)
-
-            lbl = AICSImage(self._label_directory.value / label_files[idx])
-            label = lbl.get_image_data("YX", C=0)
-            print(label.shape)
-
-            feature_set = apoc.PredefinedFeatureSet["small_quick"].value
-            # check that this is actually training on multiple uh, things
-            custom_classifier.train(
-                features=feature_set,
-                image=channel_img,
-                ground_truth=label,
-                continue_training=True,
+            OmeTiffWriter.save(
+                data=cle.pull(result).astype(np.int32),
+                uri=self._output_directory.value / image_files[idx],
+                dim_order=img_dims,
+                channel_names=["Labels"],
+                physical_pixel_sizes=img.physical_pixel_sizes,
             )
-            print("Image:", idx)
 
-        print("success")
+            self._progress_label.value = (
+                "Image: "
+                + str(idx)
+                + " of "
+                + str(len(image_files))
+                + " : "
+                + file
+            )
+
+        self._progress_label.value = (
+            "Prediction Completed on " + str(len(image_files)) + " Images"
+        )
