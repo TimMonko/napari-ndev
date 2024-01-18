@@ -3,6 +3,7 @@ try:
 except ImportError:
     __version__ = "unknown"
 
+from ._apoc_container import CustomApoc, SegmentImg
 from ._napari_utilities import annotation_saver, rescale_by
 from ._utilities_container import MetaImg
 from ._widget import (
@@ -20,4 +21,6 @@ __all__ = [
     "batch_training",
     "rescale_by",
     "MetaImg",
+    "SegmentImg",
+    "CustomApoc",
 ]
