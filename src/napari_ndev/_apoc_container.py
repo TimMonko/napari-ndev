@@ -7,6 +7,7 @@ from typing import TYPE_CHECKING, List, Union
 import apoc
 import dask.array as da
 import numpy as np
+import pandas as pd
 import pyclesperanto_prototype as cle
 import xarray as xr
 from aicsimageio import AICSImage
@@ -22,6 +23,7 @@ from magicgui.widgets import (
     RadioButtons,
     Select,
     SpinBox,
+    Table,
     TextEdit,
 )
 
@@ -40,6 +42,7 @@ class SegmentImg(Container):
     def __init__(
         self,
         viewer: "napari.viewer.Viewer",
+        # viewer = napari_viewer
     ):
         super().__init__()
         self
@@ -52,9 +55,14 @@ class SegmentImg(Container):
         )
         self._classifier_channels = Label(value="Trained on [#] Channels")
 
+        self._classifier_type_mapping = {
+            "PixelClassifier": apoc.PixelClassifier,
+            "ObjectSegmenter": apoc.ObjectSegmenter,
+        }
+
         self._classifier_type = RadioButtons(
             label="Classifier Type",
-            value="PixelClassifier",
+            value="ObjectSegmenter",
             choices=["ObjectSegmenter", "PixelClassifier"],
         )
         self._max_depth = SpinBox(
@@ -62,7 +70,7 @@ class SegmentImg(Container):
         )
         self._num_trees = SpinBox(label="Num. of Trees", value=100, step=50)
         self._positive_class_id = SpinBox(
-            label="Positive Label ID", value=2, step=1
+            label="Object Label ID", value=2, step=1
         )
 
         self._image_channels = Select(label="Image Channels", choices=[])
@@ -70,10 +78,11 @@ class SegmentImg(Container):
 
         self._PDFS = Enum("PDFS", apoc.PredefinedFeatureSet._member_names_)
         self._predefined_features = ComboBox(
-            label="Features", choices=self._PDFS
+            label="Features", choices=self._PDFS, nullable=True, value=None
         )
-        self._custom_features = LineEdit(
-            label="Custom Feature String", value=None
+        self._custom_features = LineEdit(label="Custom Feature String")
+        self._open_custom_feature_generator = PushButton(
+            label="Open Custom Feature Generator Widget"
         )
 
         self._continue_training = CheckBox(
@@ -87,31 +96,38 @@ class SegmentImg(Container):
         )
         self._progress_label = Label(value="Progress: ")
 
+        self._table = Table()
+
         self.extend(
             [
-                self._image_directory,
-                self._label_directory,
-                self._output_directory,
                 self._classifier_file,
                 self._classifier_channels,
                 self._classifier_type,
+                self._positive_class_id,
                 self._max_depth,
                 self._num_trees,
-                self._positive_class_id,
-                self._image_channels,
-                self._channel_order_label,
                 self._predefined_features,
                 self._custom_features,
+                self._open_custom_feature_generator,
+                self._image_directory,
+                self._image_channels,
+                self._channel_order_label,
+                self._label_directory,
                 self._continue_training,
                 self._batch_train_button,
+                self._output_directory,
                 self._batch_predict_button,
                 self._progress_label,
+                self._table,
             ]
         )
 
         self._image_directory.changed.connect(self._update_metadata)
         self._image_channels.changed.connect(self._update_channel_order)
         self._classifier_file.changed.connect(self._update_classifier_metadata)
+        self._open_custom_feature_generator.clicked.connect(
+            self._custom_apoc_widget
+        )
         self._batch_train_button.clicked.connect(self.batch_train)
         self._batch_predict_button.clicked.connect(self.batch_predict)
 
@@ -151,17 +167,48 @@ class SegmentImg(Container):
             or 2
         )
 
+    def _classifier_statistics_table(self, custom_classifier):
+        table, _ = custom_classifier.statistics()
+
+        trans_table = {"filter_name": [], "radius": []}
+
+        for value in table.keys():
+            filter_name, radius = (
+                value.split("=") if "=" in value else (value, 0)
+            )
+            trans_table["filter_name"].append(filter_name)
+            trans_table["radius"].append(int(radius))
+
+        for i in range(len(next(iter(table.values())))):
+            trans_table[str(i)] = [round(table[key][i], 2) for key in table]
+
+        table_df = pd.DataFrame.from_dict(trans_table)
+        self._table.value = table_df
+
+        print(table_df)
+
     def _update_classifier_metadata(self):
         with open(self._classifier_file.value) as file:
             content = file.read()
 
         # Ignore rest of function if file contents are empty
         if not content.strip():
-            print("empty file")
             self._classifier_channels.value = "New Classifier"
             return
 
         self._process_classifier_metadata(content)
+
+        if self._classifier_type.value in self._classifier_type_mapping:
+            classifier_class = self._classifier_type_mapping[
+                self._classifier_type.value
+            ]
+            custom_classifier = classifier_class(
+                opencl_filename=self._classifier_file.value
+            )
+        else:
+            custom_classifier = None
+
+        self._classifier_statistics_table(custom_classifier)
 
     def batch_train(self):
         image_files = os.listdir(self._image_directory.value)
@@ -186,8 +233,6 @@ class SegmentImg(Container):
             )
 
         if self._predefined_features.value.value == 1:
-            print(self._custom_features.value)
-            print(type(self._custom_features.value))
             feature_set = self._custom_features.value
         else:
             feature_set = apoc.PredefinedFeatureSet[
@@ -223,6 +268,8 @@ class SegmentImg(Container):
                 f"Image: {idx} of {len(image_files)} : {file}"
             )
 
+        self._classifier_statistics_table(custom_classifier)
+
         self._progress_label.value = (
             f"Training Completed on {len(image_files)} Images"
         )
@@ -230,15 +277,15 @@ class SegmentImg(Container):
     def batch_predict(self):
         image_files = os.listdir(self._image_directory.value)
 
-        if self._classifier_type.value == "PixelClassifier":
-            custom_classifier = apoc.PixelClassifier(
-                opencl_filename=self._classifier_file.value,
+        if self._classifier_type.value in self._classifier_type_mapping:
+            classifier_class = self._classifier_type_mapping[
+                self._classifier_type.value
+            ]
+            custom_classifier = classifier_class(
+                opencl_filename=self._classifier_file.value
             )
-
-        if self._classifier_type.value == "ObjectSegmenter":
-            custom_classifier = apoc.ObjectSegmenter(
-                opencl_filename=self._classifier_file.value,
-            )
+        else:
+            custom_classifier = None
 
         img = AICSImage(self._image_directory.value / image_files[0])
         channel_index_list = []
@@ -278,6 +325,12 @@ class SegmentImg(Container):
 
         self._progress_label.value = (
             f"Prediction Completed on {len(image_files)} Images"
+        )
+
+    def _custom_apoc_widget(self):
+        # self._viewer.window.add_dock_widget(CustomApoc(self._viewer))
+        self._viewer.window.add_plugin_dock_widget(
+            plugin_name="napari-ndev", widget_name="Custom APOC Feature Set"
         )
 
 
