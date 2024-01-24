@@ -96,8 +96,6 @@ class SegmentImg(Container):
         )
         self._progress_label = Label(value="Progress: ")
 
-        self._table = Table()
-
         self.extend(
             [
                 self._classifier_file,
@@ -118,7 +116,6 @@ class SegmentImg(Container):
                 self._output_directory,
                 self._batch_predict_button,
                 self._progress_label,
-                self._table,
             ]
         )
 
@@ -183,9 +180,11 @@ class SegmentImg(Container):
             trans_table[str(i)] = [round(table[key][i], 2) for key in table]
 
         table_df = pd.DataFrame.from_dict(trans_table)
-        self._table.value = table_df
 
-        print(table_df)
+        self._viewer.window.add_dock_widget(
+            Table(value=table_df), 
+            name=os.path.basename(self._classifier_file.value)
+        )
 
     def _update_classifier_metadata(self):
         with open(self._classifier_file.value) as file:
