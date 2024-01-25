@@ -164,28 +164,6 @@ class SegmentImg(Container):
             or 2
         )
 
-    def _classifier_statistics_table(self, custom_classifier):
-        table, _ = custom_classifier.statistics()
-
-        trans_table = {"filter_name": [], "radius": []}
-
-        for value in table.keys():
-            filter_name, radius = (
-                value.split("=") if "=" in value else (value, 0)
-            )
-            trans_table["filter_name"].append(filter_name)
-            trans_table["radius"].append(int(radius))
-
-        for i in range(len(next(iter(table.values())))):
-            trans_table[str(i)] = [round(table[key][i], 2) for key in table]
-
-        table_df = pd.DataFrame.from_dict(trans_table)
-
-        self._viewer.window.add_dock_widget(
-            Table(value=table_df), 
-            name=os.path.basename(self._classifier_file.value)
-        )
-
     def _update_classifier_metadata(self):
         with open(self._classifier_file.value) as file:
             content = file.read()
@@ -208,6 +186,28 @@ class SegmentImg(Container):
             custom_classifier = None
 
         self._classifier_statistics_table(custom_classifier)
+
+    def _classifier_statistics_table(self, custom_classifier):
+        table, _ = custom_classifier.statistics()
+
+        trans_table = {"filter_name": [], "radius": []}
+
+        for value in table.keys():
+            filter_name, radius = (
+                value.split("=") if "=" in value else (value, 0)
+            )
+            trans_table["filter_name"].append(filter_name)
+            trans_table["radius"].append(int(radius))
+
+        for i in range(len(next(iter(table.values())))):
+            trans_table[str(i)] = [round(table[key][i], 2) for key in table]
+
+        table_df = pd.DataFrame.from_dict(trans_table)
+
+        self._viewer.window.add_dock_widget(
+            Table(value=table_df),
+            name=os.path.basename(self._classifier_file.value),
+        )
 
     def batch_train(self):
         image_files = os.listdir(self._image_directory.value)
@@ -350,7 +350,7 @@ class CustomApoc(Container):
         self._sHoG = LineEdit(label="Small Hessian of Gauss.")
         self._lHoG = LineEdit(label="Large Hessian of Gauss.")
         self._median = LineEdit(label="Median")
-        self._tophat = LineEdit(label="Tophat")
+        self._tophat = LineEdit(label="Top Hat")
 
         self._generate_string_button = PushButton(
             label="Generate Feature String"
@@ -415,7 +415,7 @@ class CustomApoc(Container):
             process_feature("median_sphere=", self._median.value)
         )
         feature_list.extend(
-            process_feature("tophat_sphere=", self._tophat.value)
+            process_feature("top_hat_sphere=", self._tophat.value)
         )
 
         self._feature_string.value = " ".join(feature_list)
