@@ -19,6 +19,7 @@ annotation = np.asarray(
     [[0, 1, 1, 0], [0, 1, 1, 0], [0, 1, 1, 0], [0, 1, 1, 0]]
 )
 
+# test the training on each filter!!!
 
 # def test_update_metadata(make_napari_viewer):
 #     """
@@ -46,17 +47,6 @@ def test_update_channel_order():
         wdg._channel_order_label.value
         == "Selected Channel Order: ['C1', 'C3']"
     )
-
-
-# This seems unnecessary and that this could be separated out into
-# a utils.py file, because it doesn't depend on napari
-def test_set_value_from_pattern():
-    wdg = SegmentImg("dummy_viewer")
-    result = wdg._set_value_from_pattern(
-        pattern=r"classifier_class_name\s*=\s*([^\n]+)",
-        content="classifier_class_name = ObjectSegmenter",
-    )
-    assert result == "ObjectSegmenter"
 
 
 @pytest.fixture
