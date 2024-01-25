@@ -19,6 +19,7 @@ from magicgui.widgets import (
     FileEdit,
     Label,
     LineEdit,
+    ProgressBar,
     PushButton,
     RadioButtons,
     Select,
@@ -51,7 +52,9 @@ class SegmentImg(Container):
         self._label_directory = FileEdit(label="Label Directory", mode="d")
         self._output_directory = FileEdit(label="Output Directory", mode="d")
         self._classifier_file = FileEdit(
-            label="Classifier File (.cl)", mode="r"
+            label="Classifier File (.cl)",
+            mode="r",
+            tooltip="Create a .txt file and rename it to .cl ending.",
         )
         self._classifier_channels = Label(value="Trained on [#] Channels")
 
@@ -66,27 +69,58 @@ class SegmentImg(Container):
             choices=["ObjectSegmenter", "PixelClassifier"],
         )
         self._max_depth = SpinBox(
-            label="Num. of Forests", value=2, max=20, step=1
+            label="Num. of Forests",
+            value=2,
+            max=20,
+            step=1,
+            tooltip="Increases training time for each forest",
         )
-        self._num_trees = SpinBox(label="Num. of Trees", value=100, step=50)
+        self._num_trees = SpinBox(
+            label="Num. of Trees",
+            value=100,
+            step=50,
+            tooltip="Increases computational requirements.",
+        )
         self._positive_class_id = SpinBox(
-            label="Object Label ID", value=2, step=1
+            label="Object Label ID",
+            value=2,
+            step=1,
+            tooltip="Only used with ObjectSegmenter, otherwise ignored.",
         )
 
-        self._image_channels = Select(label="Image Channels", choices=[])
-        self._channel_order_label = Label(value="Selected Channel Order: []")
+        self._image_channels = Select(
+            label="Image Channels",
+            choices=[],
+            tooltip=(
+                "Channel order should be same for training and prediction."
+            ),
+        )
+        self._channel_order_label = Label(value="Select an Image Channel!")
 
         self._PDFS = Enum("PDFS", apoc.PredefinedFeatureSet._member_names_)
         self._predefined_features = ComboBox(
-            label="Features", choices=self._PDFS, nullable=True, value=None
+            label="Features",
+            choices=self._PDFS,
+            nullable=True,
+            value=None,
+            tooltip="All featuresets except 'custom' are premade",
         )
-        self._custom_features = LineEdit(label="Custom Feature String")
+        self._custom_features = LineEdit(
+            label="Custom Feature String",
+            tooltip=(
+                "A string in the form of " "'filter1=radius1 filter2=radius2'."
+            ),
+        )
         self._open_custom_feature_generator = PushButton(
             label="Open Custom Feature Generator Widget"
         )
 
         self._continue_training = CheckBox(
-            label="Continue Training?", value=True
+            label="Continue Training?",
+            value=True,
+            tooltip=(
+                "Continue training only matters if classifier already exists."
+            ),
         )
         self._batch_train_button = PushButton(
             label="Train Classifier on Image-Label Pairs"
@@ -94,7 +128,7 @@ class SegmentImg(Container):
         self._batch_predict_button = PushButton(
             label="Predict Labels with Classifier"
         )
-        self._progress_label = Label(value="Progress: ")
+        self._progress_bar = ProgressBar(label="Progress:")
 
         self.extend(
             [
@@ -115,7 +149,7 @@ class SegmentImg(Container):
                 self._batch_train_button,
                 self._output_directory,
                 self._batch_predict_button,
-                self._progress_label,
+                self._progress_bar,
             ]
         )
 
@@ -213,6 +247,10 @@ class SegmentImg(Container):
         image_files = os.listdir(self._image_directory.value)
         label_files = os.listdir(self._label_directory.value)
 
+        self._progress_bar.label = f"Training on {len(image_files)} Images"
+        self._progress_bar.value = 0
+        self._progress_bar.max = len(image_files)
+
         if not self._continue_training:
             apoc.erase_classifier(self._classifier_file.value)
 
@@ -244,10 +282,6 @@ class SegmentImg(Container):
             channel_index = img.channel_names.index(channel)
             channel_index_list.append(channel_index)
 
-        self._progress_label.value = (
-            f"Starting Training on {len(image_files)} Images"
-        )
-
         for idx, file in enumerate(image_files):
 
             img = AICSImage(self._image_directory.value / image_files[idx])
@@ -263,18 +297,18 @@ class SegmentImg(Container):
                 continue_training=True,
             )
 
-            self._progress_label.value = (
-                f"Image: {idx} of {len(image_files)} : {file}"
-            )
+            print(f"Training Image: {idx+1} of {len(image_files)} : {file}")
+            self._progress_bar.value = idx + 1
 
         self._classifier_statistics_table(custom_classifier)
-
-        self._progress_label.value = (
-            f"Training Completed on {len(image_files)} Images"
-        )
+        self._progress_bar.label = f"Trained on {len(image_files)} Images"
 
     def batch_predict(self):
         image_files = os.listdir(self._image_directory.value)
+
+        self._progress_bar.label = f"Predicting {len(image_files)} Images"
+        self._progress_bar.value = 0
+        self._progress_bar.max = len(image_files)
 
         if self._classifier_type.value in self._classifier_type_mapping:
             classifier_class = self._classifier_type_mapping[
@@ -300,10 +334,6 @@ class SegmentImg(Container):
             ]
         )
 
-        self._progress_label.value = (
-            f"Starting Prediction on {len(image_files)} Images"
-        )
-
         for idx, file in enumerate(image_files):
             img = AICSImage(self._image_directory.value / image_files[idx])
             channel_img = img.get_image_data("TCZYX", C=channel_index_list)
@@ -318,13 +348,10 @@ class SegmentImg(Container):
                 physical_pixel_sizes=img.physical_pixel_sizes,
             )
 
-            self._progress_label.value = (
-                f"Image: {idx} of {len(image_files)} : {file}"
-            )
+            print(f"Predicting Image: {idx+1} of {len(image_files)} : {file}")
+            self._progress_bar.value = idx + 1
 
-        self._progress_label.value = (
-            f"Prediction Completed on {len(image_files)} Images"
-        )
+        self._progress_bar.label = f"Predicted {len(image_files)} Images"
 
     def _custom_apoc_widget(self):
         # self._viewer.window.add_dock_widget(CustomApoc(self._viewer))
