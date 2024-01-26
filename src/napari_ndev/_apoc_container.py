@@ -28,7 +28,6 @@ from magicgui.widgets import (
     create_widget,
 )
 from napari import layers
-from napari.viewer import current_viewer
 
 if TYPE_CHECKING:
     import napari
@@ -134,9 +133,7 @@ class SegmentImg(Container):
 
         def current_layers(_):
             return [
-                x
-                for x in current_viewer().layers
-                if isinstance(x, layers.Image)
+                x for x in self._viewer.layers if isinstance(x, layers.Image)
             ]
 
         self._image_layer = Select(
