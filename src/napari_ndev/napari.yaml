@@ -2,21 +2,9 @@ name: napari-ndev
 display_name: neuralDev
 contributions:
   commands:
-    - id: napari-ndev.make_batch_utilities
-      python_name: napari_ndev._widget:batch_utilities
-      title: Make Batch Utilities Widget
-    - id: napari-ndev.make_annotation_saver
-      python_name: napari_ndev._napari_utilities:annotation_saver
-      title: Make Annotation Saver Widget
     - id: napari-ndev.make_batch_workflow
       python_name: napari_ndev._widget:batch_workflow
       title: Make Batch Workflow Widget
-    - id: napari-ndev.make_batch_training
-      python_name: napari_ndev._widget:batch_training
-      title: Make Batch Training Widget
-    - id: napari-ndev.make_batch_predict
-      python_name: napari_ndev._widget:batch_predict
-      title: Make Batch Predict Widget
     - id: napari-ndev.make_rescale_by
       python_name: napari_ndev._napari_utilities:rescale_by
       title: Make Rescale By Widget
@@ -27,20 +15,12 @@ contributions:
       python_name: napari_ndev._apoc_container:SegmentImg
       title: Batch APOC
     - id: napari-ndev.make_custom_apoc
-      python_name: napari_ndev._apoc_container:CustomApoc
+      python_name: napari_ndev._apoc_feature_stack:CustomApoc
       title: Custom APOC Feature Set
 
   widgets:
-    - command: napari-ndev.make_batch_utilities
-      display_name: Batch Utilities
-    - command: napari-ndev.make_annotation_saver
-      display_name: Annotation Saver
     - command: napari-ndev.make_batch_workflow
       display_name: Batch Workflow
-    - command: napari-ndev.make_batch_training
-      display_name: Batch APOC Training
-    - command: napari-ndev.make_batch_predict
-      display_name: Batch APOC Predict
     - command: napari-ndev.make_rescale_by
       display_name: Rescale By
     - command: napari-ndev.make_utilities_container
