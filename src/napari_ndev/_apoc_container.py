@@ -25,8 +25,9 @@ from magicgui.widgets import (
     Select,
     SpinBox,
     Table,
-    TextEdit,
+    create_widget,
 )
+from napari import layers
 
 if TYPE_CHECKING:
     import napari
@@ -130,6 +131,25 @@ class SegmentImg(Container):
         )
         self._progress_bar = ProgressBar(label="Progress:")
 
+        def current_layers(_):
+            return [
+                x for x in self._viewer.layers if isinstance(x, layers.Image)
+            ]
+
+        self._image_layer = Select(
+            choices=current_layers, nullable=False, label="Images"
+        )
+        self._label_layer = create_widget(
+            annotation="napari.layers.Labels", label="Labels"
+        )
+        self._train_image_button = PushButton(
+            label="Train classifier on selected layers using label"
+        )
+        self._predict_image_layer = PushButton(
+            label="Predict using classifier on selected layers"
+        )
+        self._single_result_label = Label()
+
         self.extend(
             [
                 self._classifier_file,
@@ -150,6 +170,11 @@ class SegmentImg(Container):
                 self._output_directory,
                 self._batch_predict_button,
                 self._progress_bar,
+                self._image_layer,
+                self._label_layer,
+                self._train_image_button,
+                self._predict_image_layer,
+                self._single_result_label,
             ]
         )
 
@@ -161,6 +186,8 @@ class SegmentImg(Container):
         )
         self._batch_train_button.clicked.connect(self.batch_train)
         self._batch_predict_button.clicked.connect(self.batch_predict)
+        self._train_image_button.clicked.connect(self.image_train)
+        self._predict_image_layer.clicked.connect(self.image_predict)
 
     def _update_metadata(self):
         files = os.listdir(self._image_directory.value)
@@ -243,6 +270,30 @@ class SegmentImg(Container):
             name=os.path.basename(self._classifier_file.value),
         )
 
+    def _get_feature_set(self):
+        if self._predefined_features.value.value == 1:
+            return self._custom_features.value
+        else:
+            return apoc.PredefinedFeatureSet[
+                self._predefined_features.value.name
+            ].value
+
+    def _get_training_classifier_instance(self):
+        if self._classifier_type.value == "PixelClassifier":
+            return apoc.PixelClassifier(
+                opencl_filename=self._classifier_file.value,
+                max_depth=self._max_depth.value,
+                num_ensembles=self._num_trees.value,
+            )
+
+        if self._classifier_type.value == "ObjectSegmenter":
+            return apoc.ObjectSegmenter(
+                opencl_filename=self._classifier_file.value,
+                positive_class_identifier=self._positive_class_id.value,
+                max_depth=self._max_depth.value,
+                num_ensembles=self._num_trees.value,
+            )
+
     def batch_train(self):
         image_files = os.listdir(self._image_directory.value)
         label_files = os.listdir(self._label_directory.value)
@@ -254,27 +305,8 @@ class SegmentImg(Container):
         if not self._continue_training:
             apoc.erase_classifier(self._classifier_file.value)
 
-        if self._classifier_type.value == "PixelClassifier":
-            custom_classifier = apoc.PixelClassifier(
-                opencl_filename=self._classifier_file.value,
-                max_depth=self._max_depth.value,
-                num_ensembles=self._num_trees.value,
-            )
-
-        if self._classifier_type.value == "ObjectSegmenter":
-            custom_classifier = apoc.ObjectSegmenter(
-                opencl_filename=self._classifier_file.value,
-                positive_class_identifier=self._positive_class_id.value,
-                max_depth=self._max_depth.value,
-                num_ensembles=self._num_trees.value,
-            )
-
-        if self._predefined_features.value.value == 1:
-            feature_set = self._custom_features.value
-        else:
-            feature_set = apoc.PredefinedFeatureSet[
-                self._predefined_features.value.name
-            ].value
+        custom_classifier = self._get_training_classifier_instance()
+        feature_set = self._get_feature_set()
 
         img = AICSImage(self._image_directory.value / image_files[0])
         channel_index_list = []
@@ -303,6 +335,35 @@ class SegmentImg(Container):
         self._classifier_statistics_table(custom_classifier)
         self._progress_bar.label = f"Trained on {len(image_files)} Images"
 
+    def image_train(self):
+        image_list = [image.data for image in self._image_layer.value]
+        image_stack = np.stack(image_list, axis=0)
+        label = self._label_layer.value.data
+
+        custom_classifier = self._get_training_classifier_instance()
+        feature_set = self._get_feature_set()
+
+        custom_classifier.train(
+            features=feature_set,
+            image=np.squeeze(image_stack),
+            ground_truth=np.squeeze(label),
+            continue_training=True,
+        )
+
+        layer_name = self._image_layer.value[0].name
+        self._single_result_label.value = f"Trained on {layer_name}"
+
+    def _get_prediction_classifier_instance(self):
+        if self._classifier_type.value in self._classifier_type_mapping:
+            classifier_class = self._classifier_type_mapping[
+                self._classifier_type.value
+            ]
+            return classifier_class(
+                opencl_filename=self._classifier_file.value
+            )
+        else:
+            return None
+
     def batch_predict(self):
         image_files = os.listdir(self._image_directory.value)
 
@@ -310,15 +371,7 @@ class SegmentImg(Container):
         self._progress_bar.value = 0
         self._progress_bar.max = len(image_files)
 
-        if self._classifier_type.value in self._classifier_type_mapping:
-            classifier_class = self._classifier_type_mapping[
-                self._classifier_type.value
-            ]
-            custom_classifier = classifier_class(
-                opencl_filename=self._classifier_file.value
-            )
-        else:
-            custom_classifier = None
+        custom_classifier = self._get_prediction_classifier_instance()
 
         img = AICSImage(self._image_directory.value / image_files[0])
         channel_index_list = []
@@ -353,96 +406,20 @@ class SegmentImg(Container):
 
         self._progress_bar.label = f"Predicted {len(image_files)} Images"
 
+    def image_predict(self):
+        image_list = [image.data for image in self._image_layer.value]
+        image_stack = np.stack(image_list, axis=0)
+        scale = self._image_layer.value[0].scale
+
+        custom_classifier = self._get_prediction_classifier_instance()
+
+        result = custom_classifier.predict(image=np.squeeze(image_stack))
+        self._viewer.add_labels(result, scale=scale)
+
+        layer_name = self._image_layer.value[0].name
+        self._single_result_label.value = f"Predicted {layer_name}"
+
     def _custom_apoc_widget(self):
-        # self._viewer.window.add_dock_widget(CustomApoc(self._viewer))
         self._viewer.window.add_plugin_dock_widget(
             plugin_name="napari-ndev", widget_name="Custom APOC Feature Set"
         )
-
-
-class CustomApoc(Container):
-    def __init__(
-        self,
-        viewer: "napari.viewer.Viewer",
-    ):
-        super().__init__()
-        self
-        self._viewer = viewer
-
-        self._original = CheckBox(label="Keep Original Image")
-        self._gaussian_blur = LineEdit(label="Gaussian Blur")
-        self._DoG = LineEdit(label="Difference of Gauss.")
-        self._LoG = LineEdit(label="Laplacian of Gauss.")
-        self._SoG = LineEdit(label="Sobel of Gauss.")
-        self._sHoG = LineEdit(label="Small Hessian of Gauss.")
-        self._lHoG = LineEdit(label="Large Hessian of Gauss.")
-        self._median = LineEdit(label="Median")
-        self._tophat = LineEdit(label="Top Hat")
-
-        self._generate_string_button = PushButton(
-            label="Generate Feature String"
-        )
-        self._feature_string = TextEdit(label="Custom Feature String")
-
-        self.extend(
-            [
-                self._original,
-                self._gaussian_blur,
-                self._DoG,
-                self._LoG,
-                self._SoG,
-                self._sHoG,
-                self._lHoG,
-                self._median,
-                self._tophat,
-                self._generate_string_button,
-                self._feature_string,
-            ]
-        )
-
-        self._generate_string_button.clicked.connect(
-            self.generate_feature_string
-        )
-
-    def generate_feature_string(self):
-        def process_feature(prefix, input_str):
-            return [
-                prefix + num.strip()
-                for num in input_str.split(",")
-                if num.strip()
-            ]
-
-        feature_list = []
-        if self._original.value:
-            feature_list.append("original")
-        feature_list.extend(
-            process_feature("gaussian_blur=", self._gaussian_blur.value)
-        )
-        feature_list.extend(
-            process_feature("difference_of_gaussian=", self._DoG.value)
-        )
-        feature_list.extend(
-            process_feature("laplace_box_of_gaussian_blur=", self._LoG.value)
-        )
-        feature_list.extend(
-            process_feature("sobel_of_gaussian_blur=", self._SoG.value)
-        )
-        feature_list.extend(
-            process_feature(
-                "small_hessian_eigenvalue_of_gaussian_blur=", self._sHoG.value
-            )
-        )
-        feature_list.extend(
-            process_feature(
-                "large_hessian_of_eigenvalue_of_gaussian_blur=",
-                self._lHoG.value,
-            )
-        )
-        feature_list.extend(
-            process_feature("median_sphere=", self._median.value)
-        )
-        feature_list.extend(
-            process_feature("top_hat_sphere=", self._tophat.value)
-        )
-
-        self._feature_string.value = " ".join(feature_list)

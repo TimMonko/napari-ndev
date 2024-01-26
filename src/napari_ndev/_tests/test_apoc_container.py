@@ -35,11 +35,13 @@ annotation = np.asarray(
 #         assert wdg._image_channels.choices == ["Channel_0"]
 
 
-def test_update_channel_order():
+def test_update_channel_order(make_napari_viewer):
     """
     Test the _update_channel_order method of the SegmentImg class.
     """
-    wdg = SegmentImg("dummy_viewer")
+    viewer = make_napari_viewer()
+    # wdg = SegmentImg("dummy_viewer")
+    wdg = SegmentImg(viewer)
     wdg._image_channels.choices = ["C0", "C1", "C2", "C3"]
     wdg._image_channels.value = ["C1", "C3"]
     wdg._update_channel_order()
@@ -70,14 +72,12 @@ def test_update_classifier_metadata(make_napari_viewer, dummy_classifier_file):
     viewer = make_napari_viewer()
     wdg = SegmentImg(viewer)
 
-    assert len(viewer.window._dock_widgets) == 0
-    assert wdg._classifier_type.value == "ObjectSegmenter"
-
+    num_widgets = len(viewer.window._dock_widgets)
     # This automatically calls wdg._update_classifier_metadata() because of
     # wdg ._classifier_file.changed.connect
     wdg._classifier_file.value = dummy_classifier_file
 
-    assert len(viewer.window._dock_widgets) == 1
+    assert len(viewer.window._dock_widgets) == 1 + num_widgets
     assert wdg._classifier_type.value == "PixelClassifier"
     assert wdg._classifier_channels.value == "Trained on 3 Channels"
     assert wdg._max_depth.value == 5
