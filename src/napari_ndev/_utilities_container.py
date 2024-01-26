@@ -14,6 +14,7 @@ from magicgui.widgets import (
     Container,
     FileEdit,
     FloatSpinBox,
+    LineEdit,
     PushButton,
     Select,
     TextEdit,
@@ -50,20 +51,14 @@ class MetaImg(Container):
         self._open_image_button = PushButton(label="Open Images")
 
         self._save_directory = FileEdit(label="Save Directory", mode="d")
-        self._save_name = create_widget(
-            annotation=str, value=None, label="File Save Name"
-        )
+        self._save_name = LineEdit(label="File Save Name")
 
         self._metadata_from_selected_layer = PushButton(
             label="Update Metadata from Selected Layer"
         )
 
-        self._dim_order = create_widget(
-            annotation=str, label="Dimension Order"
-        )
-        self._channel_names = create_widget(
-            annotation=str, label="Channel Name(s)"
-        )
+        self._dim_order = LineEdit(label="Dimension Order")
+        self._channel_names = LineEdit(label="Channel Name(s)")
 
         self._physical_pixel_sizes_z = FloatSpinBox(
             value=1, step=0.00000001, label="Z Pixel Size, um"
@@ -75,6 +70,8 @@ class MetaImg(Container):
             value=1, step=0.00000001, label="X Pixel Size, um"
         )
 
+        # Use a function for layer inputs so that it is constantly updated
+        # when the dependency changes
         def current_layers(_):
             return [
                 x
@@ -290,7 +287,7 @@ class MetaImg(Container):
             self._results.value = (
                 "Saved shapes as labels: "
                 + str(self._save_name.value)
-                + "\nWarning: no image layer selected "
+                + "\nWarning: no image layer selected  "
                 + "so inherited dimensions from: "
                 + str(self._image_layer.choices[0])
             )
