@@ -15,7 +15,7 @@ contributions:
       python_name: napari_ndev._apoc_container:SegmentImg
       title: Batch APOC
     - id: napari-ndev.make_custom_apoc
-      python_name: napari_ndev._apoc_container:CustomApoc
+      python_name: napari_ndev._apoc_feature_stack:CustomApoc
       title: Custom APOC Feature Set
 
   widgets:
