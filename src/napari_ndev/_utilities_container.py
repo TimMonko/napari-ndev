@@ -42,7 +42,7 @@ class MetaImg(Container):
         self
         self._viewer = viewer
         self._img_data = None
-        self._layer_save_dims = None
+        self._label_save_dims = None
         self._p_sizes = None
 
         self._files = FileEdit(label="File(s)", mode="rm")
@@ -138,19 +138,23 @@ class MetaImg(Container):
 
     def _update_metadata(self, img):
         self._dim_order.value = img.dims.order
-        self._layer_save_dims = "".join(
+
+        # Determine image save dimensions excluding "S"
+        self._image_save_dims = "".join(
+            [dim for dim in img.dims.order if dim != "S"]
+        )
+
+        # Determine label save dimensions excluding "C" and "S"
+        self._label_save_dims = "".join(
             [
-                d
-                for d in img.dims.order
-                if d != "C" and img.dims._dims_shape[d] > 1
+                dim
+                for dim in img.dims.order
+                if dim != "C" and dim != "S" and img.dims._dims_shape[dim] > 1
             ]
         )
         self._channel_names.value = img.channel_names
 
-        if img.physical_pixel_sizes.Z is not None:
-            self._physical_pixel_sizes_z.value = img.physical_pixel_sizes.Z
-        elif img.physical_pixel_sizes.Z is None:
-            self._physical_pixel_sizes_z.value = 0
+        self._physical_pixel_sizes_z.value = img.physical_pixel_sizes.Z or 0
         self._physical_pixel_sizes_y.value = img.physical_pixel_sizes.Y
         self._physical_pixel_sizes_x.value = img.physical_pixel_sizes.X
 
@@ -179,8 +183,16 @@ class MetaImg(Container):
             for file in self._files.value:
                 img = AICSImage(file)
 
-                for idx, _ in enumerate(img.channel_names):
-                    array = img.data[:, [idx], :, :, :]
+                if "S" in img.dims.order:
+                    img_data = np.transpose(img.data, (0, 5, 2, 3, 4, 1))
+                    img_data = np.squeeze(img_data, axis=-1)
+                    img_channels = ["red", "green", "blue"]
+                else:
+                    img_data = img.data
+                    img_channels = img.channel_names
+
+                for idx, _ in enumerate(img_channels):
+                    array = img_data[:, [idx], :, :, :]
 
                     if array.max() > 0:
                         array_list.append(array)
@@ -215,18 +227,17 @@ class MetaImg(Container):
             OmeTiffWriter.save(
                 data=self._img_data,
                 uri=img_save_loc,
-                dim_order=self._dim_order.value,
+                dim_order=self._image_save_dims,
                 channel_names=ast.literal_eval(self._channel_names.value),
                 physical_pixel_sizes=self._p_sizes,
             )
-            # print("saved:", self._save_name.value)
             self._results.value = "Saved image: " + str(self._save_name.value)
 
         except ValueError as e:
             OmeTiffWriter.save(
                 data=self._img_data,
                 uri=img_save_loc,
-                dim_order=self._dim_order.value,
+                dim_order=self._image_save_dims,
                 physical_pixel_sizes=self._p_sizes,
             )
             self._results.value = (
@@ -244,7 +255,7 @@ class MetaImg(Container):
         OmeTiffWriter.save(
             data=lbl,
             uri=lbl_save_loc,
-            dim_order=self._layer_save_dims,
+            dim_order=self._label_save_dims,
             channel_names=["Labels"],
             physical_pixel_sizes=self._p_sizes,
         )
@@ -268,7 +279,7 @@ class MetaImg(Container):
         OmeTiffWriter.save(
             data=shapes_as_labels,
             uri=shapes_save_loc,
-            dim_order=self._layer_save_dims,
+            dim_order=self._label_save_dims,
             channel_names=["Shapes"],
             physical_pixel_sizes=self._p_sizes,
         )
