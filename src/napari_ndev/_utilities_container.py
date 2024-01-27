@@ -223,26 +223,26 @@ class MetaImg(Container):
         save_directory.mkdir(parents=False, exist_ok=True)
         return save_directory / self._save_name.value
 
-    def save_ome_tiff(self):
-        self.concatenate_images()
+    def _common_save_logic(self, data, uri, dim_order, channel_names, layer):
         self._get_p_sizes()
-        img_save_loc = self._get_save_loc("Images")
 
         try:
             OmeTiffWriter.save(
-                data=self._img_data,
-                uri=img_save_loc,
-                dim_order=self._image_save_dims,
-                channel_names=ast.literal_eval(self._channel_names.value),
+                data=data,
+                uri=uri,
+                dim_order=dim_order,
+                channel_names=channel_names,
                 physical_pixel_sizes=self._p_sizes,
             )
-            self._results.value = "Saved image: " + str(self._save_name.value)
+            self._results.value = f"Saved {layer}: " + str(
+                self._save_name.value
+            )
 
         except ValueError as e:
             OmeTiffWriter.save(
-                data=self._img_data,
-                uri=img_save_loc,
-                dim_order=self._image_save_dims,
+                data=data,
+                uri=uri,
+                dim_order=dim_order,
                 physical_pixel_sizes=self._p_sizes,
             )
             self._results.value = (
@@ -252,23 +252,32 @@ class MetaImg(Container):
                 + str(self._save_name.value)
             )
 
-    def save_labels(self):
-        lbl = self._labels_layer.value.data
-        self._get_p_sizes()
-        lbl_save_loc = self._get_save_loc("Labels")
+    def save_ome_tiff(self):
+        self.concatenate_images()
+        img_save_loc = self._get_save_loc("Images")
+        channel_names = ast.literal_eval(self._channel_names.value)
 
-        OmeTiffWriter.save(
-            data=lbl,
-            uri=lbl_save_loc,
+        self._common_save_logic(
+            data=self._img_data,
+            uri=img_save_loc,
+            dim_order=self._image_save_dims,
+            channel_names=channel_names,
+            layer="Image",
+        )
+
+    def save_labels(self):
+        label_data = self._labels_layer.value.data
+        label_save_loc = self._get_save_loc("Labels")
+
+        self._common_save_logic(
+            data=label_data,
+            uri=label_save_loc,
             dim_order=self._label_save_dims,
             channel_names=["Labels"],
-            physical_pixel_sizes=self._p_sizes,
+            layer="Labels",
         )
-        self._results.value = "Saved labels: " + str(self._save_name.value)
 
     def save_shapes_as_labels(self):
-        shapes = self._shapes_layer.value
-
         # inherit shape from selected image layer or else a default
         if self._image_layer.value:
             label_dim = self._image_layer.value[0].data.shape
@@ -276,31 +285,18 @@ class MetaImg(Container):
         else:
             label_dim = self._image_layer.choices[0].data.shape
 
+        # drop last axis if represents RGB image
+        label_dim = label_dim[:-1] if label_dim[-1] == 3 else label_dim
+
+        shapes = self._shapes_layer.value
         shapes_as_labels = shapes.to_labels(labels_shape=label_dim)
 
-        self._get_p_sizes()
         shapes_save_loc = self._get_save_loc("Shapes")
 
-        OmeTiffWriter.save(
+        self._common_save_logic(
             data=shapes_as_labels,
             uri=shapes_save_loc,
             dim_order=self._label_save_dims,
             channel_names=["Shapes"],
-            physical_pixel_sizes=self._p_sizes,
+            layer="Shapes",
         )
-
-        try:
-            self._results.value = (
-                "Saved shapes as labels: "
-                + str(self._save_name.value)
-                + "\nwith dimensions inherited from: "
-                + str(self._image_layer.value[0])
-            )
-        except IndexError:
-            self._results.value = (
-                "Saved shapes as labels: "
-                + str(self._save_name.value)
-                + "\nWarning: no image layer selected  "
-                + "so inherited dimensions from: "
-                + str(self._image_layer.choices[0])
-            )
