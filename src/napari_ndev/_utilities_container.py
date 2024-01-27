@@ -101,6 +101,7 @@ class MetaImg(Container):
         self._save_shapes_button = PushButton(label="Save Shapes as Labels")
 
         self._results = TextEdit(label="Info")
+        self._container = Container(label="container")
 
         # Container Widget Order
         self.extend(
@@ -124,8 +125,15 @@ class MetaImg(Container):
                 self._shapes_layer,
                 self._save_shapes_button,
                 self._results,
+                # self._container,
             ]
         )
+        # self._container.extend([
+        #     self._results,
+        #     self._save_shapes_button,
+        # ])
+        # self._container.hide()
+        # self._container.show()
 
         # Callbacks
         self._files.changed.connect(self.update_metadata_from_file)
@@ -157,21 +165,24 @@ class MetaImg(Container):
         self._physical_pixel_sizes_y.value = img.physical_pixel_sizes.Y
         self._physical_pixel_sizes_x.value = img.physical_pixel_sizes.X
 
-        self._save_name.value = str(
-            os.path.splitext(os.path.basename(self._files.value[0]))[0]
-            + ".tif"
-        )
-
     def update_metadata_from_file(self):
         print(self._files.value[0])
         img = AICSImage(self._files.value[0])
         self._img = img
         self._update_metadata(img)
+        self._save_name.value = str(
+            os.path.splitext(os.path.basename(self._files.value[0]))[0]
+            + ".tif"
+        )
 
     def update_metadata_from_layer(self):
         img = self._image_layer.value[0].metadata["aicsimage"]
+
         self._img = img
         self._update_metadata(img)
+
+        # self._results.hide()
+        # self._results.show()
 
     def open_images(self):
         self._viewer.open(self._files.value, plugin="napari-aicsimageio")
