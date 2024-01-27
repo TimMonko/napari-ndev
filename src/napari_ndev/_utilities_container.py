@@ -98,7 +98,6 @@ class MetaImg(Container):
         self._save_shapes_button = PushButton(label="Save Shapes as Labels")
 
         self._results = TextEdit(label="Info")
-        self._container = Container(label="container")
 
         # Container Widget Order
         self.extend(
@@ -122,15 +121,8 @@ class MetaImg(Container):
                 self._shapes_layer,
                 self._save_shapes_button,
                 self._results,
-                # self._container,
             ]
         )
-        # self._container.extend([
-        #     self._results,
-        #     self._save_shapes_button,
-        # ])
-        # self._container.hide()
-        # self._container.show()
 
         # Callbacks
         self._files.changed.connect(self.update_metadata_from_file)
@@ -177,9 +169,6 @@ class MetaImg(Container):
 
         self._img = img
         self._update_metadata(img)
-
-        # self._results.hide()
-        # self._results.show()
 
     def open_images(self):
         self._viewer.open(self._files.value, plugin="napari-aicsimageio")
