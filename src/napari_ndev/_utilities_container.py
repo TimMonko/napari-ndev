@@ -42,7 +42,7 @@ class MetaImg(Container):
         self
         self._viewer = viewer
         self._img_data = None
-        self._layer_save_dims = None
+        self._label_save_dims = None
         self._p_sizes = None
 
         self._files = FileEdit(label="File(s)", mode="rm")
@@ -98,7 +98,6 @@ class MetaImg(Container):
         self._save_shapes_button = PushButton(label="Save Shapes as Labels")
 
         self._results = TextEdit(label="Info")
-        self._container = Container(label="container")
 
         # Container Widget Order
         self.extend(
@@ -122,15 +121,8 @@ class MetaImg(Container):
                 self._shapes_layer,
                 self._save_shapes_button,
                 self._results,
-                # self._container,
             ]
         )
-        # self._container.extend([
-        #     self._results,
-        #     self._save_shapes_button,
-        # ])
-        # self._container.hide()
-        # self._container.show()
 
         # Callbacks
         self._files.changed.connect(self.update_metadata_from_file)
@@ -146,19 +138,26 @@ class MetaImg(Container):
 
     def _update_metadata(self, img):
         self._dim_order.value = img.dims.order
-        self._layer_save_dims = "".join(
+
+        # Determine image save dimensions excluding "S"
+        self._image_save_dims = "".join(
+            [dim for dim in img.dims.order if dim != "S"]
+        )
+
+        # Determine label save dimensions excluding "C" and "S"
+        self._label_save_dims = "".join(
             [
-                d
-                for d in img.dims.order
-                if d != "C" and img.dims._dims_shape[d] > 1
+                dim
+                for dim in img.dims.order
+                if dim != "C" and dim != "S" and img.dims._dims_shape[dim] > 1
             ]
         )
-        self._channel_names.value = img.channel_names
+        if "S" in img.dims.order:
+            self._channel_names.value = ["red", "green", "blue"]
+        else:
+            self._channel_names.value = img.channel_names
 
-        if img.physical_pixel_sizes.Z is not None:
-            self._physical_pixel_sizes_z.value = img.physical_pixel_sizes.Z
-        elif img.physical_pixel_sizes.Z is None:
-            self._physical_pixel_sizes_z.value = 0
+        self._physical_pixel_sizes_z.value = img.physical_pixel_sizes.Z or 0
         self._physical_pixel_sizes_y.value = img.physical_pixel_sizes.Y
         self._physical_pixel_sizes_x.value = img.physical_pixel_sizes.X
 
@@ -178,20 +177,29 @@ class MetaImg(Container):
         self._img = img
         self._update_metadata(img)
 
-        # self._results.hide()
-        # self._results.show()
-
     def open_images(self):
         self._viewer.open(self._files.value, plugin="napari-aicsimageio")
+
+    def _process_image_data(self, img: AICSImage) -> np.ndarray:
+        """Process image data for concatenation."""
+        if "S" in img.dims.order:
+            img_data = np.transpose(img.data, (0, 5, 2, 3, 4, 1))
+            img_data = np.squeeze(img_data, axis=-1)
+            print(img_data.shape)
+            return img_data
+        else:
+            return img.data
 
     def concatenate_images(self):
         array_list = []
         if self._concatenate_image_files.value:
             for file in self._files.value:
                 img = AICSImage(file)
+                img_data = self._process_image_data(img)
 
-                for idx, _ in enumerate(img.channel_names):
-                    array = img.data[:, [idx], :, :, :]
+                channel_list = ast.literal_eval(self._channel_names.value)
+                for idx, _ in enumerate(channel_list):
+                    array = img_data[:, [idx], :, :, :]
 
                     if array.max() > 0:
                         array_list.append(array)
@@ -214,56 +222,71 @@ class MetaImg(Container):
     def _get_save_loc(self, parent):
         save_directory = self._save_directory.value / parent
         save_directory.mkdir(parents=False, exist_ok=True)
-        save_loc = save_directory / self._save_name.value
-        return save_loc
+        return save_directory / self._save_name.value
 
-    def save_ome_tiff(self):
-        self.concatenate_images()
+    def _common_save_logic(
+        self,
+        data: np.ndarray,
+        uri: Path,
+        dim_order: str,
+        channel_names: List[str],
+        layer: str,
+    ) -> None:
+        """Common logic for saving data."""
         self._get_p_sizes()
-        img_save_loc = self._get_save_loc("Images")
 
         try:
             OmeTiffWriter.save(
-                data=self._img_data,
-                uri=img_save_loc,
-                dim_order=self._dim_order.value,
-                channel_names=ast.literal_eval(self._channel_names.value),
+                data=data,
+                uri=uri,
+                dim_order=dim_order,
+                channel_names=channel_names,
                 physical_pixel_sizes=self._p_sizes,
             )
-            # print("saved:", self._save_name.value)
-            self._results.value = "Saved image: " + str(self._save_name.value)
+            self._results.value = f"Saved {layer}: " + str(
+                self._save_name.value
+            )
 
         except ValueError as e:
             OmeTiffWriter.save(
-                data=self._img_data,
-                uri=img_save_loc,
-                dim_order=self._dim_order.value,
+                data=data,
+                uri=uri,
+                dim_order=dim_order,
                 physical_pixel_sizes=self._p_sizes,
             )
             self._results.value = (
                 "ValueError: "
                 + str(e)
-                + "\nSo, saved with default file names: \n"
+                + "\nSo, saved with default channel names: \n"
                 + str(self._save_name.value)
             )
 
-    def save_labels(self):
-        lbl = self._labels_layer.value.data
-        self._get_p_sizes()
-        lbl_save_loc = self._get_save_loc("Labels")
+    def save_ome_tiff(self) -> None:
+        self.concatenate_images()
+        img_save_loc = self._get_save_loc("Images")
+        channel_names = ast.literal_eval(self._channel_names.value)
 
-        OmeTiffWriter.save(
-            data=lbl,
-            uri=lbl_save_loc,
-            dim_order=self._layer_save_dims,
-            channel_names=["Labels"],
-            physical_pixel_sizes=self._p_sizes,
+        self._common_save_logic(
+            data=self._img_data,
+            uri=img_save_loc,
+            dim_order=self._image_save_dims,
+            channel_names=channel_names,
+            layer="Image",
         )
-        self._results.value = "Saved labels: " + str(self._save_name.value)
 
-    def save_shapes_as_labels(self):
-        shapes = self._shapes_layer.value
+    def save_labels(self) -> None:
+        label_data = self._labels_layer.value.data
+        label_save_loc = self._get_save_loc("Labels")
 
+        self._common_save_logic(
+            data=label_data,
+            uri=label_save_loc,
+            dim_order=self._label_save_dims,
+            channel_names=["Labels"],
+            layer="Labels",
+        )
+
+    def save_shapes_as_labels(self) -> None:
         # inherit shape from selected image layer or else a default
         if self._image_layer.value:
             label_dim = self._image_layer.value[0].data.shape
@@ -271,31 +294,18 @@ class MetaImg(Container):
         else:
             label_dim = self._image_layer.choices[0].data.shape
 
+        # drop last axis if represents RGB image
+        label_dim = label_dim[:-1] if label_dim[-1] == 3 else label_dim
+
+        shapes = self._shapes_layer.value
         shapes_as_labels = shapes.to_labels(labels_shape=label_dim)
 
-        self._get_p_sizes()
         shapes_save_loc = self._get_save_loc("Shapes")
 
-        OmeTiffWriter.save(
+        self._common_save_logic(
             data=shapes_as_labels,
             uri=shapes_save_loc,
-            dim_order=self._layer_save_dims,
+            dim_order=self._label_save_dims,
             channel_names=["Shapes"],
-            physical_pixel_sizes=self._p_sizes,
+            layer="Shapes",
         )
-
-        try:
-            self._results.value = (
-                "Saved shapes as labels: "
-                + str(self._save_name.value)
-                + "\nwith dimensions inherited from: "
-                + str(self._image_layer.value[0])
-            )
-        except IndexError:
-            self._results.value = (
-                "Saved shapes as labels: "
-                + str(self._save_name.value)
-                + "\nWarning: no image layer selected  "
-                + "so inherited dimensions from: "
-                + str(self._image_layer.choices[0])
-            )
