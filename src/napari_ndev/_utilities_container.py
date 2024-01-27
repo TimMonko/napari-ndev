@@ -180,7 +180,8 @@ class MetaImg(Container):
     def open_images(self):
         self._viewer.open(self._files.value, plugin="napari-aicsimageio")
 
-    def _process_image_data(self, img):
+    def _process_image_data(self, img: AICSImage) -> np.ndarray:
+        """Process image data for concatenation."""
         if "S" in img.dims.order:
             img_data = np.transpose(img.data, (0, 5, 2, 3, 4, 1))
             img_data = np.squeeze(img_data, axis=-1)
@@ -223,7 +224,15 @@ class MetaImg(Container):
         save_directory.mkdir(parents=False, exist_ok=True)
         return save_directory / self._save_name.value
 
-    def _common_save_logic(self, data, uri, dim_order, channel_names, layer):
+    def _common_save_logic(
+        self,
+        data: np.ndarray,
+        uri: Path,
+        dim_order: str,
+        channel_names: List[str],
+        layer: str,
+    ) -> None:
+        """Common logic for saving data."""
         self._get_p_sizes()
 
         try:
@@ -252,7 +261,7 @@ class MetaImg(Container):
                 + str(self._save_name.value)
             )
 
-    def save_ome_tiff(self):
+    def save_ome_tiff(self) -> None:
         self.concatenate_images()
         img_save_loc = self._get_save_loc("Images")
         channel_names = ast.literal_eval(self._channel_names.value)
@@ -265,7 +274,7 @@ class MetaImg(Container):
             layer="Image",
         )
 
-    def save_labels(self):
+    def save_labels(self) -> None:
         label_data = self._labels_layer.value.data
         label_save_loc = self._get_save_loc("Labels")
 
@@ -277,7 +286,7 @@ class MetaImg(Container):
             layer="Labels",
         )
 
-    def save_shapes_as_labels(self):
+    def save_shapes_as_labels(self) -> None:
         # inherit shape from selected image layer or else a default
         if self._image_layer.value:
             label_dim = self._image_layer.value[0].data.shape
