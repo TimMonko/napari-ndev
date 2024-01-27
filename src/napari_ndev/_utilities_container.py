@@ -152,7 +152,10 @@ class MetaImg(Container):
                 if dim != "C" and dim != "S" and img.dims._dims_shape[dim] > 1
             ]
         )
-        self._channel_names.value = img.channel_names
+        if "S" in img.dims.order:
+            self._channel_names.value = ["red", "green", "blue"]
+        else:
+            self._channel_names.value = img.channel_names
 
         self._physical_pixel_sizes_z.value = img.physical_pixel_sizes.Z or 0
         self._physical_pixel_sizes_y.value = img.physical_pixel_sizes.Y
@@ -177,21 +180,24 @@ class MetaImg(Container):
     def open_images(self):
         self._viewer.open(self._files.value, plugin="napari-aicsimageio")
 
+    def _process_image_data(self, img):
+        if "S" in img.dims.order:
+            img_data = np.transpose(img.data, (0, 5, 2, 3, 4, 1))
+            img_data = np.squeeze(img_data, axis=-1)
+            print(img_data.shape)
+            return img_data
+        else:
+            return img.data
+
     def concatenate_images(self):
         array_list = []
         if self._concatenate_image_files.value:
             for file in self._files.value:
                 img = AICSImage(file)
+                img_data = self._process_image_data(img)
 
-                if "S" in img.dims.order:
-                    img_data = np.transpose(img.data, (0, 5, 2, 3, 4, 1))
-                    img_data = np.squeeze(img_data, axis=-1)
-                    img_channels = ["red", "green", "blue"]
-                else:
-                    img_data = img.data
-                    img_channels = img.channel_names
-
-                for idx, _ in enumerate(img_channels):
+                channel_list = ast.literal_eval(self._channel_names.value)
+                for idx, _ in enumerate(channel_list):
                     array = img_data[:, [idx], :, :, :]
 
                     if array.max() > 0:
@@ -215,8 +221,7 @@ class MetaImg(Container):
     def _get_save_loc(self, parent):
         save_directory = self._save_directory.value / parent
         save_directory.mkdir(parents=False, exist_ok=True)
-        save_loc = save_directory / self._save_name.value
-        return save_loc
+        return save_directory / self._save_name.value
 
     def save_ome_tiff(self):
         self.concatenate_images()
@@ -243,7 +248,7 @@ class MetaImg(Container):
             self._results.value = (
                 "ValueError: "
                 + str(e)
-                + "\nSo, saved with default file names: \n"
+                + "\nSo, saved with default channel names: \n"
                 + str(self._save_name.value)
             )
 
