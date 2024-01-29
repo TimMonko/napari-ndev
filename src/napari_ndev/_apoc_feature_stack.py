@@ -15,7 +15,7 @@ if TYPE_CHECKING:
     import napari
 
 
-class CustomApoc(Container):
+class ApocFeatureStack(Container):
     def __init__(
         self,
         viewer: "napari.viewer.Viewer",
