@@ -2,9 +2,9 @@ import os
 import tempfile
 
 import numpy as np
-import pytest
 
-from napari_ndev import CustomApoc, SegmentImg
+from napari_ndev import ApocContainer
+import pytest
 
 image = np.asarray(
     [
@@ -41,7 +41,7 @@ def test_update_channel_order(make_napari_viewer):
     """
     viewer = make_napari_viewer()
     # wdg = SegmentImg("dummy_viewer")
-    wdg = SegmentImg(viewer)
+    wdg = ApocContainer(viewer)
     wdg._image_channels.choices = ["C0", "C1", "C2", "C3"]
     wdg._image_channels.value = ["C1", "C3"]
     wdg._update_channel_order()
@@ -70,7 +70,7 @@ def dummy_classifier_file():
 
 def test_update_classifier_metadata(make_napari_viewer, dummy_classifier_file):
     viewer = make_napari_viewer()
-    wdg = SegmentImg(viewer)
+    wdg = ApocContainer(viewer)
 
     num_widgets = len(viewer.window._dock_widgets)
     # This automatically calls wdg._update_classifier_metadata() because of
@@ -84,40 +84,3 @@ def test_update_classifier_metadata(make_napari_viewer, dummy_classifier_file):
     assert wdg._num_trees.value == 100
     assert wdg._positive_class_id.value == 2
 
-
-# Test CustomAPOC
-def test_generate_feature_string_button(make_napari_viewer):
-    wdg = CustomApoc(make_napari_viewer())
-    wdg._original.value = True
-    wdg._generate_string_button.clicked.emit()
-    assert wdg._feature_string.value != ""
-
-
-def test_generate_features_none(make_napari_viewer):
-    wdg = CustomApoc(make_napari_viewer())
-    wdg.generate_feature_string()
-    assert wdg._feature_string.value == ""
-
-
-def test_generate_feature_string_original(make_napari_viewer):
-    wdg = CustomApoc(make_napari_viewer())
-    wdg._original.value = True
-    wdg.generate_feature_string()
-    assert "original" in wdg._feature_string.value
-
-
-@pytest.mark.parametrize(
-    "input_value, expected_output",
-    [
-        ("3", "gaussian_blur=3"),
-        ("3,4,5", "gaussian_blur=3 gaussian_blur=4 gaussian_blur=5"),
-        ("3, 4,   5", "gaussian_blur=3 gaussian_blur=4 gaussian_blur=5"),
-    ],
-)
-def test_generate_feature_string_gaussian_blur(
-    make_napari_viewer, input_value, expected_output
-):
-    wdg = CustomApoc(make_napari_viewer())
-    wdg._gaussian_blur.value = input_value
-    wdg.generate_feature_string()
-    assert wdg._feature_string.value == expected_output

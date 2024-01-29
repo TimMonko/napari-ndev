@@ -9,13 +9,13 @@ contributions:
       python_name: napari_ndev._napari_utilities:rescale_by
       title: Make Rescale By Widget
     - id: napari-ndev.make_utilities_container
-      python_name: napari_ndev._utilities_container:MetaImg
+      python_name: napari_ndev._utilities_container:UtilitiesContainer
       title: Image Utilities
     - id: napari-ndev.make_apoc_container
-      python_name: napari_ndev._apoc_container:SegmentImg
+      python_name: napari_ndev._apoc_container:ApocContainer
       title: Batch APOC
     - id: napari-ndev.make_custom_apoc
-      python_name: napari_ndev._apoc_feature_stack:CustomApoc
+      python_name: napari_ndev._apoc_feature_stack:ApocFeatureStack
       title: Custom APOC Feature Set
 
   widgets:

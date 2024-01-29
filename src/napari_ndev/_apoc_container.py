@@ -40,7 +40,7 @@ ImageLike = Union[
 ]
 
 
-class SegmentImg(Container):
+class ApocContainer(Container):
     def __init__(
         self,
         viewer: "napari.viewer.Viewer",
