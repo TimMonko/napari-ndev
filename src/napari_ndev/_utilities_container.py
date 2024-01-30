@@ -278,8 +278,12 @@ class UtilitiesContainer(Container):
         label_data = self._labels_layer.value.data
         label_save_loc = self._get_save_loc("Labels")
 
+        # AICSImage does not allow saving labels as np.int64
+        # napari generates labels differently depending on the OS
+        # so we need to convert to np.int32 in case np.int64 generated
+        # see: https://github.com/napari/napari/issues/5545
         self._common_save_logic(
-            data=label_data,
+            data=label_data.astype(np.int32),
             uri=label_save_loc,
             dim_order=self._label_save_dims,
             channel_names=["Labels"],
@@ -302,8 +306,9 @@ class UtilitiesContainer(Container):
 
         shapes_save_loc = self._get_save_loc("Shapes")
 
+        # see: https://github.com/napari/napari/issues/5545
         self._common_save_logic(
-            data=shapes_as_labels,
+            data=shapes_as_labels.astype(np.int32),
             uri=shapes_save_loc,
             dim_order=self._label_save_dims,
             channel_names=["Shapes"],
