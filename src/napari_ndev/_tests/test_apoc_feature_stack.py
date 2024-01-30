@@ -1,5 +1,7 @@
-from napari_ndev import ApocFeatureStack
 import pytest
+
+from napari_ndev._apoc_feature_stack import ApocFeatureStack
+
 
 # Test CustomAPOC
 def test_generate_feature_string_button(make_napari_viewer):
