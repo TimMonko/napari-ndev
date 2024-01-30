@@ -17,6 +17,9 @@ contributions:
     - id: napari-ndev.make_custom_apoc
       python_name: napari_ndev._apoc_feature_stack:ApocFeatureStack
       title: Custom APOC Feature Set
+    - id: napari-ndev.make_rescaleby
+      python_name: napari_ndev._rescale_by:RescaleBy
+      title: Make Rescale By Container
 
   widgets:
     - command: napari-ndev.make_batch_workflow
@@ -29,3 +32,5 @@ contributions:
       display_name: Batch APOC
     - command: napari-ndev.make_custom_apoc
       display_name: Custom APOC Feature Set
+    - command: napari-ndev.make_rescaleby
+      display_name: Rescale By 2
