@@ -83,5 +83,4 @@ class RescaleBy(Container):
                 self._scale_x.value,
             )
 
-        layer = self._layer_to_scale.value
-        layer.scale = scale_factors
+        self._layer_to_scale.value.scale = scale_factors
