@@ -65,13 +65,12 @@ class RescaleBy(Container):
         self._rescale_by_button.clicked.connect(self.rescale_by)
 
     def _inherit_from(self):
-        if self._scale_in_z.value is False:
-            self._scale_y.value = self._inherit_from_layer.value.scale[0]
-            self._scale_x.value = self._inherit_from_layer.value.scale[1]
-        if self._scale_in_z.value is True:
-            self._scale_z.value = self._inherit_from_layer.value.scale[0]
-            self._scale_y.value = self._inherit_from_layer.value.scale[1]
-            self._scale_x.value = self._inherit_from_layer.value.scale[2]
+        scale = self._inherit_from_layer.value.scale
+        self._scale_y.value = scale[-2]
+        self._scale_x.value = scale[-1]
+
+        if len(scale) >= 3:
+            self._scale_z.value = scale[-3]
 
     def rescale_by(self):
         if self._scale_in_z.value is False:
