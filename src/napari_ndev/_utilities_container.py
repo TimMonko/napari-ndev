@@ -304,7 +304,7 @@ class UtilitiesContainer(Container):
         shapes = self._shapes_layer.value
         shapes_as_labels = shapes.to_labels(labels_shape=label_dim)
 
-        shapes_save_loc = self._get_save_loc("Shapes")
+        shapes_save_loc = self._get_save_loc("ShapesAsLabels")
 
         # see: https://github.com/napari/napari/issues/5545
         self._common_save_logic(
