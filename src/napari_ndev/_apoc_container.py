@@ -340,6 +340,9 @@ class ApocContainer(Container):
         image_stack = np.stack(image_list, axis=0)
         label = self._label_layer.value.data
 
+        if not self._continue_training:
+            apoc.erase_classifier(self._classifier_file.value)
+
         custom_classifier = self._get_training_classifier_instance()
         feature_set = self._get_feature_set()
 
@@ -414,10 +417,20 @@ class ApocContainer(Container):
         custom_classifier = self._get_prediction_classifier_instance()
 
         result = custom_classifier.predict(image=np.squeeze(image_stack))
+
+        # sometimes, input layers may have shape with 1s, like (1,1,10,10)
+        # however, we are squeezing the input, so the reuslt will have shape
+        # (10,10), and therefore scale needs to accomodate dropped axes
+        result_dims = result.ndim
+        if len(scale) > result_dims:
+            scale = scale[-result_dims:]
+
         self._viewer.add_labels(result, scale=scale)
 
         layer_name = self._image_layer.value[0].name
         self._single_result_label.value = f"Predicted {layer_name}"
+
+        return result
 
     def _custom_apoc_widget(self):
         self._viewer.window.add_plugin_dock_widget(
