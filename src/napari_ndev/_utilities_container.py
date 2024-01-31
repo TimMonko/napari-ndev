@@ -238,6 +238,8 @@ class UtilitiesContainer(Container):
     ) -> None:
         """Common logic for saving data."""
         self._get_p_sizes()
+        if data.dtype == np.int64:
+            data = data.astype(np.int32)
 
         try:
             OmeTiffWriter.save(
@@ -288,7 +290,7 @@ class UtilitiesContainer(Container):
         # so we need to convert to np.int32 in case np.int64 generated
         # see: https://github.com/napari/napari/issues/5545
         self._common_save_logic(
-            data=label_data.astype(np.int32),
+            data=label_data,
             uri=label_save_loc,
             dim_order=self._label_save_dims,
             channel_names=["Labels"],
@@ -314,7 +316,7 @@ class UtilitiesContainer(Container):
 
         # see: https://github.com/napari/napari/issues/5545
         self._common_save_logic(
-            data=shapes_as_labels.astype(np.int32),
+            data=shapes_as_labels,
             uri=shapes_save_loc,
             dim_order=self._label_save_dims,
             channel_names=["Shapes"],
