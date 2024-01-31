@@ -71,9 +71,7 @@ def test_save_shapes_as_labels(
     expected_save_loc = tmp_path / "ShapesAsLabels" / "test.tiff"
     assert expected_save_loc.exists()
     assert shapes_as_labels.shape == test_image.shape
-    assert np.array_equal(
-        shapes_as_labels, test_labels
-    )  # Check if arrays are equal
+    assert np.array_equal(shapes_as_labels, test_labels)
     assert AICSImage(expected_save_loc).channel_names == ["Shapes"]
 
 
@@ -93,7 +91,7 @@ def test_save_labels(make_napari_viewer, tmp_path: Path, test_data):
 
     expected_save_loc = tmp_path / "Labels" / "test.tiff"
     assert expected_save_loc.exists()
-    assert np.array_equal(labels, test_labels)  # Check if arrays are equal
+    assert np.array_equal(labels, test_labels)
     assert AICSImage(expected_save_loc).channel_names == ["Labels"]
 
 
@@ -132,11 +130,8 @@ def test_update_metadata_from_file(make_napari_viewer, test_rgb_image):
     path, _ = test_rgb_image
     container._files.value = path
 
-    # assert rgb_tif is not None
     assert container._save_name.value == "RGB.tif"
     assert container._image_save_dims == "TCZYX"
     assert container._label_save_dims == "YX"
     assert container._channel_names.value == "['red', 'green', 'blue']"
     assert container._physical_pixel_sizes_z.value == 0
-
-    # Add an additional blank line here
