@@ -106,6 +106,7 @@ def empty_classifier_file():
         yield classifier_file_path
 
 
+@pytest.mark.notox
 def test_image_train(make_napari_viewer, test_data, empty_classifier_file):
     viewer = make_napari_viewer()
     test_image, _, test_labels, _ = test_data
@@ -145,6 +146,7 @@ def trained_classifier_file(
     yield empty_classifier_file
 
 
+@pytest.mark.notox
 def test_image_predict(make_napari_viewer, test_data, trained_classifier_file):
     viewer = make_napari_viewer()
     test_image, _, _, _ = test_data
