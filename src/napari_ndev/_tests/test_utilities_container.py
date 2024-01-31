@@ -138,3 +138,5 @@ def test_update_metadata_from_file(make_napari_viewer, test_rgb_image):
     assert container._label_save_dims == "YX"
     assert container._channel_names.value == "['red', 'green', 'blue']"
     assert container._physical_pixel_sizes_z.value == 0
+
+    # Add an additional blank line here
