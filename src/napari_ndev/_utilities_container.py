@@ -172,10 +172,12 @@ class UtilitiesContainer(Container):
         )
 
     def update_metadata_from_layer(self):
-        img = self._image_layer.value[0].metadata["aicsimage"]
-
-        self._img = img
-        self._update_metadata(img)
+        try:
+            img = self._image_layer.value[0].metadata["aicsimage"]
+            self._img = img
+            self._update_metadata(img)
+        except KeyError as e:
+            self._results.value = "KeyError: " + str(e)
 
     def open_images(self):
         self._viewer.open(self._files.value, plugin="napari-aicsimageio")
@@ -206,9 +208,11 @@ class UtilitiesContainer(Container):
 
         if self._concatenate_image_layers.value:
             for layer in self._image_layer.value:
-                print(layer.data.shape)
-                layer_reshape = layer.data[np.newaxis, np.newaxis, np.newaxis]
-                array_list.append(layer_reshape)
+                layer_data = layer.data
+                # convert to 5D array for compatability with image dims
+                while len(layer_data.shape) < 5:
+                    layer_data = np.expand_dims(layer_data, axis=0)
+                array_list.append(layer_data)
 
         self._img_data = np.concatenate(array_list, axis=1)
 
@@ -234,6 +238,8 @@ class UtilitiesContainer(Container):
     ) -> None:
         """Common logic for saving data."""
         self._get_p_sizes()
+        if data.dtype == np.int64:
+            data = data.astype(np.int32)
 
         try:
             OmeTiffWriter.save(
@@ -273,6 +279,7 @@ class UtilitiesContainer(Container):
             channel_names=channel_names,
             layer="Image",
         )
+        return self._img_data
 
     def save_labels(self) -> None:
         label_data = self._labels_layer.value.data
@@ -283,12 +290,13 @@ class UtilitiesContainer(Container):
         # so we need to convert to np.int32 in case np.int64 generated
         # see: https://github.com/napari/napari/issues/5545
         self._common_save_logic(
-            data=label_data.astype(np.int32),
+            data=label_data,
             uri=label_save_loc,
             dim_order=self._label_save_dims,
             channel_names=["Labels"],
             layer="Labels",
         )
+        return label_data
 
     def save_shapes_as_labels(self) -> None:
         # inherit shape from selected image layer or else a default
@@ -308,9 +316,11 @@ class UtilitiesContainer(Container):
 
         # see: https://github.com/napari/napari/issues/5545
         self._common_save_logic(
-            data=shapes_as_labels.astype(np.int32),
+            data=shapes_as_labels,
             uri=shapes_save_loc,
             dim_order=self._label_save_dims,
             channel_names=["Shapes"],
             layer="Shapes",
         )
+
+        return shapes_as_labels
