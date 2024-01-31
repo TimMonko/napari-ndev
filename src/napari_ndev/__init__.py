@@ -5,14 +5,14 @@ except ImportError:
 
 from ._apoc_container import ApocContainer
 from ._apoc_feature_stack import ApocFeatureStack
-from ._napari_utilities import rescale_by
+from ._rescale_by import RescaleBy
 from ._utilities_container import UtilitiesContainer
 from ._widget import batch_workflow
 
 __all__ = [
     "batch_workflow",
-    "rescale_by",
     "UtilitiesContainer",
     "ApocContainer",
     "ApocFeatureStack",
+    "RescaleBy",
 ]
