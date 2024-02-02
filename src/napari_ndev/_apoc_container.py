@@ -1,5 +1,7 @@
+import logging
 import os
 import re
+import time
 from enum import Enum
 from pathlib import Path
 from typing import TYPE_CHECKING, List, Union
@@ -379,6 +381,24 @@ class ApocContainer(Container):
 
     def batch_predict(self):
         image_files = os.listdir(self._image_directory.value)
+
+        # Create a logger
+        logger = logging.getLogger(__name__ + str(time.time()))
+        logger.setLevel(logging.INFO)
+        handler = logging.FileHandler(self._output_directory.value / "log.txt")
+        handler.setLevel(logging.INFO)
+        formatter = logging.Formatter("%(asctime)s - %(message)s")
+        handler.setFormatter(formatter)
+        logger.addHandler(handler)
+        logger.info(
+            f"""
+        Classifier: {self._classifier_file.value}
+        Channels: {self._image_channels.value}
+        Num. Files: {len(image_files)}
+        Image Directory: {self._image_directory.value}
+        Output Directory: {self._output_directory.value}
+        GPU: {cle.select_device()}"""
+        )
         # https://github.com/clEsperanto/pyclesperanto_prototype/issues/163
         cle.set_wait_for_kernel_finish(True)
 
@@ -403,11 +423,19 @@ class ApocContainer(Container):
         )
 
         for idx, file in enumerate(image_files):
-            print(f"Predicting Image: {idx+1} of {len(image_files)} : {file}")
+            logger.info(
+                f"Predicting Image: {idx+1} of {len(image_files)} : {file}"
+            )
             img = AICSImage(self._image_directory.value / file)
             channel_img = img.get_image_data("TCZYX", C=channel_index_list)
-
-            result = custom_classifier.predict(image=np.squeeze(channel_img))
+            try:
+                result = custom_classifier.predict(
+                    image=np.squeeze(channel_img)
+                )
+            except Exception as e:
+                logger.error(f"Error predicting {file}: {e}")
+                self._progress_bar.value = idx + 1
+                continue
 
             OmeTiffWriter.save(
                 data=cle.pull(result).astype(np.int32),
@@ -416,12 +444,12 @@ class ApocContainer(Container):
                 channel_names=["Labels"],
                 physical_pixel_sizes=img.physical_pixel_sizes,
             )
-
             del result
 
             self._progress_bar.value = idx + 1
 
         self._progress_bar.label = f"Predicted {len(image_files)} Images"
+        logger.removeHandler(handler)
 
     def image_predict(self):
         layer_name = self._image_layer.value[0].name
