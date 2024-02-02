@@ -1,0 +1,17 @@
+2024-02-02 17:37:52,827 -
+        Classifier: C:\Users\timmo\OneDrive\Documents\GitHub\BastianLab\PythonProjects\VuongLab\MicrogliaTesting\Classifiers\newlabels_pixel_classifier.cl
+        Channels: ['IBA1']
+        Num. Files: 2
+        Image Directory: C:\Users\timmo\napari-ndev\src\napari_ndev\_tests\resources\Apoc\Images
+        Output Directory: C:\Users\timmo\napari-ndev\src\napari_ndev\_tests\resources\Apoc\OutputLabels
+        GPU: <NVIDIA GeForce RTX 3060 on Platform: NVIDIA CUDA (1 refs)>
+2024-02-02 17:37:52,845 - Predicting Image: 1 of 2 : SPF-4MM-22 slide 9-S6_Top Slide_TR2_p00_0_A01f00d0.tif
+2024-02-02 17:37:54,408 - Predicting Image: 2 of 2 : SPF-4MM-22 slide 9-S9_Top Slide_TR5_p00_0_A01f00d0.tif
+2024-02-02 17:53:14,960 -
+        Classifier: C:\Users\timmo\napari-ndev\src\napari_ndev\_tests\resources\Apoc\Classifiers\test_classifier.cl
+        Channels: ['IBA1']
+        Num. Files: 2
+        Image Directory: C:\Users\timmo\napari-ndev\src\napari_ndev\_tests\resources\Apoc\Images
+        Output Directory: C:\Users\timmo\napari-ndev\src\napari_ndev\_tests\resources\Apoc\OutputLabels
+2024-02-02 17:53:14,978 - Predicting Image: 1 of 2 : SPF-4MM-22 slide 9-S6_Top Slide_TR2_p00_0_A01f00d0.tif
+2024-02-02 17:53:16,647 - Predicting Image: 2 of 2 : SPF-4MM-22 slide 9-S9_Top Slide_TR5_p00_0_A01f00d0.tif
