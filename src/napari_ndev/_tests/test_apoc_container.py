@@ -1,11 +1,13 @@
+import logging
 import os
+import pathlib
 import tempfile
 
 import numpy as np
 import pyclesperanto_prototype as cle
 import pytest
 
-from napari_ndev import ApocContainer
+from napari_ndev._apoc_container import ApocContainer
 
 
 def test_update_channel_order(make_napari_viewer):
@@ -162,3 +164,83 @@ def test_image_predict(make_napari_viewer, test_data, trained_classifier_file):
     assert wdg._single_result_label.value == "Predicted test_image"
     assert cle.pull(result).any() > 0
     assert cle.pull(wdg._viewer.layers["result"].data).any() > 0
+
+
+def test_batch_predict_normal_operation(make_napari_viewer, tmp_path):
+
+    image_directory = pathlib.Path(
+        os.path.join(
+            "src", "napari_ndev", "_tests", "resources", "Apoc", "Images"
+        )
+    )
+    num_files = len(list(image_directory.glob("*.tif")))
+    output_directory = tmp_path / "output"
+    output_directory.mkdir()
+
+    classifier = pathlib.Path(
+        r"C:\Users\timmo\napari-ndev\src\napari_ndev\_tests\resources"
+        r"\Apoc\Classifiers\newlabels_pixel_classifier.cl"
+    )
+
+    # Create an instance of ApocContainer
+    container = ApocContainer(make_napari_viewer())
+    container._image_directory.value = image_directory
+    container._output_directory.value = output_directory
+    container._image_channels.value = ["IBA1"]
+    container._classifier_file.value = classifier
+
+    container.batch_predict()
+
+    # Check if the loop completes without exceptions
+    assert container._progress_bar.value == num_files
+    assert container._progress_bar.label == f"Predicted {num_files} Images"
+
+
+def test_batch_predict_exception_logging(make_napari_viewer, tmp_path):
+
+    image_directory = pathlib.Path(
+        os.path.join(
+            "src", "napari_ndev", "_tests", "resources", "Apoc", "Images"
+        )
+    )
+    num_files = len(list(image_directory.glob("*.tif")))
+    output_directory = tmp_path / "output"
+    output_directory.mkdir()
+
+    # Create an instance of ApocContainer
+    container = ApocContainer(make_napari_viewer())
+    container._image_directory.value = image_directory
+    container._output_directory.value = output_directory
+    container._image_channels.value = ["IBA1"]
+
+    # Mock the custom_classifier.predict() method to raise an exception
+    class MockClassifier:
+        def predict(self, image):
+            raise Exception("Test exception")
+
+    container._get_prediction_classifier_instance = lambda: MockClassifier()
+
+    # Set up logging
+    log_file = output_directory / "log.txt"
+    logger = logging.getLogger(__name__)
+    logger.setLevel(logging.INFO)
+    handler = logging.FileHandler(log_file)
+    handler.setLevel(logging.INFO)
+    formatter = logging.Formatter("%(asctime)s - %(message)s")
+    handler.setFormatter(formatter)
+    logger.addHandler(handler)
+
+    # Call the batch_predict() method
+    container.batch_predict()
+
+    # Check if the exception is logged
+    with open(log_file) as f:
+        log_contents = f.read()
+        assert "Error predicting" in log_contents
+
+    # Check if the loop continues
+    assert container._progress_bar.value == num_files
+    assert container._progress_bar.label == f"Predicted {num_files} Images"
+
+    # Clean up
+    logger.removeHandler(handler)
