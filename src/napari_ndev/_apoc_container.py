@@ -1,5 +1,7 @@
+import logging
 import os
 import re
+import time
 from enum import Enum
 from pathlib import Path
 from typing import TYPE_CHECKING, List, Union
@@ -294,9 +296,34 @@ class ApocContainer(Container):
                 num_ensembles=self._num_trees.value,
             )
 
+    def setup_logger(self, log_loc):
+        # Create a logger
+        logger = logging.getLogger(__name__ + str(time.time()))
+        logger.setLevel(logging.INFO)
+        handler = logging.FileHandler(log_loc)
+        handler.setLevel(logging.INFO)
+        formatter = logging.Formatter("%(asctime)s - %(message)s")
+        handler.setFormatter(formatter)
+        logger.addHandler(handler)
+        return logger, handler
+
     def batch_train(self):
         image_files = os.listdir(self._image_directory.value)
         label_files = os.listdir(self._label_directory.value)
+        log_loc = self._classifier_file.value.with_suffix(".log.txt")
+        logger, handler = self.setup_logger(log_loc)
+
+        logger.info(
+            f"""
+        Classifier: {self._classifier_file.value}
+        Channels: {self._image_channels.value}
+        Num. Files: {len(image_files)}
+        Image Directory: {self._image_directory.value}
+        Label Directory: {self._label_directory.value}"""
+        )
+
+        # https://github.com/clEsperanto/pyclesperanto_prototype/issues/163
+        cle.set_wait_for_kernel_finish(True)
 
         self._progress_bar.label = f"Training on {len(image_files)} Images"
         self._progress_bar.value = 0
@@ -314,31 +341,44 @@ class ApocContainer(Container):
             channel_index = img.channel_names.index(channel)
             channel_index_list.append(channel_index)
 
-        for idx, file in enumerate(image_files):
-
-            img = AICSImage(self._image_directory.value / image_files[idx])
-            channel_img = img.get_image_data("TCZYX", C=channel_index_list)
-
-            lbl = AICSImage(self._label_directory.value / label_files[idx])
-            label = lbl.get_image_data("TCZYX", C=0)
-
-            custom_classifier.train(
-                features=feature_set,
-                image=np.squeeze(channel_img),
-                ground_truth=np.squeeze(label),
-                continue_training=True,
+        for idx, (image_file, label_file) in enumerate(
+            zip(image_files, label_files)
+        ):
+            logger.info(
+                f"Training Image: {idx+1} of {len(image_files)} : {image_file}"
             )
 
-            print(f"Training Image: {idx+1} of {len(image_files)} : {file}")
-            self._progress_bar.value = idx + 1
+            img = AICSImage(self._image_directory.value / image_file)
+            channel_img = img.get_image_data("TCZYX", C=channel_index_list)
+
+            lbl = AICSImage(self._label_directory.value / label_file)
+            label = lbl.get_image_data("TCZYX", C=0)
+            try:
+                custom_classifier.train(
+                    features=feature_set,
+                    image=np.squeeze(channel_img),
+                    ground_truth=np.squeeze(label),
+                    continue_training=True,
+                )
+                self._progress_bar.value = idx + 1
+            except Exception as e:
+                logger.error(f"Error training {image_file}: {e}")
+                self._progress_bar.value = idx + 1
+                continue
 
         self._classifier_statistics_table(custom_classifier)
         self._progress_bar.label = f"Trained on {len(image_files)} Images"
+        logger.removeHandler(handler)
 
     def image_train(self):
+        layer_name = self._image_layer.value[0].name
+        print(f"Training on {layer_name}")
         image_list = [image.data for image in self._image_layer.value]
         image_stack = np.stack(image_list, axis=0)
         label = self._label_layer.value.data
+
+        # https://github.com/clEsperanto/pyclesperanto_prototype/issues/163
+        cle.set_wait_for_kernel_finish(True)
 
         if not self._continue_training:
             apoc.erase_classifier(self._classifier_file.value)
@@ -353,7 +393,6 @@ class ApocContainer(Container):
             continue_training=True,
         )
 
-        layer_name = self._image_layer.value[0].name
         self._single_result_label.value = f"Trained on {layer_name}"
 
     def _get_prediction_classifier_instance(self):
@@ -369,6 +408,21 @@ class ApocContainer(Container):
 
     def batch_predict(self):
         image_files = os.listdir(self._image_directory.value)
+
+        log_loc = self._output_directory.value / "log.txt"
+        logger, handler = self.setup_logger(log_loc)
+
+        logger.info(
+            f"""
+        Classifier: {self._classifier_file.value}
+        Channels: {self._image_channels.value}
+        Num. Files: {len(image_files)}
+        Image Directory: {self._image_directory.value}
+        Output Directory: {self._output_directory.value}"""
+        )
+
+        # https://github.com/clEsperanto/pyclesperanto_prototype/issues/163
+        cle.set_wait_for_kernel_finish(True)
 
         self._progress_bar.label = f"Predicting {len(image_files)} Images"
         self._progress_bar.value = 0
@@ -391,25 +445,40 @@ class ApocContainer(Container):
         )
 
         for idx, file in enumerate(image_files):
-            img = AICSImage(self._image_directory.value / image_files[idx])
+            logger.info(
+                f"Predicting Image: {idx+1} of {len(image_files)} : {file}"
+            )
+            img = AICSImage(self._image_directory.value / file)
             channel_img = img.get_image_data("TCZYX", C=channel_index_list)
-
-            result = custom_classifier.predict(image=np.squeeze(channel_img))
+            try:
+                result = custom_classifier.predict(
+                    image=np.squeeze(channel_img)
+                )
+            except Exception as e:
+                logger.error(f"Error predicting {file}: {e}")
+                self._progress_bar.value = idx + 1
+                continue
 
             OmeTiffWriter.save(
                 data=cle.pull(result).astype(np.int32),
-                uri=self._output_directory.value / image_files[idx],
+                uri=self._output_directory.value / file,
                 dim_order=img_dims,
                 channel_names=["Labels"],
                 physical_pixel_sizes=img.physical_pixel_sizes,
             )
+            del result
 
-            print(f"Predicting Image: {idx+1} of {len(image_files)} : {file}")
             self._progress_bar.value = idx + 1
 
         self._progress_bar.label = f"Predicted {len(image_files)} Images"
+        logger.removeHandler(handler)
 
     def image_predict(self):
+        layer_name = self._image_layer.value[0].name
+        print(f"Predicting {layer_name}")
+        # https://github.com/clEsperanto/pyclesperanto_prototype/issues/163
+        cle.set_wait_for_kernel_finish(True)
+
         image_list = [image.data for image in self._image_layer.value]
         image_stack = np.stack(image_list, axis=0)
         scale = self._image_layer.value[0].scale
@@ -427,7 +496,6 @@ class ApocContainer(Container):
 
         self._viewer.add_labels(result, scale=scale)
 
-        layer_name = self._image_layer.value[0].name
         self._single_result_label.value = f"Predicted {layer_name}"
 
         return result
