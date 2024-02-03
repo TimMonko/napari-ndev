@@ -1,7 +1,6 @@
 import logging
 import os
 import pathlib
-import sys
 import tempfile
 
 import numpy as np
@@ -9,12 +8,6 @@ import pyclesperanto_prototype as cle
 import pytest
 
 from napari_ndev._apoc_container import ApocContainer
-
-POSIX = os.name == "posix"
-WINDOWS = os.name == "nt"
-LINUX = sys.platform.startswith("linux")
-MACOS = sys.platform.startswith("darwin")
-CI = os.getenv("CI")
 
 
 def test_update_channel_order(make_napari_viewer):
@@ -115,9 +108,7 @@ def empty_classifier_file():
         yield classifier_file_path
 
 
-@pytest.mark.skipif(
-    "LINUX and CI", reason="Segmentation faults only happen on CI"
-)
+@pytest.mark.notox
 def test_image_train(make_napari_viewer, test_data, empty_classifier_file):
     viewer = make_napari_viewer()
     test_image, _, test_labels, _ = test_data
@@ -157,9 +148,7 @@ def trained_classifier_file(
     yield empty_classifier_file
 
 
-@pytest.mark.skipif(
-    "LINUX and CI", reason="Segmentation faults only happen on CI"
-)
+@pytest.mark.notox
 def test_image_predict(make_napari_viewer, test_data, trained_classifier_file):
     viewer = make_napari_viewer()
     test_image, _, _, _ = test_data
@@ -177,9 +166,7 @@ def test_image_predict(make_napari_viewer, test_data, trained_classifier_file):
     assert cle.pull(wdg._viewer.layers["result"].data).any() > 0
 
 
-@pytest.mark.skipif(
-    "LINUX and CI", reason="Segmentation faults only happen on CI"
-)
+@pytest.mark.notox
 def test_batch_predict_normal_operation(make_napari_viewer, tmp_path):
     image_directory = pathlib.Path(
         "src", "napari_ndev", "_tests", "resources", "Apoc", "Images"
@@ -214,9 +201,7 @@ def test_batch_predict_normal_operation(make_napari_viewer, tmp_path):
     assert container._progress_bar.label == f"Predicted {num_files} Images"
 
 
-@pytest.mark.skipif(
-    "LINUX and CI", reason="Segmentation faults only happen on CI"
-)
+@pytest.mark.notox
 def test_batch_predict_exception_logging(make_napari_viewer, tmp_path):
     image_directory = pathlib.Path(
         "src", "napari_ndev", "_tests", "resources", "Apoc", "Images"
