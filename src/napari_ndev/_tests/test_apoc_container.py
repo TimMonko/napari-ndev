@@ -1,6 +1,7 @@
 import logging
 import os
 import pathlib
+import sys
 import tempfile
 
 import numpy as np
@@ -8,6 +9,12 @@ import pyclesperanto_prototype as cle
 import pytest
 
 from napari_ndev._apoc_container import ApocContainer
+
+POSIX = os.name == "posix"
+WINDOWS = os.name == "nt"
+LINUX = sys.platform.startswith("linux")
+MACOS = sys.platform.startswith("darwin")
+CI = os.getenv("CI")
 
 
 def test_update_channel_order(make_napari_viewer):
