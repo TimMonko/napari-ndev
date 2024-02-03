@@ -115,7 +115,9 @@ def empty_classifier_file():
         yield classifier_file_path
 
 
-@pytest.mark.notox
+@pytest.mark.skipif(
+    "LINUX and CI", reason="Segmentation faults only happen on CI"
+)
 def test_image_train(make_napari_viewer, test_data, empty_classifier_file):
     viewer = make_napari_viewer()
     test_image, _, test_labels, _ = test_data
