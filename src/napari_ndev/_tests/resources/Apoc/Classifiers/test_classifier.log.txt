@@ -1,0 +1,17 @@
+2024-02-02 17:44:06,087 -
+        Classifier: C:\Users\timmo\napari-ndev\src\napari_ndev\_tests\resources\Apoc\Classifiers\test_classifier.cl
+        Channels: ['IBA1']
+        Num. Files: 2
+        Image Directory: C:\Users\timmo\napari-ndev\src\napari_ndev\_tests\resources\Apoc\Images
+        Label Directory: C:\Users\timmo\napari-ndev\src\napari_ndev\_tests\resources\Apoc\Annotations
+        GPU: <NVIDIA GeForce RTX 3060 on Platform: NVIDIA CUDA (1 refs)>
+2024-02-02 17:44:06,106 - Training Image: 1 of 2 : SPF-4MM-22 slide 9-S6_Top Slide_TR2_p00_0_A01f00d0.tif
+2024-02-02 17:44:08,683 - Training Image: 2 of 2 : SPF-4MM-22 slide 9-S9_Top Slide_TR5_p00_0_A01f00d0.tif
+2024-02-02 17:52:51,609 -
+        Classifier: C:\Users\timmo\napari-ndev\src\napari_ndev\_tests\resources\Apoc\Classifiers\test_classifier.cl
+        Channels: ['IBA1']
+        Num. Files: 2
+        Image Directory: C:\Users\timmo\napari-ndev\src\napari_ndev\_tests\resources\Apoc\Images
+        Label Directory: C:\Users\timmo\napari-ndev\src\napari_ndev\_tests\resources\Apoc\Annotations
+2024-02-02 17:52:51,631 - Training Image: 1 of 2 : SPF-4MM-22 slide 9-S6_Top Slide_TR2_p00_0_A01f00d0.tif
+2024-02-02 17:52:54,170 - Training Image: 2 of 2 : SPF-4MM-22 slide 9-S9_Top Slide_TR5_p00_0_A01f00d0.tif
