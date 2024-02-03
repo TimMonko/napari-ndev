@@ -189,8 +189,17 @@ def test_batch_predict_normal_operation(make_napari_viewer, tmp_path):
     output_directory.mkdir()
 
     classifier = pathlib.Path(
-        r"C:\Users\timmo\napari-ndev\src\napari_ndev\_tests\resources"
-        r"\Apoc\Classifiers\newlabels_pixel_classifier.cl"
+        os.path.join(
+            "src",
+            "napari_ndev",
+            "_tests",
+            "resources",
+            "Apoc",
+            "Classifiers",
+            "newlabels_pixel_classifier.cl",
+        )
+        # r"C:\Users\timmo\napari-ndev\src\napari_ndev\_tests\resources"
+        # r"\Apoc\Classifiers\newlabels_pixel_classifier.cl"
     )
 
     # Create an instance of ApocContainer
