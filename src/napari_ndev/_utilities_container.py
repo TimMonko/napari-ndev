@@ -162,7 +162,6 @@ class UtilitiesContainer(Container):
         self._physical_pixel_sizes_x.value = img.physical_pixel_sizes.X
 
     def update_metadata_from_file(self):
-        print(self._files.value[0])
         img = AICSImage(self._files.value[0])
         self._img = img
         self._update_metadata(img)
@@ -192,32 +191,37 @@ class UtilitiesContainer(Container):
         else:
             return img.data
 
-    def concatenate_images(self):
+    def concatenate_images(
+        self,
+        concatenate_files: bool,
+        files: List[PathLike],
+        concatenate_layers: bool,
+        layers: List[layers.Image],
+    ):
         array_list = []
-        if self._concatenate_image_files.value:
-            for file in self._files.value:
+        if concatenate_files:
+            for file in files:
                 img = AICSImage(file)
                 img_data = self._process_image_data(img)
 
-                channel_list = ast.literal_eval(self._channel_names.value)
-                for idx, _ in enumerate(channel_list):
+                for idx in range(img_data.shape[1]):  # iter over all channels
                     array = img_data[:, [idx], :, :, :]
-
                     if array.max() > 0:
                         array_list.append(array)
 
-        if self._concatenate_image_layers.value:
-            for layer in self._image_layer.value:
+        if concatenate_layers:
+            for layer in layers:
                 layer_data = layer.data
                 # convert to 5D array for compatability with image dims
                 while len(layer_data.shape) < 5:
                     layer_data = np.expand_dims(layer_data, axis=0)
                 array_list.append(layer_data)
 
-        self._img_data = np.concatenate(array_list, axis=1)
+        return np.concatenate(array_list, axis=1)
 
-    def _get_p_sizes(self):
-        self._p_sizes = PhysicalPixelSizes(
+    @property
+    def p_sizes(self):
+        return PhysicalPixelSizes(
             self._physical_pixel_sizes_z.value,
             self._physical_pixel_sizes_y.value,
             self._physical_pixel_sizes_x.value,
@@ -237,7 +241,6 @@ class UtilitiesContainer(Container):
         layer: str,
     ) -> None:
         """Common logic for saving data."""
-        self._get_p_sizes()
         if data.dtype == np.int64:
             data = data.astype(np.int32)
 
@@ -247,7 +250,7 @@ class UtilitiesContainer(Container):
                 uri=uri,
                 dim_order=dim_order,
                 channel_names=channel_names,
-                physical_pixel_sizes=self._p_sizes,
+                physical_pixel_sizes=self.p_sizes,
             )
             self._results.value = f"Saved {layer}: " + str(
                 self._save_name.value
@@ -258,7 +261,7 @@ class UtilitiesContainer(Container):
                 data=data,
                 uri=uri,
                 dim_order=dim_order,
-                physical_pixel_sizes=self._p_sizes,
+                physical_pixel_sizes=self.p_sizes,
             )
             self._results.value = (
                 "ValueError: "
@@ -268,7 +271,12 @@ class UtilitiesContainer(Container):
             )
 
     def save_ome_tiff(self) -> None:
-        self.concatenate_images()
+        self._img_data = self.concatenate_images(
+            self._concatenate_image_files.value,
+            self._files.value,
+            self._concatenate_image_layers.value,
+            self._image_layer.value,
+        )
         img_save_loc = self._get_save_loc("Images")
         channel_names = ast.literal_eval(self._channel_names.value)
 
