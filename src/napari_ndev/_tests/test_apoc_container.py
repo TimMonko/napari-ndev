@@ -169,17 +169,22 @@ def test_image_predict(make_napari_viewer, test_data, trained_classifier_file):
 @pytest.mark.notox
 def test_batch_predict_normal_operation(make_napari_viewer, tmp_path):
     image_directory = pathlib.Path(
-        os.path.join(
-            "src", "napari_ndev", "_tests", "resources", "Apoc", "Images"
-        )
+        "src", "napari_ndev", "_tests", "resources", "Apoc", "Images"
     )
     num_files = len(list(image_directory.glob("*.tif")))
     output_directory = tmp_path / "output"
     output_directory.mkdir()
 
     classifier = pathlib.Path(
-        r"C:\Users\timmo\napari-ndev\src\napari_ndev\_tests\resources"
-        r"\Apoc\Classifiers\newlabels_pixel_classifier.cl"
+        "src",
+        "napari_ndev",
+        "_tests",
+        "resources",
+        "Apoc",
+        "Classifiers",
+        "newlabels_pixel_classifier.cl",
+        # r"C:\Users\timmo\napari-ndev\src\napari_ndev\_tests\resources"
+        # r"\Apoc\Classifiers\newlabels_pixel_classifier.cl"
     )
 
     # Create an instance of ApocContainer
@@ -199,9 +204,7 @@ def test_batch_predict_normal_operation(make_napari_viewer, tmp_path):
 @pytest.mark.notox
 def test_batch_predict_exception_logging(make_napari_viewer, tmp_path):
     image_directory = pathlib.Path(
-        os.path.join(
-            "src", "napari_ndev", "_tests", "resources", "Apoc", "Images"
-        )
+        "src", "napari_ndev", "_tests", "resources", "Apoc", "Images"
     )
     num_files = len(list(image_directory.glob("*.tif")))
     output_directory = tmp_path / "output"
