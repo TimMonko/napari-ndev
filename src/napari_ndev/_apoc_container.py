@@ -31,6 +31,11 @@ from magicgui.widgets import (
 )
 from napari import layers
 
+from napari_ndev.helpers import (
+    check_for_missing_files,
+    get_directory_and_files,
+)
+
 if TYPE_CHECKING:
     import napari
 
@@ -51,6 +56,10 @@ class ApocContainer(Container):
         super().__init__()
         self
         self._viewer = viewer
+
+        ##############################
+        # Widgets
+        ##############################
         self._image_directory = FileEdit(label="Image Directory", mode="d")
         self._label_directory = FileEdit(label="Label Directory", mode="d")
         self._output_directory = FileEdit(label="Output Directory", mode="d")
@@ -59,7 +68,6 @@ class ApocContainer(Container):
             mode="r",
             tooltip="Create a .txt file and rename it to .cl ending.",
         )
-        self._classifier_channels = Label(value="Trained on [#] Channels")
 
         self._classifier_type_mapping = {
             "PixelClassifier": apoc.PixelClassifier,
@@ -155,7 +163,6 @@ class ApocContainer(Container):
         self.extend(
             [
                 self._classifier_file,
-                self._classifier_channels,
                 self._classifier_type,
                 self._positive_class_id,
                 self._max_depth,
@@ -179,8 +186,10 @@ class ApocContainer(Container):
                 self._single_result_label,
             ]
         )
-
-        self._image_directory.changed.connect(self._update_metadata)
+        ##############################
+        # Event Handling
+        ##############################
+        self._image_directory.changed.connect(self._update_metadata_from_file)
         self._image_channels.changed.connect(self._update_channel_order)
         self._classifier_file.changed.connect(self._update_classifier_metadata)
         self._open_custom_feature_generator.clicked.connect(
@@ -191,9 +200,9 @@ class ApocContainer(Container):
         self._train_image_button.clicked.connect(self.image_train)
         self._predict_image_layer.clicked.connect(self.image_predict)
 
-    def _update_metadata(self):
-        files = os.listdir(self._image_directory.value)
-        img = AICSImage(self._image_directory.value / files[0])
+    def _update_metadata_from_file(self):
+        _, files = get_directory_and_files(self._image_directory.value)
+        img = AICSImage(files[0])
         self._image_channels.choices = img.channel_names
 
     def _update_channel_order(self):
@@ -201,6 +210,9 @@ class ApocContainer(Container):
             self._image_channels.value
         )
 
+    ##############################
+    # Classifier Related Functions
+    ##############################
     def _set_value_from_pattern(self, pattern, content):
         match = re.search(pattern, content)
         return match.group(1) if match else None
@@ -208,11 +220,6 @@ class ApocContainer(Container):
     def _process_classifier_metadata(self, content):
         self._classifier_type.value = self._set_value_from_pattern(
             r"classifier_class_name\s*=\s*([^\n]+)", content
-        )
-        self._classifier_channels.value = (
-            "Trained on "
-            + self._set_value_from_pattern(r"num_classes\s*=\s*(\d+)", content)
-            + " Channels"
         )
         self._max_depth.value = self._set_value_from_pattern(
             r"max_depth\s*=\s*(\d+)", content
@@ -233,7 +240,6 @@ class ApocContainer(Container):
 
         # Ignore rest of function if file contents are empty
         if not content.strip():
-            self._classifier_channels.value = "New Classifier"
             return
 
         self._process_classifier_metadata(content)
@@ -307,9 +313,18 @@ class ApocContainer(Container):
         logger.addHandler(handler)
         return logger, handler
 
+    ##############################
+    # Training and Prediction
+    ##############################
     def batch_train(self):
-        image_files = os.listdir(self._image_directory.value)
-        label_files = os.listdir(self._label_directory.value)
+        image_directory, image_files = get_directory_and_files(
+            self._image_directory.value
+        )
+        label_directory, label_files = get_directory_and_files(
+            self._label_directory.value
+        )
+        missing_files = check_for_missing_files(image_files, label_directory)
+
         log_loc = self._classifier_file.value.with_suffix(".log.txt")
         logger, handler = self.setup_logger(log_loc)
 
@@ -318,8 +333,9 @@ class ApocContainer(Container):
         Classifier: {self._classifier_file.value}
         Channels: {self._image_channels.value}
         Num. Files: {len(image_files)}
-        Image Directory: {self._image_directory.value}
-        Label Directory: {self._label_directory.value}"""
+        Image Directory: {image_directory}
+        Label Directory: {label_directory}
+        Files Missing in Label Directory: {missing_files}"""
         )
 
         # https://github.com/clEsperanto/pyclesperanto_prototype/issues/163
@@ -335,8 +351,9 @@ class ApocContainer(Container):
         custom_classifier = self._get_training_classifier_instance()
         feature_set = self._get_feature_set()
 
-        img = AICSImage(self._image_directory.value / image_files[0])
+        img = AICSImage(image_files[0])
         channel_index_list = []
+
         for channel in self._image_channels.value:
             channel_index = img.channel_names.index(channel)
             channel_index_list.append(channel_index)
@@ -344,14 +361,12 @@ class ApocContainer(Container):
         for idx, (image_file, label_file) in enumerate(
             zip(image_files, label_files)
         ):
-            logger.info(
-                f"Training Image: {idx+1} of {len(image_files)} : {image_file}"
-            )
+            logger.info(f"Training Image {idx+1}: {image_file.name}")
 
-            img = AICSImage(self._image_directory.value / image_file)
+            img = AICSImage(image_directory / image_file.name)
             channel_img = img.get_image_data("TCZYX", C=channel_index_list)
 
-            lbl = AICSImage(self._label_directory.value / label_file)
+            lbl = AICSImage(label_directory / image_file.name)
             label = lbl.get_image_data("TCZYX", C=0)
             try:
                 custom_classifier.train(
@@ -407,7 +422,9 @@ class ApocContainer(Container):
             return None
 
     def batch_predict(self):
-        image_files = os.listdir(self._image_directory.value)
+        image_directory, image_files = get_directory_and_files(
+            dir=self._image_directory.value,
+        )
 
         log_loc = self._output_directory.value / "log.txt"
         logger, handler = self.setup_logger(log_loc)
@@ -417,7 +434,7 @@ class ApocContainer(Container):
         Classifier: {self._classifier_file.value}
         Channels: {self._image_channels.value}
         Num. Files: {len(image_files)}
-        Image Directory: {self._image_directory.value}
+        Image Directory: {image_directory}
         Output Directory: {self._output_directory.value}"""
         )
 
@@ -430,7 +447,7 @@ class ApocContainer(Container):
 
         custom_classifier = self._get_prediction_classifier_instance()
 
-        img = AICSImage(self._image_directory.value / image_files[0])
+        img = AICSImage(image_files[0])
         channel_index_list = []
         for channel in self._image_channels.value:
             channel_index = img.channel_names.index(channel)
@@ -445,10 +462,9 @@ class ApocContainer(Container):
         )
 
         for idx, file in enumerate(image_files):
-            logger.info(
-                f"Predicting Image: {idx+1} of {len(image_files)} : {file}"
-            )
-            img = AICSImage(self._image_directory.value / file)
+            logger.info(f"Predicting Image {idx+1}: {file.name}")
+            # img = AICSImage(self._image_directory.value / file)
+            img = AICSImage(file)
             channel_img = img.get_image_data("TCZYX", C=channel_index_list)
             try:
                 result = custom_classifier.predict(
@@ -461,7 +477,7 @@ class ApocContainer(Container):
 
             OmeTiffWriter.save(
                 data=cle.pull(result).astype(np.int32),
-                uri=self._output_directory.value / file,
+                uri=self._output_directory.value / file.name,
                 dim_order=img_dims,
                 channel_names=["Labels"],
                 physical_pixel_sizes=img.physical_pixel_sizes,
