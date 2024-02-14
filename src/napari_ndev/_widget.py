@@ -4,7 +4,7 @@ neural development (nDev) widget collection
 import os
 import pathlib
 from functools import reduce
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Union
 
 import dask.array as da
 import pyclesperanto_prototype as cle
@@ -18,7 +18,7 @@ if TYPE_CHECKING:
     pass
 
 
-def _get_channel_image(img, dims: str, channel: str or int):
+def _get_channel_image(img, dims: str, channel: Union[str, int]):
     """From an AICSImage object (img), get image data for a particular
     channel whether from the channels name (str) or the channel's index
     (int)
