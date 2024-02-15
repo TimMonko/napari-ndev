@@ -31,10 +31,7 @@ from magicgui.widgets import (
 )
 from napari import layers
 
-from napari_ndev.helpers import (
-    check_for_missing_files,
-    get_directory_and_files,
-)
+from napari_ndev.helpers import get_directory_and_files
 
 if TYPE_CHECKING:
     import napari
@@ -323,7 +320,7 @@ class ApocContainer(Container):
         label_directory, label_files = get_directory_and_files(
             self._label_directory.value
         )
-        missing_files = check_for_missing_files(image_files, label_directory)
+        # missing_files = check_for_missing_files(image_files, label_directory)
 
         log_loc = self._classifier_file.value.with_suffix(".log.txt")
         logger, handler = self.setup_logger(log_loc)
@@ -335,7 +332,7 @@ class ApocContainer(Container):
         Num. Files: {len(image_files)}
         Image Directory: {image_directory}
         Label Directory: {label_directory}
-        Files Missing in Label Directory: {missing_files}"""
+        """
         )
 
         # https://github.com/clEsperanto/pyclesperanto_prototype/issues/163
@@ -358,9 +355,14 @@ class ApocContainer(Container):
             channel_index = img.channel_names.index(channel)
             channel_index_list.append(channel_index)
 
-        for idx, (image_file, label_file) in enumerate(
-            zip(image_files, label_files)
-        ):
+        # for idx, (image_file, label_file) in enumerate(
+        #     zip(image_files, label_files)
+        # ):
+        for idx, image_file in enumerate(image_files):
+            if not (label_directory / image_file.name).exists():
+                logger.error(f"Label file missing for {image_file.name}")
+                self._progress_bar.value = idx + 1
+                continue
             logger.info(f"Training Image {idx+1}: {image_file.name}")
 
             img = AICSImage(image_directory / image_file.name)
@@ -368,6 +370,7 @@ class ApocContainer(Container):
 
             lbl = AICSImage(label_directory / image_file.name)
             label = lbl.get_image_data("TCZYX", C=0)
+
             try:
                 custom_classifier.train(
                     features=feature_set,
