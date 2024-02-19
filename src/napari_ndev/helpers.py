@@ -1,3 +1,5 @@
+import logging
+import time
 from pathlib import Path
 from typing import List, Tuple, Union
 
@@ -47,3 +49,24 @@ def check_for_missing_files(
                 missing_files.append((file.name, directory.name))
 
     return missing_files
+
+
+def setup_logger(log_loc=PathLike):
+    """
+    Set up a logger with the specified log location.
+
+    Parameters:
+    log_loc (PathLike): The path to the log file.
+
+    Returns:
+    logger (logging.Logger): The logger object.
+    handler (logging.FileHandler): The file handler object.
+    """
+    logger = logging.getLogger(__name__ + str(time.time()))
+    logger.setLevel(logging.INFO)
+    handler = logging.FileHandler(log_loc)
+    handler.setLevel(logging.INFO)
+    formatter = logging.Formatter("%(asctime)s - %(message)s")
+    handler.setFormatter(formatter)
+    logger.addHandler(handler)
+    return logger, handler

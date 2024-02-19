@@ -1,0 +1,102 @@
+2024-02-14 17:10:32,036 -
+        Classifier: C:\Users\timmo\napari-ndev\src\napari_ndev\_tests\resources\Apoc\Classifiers\newlabels_pixel_classifier.cl
+        Channels: ['IBA1']
+        Num. Files: 2
+        Image Directory: C:\Users\timmo\napari-ndev\src\napari_ndev\_tests\resources\Apoc\Images
+        Label Directory: C:\Users\timmo\napari-ndev\src\napari_ndev\_tests\resources\Apoc\Annotations
+        Files Missing in Label Directory: []
+2024-02-14 17:10:32,055 - Training Image 1: SPF-4MM-22 slide 9-S6_Top Slide_TR2_p00_0_A01f00d0.tif
+2024-02-14 17:11:00,052 - Training Image 2: SPF-4MM-22 slide 9-S9_Top Slide_TR5_p00_0_A01f00d0.tif
+2024-02-14 17:11:19,259 -
+        Classifier: C:\Users\timmo\napari-ndev\src\napari_ndev\_tests\resources\Apoc\Classifiers\newlabels_pixel_classifier.cl
+        Channels: ['IBA1']
+        Num. Files: 2
+        Image Directory: C:\Users\timmo\napari-ndev\src\napari_ndev\_tests\resources\Apoc\Images
+        Label Directory: C:\Users\timmo\napari-ndev\src\napari_ndev\_tests\resources\Apoc\Annotations
+        Files Missing in Label Directory: [('SPF-4MM-22 slide 9-S9_Top Slide_TR5_p00_0_A01f00d0.tif', 'Annotations')]
+2024-02-14 17:11:19,283 - Training Image 1: SPF-4MM-22 slide 9-S6_Top Slide_TR2_p00_0_A01f00d0.tif
+2024-02-14 17:12:56,709 -
+        Classifier: C:\Users\timmo\napari-ndev\src\napari_ndev\_tests\resources\Apoc\Classifiers\newlabels_pixel_classifier.cl
+        Channels: ['IBA1']
+        Num. Files: 2
+        Image Directory: C:\Users\timmo\napari-ndev\src\napari_ndev\_tests\resources\Apoc\Images
+        Label Directory: C:\Users\timmo\napari-ndev\src\napari_ndev\_tests\resources\Apoc\Annotations
+        Files Missing in Label Directory: ('SPF-4MM-22 slide 9-S9_Top Slide_TR5_p00_0_A01f00d0.tif', 'Annotations')
+2024-02-14 17:12:56,727 - Training Image 1: SPF-4MM-22 slide 9-S6_Top Slide_TR2_p00_0_A01f00d0.tif
+2024-02-14 17:19:28,292 -
+        Classifier: C:\Users\timmo\napari-ndev\src\napari_ndev\_tests\resources\Apoc\Classifiers\newlabels_pixel_classifier.cl
+        Channels: ['IBA1']
+        Num. Files: 2
+        Image Directory: C:\Users\timmo\napari-ndev\src\napari_ndev\_tests\resources\Apoc\Images
+        Label Directory: C:\Users\timmo\napari-ndev\src\napari_ndev\_tests\resources\Apoc\Annotations
+        Files Missing in Label Directory: [('SPF-4MM-22 slide 9-S6_Top Slide_TR2_p00_0_A01f00d0.tif', 'Annotations'), ('SPF-4MM-22 slide 9-S9_Top Slide_TR5_p00_0_A01f00d0.tif', 'Annotations')]
+2024-02-14 17:22:53,201 -
+        Classifier: C:\Users\timmo\napari-ndev\src\napari_ndev\_tests\resources\Apoc\Classifiers\newlabels_pixel_classifier.cl
+        Channels: ['IBA1']
+        Num. Files: 2
+        Image Directory: C:\Users\timmo\napari-ndev\src\napari_ndev\_tests\resources\Apoc\Images
+        Label Directory: C:\Users\timmo\napari-ndev\src\napari_ndev\_tests\resources\Apoc\Annotations
+        Files Missing in Label Directory: [('SPF-4MM-22 slide 9-S6_Top Slide_TR2_p00_0_A01f00d0.tif', 'Annotations'), ('SPF-4MM-22 slide 9-S9_Top Slide_TR5_p00_0_A01f00d0.tif', 'Annotations')]
+2024-02-14 17:22:55,577 -
+        Classifier: C:\Users\timmo\napari-ndev\src\napari_ndev\_tests\resources\Apoc\Classifiers\newlabels_pixel_classifier.cl
+        Channels: ['IBA1']
+        Num. Files: 2
+        Image Directory: C:\Users\timmo\napari-ndev\src\napari_ndev\_tests\resources\Apoc\Images
+        Label Directory: C:\Users\timmo\napari-ndev\src\napari_ndev\_tests\resources\Apoc\Annotations
+        Files Missing in Label Directory: [('SPF-4MM-22 slide 9-S6_Top Slide_TR2_p00_0_A01f00d0.tif', 'Annotations'), ('SPF-4MM-22 slide 9-S9_Top Slide_TR5_p00_0_A01f00d0.tif', 'Annotations')]
+2024-02-14 17:23:42,134 -
+        Classifier: C:\Users\timmo\napari-ndev\src\napari_ndev\_tests\resources\Apoc\Classifiers\newlabels_pixel_classifier.cl
+        Channels: ['IBA1']
+        Num. Files: 2
+        Image Directory: C:\Users\timmo\napari-ndev\src\napari_ndev\_tests\resources\Apoc\Images
+        Label Directory: C:\Users\timmo\napari-ndev\src\napari_ndev\_tests\resources\Apoc\Annotations
+
+2024-02-14 17:24:49,442 -
+        Classifier: C:\Users\timmo\napari-ndev\src\napari_ndev\_tests\resources\Apoc\Classifiers\newlabels_pixel_classifier.cl
+        Channels: ['IBA1']
+        Num. Files: 2
+        Image Directory: C:\Users\timmo\napari-ndev\src\napari_ndev\_tests\resources\Apoc\Images
+        Label Directory: C:\Users\timmo\napari-ndev\src\napari_ndev\_tests\resources\Apoc\Annotations
+
+2024-02-14 17:26:28,364 -
+        Classifier: C:\Users\timmo\napari-ndev\src\napari_ndev\_tests\resources\Apoc\Classifiers\newlabels_pixel_classifier.cl
+        Channels: ['IBA1']
+        Num. Files: 2
+        Image Directory: C:\Users\timmo\napari-ndev\src\napari_ndev\_tests\resources\Apoc\Images
+        Label Directory: C:\Users\timmo\napari-ndev\src\napari_ndev\_tests\resources\Apoc\Annotations
+
+2024-02-14 17:26:28,384 - Training Image 1: SPF-4MM-22 slide 9-S6_Top Slide_TR2_p00_0_A01f00d0.tif
+2024-02-14 17:26:55,871 - Training Image 2: SPF-4MM-22 slide 9-S9_Top Slide_TR5_p00_0_A01f00d0.tif
+2024-02-14 17:30:44,915 -
+        Classifier: C:\Users\timmo\napari-ndev\src\napari_ndev\_tests\resources\Apoc\Classifiers\newlabels_pixel_classifier.cl
+        Channels: ['IBA1']
+        Num. Files: 2
+        Image Directory: C:\Users\timmo\napari-ndev\src\napari_ndev\_tests\resources\Apoc\Images
+        Label Directory: C:\Users\timmo\napari-ndev\src\napari_ndev\_tests\resources\Apoc\Annotations
+
+2024-02-14 17:30:44,935 - Training Image 1: SPF-4MM-22 slide 9-S6_Top Slide_TR2_p00_0_A01f00d0.tif
+2024-02-14 17:34:27,683 -
+        Classifier: C:\Users\timmo\napari-ndev\src\napari_ndev\_tests\resources\Apoc\Classifiers\newlabels_pixel_classifier.cl
+        Channels: ['IBA1']
+        Num. Files: 2
+        Image Directory: C:\Users\timmo\napari-ndev\src\napari_ndev\_tests\resources\Apoc\Images
+        Label Directory: C:\Users\timmo\napari-ndev\src\napari_ndev\_tests\resources\Apoc\Annotations
+
+2024-02-14 17:34:27,700 - Training Image 1: SPF-4MM-22 slide 9-S6_Top Slide_TR2_p00_0_A01f00d0.tif
+2024-02-14 19:45:41,451 -
+        Classifier: C:\Users\timmo\napari-ndev\src\napari_ndev\_tests\resources\Apoc\Classifiers\newlabels_pixel_classifier.cl
+        Channels: ['IBA1']
+        Num. Files: 2
+        Image Directory: C:\Users\timmo\napari-ndev\src\napari_ndev\_tests\resources\Apoc\Images
+        Label Directory: C:\Users\timmo\napari-ndev\src\napari_ndev\_tests\resources\Apoc\Annotations
+
+2024-02-14 19:45:41,469 - Training Image 1: SPF-4MM-22 slide 9-S6_Top Slide_TR2_p00_0_A01f00d0.tif
+2024-02-14 19:49:31,605 -
+        Classifier: C:\Users\timmo\napari-ndev\src\napari_ndev\_tests\resources\Apoc\Classifiers\newlabels_pixel_classifier.cl
+        Channels: ['IBA1']
+        Num. Files: 2
+        Image Directory: C:\Users\timmo\napari-ndev\src\napari_ndev\_tests\resources\Apoc\Images
+        Label Directory: C:\Users\timmo\napari-ndev\src\napari_ndev\_tests\resources\Apoc\Annotations
+
+2024-02-14 19:49:31,624 - Training Image 1: SPF-4MM-22 slide 9-S6_Top Slide_TR2_p00_0_A01f00d0.tif
+2024-02-14 19:49:58,793 - Label file missing for SPF-4MM-22 slide 9-S9_Top Slide_TR5_p00_0_A01f00d0.tif

@@ -39,12 +39,18 @@ class UtilitiesContainer(Container):
         viewer: "napari.viewer.Viewer",
     ):
         super().__init__()
+        ##############################
+        # Attributes
+        ##############################
         self
         self._viewer = viewer
         self._img_data = None
+        self._image_save_dims = None
         self._label_save_dims = None
         self._p_sizes = None
-
+        ##############################
+        # Widgets
+        ##############################
         self._files = FileEdit(label="File(s)", mode="rm")
 
         self._open_image_button = PushButton(label="Open Images")
@@ -123,8 +129,9 @@ class UtilitiesContainer(Container):
                 self._results,
             ]
         )
-
-        # Callbacks
+        ##############################
+        # Event Handling
+        ##############################
         self._files.changed.connect(self.update_metadata_from_file)
         self._open_image_button.clicked.connect(self.open_images)
         self._metadata_from_selected_layer.clicked.connect(
@@ -240,16 +247,19 @@ class UtilitiesContainer(Container):
         channel_names: List[str],
         layer: str,
     ) -> None:
-        """Common logic for saving data."""
-        if data.dtype == np.int64:
-            data = data.astype(np.int32)
+        # AICSImage does not allow saving labels as np.int64
+        # napari generates labels differently depending on the OS
+        # so we need to convert to np.int32 in case np.int64 generated
+        # see: https://github.com/napari/napari/issues/5545
+        if data.dtype == np.int64 or data.dtype == np.int32:
+            data = data.astype(np.int16)
 
         try:
             OmeTiffWriter.save(
                 data=data,
                 uri=uri,
-                dim_order=dim_order,
-                channel_names=channel_names,
+                dim_order=dim_order or None,
+                channel_names=channel_names or None,
                 physical_pixel_sizes=self.p_sizes,
             )
             self._results.value = f"Saved {layer}: " + str(
@@ -269,6 +279,7 @@ class UtilitiesContainer(Container):
                 + "\nSo, saved with default channel names: \n"
                 + str(self._save_name.value)
             )
+        return
 
     def save_ome_tiff(self) -> None:
         self._img_data = self.concatenate_images(
@@ -278,12 +289,17 @@ class UtilitiesContainer(Container):
             self._image_layer.value,
         )
         img_save_loc = self._get_save_loc("Images")
-        channel_names = ast.literal_eval(self._channel_names.value)
+        # get channel names from widget if truthy
+        cnames = self._channel_names.value
+        channel_names = ast.literal_eval(cnames) if cnames else None
+        # get dim order if from a loaded AICSImage, or else use widget value
+        # the widget value can be None, allowing OmeTiffWriter to handle it
+        dim_order = self._image_save_dims or self._dim_order.value
 
         self._common_save_logic(
             data=self._img_data,
             uri=img_save_loc,
-            dim_order=self._image_save_dims,
+            dim_order=dim_order,
             channel_names=channel_names,
             layer="Image",
         )
@@ -292,15 +308,11 @@ class UtilitiesContainer(Container):
     def save_labels(self) -> None:
         label_data = self._labels_layer.value.data
         label_save_loc = self._get_save_loc("Labels")
-
-        # AICSImage does not allow saving labels as np.int64
-        # napari generates labels differently depending on the OS
-        # so we need to convert to np.int32 in case np.int64 generated
-        # see: https://github.com/napari/napari/issues/5545
+        dim_order = self._label_save_dims or self._dim_order.value
         self._common_save_logic(
             data=label_data,
             uri=label_save_loc,
-            dim_order=self._label_save_dims,
+            dim_order=dim_order,
             channel_names=["Labels"],
             layer="Labels",
         )
@@ -310,7 +322,6 @@ class UtilitiesContainer(Container):
         # inherit shape from selected image layer or else a default
         if self._image_layer.value:
             label_dim = self._image_layer.value[0].data.shape
-            print("image layer:", self._image_layer.value[0])
         else:
             label_dim = self._image_layer.choices[0].data.shape
 
@@ -321,12 +332,11 @@ class UtilitiesContainer(Container):
         shapes_as_labels = shapes.to_labels(labels_shape=label_dim)
 
         shapes_save_loc = self._get_save_loc("ShapesAsLabels")
-
-        # see: https://github.com/napari/napari/issues/5545
+        dim_order = self._label_save_dims or self._dim_order.value
         self._common_save_logic(
             data=shapes_as_labels,
             uri=shapes_save_loc,
-            dim_order=self._label_save_dims,
+            dim_order=dim_order,
             channel_names=["Shapes"],
             layer="Shapes",
         )
