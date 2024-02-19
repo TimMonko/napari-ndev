@@ -1,7 +1,5 @@
-import logging
 import os
 import re
-import time
 from enum import Enum
 from pathlib import Path
 from typing import TYPE_CHECKING, List, Union
@@ -31,7 +29,7 @@ from magicgui.widgets import (
 )
 from napari import layers
 
-from napari_ndev.helpers import get_directory_and_files
+from napari_ndev.helpers import get_directory_and_files, setup_logger
 
 if TYPE_CHECKING:
     import napari
@@ -51,6 +49,9 @@ class ApocContainer(Container):
         # viewer = napari_viewer
     ):
         super().__init__()
+        ##############################
+        # Attributes
+        ##############################
         self
         self._viewer = viewer
 
@@ -299,17 +300,6 @@ class ApocContainer(Container):
                 num_ensembles=self._num_trees.value,
             )
 
-    def setup_logger(self, log_loc):
-        # Create a logger
-        logger = logging.getLogger(__name__ + str(time.time()))
-        logger.setLevel(logging.INFO)
-        handler = logging.FileHandler(log_loc)
-        handler.setLevel(logging.INFO)
-        formatter = logging.Formatter("%(asctime)s - %(message)s")
-        handler.setFormatter(formatter)
-        logger.addHandler(handler)
-        return logger, handler
-
     ##############################
     # Training and Prediction
     ##############################
@@ -323,7 +313,7 @@ class ApocContainer(Container):
         # missing_files = check_for_missing_files(image_files, label_directory)
 
         log_loc = self._classifier_file.value.with_suffix(".log.txt")
-        logger, handler = self.setup_logger(log_loc)
+        logger, handler = setup_logger(log_loc)
 
         logger.info(
             f"""
@@ -355,14 +345,18 @@ class ApocContainer(Container):
             channel_index = img.channel_names.index(channel)
             channel_index_list.append(channel_index)
 
-        # for idx, (image_file, label_file) in enumerate(
-        #     zip(image_files, label_files)
-        # ):
+        # iterate over image files, only pulling label files with an identical
+        # name to the image file. Ensuring that files match by some other
+        # method would be much more complicated, so I'm leaving it up to the
+        # user at this point. In addition, the utilities widget saves with
+        # the same name, so this should be a non-issue, if staying within the
+        # same workflow.
         for idx, image_file in enumerate(image_files):
             if not (label_directory / image_file.name).exists():
                 logger.error(f"Label file missing for {image_file.name}")
                 self._progress_bar.value = idx + 1
                 continue
+
             logger.info(f"Training Image {idx+1}: {image_file.name}")
 
             img = AICSImage(image_directory / image_file.name)
@@ -370,6 +364,8 @@ class ApocContainer(Container):
 
             lbl = AICSImage(label_directory / image_file.name)
             label = lbl.get_image_data("TCZYX", C=0)
+
+            # this is where setting up dask processing would be useful
 
             try:
                 custom_classifier.train(
@@ -430,7 +426,7 @@ class ApocContainer(Container):
         )
 
         log_loc = self._output_directory.value / "log.txt"
-        logger, handler = self.setup_logger(log_loc)
+        logger, handler = setup_logger(log_loc)
 
         logger.info(
             f"""
@@ -451,10 +447,14 @@ class ApocContainer(Container):
         custom_classifier = self._get_prediction_classifier_instance()
 
         img = AICSImage(image_files[0])
-        channel_index_list = []
-        for channel in self._image_channels.value:
-            channel_index = img.channel_names.index(channel)
-            channel_index_list.append(channel_index)
+        channel_index_list = [
+            img.channel_names.index(channel)
+            for channel in self._image_channels.value
+        ]
+        # channel_index_list = []
+        # for channel in self._image_channels.value:
+        #     channel_index = img.channel_names.index(channel)
+        #     channel_index_list.append(channel_index)
 
         img_dims = "".join(
             [
@@ -466,9 +466,12 @@ class ApocContainer(Container):
 
         for idx, file in enumerate(image_files):
             logger.info(f"Predicting Image {idx+1}: {file.name}")
-            # img = AICSImage(self._image_directory.value / file)
+
             img = AICSImage(file)
             channel_img = img.get_image_data("TCZYX", C=channel_index_list)
+
+            # this is where setting up dask processing would be useful
+
             try:
                 result = custom_classifier.predict(
                     image=np.squeeze(channel_img)
@@ -480,7 +483,7 @@ class ApocContainer(Container):
 
             OmeTiffWriter.save(
                 data=cle.pull(result).astype(np.int32),
-                uri=self._output_directory.value / file.name,
+                uri=self._output_directory.value / (file.stem + ".tif"),
                 dim_order=img_dims,
                 channel_names=["Labels"],
                 physical_pixel_sizes=img.physical_pixel_sizes,

@@ -17,6 +17,9 @@ contributions:
     - id: napari-ndev.make_rescale_by
       python_name: napari_ndev._rescale_by:RescaleBy
       title: Make Rescale By
+    - id: napari-ndev.make_workflow_container
+      python_name: napari_ndev._workflow_container:WorkflowContainer
+      title: Make Workflow Container
 
   widgets:
     - command: napari-ndev.make_batch_workflow
@@ -31,3 +34,5 @@ contributions:
       display_name: Custom APOC Feature Set
     - command: napari-ndev.make_rescale_by
       display_name: Rescale By
+    - command: napari-ndev.make_workflow_container
+      display_name: Workflow Container
