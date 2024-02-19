@@ -18,8 +18,14 @@ class RescaleBy(Container):
         viewer: "napari.viewer.Viewer",
     ):
         super().__init__()
+        ##############################
+        # Attributes
+        ##############################
         self
         self._viewer = viewer
+        ##############################
+        # Widgets
+        ##############################
         self._scale_x = FloatSpinBox(
             value=1.0, step=0.00000001, label="Scale X"
         )
@@ -60,9 +66,15 @@ class RescaleBy(Container):
                 self._rescale_by_button,
             ]
         )
-
+        ##############################
+        # Event Handling
+        ##############################
         self._inherit_from_layer.changed.connect(self._inherit_from)
         self._rescale_by_button.clicked.connect(self.rescale_by)
+
+    ##############################
+    # Methods
+    ##############################
 
     def _inherit_from(self):
         scale = self._inherit_from_layer.value.scale
