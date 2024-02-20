@@ -481,8 +481,14 @@ class ApocContainer(Container):
                 self._progress_bar.value = idx + 1
                 continue
 
+            save_data = cle.pull(result)
+            if save_data.max() > 65535:
+                save_data = save_data.astype(np.int32)
+            else:
+                save_data = save_data.astype(np.int16)
+
             OmeTiffWriter.save(
-                data=cle.pull(result).astype(np.int32),
+                data=save_data,
                 uri=self._output_directory.value / (file.stem + ".tif"),
                 dim_order=img_dims,
                 channel_names=["Labels"],
