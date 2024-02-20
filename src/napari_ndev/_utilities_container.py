@@ -266,7 +266,7 @@ class UtilitiesContainer(Container):
             self._results.value = f"Saved {layer}: " + str(
                 self._save_name.value
             )
-
+        # if ValueError is raised, save with default channel names
         except ValueError as e:
             OmeTiffWriter.save(
                 data=data,
