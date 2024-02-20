@@ -189,6 +189,8 @@ class WorkflowContainer(Container):
                 return_dims="TCZYX",
             )
 
+            # <- should I add a check for the result_stack to be a dask array?
+            # <- should this be done using dask or numpy?
             if self._keep_original_images.value:
                 dask_images = da.concatenate(root_stack, axis=1)  # along "C"
                 result_stack = da.concatenate(
