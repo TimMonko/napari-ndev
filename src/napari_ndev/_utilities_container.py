@@ -251,8 +251,9 @@ class UtilitiesContainer(Container):
         # napari generates labels differently depending on the OS
         # so we need to convert to np.int32 in case np.int64 generated
         # see: https://github.com/napari/napari/issues/5545
-        if data.dtype == np.int64 or data.dtype == np.int32:
-            data = data.astype(np.int16)
+        # This is a failsafe
+        if data.dtype == np.int64:
+            data = data.astype(np.int32)
 
         try:
             OmeTiffWriter.save(
@@ -307,6 +308,12 @@ class UtilitiesContainer(Container):
 
     def save_labels(self) -> None:
         label_data = self._labels_layer.value.data
+
+        if label_data.max() > 65535:
+            label_data = label_data.astype(np.int32)
+        else:
+            label_data = label_data.astype(np.int16)
+
         label_save_loc = self._get_save_loc("Labels")
         dim_order = self._label_save_dims or self._dim_order.value
         self._common_save_logic(
@@ -330,6 +337,7 @@ class UtilitiesContainer(Container):
 
         shapes = self._shapes_layer.value
         shapes_as_labels = shapes.to_labels(labels_shape=label_dim)
+        shapes_as_labels = shapes_as_labels.astype(np.int16)
 
         shapes_save_loc = self._get_save_loc("ShapesAsLabels")
         dim_order = self._label_save_dims or self._dim_order.value
