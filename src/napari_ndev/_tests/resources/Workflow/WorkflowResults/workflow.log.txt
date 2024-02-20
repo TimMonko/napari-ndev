@@ -77,3 +77,17 @@
         Roots: ['C:0', 'C:1']
 
 2024-02-19 17:01:51,184 - Processing 1: cells3d2ch.tif
+2024-02-19 20:24:25,590 -
+        Image Directory: C:\Users\timmo\napari-ndev\src\napari_ndev\_tests\resources\Workflow\Images
+        Result Directory: C:\Users\timmo\napari-ndev\src\napari_ndev\_tests\resources\Workflow\WorkflowResults
+        Workflow File: C:\Users\timmo\napari-ndev\src\napari_ndev\_tests\resources\Workflow\workflows\test_2roots_1leaf.yaml
+        Roots: ['C:0', 'C:1']
+
+2024-02-19 20:24:25,592 - Processing 1: cells3d2ch.tif
+2024-02-19 20:24:51,304 -
+        Image Directory: C:\Users\timmo\napari-ndev\src\napari_ndev\_tests\resources\Workflow\Images
+        Result Directory: C:\Users\timmo\napari-ndev\src\napari_ndev\_tests\resources\Workflow\WorkflowResults
+        Workflow File: C:\Users\timmo\napari-ndev\src\napari_ndev\_tests\resources\Workflow\workflows\test_2roots_1leaf.yaml
+        Roots: ['C:0', 'C:1']
+
+2024-02-19 20:24:51,306 - Processing 1: cells3d2ch.tif
