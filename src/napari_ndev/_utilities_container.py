@@ -1,5 +1,4 @@
 import ast
-import os
 from pathlib import Path
 from typing import TYPE_CHECKING, List, Union
 
@@ -21,6 +20,8 @@ from magicgui.widgets import (
     create_widget,
 )
 from napari import layers
+
+from napari_ndev import helpers
 
 if TYPE_CHECKING:
     import napari
@@ -146,23 +147,8 @@ class UtilitiesContainer(Container):
     def _update_metadata(self, img):
         self._dim_order.value = img.dims.order
 
-        # Determine image save dimensions excluding "S"
-        self._image_save_dims = "".join(
-            [dim for dim in img.dims.order if dim != "S"]
-        )
-
-        # Determine label save dimensions excluding "C" and "S"
-        self._label_save_dims = "".join(
-            [
-                dim
-                for dim in img.dims.order
-                if dim != "C" and dim != "S" and img.dims._dims_shape[dim] > 1
-            ]
-        )
-        if "S" in img.dims.order:
-            self._channel_names.value = ["red", "green", "blue"]
-        else:
-            self._channel_names.value = img.channel_names
+        self._squeezed_dims = helpers.get_squeezed_dims(img)
+        self._channel_names.value = helpers.get_channel_names(img)
 
         self._physical_pixel_sizes_z.value = img.physical_pixel_sizes.Z or 0
         self._physical_pixel_sizes_y.value = img.physical_pixel_sizes.Y
@@ -172,10 +158,7 @@ class UtilitiesContainer(Container):
         img = AICSImage(self._files.value[0])
         self._img = img
         self._update_metadata(img)
-        self._save_name.value = str(
-            os.path.splitext(os.path.basename(self._files.value[0]))[0]
-            + ".tif"
-        )
+        self._save_name.value = str(self._files.value[0].stem + ".tif")
 
     def update_metadata_from_layer(self):
         try:
@@ -188,16 +171,6 @@ class UtilitiesContainer(Container):
     def open_images(self):
         self._viewer.open(self._files.value, plugin="napari-aicsimageio")
 
-    def _process_image_data(self, img: AICSImage) -> np.ndarray:
-        """Process image data for concatenation."""
-        if "S" in img.dims.order:
-            img_data = np.transpose(img.data, (0, 5, 2, 3, 4, 1))
-            img_data = np.squeeze(img_data, axis=-1)
-            print(img_data.shape)
-            return img_data
-        else:
-            return img.data
-
     def concatenate_images(
         self,
         concatenate_files: bool,
@@ -209,13 +182,18 @@ class UtilitiesContainer(Container):
         if concatenate_files:
             for file in files:
                 img = AICSImage(file)
-                img_data = self._process_image_data(img)
+                if "S" in img.dims.order:
+                    img_data = img.get_image_data("TSZYX")
+                else:
+                    img_data = img.data
 
-                for idx in range(img_data.shape[1]):  # iter over all channels
+                # iterate over all channels and only keep if not blank
+                for idx in range(img_data.shape[1]):
                     array = img_data[:, [idx], :, :, :]
                     if array.max() > 0:
                         array_list.append(array)
 
+        # <- fix if RGB image is the layer data
         if concatenate_layers:
             for layer in layers:
                 layer_data = layer.data
@@ -293,14 +271,11 @@ class UtilitiesContainer(Container):
         # get channel names from widget if truthy
         cnames = self._channel_names.value
         channel_names = ast.literal_eval(cnames) if cnames else None
-        # get dim order if from a loaded AICSImage, or else use widget value
-        # the widget value can be None, allowing OmeTiffWriter to handle it
-        dim_order = self._image_save_dims or self._dim_order.value
 
         self._common_save_logic(
             data=self._img_data,
             uri=img_save_loc,
-            dim_order=dim_order,
+            dim_order="TCZYX",
             channel_names=channel_names,
             layer="Image",
         )
@@ -315,11 +290,11 @@ class UtilitiesContainer(Container):
             label_data = label_data.astype(np.int16)
 
         label_save_loc = self._get_save_loc("Labels")
-        dim_order = self._label_save_dims or self._dim_order.value
+
         self._common_save_logic(
             data=label_data,
             uri=label_save_loc,
-            dim_order=dim_order,
+            dim_order=self._squeezed_dims,
             channel_names=["Labels"],
             layer="Labels",
         )
@@ -340,11 +315,11 @@ class UtilitiesContainer(Container):
         shapes_as_labels = shapes_as_labels.astype(np.int16)
 
         shapes_save_loc = self._get_save_loc("ShapesAsLabels")
-        dim_order = self._label_save_dims or self._dim_order.value
+
         self._common_save_logic(
             data=shapes_as_labels,
             uri=shapes_save_loc,
-            dim_order=dim_order,
+            dim_order=self._squeezed_dims,
             channel_names=["Shapes"],
             layer="Shapes",
         )
