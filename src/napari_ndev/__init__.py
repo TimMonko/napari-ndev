@@ -11,7 +11,9 @@ from ._widget import batch_workflow
 from ._workflow_container import WorkflowContainer
 from .helpers import (
     check_for_missing_files,
+    get_channel_names,
     get_directory_and_files,
+    get_squeezed_dims,
     setup_logger,
 )
 
@@ -25,4 +27,6 @@ __all__ = [
     "get_directory_and_files",
     "check_for_missing_files",
     "setup_logger",
+    "get_squeezed_dims",
+    "get_channel_names",
 ]
