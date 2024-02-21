@@ -18,7 +18,7 @@ from magicgui.widgets import (
 )
 from napari_workflows._io_yaml_v1 import load_workflow
 
-from napari_ndev.helpers import get_directory_and_files, setup_logger
+from napari_ndev import helpers
 
 if TYPE_CHECKING:
     import napari
@@ -86,24 +86,14 @@ class WorkflowContainer(Container):
 
     # Get Channel names and image dimensions without C
     def _get_image_info(self):
-        self.image_dir, self.image_files = get_directory_and_files(
+        self.image_dir, self.image_files = helpers.get_directory_and_files(
             self.image_directory.value,
         )
         img = AICSImage(self.image_files[0])
-        if "S" in img.dims.order:
-            self._channel_names = ["red", "green", "blue"]
-        else:
-            self._channel_names = img.channel_names
 
+        self._channel_names = helpers.get_channel_names(img)
         self._update_root_choices()
-
-        self._squeezed_img_dims = "".join(
-            {
-                k: v
-                for k, v in img.dims.items()
-                if v > 1 and k not in ["C", "S"]
-            }
-        )
+        self._squeezed_img_dims = helpers.get_squeezed_dims(img)
         return self._squeezed_img_dims
 
     def _update_root_choices(self):
@@ -144,7 +134,7 @@ class WorkflowContainer(Container):
 
         # Setting up Logging File
         log_loc = result_dir / "workflow.log.txt"
-        logger, handler = setup_logger(log_loc)
+        logger, handler = helpers.setup_logger(log_loc)
         logger.info(
             f"""
         Image Directory: {self.image_directory.value}
