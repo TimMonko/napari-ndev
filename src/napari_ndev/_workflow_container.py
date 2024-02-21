@@ -87,20 +87,24 @@ class WorkflowContainer(Container):
     # Get Channel names and image dimensions without C
     def _get_image_info(self):
         self.image_dir, self.image_files = get_directory_and_files(
-            self.image_directory.value
+            self.image_directory.value,
         )
         img = AICSImage(self.image_files[0])
-        self._channel_names = img.channel_names
+        if "S" in img.dims.order:
+            self._channel_names = ["red", "green", "blue"]
+        else:
+            self._channel_names = img.channel_names
+
         self._update_root_choices()
 
-        self._img_dims = "".join(
-            [
-                dim
-                for dim in img.dims.order
-                if dim != "C" and img.dims._dims_shape[dim] > 1
-            ]
+        self._squeezed_img_dims = "".join(
+            {
+                k: v
+                for k, v in img.dims.items()
+                if v > 1 and k not in ["C", "S"]
+            }
         )
-        return self._img_dims
+        return self._squeezed_img_dims
 
     def _update_root_choices(self):
         for root in self.roots:
@@ -125,22 +129,18 @@ class WorkflowContainer(Container):
     def _get_workflow_info(self):
         self.workflow = load_workflow(self.workflow_file.value)
         self._workflow_roots.value = self.workflow.roots()
-        # self._update_roots(len(self.workflow.roots()))
         self._update_roots()
         return
 
     def batch_workflow(self):
         result_dir = self.result_directory.value
         image_files = self.image_files
-        # image_dir = self.image_dir
-        # image_dims = self._img_dims
         workflow = self.workflow
 
+        # get indexes of channel names, in case not all images have
+        # the same channel names, the index should be in the same order
         root_list = [root.value for root in self.roots]
-        roots = [root for root in root_list if root is not None]
-
-        img = AICSImage(image_files[0])
-        root_index_list = [img.channel_names.index(root) for root in roots]
+        root_index_list = [self._channel_names.index(r) for r in root_list]
 
         # Setting up Logging File
         log_loc = result_dir / "workflow.log.txt"
@@ -150,7 +150,7 @@ class WorkflowContainer(Container):
         Image Directory: {self.image_directory.value}
         Result Directory: {result_dir}
         Workflow File: {self.workflow_file.value}
-        Roots: {roots}
+        Roots: {root_list}
         """
         )
 
@@ -162,19 +162,22 @@ class WorkflowContainer(Container):
             logger.info(f"Processing {idx_file+1}: {image_file.name}")
             img = AICSImage(image_file)
 
-            # get indexes of channel names, in case not all images have
-            # the same channel names, the index should be in the same order
             root_stack = []
+            # get image corresponding to each root, and set it to the workflow
             for idx, root_index in enumerate(root_index_list):
-                # <- RGB prep here
-                root_img = img.get_image_data("TCZYX", C=root_index)
-                # squeeze the root image for workflow bc workflow expects
+
+                if "S" in img.dims.order:
+                    root_img = img.get_image_data("TSZYX", S=root_index)
+                else:
+                    root_img = img.get_image_data("TCZYX", C=root_index)
+                # stack the TCZYX images for later stacking with results
+                root_stack.append(root_img)
+                # squeeze the root image for workflow
                 root_squeeze = np.squeeze(root_img)
                 # set the root image to the index of the root in the workflow
                 workflow.set(
                     name=workflow.roots()[idx], func_or_data=root_squeeze
                 )
-                root_stack.append(root_img)  # stacks the TCZYX images
 
             leaf_names = workflow.leafs()
             result = workflow.get(name=leaf_names)
@@ -185,7 +188,7 @@ class WorkflowContainer(Container):
             # transform result_stack to TCZYX
             result_stack = transforms.reshape_data(
                 data=result_stack,
-                given_dims="C" + self._img_dims,
+                given_dims="C" + self._squeezed_img_dims,
                 return_dims="TCZYX",
             )
 
