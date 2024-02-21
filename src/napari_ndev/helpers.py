@@ -3,6 +3,8 @@ import time
 from pathlib import Path
 from typing import List, Tuple, Union
 
+from aicsimageio import AICSImage
+
 
 def get_directory_and_files(
     dir: Union[str, Path],
@@ -46,6 +48,46 @@ def get_directory_and_files(
         for file in directory.glob(p_glob):
             files.append(file)
     return directory, files
+
+
+def get_channel_names(img: AICSImage) -> List[str]:
+    """
+    Get the channel names from an AICSImage object.
+
+    If the image has a dimension order that includes "S" (it is RGB),
+    return the default channel names ["red", "green", "blue"].
+    Otherwise, return the channel names from the image.
+
+    Parameters:
+        img (AICSImage): The AICSImage object.
+
+    Returns:
+        List[str]: The channel names.
+    """
+    if "S" in img.dims.order:
+        return ["red", "green", "blue"]
+    else:
+        return img.channel_names
+
+
+def get_squeezed_dims(
+    img: AICSImage, skip_dims: Union[List[str], str] = ["C", "S"]
+) -> str:
+    """
+    Returns a string containing the squeezed dimensions of the given AICSImage
+    object.
+
+    Parameters:
+        img (AICSImage): The AICSImage object.
+        skip_dims (Union[List[str], str], optional): Dimensions to skip.
+            Defaults to ["C", "S"].
+
+    Returns:
+        str: A string containing the squeezed dimensions.
+    """
+    return "".join(
+        {k: v for k, v in img.dims.items() if v > 1 and k not in skip_dims}
+    )
 
 
 def check_for_missing_files(
