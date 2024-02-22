@@ -23,6 +23,52 @@ if TYPE_CHECKING:
 
 
 class WorkflowContainer(Container):
+    """
+    Container class for managing the workflow functionality in napari-ndev.
+
+    Parameters:
+    -----------
+    viewer : napari.viewer.Viewer
+        The napari viewer instance.
+
+    Attributes:
+    -----------
+    viewer : napari.viewer.Viewer
+        The napari viewer instance.
+    roots : list
+        List of ComboBox widgets representing the workflow roots.
+    _channel_names : list
+        List of channel names extracted from the image data.
+    _img_dims : str
+        The dimensions of the image data.
+
+    Widgets:
+    --------
+    image_directory : FileEdit
+        Widget for selecting the image directory.
+    result_directory : FileEdit
+        Widget for selecting the result directory.
+    workflow_file : FileEdit
+        Widget for selecting the workflow file.
+    _keep_original_images : CheckBox
+        Checkbox widget for specifying whether to keep original images.
+    batch_button : PushButton
+        Button widget for triggering the batch workflow.
+    _progress_bar : ProgressBar
+        Progress bar widget for displaying the progress of the workflow.
+    _workflow_roots : Label
+        Label widget for displaying the workflow roots.
+
+    Events:
+    -------
+    image_directory.changed : Signal
+        Signal emitted when the image directory is changed.
+    workflow_file.changed : Signal
+        Signal emitted when the workflow file is changed.
+    batch_button.clicked : Signal
+        Signal emitted when the batch button is clicked.
+    """
+
     def __init__(self, viewer: "napari.viewer.Viewer"):
         super().__init__()
         ##############################
@@ -48,6 +94,8 @@ class WorkflowContainer(Container):
         self._keep_original_images = CheckBox(
             label="Keep Original Images",
             value=False,
+            tooltip="If checked, the original images will be "
+            "concatenated with the results",
         )
         self.batch_button = PushButton(label="Batch Workflow")
 
@@ -69,9 +117,9 @@ class WorkflowContainer(Container):
         # Event Handling
         ##############################
         self.image_directory.changed.connect(self._get_image_info)
-        # <- currently this is not triggering the update of the roots
-        self.viewer.layers.events.inserted.connect(self._update_root_choices)
-        self.viewer.layers.events.removed.connect(self._update_root_choices)
+        # <- the below will be used for single workflow, not batch
+        # self.viewer.layers.events.inserted.connect(self._update_root_choices)
+        # self.viewer.layers.events.removed.connect(self._update_root_choices)
         self.workflow_file.changed.connect(self._get_workflow_info)
         self.batch_button.clicked.connect(self.batch_workflow)
 
