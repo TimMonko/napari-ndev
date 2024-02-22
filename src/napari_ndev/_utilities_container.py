@@ -147,7 +147,7 @@ class UtilitiesContainer(Container):
     def _update_metadata(self, img):
         self._dim_order.value = img.dims.order
 
-        self._squeezed_dims = helpers.get_squeezed_dims(img)
+        self._squeezed_dims = helpers.get_squeezed_dim_order(img)
         self._channel_names.value = helpers.get_channel_names(img)
 
         self._physical_pixel_sizes_z.value = img.physical_pixel_sizes.Z or 0
