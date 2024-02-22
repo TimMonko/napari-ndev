@@ -13,7 +13,7 @@ from .helpers import (
     check_for_missing_files,
     get_channel_names,
     get_directory_and_files,
-    get_squeezed_dims,
+    get_squeezed_dim_order,
     setup_logger,
 )
 
@@ -27,6 +27,6 @@ __all__ = [
     "get_directory_and_files",
     "check_for_missing_files",
     "setup_logger",
-    "get_squeezed_dims",
+    "get_squeezed_dim_order",
     "get_channel_names",
 ]
