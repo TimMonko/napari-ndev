@@ -1,0 +1,93 @@
+2024-02-19 16:13:08,727 -
+        Image Directory: C:\Users\timmo\napari-ndev\src\napari_ndev\_tests\resources\Workflow\Images
+        Result Directory: C:\Users\timmo\napari-ndev\src\napari_ndev\_tests\resources\Workflow\WorkflowResults
+        Workflow File: C:\Users\timmo\napari-ndev\src\napari_ndev\_tests\resources\Workflow\workflows\test_2roots_1leaf.yaml
+        Roots: ['C:0', 'C:1']
+
+2024-02-19 16:26:05,853 -
+        Image Directory: C:\Users\timmo\napari-ndev\src\napari_ndev\_tests\resources\Workflow\Images
+        Result Directory: C:\Users\timmo\napari-ndev\src\napari_ndev\_tests\resources\Workflow\WorkflowResults
+        Workflow File: C:\Users\timmo\napari-ndev\src\napari_ndev\_tests\resources\Workflow\workflows\test_2roots_1leaf.yaml
+        Roots: []
+
+2024-02-19 16:26:51,164 -
+        Image Directory: C:\Users\timmo\napari-ndev\src\napari_ndev\_tests\resources\Workflow\Images
+        Result Directory: C:\Users\timmo\napari-ndev\src\napari_ndev\_tests\resources\Workflow\WorkflowResults
+        Workflow File: C:\Users\timmo\napari-ndev\src\napari_ndev\_tests\resources\Workflow\workflows\test_2roots_1leaf.yaml
+        Roots: ['C:0', 'C:1']
+
+2024-02-19 16:29:01,644 -
+        Image Directory: C:\Users\timmo\napari-ndev\src\napari_ndev\_tests\resources\Workflow\Images
+        Result Directory: C:\Users\timmo\napari-ndev\src\napari_ndev\_tests\resources\Workflow\WorkflowResults
+        Workflow File: C:\Users\timmo\napari-ndev\src\napari_ndev\_tests\resources\Workflow\workflows\test_2roots_1leaf.yaml
+        Roots: ['C:0', 'C:1']
+
+2024-02-19 16:36:00,583 -
+        Image Directory: C:\Users\timmo\napari-ndev\src\napari_ndev\_tests\resources\Workflow\Images
+        Result Directory: C:\Users\timmo\napari-ndev\src\napari_ndev\_tests\resources\Workflow\WorkflowResults
+        Workflow File: C:\Users\timmo\napari-ndev\src\napari_ndev\_tests\resources\Workflow\workflows\test_2roots_1leaf.yaml
+        Roots: ['C:0', 'C:1']
+
+2024-02-19 16:43:59,955 -
+        Image Directory: C:\Users\timmo\napari-ndev\src\napari_ndev\_tests\resources\Workflow\Images
+        Result Directory: C:\Users\timmo\napari-ndev\src\napari_ndev\_tests\resources\Workflow\WorkflowResults
+        Workflow File: C:\Users\timmo\napari-ndev\src\napari_ndev\_tests\resources\Workflow\workflows\test_2roots_1leaf.yaml
+        Roots: ['C:0', 'C:1']
+
+2024-02-19 16:46:13,825 -
+        Image Directory: C:\Users\timmo\napari-ndev\src\napari_ndev\_tests\resources\Workflow\Images
+        Result Directory: C:\Users\timmo\napari-ndev\src\napari_ndev\_tests\resources\Workflow\WorkflowResults
+        Workflow File: C:\Users\timmo\napari-ndev\src\napari_ndev\_tests\resources\Workflow\workflows\test_2roots_1leaf.yaml
+        Roots: ['C:0', 'C:1']
+
+2024-02-19 16:46:17,486 -
+        Image Directory: C:\Users\timmo\napari-ndev\src\napari_ndev\_tests\resources\Workflow\Images
+        Result Directory: C:\Users\timmo\napari-ndev\src\napari_ndev\_tests\resources\Workflow\WorkflowResults
+        Workflow File: C:\Users\timmo\napari-ndev\src\napari_ndev\_tests\resources\Workflow\workflows\test_2roots_1leaf.yaml
+        Roots: ['C:0', 'C:1']
+
+2024-02-19 16:48:46,064 -
+        Image Directory: C:\Users\timmo\napari-ndev\src\napari_ndev\_tests\resources\Workflow\Images
+        Result Directory: C:\Users\timmo\napari-ndev\src\napari_ndev\_tests\resources\Workflow\WorkflowResults
+        Workflow File: C:\Users\timmo\napari-ndev\src\napari_ndev\_tests\resources\Workflow\workflows\test_2roots_1leaf.yaml
+        Roots: ['C:0', 'C:1']
+
+2024-02-19 16:48:55,077 -
+        Image Directory: C:\Users\timmo\napari-ndev\src\napari_ndev\_tests\resources\Workflow\Images
+        Result Directory: C:\Users\timmo\napari-ndev\src\napari_ndev\_tests\resources\Workflow\WorkflowResults
+        Workflow File: C:\Users\timmo\napari-ndev\src\napari_ndev\_tests\resources\Workflow\workflows\test_2roots_1leaf.yaml
+        Roots: ['C:0', 'C:1']
+
+2024-02-19 16:50:10,910 -
+        Image Directory: C:\Users\timmo\napari-ndev\src\napari_ndev\_tests\resources\Workflow\Images
+        Result Directory: C:\Users\timmo\napari-ndev\src\napari_ndev\_tests\resources\Workflow\WorkflowResults
+        Workflow File: C:\Users\timmo\napari-ndev\src\napari_ndev\_tests\resources\Workflow\workflows\test_2roots_1leaf.yaml
+        Roots: ['C:0', 'C:1']
+
+2024-02-19 16:50:13,320 -
+        Image Directory: C:\Users\timmo\napari-ndev\src\napari_ndev\_tests\resources\Workflow\Images
+        Result Directory: C:\Users\timmo\napari-ndev\src\napari_ndev\_tests\resources\Workflow\WorkflowResults
+        Workflow File: C:\Users\timmo\napari-ndev\src\napari_ndev\_tests\resources\Workflow\workflows\test_2roots_1leaf.yaml
+        Roots: ['C:0', 'C:1']
+
+2024-02-19 17:01:51,183 -
+        Image Directory: C:\Users\timmo\napari-ndev\src\napari_ndev\_tests\resources\Workflow\Images
+        Result Directory: C:\Users\timmo\napari-ndev\src\napari_ndev\_tests\resources\Workflow\WorkflowResults
+        Workflow File: C:\Users\timmo\napari-ndev\src\napari_ndev\_tests\resources\Workflow\workflows\test_2roots_1leaf.yaml
+        Roots: ['C:0', 'C:1']
+
+2024-02-19 17:01:51,184 - Processing 1: cells3d2ch.tif
+2024-02-19 20:24:25,590 -
+        Image Directory: C:\Users\timmo\napari-ndev\src\napari_ndev\_tests\resources\Workflow\Images
+        Result Directory: C:\Users\timmo\napari-ndev\src\napari_ndev\_tests\resources\Workflow\WorkflowResults
+        Workflow File: C:\Users\timmo\napari-ndev\src\napari_ndev\_tests\resources\Workflow\workflows\test_2roots_1leaf.yaml
+        Roots: ['C:0', 'C:1']
+
+2024-02-19 20:24:25,592 - Processing 1: cells3d2ch.tif
+2024-02-19 20:24:51,304 -
+        Image Directory: C:\Users\timmo\napari-ndev\src\napari_ndev\_tests\resources\Workflow\Images
+        Result Directory: C:\Users\timmo\napari-ndev\src\napari_ndev\_tests\resources\Workflow\WorkflowResults
+        Workflow File: C:\Users\timmo\napari-ndev\src\napari_ndev\_tests\resources\Workflow\workflows\test_2roots_1leaf.yaml
+        Roots: ['C:0', 'C:1']
+
+2024-02-19 20:24:51,306 - Processing 1: cells3d2ch.tif
