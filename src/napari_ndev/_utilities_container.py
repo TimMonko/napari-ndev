@@ -1,11 +1,8 @@
 import ast
-import os
 from pathlib import Path
 from typing import TYPE_CHECKING, List, Union
 
-import dask.array as da
 import numpy as np
-import xarray as xr
 from aicsimageio import AICSImage
 from aicsimageio.types import PhysicalPixelSizes
 from aicsimageio.writers import OmeTiffWriter
@@ -14,6 +11,7 @@ from magicgui.widgets import (
     Container,
     FileEdit,
     FloatSpinBox,
+    Label,
     LineEdit,
     PushButton,
     Select,
@@ -22,42 +20,148 @@ from magicgui.widgets import (
 )
 from napari import layers
 
+from napari_ndev import helpers
+
 if TYPE_CHECKING:
     import napari
 
-PathLike = Union[str, Path]
-ArrayLike = Union[np.ndarray, da.Array]
-MetaArrayLike = Union[ArrayLike, xr.DataArray]
-ImageLike = Union[
-    PathLike, ArrayLike, MetaArrayLike, List[MetaArrayLike], List[PathLike]
-]
-
 
 class UtilitiesContainer(Container):
+    """
+    A container class that provides utility functions for working with napari
+    images and layers.
+
+    Parameters:
+    - viewer: napari.viewer.Viewer
+        The napari viewer instance.
+
+    Attributes:
+    - _viewer: napari.viewer.Viewer
+        The napari viewer instance.
+    - _img_data: numpy.ndarray or None
+        The concatenated image data.
+    - _image_save_dims: str or None
+        The dimension order for saving images.
+    - _label_save_dims: str or None
+        The dimension order for saving labels.
+    - _p_sizes: PhysicalPixelSizes
+        The physical pixel sizes for the image.
+
+    Widgets:
+    - _files: FileEdit
+        Widget for selecting file(s).
+    - _open_image_button: PushButton
+        Button for opening images.
+    - _save_directory: FileEdit
+        Widget for selecting the save directory.
+    - _save_name: LineEdit
+        Widget for entering the file save name.
+    - _metadata_from_selected_layer: PushButton
+        Button for updating metadata from the selected layer.
+    - _dim_order: LineEdit
+        Widget for entering the dimension order.
+    - _channel_names: LineEdit
+        Widget for entering the channel names.
+    - _physical_pixel_sizes_z: FloatSpinBox
+        Widget for entering the Z pixel size in micrometers.
+    - _physical_pixel_sizes_y: FloatSpinBox
+        Widget for entering the Y pixel size in micrometers.
+    - _physical_pixel_sizes_x: FloatSpinBox
+        Widget for entering the X pixel size in micrometers.
+    - _image_layer: Select
+        Widget for selecting the image layer.
+    - _concatenate_image_files: CheckBox
+        Checkbox for concatenating image files.
+    - _concatenate_image_layers: CheckBox
+        Checkbox for concatenating image layers.
+    - _save_image_button: PushButton
+        Button for saving images.
+    - _labels_layer: Widget
+        Widget for working with labels layer.
+    - _save_labels_button: PushButton
+        Button for saving labels.
+    - _shapes_layer: Widget
+        Widget for working with shapes layer.
+    - _save_shapes_button: PushButton
+        Button for saving shapes as labels.
+    - _results: TextEdit
+        Widget for displaying information.
+
+    Methods:
+    - _update_metadata(img)
+        Update the metadata based on the given image.
+    - update_metadata_from_file()
+        Update the metadata from the selected file.
+    - update_metadata_from_layer()
+        Update the metadata from the selected layer.
+    - open_images()
+        Open the selected images in the napari viewer.
+    - concatenate_images(concatenate_files, files, concatenate_layers, layers)
+        Concatenate the image data based on the selected options.
+    - p_sizes()
+        Get the physical pixel sizes.
+    - _get_save_loc(parent)
+        Get the save location based on the parent directory.
+    - _common_save_logic(data, uri, dim_order, channel_names, layer)
+        Common logic for saving data as OME-TIFF.
+    - save_ome_tiff()
+        Save the concatenated image data as OME-TIFF.
+    - save_labels()
+        Save the labels data.
+    - save_shapes_as_labels()
+        Save the shapes data as labels.
+    """
+
     def __init__(
         self,
         viewer: "napari.viewer.Viewer",
     ):
         super().__init__()
+        ##############################
+        # Attributes
+        ##############################
         self
         self._viewer = viewer
         self._img_data = None
+        self._image_save_dims = None
         self._label_save_dims = None
         self._p_sizes = None
-
-        self._files = FileEdit(label="File(s)", mode="rm")
-
+        ##############################
+        # Widgets
+        ##############################
+        self._files = FileEdit(
+            label="File(s)",
+            mode="rm",
+            tooltip="Select file(s) to load.",
+        )
         self._open_image_button = PushButton(label="Open Images")
 
-        self._save_directory = FileEdit(label="Save Directory", mode="d")
-        self._save_name = LineEdit(label="File Save Name")
-
-        self._metadata_from_selected_layer = PushButton(
-            label="Update Metadata from Selected Layer"
+        self._save_directory = FileEdit(
+            label="Save Directory",
+            mode="d",
+            tooltip="Directory where images will be saved.",
+        )
+        self._save_name = LineEdit(
+            label="File Save Name",
+            tooltip="Name of saved file. Helpful to include a"
+            ".ome/.tif/.tiff extension.",
         )
 
-        self._dim_order = LineEdit(label="Dimension Order")
-        self._channel_names = LineEdit(label="Channel Name(s)")
+        self._metadata_from_selected_layer = PushButton(
+            label="Update Metadata from Selected Layer",
+            tooltip="Gets pixel sizes, dim order from selected layer.",
+        )
+
+        self._dim_order = Label(
+            label="Dimension Order",
+            tooltip="Sanity check for available dimensions.",
+        )
+        self._channel_names = LineEdit(
+            label="Channel Name(s)",
+            tooltip="Enter channel names as a list. If left blank or the "
+            "channel names are not the proper length, then default channel "
+            "names will be used.",
+        )
 
         self._physical_pixel_sizes_z = FloatSpinBox(
             value=1, step=0.00000001, label="Z Pixel Size, um"
@@ -78,25 +182,38 @@ class UtilitiesContainer(Container):
 
         self._image_layer = Select(
             choices=current_layers, nullable=False, label="Images"
-        )  # use no value and allow user to unhighlight layers
+        )  # use no value and allow user to deselect layers
 
-        self._concatenate_image_files = CheckBox(label="Concatenate Files")
+        self._concatenate_image_files = CheckBox(
+            label="Concatenate Files",
+            tooltip="Concatenate files in the selected directory. Removes "
+            "blank channels.",
+        )
         self._concatenate_image_layers = CheckBox(
-            label="Concatenate Image Layers"
+            label="Concatenate Image Layers",
+            tooltip="Concatenate image layers in the viewer. Removes empty.",
         )
 
-        self._save_image_button = PushButton(label="Save Images")
+        self._save_image_button = PushButton(
+            label="Save Images",
+            tooltip="Save the concatenated image data as OME-TIFF.",
+        )
 
         self._labels_layer = create_widget(
             annotation="napari.layers.Labels", label="Labels"
         )
-        self._save_labels_button = PushButton(label="Save Labels")
+        self._save_labels_button = PushButton(
+            label="Save Labels", tooltip="Save the labels data as OME-TIFF."
+        )
 
         self._shapes_layer = create_widget(
             annotation="napari.layers.Shapes", label="Shapes"
         )
-        self._save_shapes_button = PushButton(label="Save Shapes as Labels")
-
+        self._save_shapes_button = PushButton(
+            label="Save Shapes as Labels",
+            tooltip="Save the shapes data as labels (OME-TIFF) according to "
+            "selected image layer dimensions.",
+        )
         self._results = TextEdit(label="Info")
 
         # Container Widget Order
@@ -123,8 +240,9 @@ class UtilitiesContainer(Container):
                 self._results,
             ]
         )
-
-        # Callbacks
+        ##############################
+        # Event Handling
+        ##############################
         self._files.changed.connect(self.update_metadata_from_file)
         self._open_image_button.clicked.connect(self.open_images)
         self._metadata_from_selected_layer.clicked.connect(
@@ -139,23 +257,8 @@ class UtilitiesContainer(Container):
     def _update_metadata(self, img):
         self._dim_order.value = img.dims.order
 
-        # Determine image save dimensions excluding "S"
-        self._image_save_dims = "".join(
-            [dim for dim in img.dims.order if dim != "S"]
-        )
-
-        # Determine label save dimensions excluding "C" and "S"
-        self._label_save_dims = "".join(
-            [
-                dim
-                for dim in img.dims.order
-                if dim != "C" and dim != "S" and img.dims._dims_shape[dim] > 1
-            ]
-        )
-        if "S" in img.dims.order:
-            self._channel_names.value = ["red", "green", "blue"]
-        else:
-            self._channel_names.value = img.channel_names
+        self._squeezed_dims = helpers.get_squeezed_dim_order(img)
+        self._channel_names.value = helpers.get_channel_names(img)
 
         self._physical_pixel_sizes_z.value = img.physical_pixel_sizes.Z or 0
         self._physical_pixel_sizes_y.value = img.physical_pixel_sizes.Y
@@ -165,10 +268,7 @@ class UtilitiesContainer(Container):
         img = AICSImage(self._files.value[0])
         self._img = img
         self._update_metadata(img)
-        self._save_name.value = str(
-            os.path.splitext(os.path.basename(self._files.value[0]))[0]
-            + ".tif"
-        )
+        self._save_name.value = str(self._files.value[0].stem + ".tif")
 
     def update_metadata_from_layer(self):
         try:
@@ -181,20 +281,10 @@ class UtilitiesContainer(Container):
     def open_images(self):
         self._viewer.open(self._files.value, plugin="napari-aicsimageio")
 
-    def _process_image_data(self, img: AICSImage) -> np.ndarray:
-        """Process image data for concatenation."""
-        if "S" in img.dims.order:
-            img_data = np.transpose(img.data, (0, 5, 2, 3, 4, 1))
-            img_data = np.squeeze(img_data, axis=-1)
-            print(img_data.shape)
-            return img_data
-        else:
-            return img.data
-
     def concatenate_images(
         self,
         concatenate_files: bool,
-        files: List[PathLike],
+        files: List[Union[str, Path]],
         concatenate_layers: bool,
         layers: List[layers.Image],
     ):
@@ -202,13 +292,18 @@ class UtilitiesContainer(Container):
         if concatenate_files:
             for file in files:
                 img = AICSImage(file)
-                img_data = self._process_image_data(img)
+                if "S" in img.dims.order:
+                    img_data = img.get_image_data("TSZYX")
+                else:
+                    img_data = img.data
 
-                for idx in range(img_data.shape[1]):  # iter over all channels
+                # iterate over all channels and only keep if not blank
+                for idx in range(img_data.shape[1]):
                     array = img_data[:, [idx], :, :, :]
                     if array.max() > 0:
                         array_list.append(array)
 
+        # <- fix if RGB image is the layer data
         if concatenate_layers:
             for layer in layers:
                 layer_data = layer.data
@@ -240,7 +335,11 @@ class UtilitiesContainer(Container):
         channel_names: List[str],
         layer: str,
     ) -> None:
-        """Common logic for saving data."""
+        # AICSImage does not allow saving labels as np.int64
+        # napari generates labels differently depending on the OS
+        # so we need to convert to np.int32 in case np.int64 generated
+        # see: https://github.com/napari/napari/issues/5545
+        # This is a failsafe
         if data.dtype == np.int64:
             data = data.astype(np.int32)
 
@@ -248,14 +347,14 @@ class UtilitiesContainer(Container):
             OmeTiffWriter.save(
                 data=data,
                 uri=uri,
-                dim_order=dim_order,
-                channel_names=channel_names,
+                dim_order=dim_order or None,
+                channel_names=channel_names or None,
                 physical_pixel_sizes=self.p_sizes,
             )
             self._results.value = f"Saved {layer}: " + str(
                 self._save_name.value
             )
-
+        # if ValueError is raised, save with default channel names
         except ValueError as e:
             OmeTiffWriter.save(
                 data=data,
@@ -269,6 +368,7 @@ class UtilitiesContainer(Container):
                 + "\nSo, saved with default channel names: \n"
                 + str(self._save_name.value)
             )
+        return
 
     def save_ome_tiff(self) -> None:
         self._img_data = self.concatenate_images(
@@ -278,12 +378,14 @@ class UtilitiesContainer(Container):
             self._image_layer.value,
         )
         img_save_loc = self._get_save_loc("Images")
-        channel_names = ast.literal_eval(self._channel_names.value)
+        # get channel names from widget if truthy
+        cnames = self._channel_names.value
+        channel_names = ast.literal_eval(cnames) if cnames else None
 
         self._common_save_logic(
             data=self._img_data,
             uri=img_save_loc,
-            dim_order=self._image_save_dims,
+            dim_order="TCZYX",
             channel_names=channel_names,
             layer="Image",
         )
@@ -291,16 +393,18 @@ class UtilitiesContainer(Container):
 
     def save_labels(self) -> None:
         label_data = self._labels_layer.value.data
+
+        if label_data.max() > 65535:
+            label_data = label_data.astype(np.int32)
+        else:
+            label_data = label_data.astype(np.int16)
+
         label_save_loc = self._get_save_loc("Labels")
 
-        # AICSImage does not allow saving labels as np.int64
-        # napari generates labels differently depending on the OS
-        # so we need to convert to np.int32 in case np.int64 generated
-        # see: https://github.com/napari/napari/issues/5545
         self._common_save_logic(
             data=label_data,
             uri=label_save_loc,
-            dim_order=self._label_save_dims,
+            dim_order=self._squeezed_dims,
             channel_names=["Labels"],
             layer="Labels",
         )
@@ -310,7 +414,6 @@ class UtilitiesContainer(Container):
         # inherit shape from selected image layer or else a default
         if self._image_layer.value:
             label_dim = self._image_layer.value[0].data.shape
-            print("image layer:", self._image_layer.value[0])
         else:
             label_dim = self._image_layer.choices[0].data.shape
 
@@ -319,14 +422,14 @@ class UtilitiesContainer(Container):
 
         shapes = self._shapes_layer.value
         shapes_as_labels = shapes.to_labels(labels_shape=label_dim)
+        shapes_as_labels = shapes_as_labels.astype(np.int16)
 
         shapes_save_loc = self._get_save_loc("ShapesAsLabels")
 
-        # see: https://github.com/napari/napari/issues/5545
         self._common_save_logic(
             data=shapes_as_labels,
             uri=shapes_save_loc,
-            dim_order=self._label_save_dims,
+            dim_order=self._squeezed_dims,
             channel_names=["Shapes"],
             layer="Shapes",
         )
