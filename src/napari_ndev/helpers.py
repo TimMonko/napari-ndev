@@ -70,7 +70,7 @@ def get_channel_names(img: AICSImage) -> List[str]:
         return img.channel_names
 
 
-def get_squeezed_dims(
+def get_squeezed_dim_order(
     img: AICSImage, skip_dims: Union[List[str], str] = ["C", "S"]
 ) -> str:
     """
