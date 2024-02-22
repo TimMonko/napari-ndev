@@ -33,6 +33,122 @@ if TYPE_CHECKING:
 
 
 class ApocContainer(Container):
+    """
+    Container class for managing the ApocContainer widget in napari.
+
+    Parameters:
+    -----------
+    viewer : napari.viewer.Viewer
+        The napari viewer instance.
+
+    Attributes:
+    -----------
+    _viewer : napari.viewer.Viewer
+        The napari viewer instance.
+
+    _image_directory : FileEdit
+        Widget for selecting the image directory.
+
+    _label_directory : FileEdit
+        Widget for selecting the label directory.
+
+    _output_directory : FileEdit
+        Widget for selecting the output directory.
+
+    _classifier_file : FileEdit
+        Widget for selecting the classifier file.
+
+    _classifier_type_mapping : dict
+        Mapping of classifier types to their corresponding classes.
+
+    _classifier_type : RadioButtons
+        Widget for selecting the classifier type.
+
+    _max_depth : SpinBox
+        Widget for selecting the number of forests.
+
+    _num_trees : SpinBox
+        Widget for selecting the number of trees.
+
+    _positive_class_id : SpinBox
+        Widget for selecting the object label ID.
+
+    _image_channels : Select
+        Widget for selecting the image channels.
+
+    _channel_order_label : Label
+        Label widget for displaying the selected channel order.
+
+    _PDFS : Enum
+        Enum for predefined feature sets.
+
+    _predefined_features : ComboBox
+        Widget for selecting the features.
+
+    _custom_features : LineEdit
+        Widget for entering custom feature string.
+
+    _open_custom_feature_generator : PushButton
+        Button for opening the custom feature generator widget.
+
+    _continue_training : CheckBox
+        Checkbox for indicating whether to continue training.
+
+    _batch_train_button : PushButton
+        Button for training the classifier on image-label pairs.
+
+    _batch_predict_button : PushButton
+        Button for predicting labels with the classifier.
+
+    _progress_bar : ProgressBar
+        Progress bar widget.
+
+    _image_layer : Select
+        Widget for selecting the image layers.
+
+    _label_layer : Widget
+        Widget for selecting the label layers.
+
+    _train_image_button : PushButton
+        Button for training the classifier on selected layers using labels.
+
+    _predict_image_layer : PushButton
+        Button for predicting using the classifier on selected layers.
+
+    _single_result_label : Label
+        Label widget for displaying a single result.
+
+    Methods:
+    --------
+    _update_metadata_from_file()
+        Update the metadata from the selected image directory.
+
+    _update_channel_order()
+        Update the channel order label based on the selected image channels.
+
+    _set_value_from_pattern(pattern, content)
+        Set the value from a pattern in the content.
+
+    _process_classifier_metadata(content)
+        Process the classifier metadata from the content.
+
+    _update_classifier_metadata()
+        Update the classifier metadata based on the selected classifier file.
+
+    _classifier_statistics_table(custom_classifier)
+        Display the classifier statistics table.
+
+    _get_feature_set()
+        Get the selected feature set.
+
+    _get_training_classifier_instance()
+        Get the training classifier instance based on the selected classifier
+        type.
+
+    _get_channel_image(img, channel_index_list)
+        Get the channel image based on the selected channel index list.
+    """
+
     def __init__(
         self,
         viewer: "napari.viewer.Viewer",
@@ -66,6 +182,9 @@ class ApocContainer(Container):
             label="Classifier Type",
             value="ObjectSegmenter",
             choices=["ObjectSegmenter", "PixelClassifier"],
+            tooltip="Object Segmenter is used for detecting objects of one "
+            "class, including connected components. "
+            "Pixel Classifier is used to classify pixel-types.",
         )
         self._max_depth = SpinBox(
             label="Num. of Forests",
