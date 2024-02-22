@@ -201,7 +201,7 @@ def test_update_metadata_from_file(make_napari_viewer):
 
     # Mock the get_directory_and_files function to return a sample file
     with patch(
-        "napari_ndev._apoc_container.get_directory_and_files"
+        "napari_ndev.helpers.get_directory_and_files"
     ) as mock_get_directory_and_files:
         mock_get_directory_and_files.return_value = (
             "/path/to/directory",
