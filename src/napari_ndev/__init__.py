@@ -7,7 +7,6 @@ from ._apoc_container import ApocContainer
 from ._apoc_feature_stack import ApocFeatureStack
 from ._rescale_by import RescaleBy
 from ._utilities_container import UtilitiesContainer
-from ._widget import batch_workflow
 from ._workflow_container import WorkflowContainer
 from .helpers import (
     check_for_missing_files,
@@ -18,7 +17,6 @@ from .helpers import (
 )
 
 __all__ = [
-    "batch_workflow",
     "WorkflowContainer",
     "UtilitiesContainer",
     "ApocContainer",
