@@ -1,10 +1,8 @@
-from pathlib import Path
-from typing import TYPE_CHECKING, List, Union
+from typing import TYPE_CHECKING
 
 import dask.array as da
 import numpy as np
 import pyclesperanto_prototype as cle
-import xarray as xr
 from aicsimageio import AICSImage, transforms
 from aicsimageio.writers import OmeTiffWriter
 from magicgui.widgets import (
@@ -22,13 +20,6 @@ from napari_ndev import helpers
 
 if TYPE_CHECKING:
     import napari
-
-PathLike = Union[str, Path]
-ArrayLike = Union[np.ndarray, da.Array]
-MetaArrayLike = Union[ArrayLike, xr.DataArray]
-ImageLike = Union[
-    PathLike, ArrayLike, MetaArrayLike, List[MetaArrayLike], List[PathLike]
-]
 
 
 class WorkflowContainer(Container):
@@ -93,7 +84,7 @@ class WorkflowContainer(Container):
 
         self._channel_names = helpers.get_channel_names(img)
         self._update_root_choices()
-        self._squeezed_img_dims = helpers.get_squeezed_dims(img)
+        self._squeezed_img_dims = helpers.get_squeezed_dim_order(img)
         return self._squeezed_img_dims
 
     def _update_root_choices(self):
