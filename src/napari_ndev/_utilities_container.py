@@ -2,9 +2,7 @@ import ast
 from pathlib import Path
 from typing import TYPE_CHECKING, List, Union
 
-import dask.array as da
 import numpy as np
-import xarray as xr
 from aicsimageio import AICSImage
 from aicsimageio.types import PhysicalPixelSizes
 from aicsimageio.writers import OmeTiffWriter
@@ -13,6 +11,7 @@ from magicgui.widgets import (
     Container,
     FileEdit,
     FloatSpinBox,
+    Label,
     LineEdit,
     PushButton,
     Select,
@@ -26,15 +25,93 @@ from napari_ndev import helpers
 if TYPE_CHECKING:
     import napari
 
-PathLike = Union[str, Path]
-ArrayLike = Union[np.ndarray, da.Array]
-MetaArrayLike = Union[ArrayLike, xr.DataArray]
-ImageLike = Union[
-    PathLike, ArrayLike, MetaArrayLike, List[MetaArrayLike], List[PathLike]
-]
-
 
 class UtilitiesContainer(Container):
+    """
+    A container class that provides utility functions for working with napari
+    images and layers.
+
+    Parameters:
+    - viewer: napari.viewer.Viewer
+        The napari viewer instance.
+
+    Attributes:
+    - _viewer: napari.viewer.Viewer
+        The napari viewer instance.
+    - _img_data: numpy.ndarray or None
+        The concatenated image data.
+    - _image_save_dims: str or None
+        The dimension order for saving images.
+    - _label_save_dims: str or None
+        The dimension order for saving labels.
+    - _p_sizes: PhysicalPixelSizes
+        The physical pixel sizes for the image.
+
+    Widgets:
+    - _files: FileEdit
+        Widget for selecting file(s).
+    - _open_image_button: PushButton
+        Button for opening images.
+    - _save_directory: FileEdit
+        Widget for selecting the save directory.
+    - _save_name: LineEdit
+        Widget for entering the file save name.
+    - _metadata_from_selected_layer: PushButton
+        Button for updating metadata from the selected layer.
+    - _dim_order: LineEdit
+        Widget for entering the dimension order.
+    - _channel_names: LineEdit
+        Widget for entering the channel names.
+    - _physical_pixel_sizes_z: FloatSpinBox
+        Widget for entering the Z pixel size in micrometers.
+    - _physical_pixel_sizes_y: FloatSpinBox
+        Widget for entering the Y pixel size in micrometers.
+    - _physical_pixel_sizes_x: FloatSpinBox
+        Widget for entering the X pixel size in micrometers.
+    - _image_layer: Select
+        Widget for selecting the image layer.
+    - _concatenate_image_files: CheckBox
+        Checkbox for concatenating image files.
+    - _concatenate_image_layers: CheckBox
+        Checkbox for concatenating image layers.
+    - _save_image_button: PushButton
+        Button for saving images.
+    - _labels_layer: Widget
+        Widget for working with labels layer.
+    - _save_labels_button: PushButton
+        Button for saving labels.
+    - _shapes_layer: Widget
+        Widget for working with shapes layer.
+    - _save_shapes_button: PushButton
+        Button for saving shapes as labels.
+    - _results: TextEdit
+        Widget for displaying information.
+
+    Methods:
+    - _update_metadata(img)
+        Update the metadata based on the given image.
+    - update_metadata_from_file()
+        Update the metadata from the selected file.
+    - update_metadata_from_layer()
+        Update the metadata from the selected layer.
+    - open_images()
+        Open the selected images in the napari viewer.
+    - concatenate_images(concatenate_files, files, concatenate_layers, layers)
+        Concatenate the image data based on the selected options.
+    - p_sizes()
+        Get the physical pixel sizes.
+    - _get_save_loc(parent)
+        Get the save location based on the parent directory.
+    - _common_save_logic(data, uri, dim_order, channel_names, layer)
+        Common logic for saving data as OME-TIFF.
+    - save_ome_tiff()
+        Save the concatenated image data as OME-TIFF.
+    - save_labels()
+        Save the labels data.
+    - save_shapes_as_labels()
+        Save the shapes data as labels.
+    """
+
     def __init__(
         self,
         viewer: "napari.viewer.Viewer",
@@ -52,19 +129,39 @@ class UtilitiesContainer(Container):
         ##############################
         # Widgets
         ##############################
-        self._files = FileEdit(label="File(s)", mode="rm")
-
+        self._files = FileEdit(
+            label="File(s)",
+            mode="rm",
+            tooltip="Select file(s) to load.",
+        )
         self._open_image_button = PushButton(label="Open Images")
 
-        self._save_directory = FileEdit(label="Save Directory", mode="d")
-        self._save_name = LineEdit(label="File Save Name")
-
-        self._metadata_from_selected_layer = PushButton(
-            label="Update Metadata from Selected Layer"
+        self._save_directory = FileEdit(
+            label="Save Directory",
+            mode="d",
+            tooltip="Directory where images will be saved.",
+        )
+        self._save_name = LineEdit(
+            label="File Save Name",
+            tooltip="Name of saved file. Helpful to include a"
+            ".ome/.tif/.tiff extension.",
         )
 
-        self._dim_order = LineEdit(label="Dimension Order")
-        self._channel_names = LineEdit(label="Channel Name(s)")
+        self._metadata_from_selected_layer = PushButton(
+            label="Update Metadata from Selected Layer",
+            tooltip="Gets pixel sizes, dim order from selected layer.",
+        )
+
+        self._dim_order = Label(
+            label="Dimension Order",
+            tooltip="Sanity check for available dimensions.",
+        )
+        self._channel_names = LineEdit(
+            label="Channel Name(s)",
+            tooltip="Enter channel names as a list. If left blank or the "
+            "channel names are not the proper length, then default channel "
+            "names will be used.",
+        )
 
         self._physical_pixel_sizes_z = FloatSpinBox(
             value=1, step=0.00000001, label="Z Pixel Size, um"
@@ -85,25 +182,38 @@ class UtilitiesContainer(Container):
 
         self._image_layer = Select(
             choices=current_layers, nullable=False, label="Images"
-        )  # use no value and allow user to unhighlight layers
+        )  # use no value and allow user to deselect layers
 
-        self._concatenate_image_files = CheckBox(label="Concatenate Files")
+        self._concatenate_image_files = CheckBox(
+            label="Concatenate Files",
+            tooltip="Concatenate files in the selected directory. Removes "
+            "blank channels.",
+        )
         self._concatenate_image_layers = CheckBox(
-            label="Concatenate Image Layers"
+            label="Concatenate Image Layers",
+            tooltip="Concatenate image layers in the viewer. Removes empty.",
         )
 
-        self._save_image_button = PushButton(label="Save Images")
+        self._save_image_button = PushButton(
+            label="Save Images",
+            tooltip="Save the concatenated image data as OME-TIFF.",
+        )
 
         self._labels_layer = create_widget(
             annotation="napari.layers.Labels", label="Labels"
         )
-        self._save_labels_button = PushButton(label="Save Labels")
+        self._save_labels_button = PushButton(
+            label="Save Labels", tooltip="Save the labels data as OME-TIFF."
+        )
 
         self._shapes_layer = create_widget(
             annotation="napari.layers.Shapes", label="Shapes"
         )
-        self._save_shapes_button = PushButton(label="Save Shapes as Labels")
-
+        self._save_shapes_button = PushButton(
+            label="Save Shapes as Labels",
+            tooltip="Save the shapes data as labels (OME-TIFF) according to "
+            "selected image layer dimensions.",
+        )
         self._results = TextEdit(label="Info")
 
         # Container Widget Order
@@ -174,7 +284,7 @@ class UtilitiesContainer(Container):
     def concatenate_images(
         self,
         concatenate_files: bool,
-        files: List[PathLike],
+        files: List[Union[str, Path]],
         concatenate_layers: bool,
         layers: List[layers.Image],
     ):
