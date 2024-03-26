@@ -5,6 +5,7 @@ except ImportError:
 
 from ._apoc_container import ApocContainer
 from ._apoc_feature_stack import ApocFeatureStack
+from ._plate_mapper import PlateMapper
 from ._rescale_by import RescaleBy
 from ._utilities_container import UtilitiesContainer
 from ._workflow_container import WorkflowContainer
@@ -22,6 +23,7 @@ __all__ = [
     "ApocContainer",
     "ApocFeatureStack",
     "RescaleBy",
+    "PlateMapper",
     "get_directory_and_files",
     "check_for_missing_files",
     "setup_logger",
