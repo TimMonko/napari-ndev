@@ -591,7 +591,7 @@ class ApocContainer(Container):
 
             OmeTiffWriter.save(
                 data=save_data,
-                uri=self._output_directory.value / (file.stem + ".tif"),
+                uri=self._output_directory.value / (file.stem + ".tiff"),
                 dim_order=squeezed_dim_order,
                 channel_names=["Labels"],
                 physical_pixel_sizes=img.physical_pixel_sizes,

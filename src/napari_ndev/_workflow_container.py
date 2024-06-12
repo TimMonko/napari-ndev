@@ -234,7 +234,7 @@ class WorkflowContainer(Container):
 
             OmeTiffWriter.save(
                 data=result_stack,
-                uri=result_dir / (image_file.stem + ".tif"),
+                uri=result_dir / (image_file.stem + ".tiff"),
                 dim_order="TCZYX",
                 channel_names=result_names,
                 physical_pixel_sizes=img.physical_pixel_sizes,

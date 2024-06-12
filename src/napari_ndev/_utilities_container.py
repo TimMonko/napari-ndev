@@ -268,7 +268,7 @@ class UtilitiesContainer(Container):
         img = AICSImage(self._files.value[0])
         self._img = img
         self._update_metadata(img)
-        self._save_name.value = str(self._files.value[0].stem + ".tif")
+        self._save_name.value = str(self._files.value[0].stem + ".tiff")
 
     def update_metadata_from_layer(self):
         try:
