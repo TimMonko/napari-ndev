@@ -117,7 +117,9 @@ def test_save_ome_tiff(make_napari_viewer, test_data, tmp_path: Path):
 
 @pytest.fixture
 def test_rgb_image():
-    path = os.path.join("src", "napari_ndev", "_tests", "resources", "RGB.tif")
+    path = os.path.join(
+        "src", "napari_ndev", "_tests", "resources", "RGB.tiff"
+    )
     img = AICSImage(path)
     return path, img
 
