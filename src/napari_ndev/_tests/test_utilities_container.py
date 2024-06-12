@@ -131,7 +131,7 @@ def test_update_metadata_from_file(make_napari_viewer, test_rgb_image):
     path, _ = test_rgb_image
     container._files.value = path
 
-    assert container._save_name.value == "RGB.tif"
+    assert container._save_name.value == "RGB.tiff"
     assert container._img.dims.order == "TCZYXS"
     assert container._squeezed_dims == "YX"
     assert container._channel_names.value == "['red', 'green', 'blue']"
