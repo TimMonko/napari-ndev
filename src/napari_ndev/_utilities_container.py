@@ -288,8 +288,9 @@ class UtilitiesContainer(Container):
         img = AICSImage(self._files.value[0])
         self._img = img
         self._update_metadata(img)
+        self._save_name.value = str(self._files.value[0].stem + ".tiff")
         self._scenes.value = len(img.scenes)
-        self._save_name.value = str(self._files.value[0].stem + ".tif")
+
 
     def update_metadata_from_layer(self):
         try:
