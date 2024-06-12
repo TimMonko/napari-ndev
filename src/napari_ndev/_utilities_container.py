@@ -126,6 +126,7 @@ class UtilitiesContainer(Container):
         self._image_save_dims = None
         self._label_save_dims = None
         self._p_sizes = None
+        self._scenes = None
         ##############################
         # Widgets
         ##############################
@@ -156,6 +157,10 @@ class UtilitiesContainer(Container):
             label="Dimension Order",
             tooltip="Sanity check for available dimensions.",
         )
+        
+        self._scenes = Label(
+            label="Number of Scenes",
+        )
         self._channel_names = LineEdit(
             label="Channel Name(s)",
             tooltip="Enter channel names as a list. If left blank or the "
@@ -183,6 +188,17 @@ class UtilitiesContainer(Container):
         self._image_layer = Select(
             choices=current_layers, nullable=False, label="Images"
         )  # use no value and allow user to deselect layers
+        
+
+        self._scenes_to_extract = LineEdit(
+            label="Scenes to Extract",
+            tooltip="Enter the scenes to extract as a list. If left blank "
+            "then all scenes will be extracted.",
+        )
+        self._extract_scenes = PushButton(
+            label="Extract Scenes",
+            tooltip="Extract scenes from a single selected file.",
+        )
 
         self._concatenate_image_files = CheckBox(
             label="Concatenate Files",
@@ -219,18 +235,21 @@ class UtilitiesContainer(Container):
         # Container Widget Order
         self.extend(
             [
+                self._save_directory,
                 self._files,
                 self._open_image_button,
                 self._dim_order,
+                self._scenes,
                 self._channel_names,
                 self._physical_pixel_sizes_z,
                 self._physical_pixel_sizes_y,
                 self._physical_pixel_sizes_x,
                 self._image_layer,
                 self._metadata_from_selected_layer,
+                self._scenes_to_extract,
+                self._extract_scenes,
                 self._concatenate_image_files,
                 self._concatenate_image_layers,
-                self._save_directory,
                 self._save_name,
                 self._save_image_button,
                 self._labels_layer,
@@ -248,7 +267,7 @@ class UtilitiesContainer(Container):
         self._metadata_from_selected_layer.clicked.connect(
             self.update_metadata_from_layer
         )
-
+        self._extract_scenes.clicked.connect(self.save_scenes_ome_tiff)
         self._save_image_button.clicked.connect(self.save_ome_tiff)
         self._save_labels_button.clicked.connect(self.save_labels)
         self._save_shapes_button.clicked.connect(self.save_shapes_as_labels)
@@ -268,6 +287,7 @@ class UtilitiesContainer(Container):
         img = AICSImage(self._files.value[0])
         self._img = img
         self._update_metadata(img)
+        self._scenes.value = len(img.scenes)
         self._save_name.value = str(self._files.value[0].stem + ".tif")
 
     def update_metadata_from_layer(self):
@@ -369,6 +389,32 @@ class UtilitiesContainer(Container):
                 + str(self._save_name.value)
             )
         return
+
+    def save_scenes_ome_tiff(self) -> None:
+        img = AICSImage(self._files.value[0])
+        scenes = self._scenes_to_extract.value
+        scenes_list = ast.literal_eval(scenes) if scenes else None
+        save_directory = self._save_directory.value / "Images"
+        save_directory.mkdir(parents=False, exist_ok=True)
+        for scene in scenes_list:
+            img.set_scene(scene)
+
+            img_save_name = (f'{self._save_name.value.split(".")[0]}'
+                             f'_scene_{img.current_scene}.ome.tiff')
+            img_save_loc = save_directory / img_save_name
+
+            # get channel names from widget if truthy
+            cnames = self._channel_names.value
+            channel_names = ast.literal_eval(cnames) if cnames else None
+
+            self._common_save_logic(
+                data=img.data,
+                uri=img_save_loc,
+                dim_order="TCZYX",
+                channel_names=channel_names,
+                layer=f"Scene: {img.current_scene}",
+            )
+
 
     def save_ome_tiff(self) -> None:
         self._img_data = self.concatenate_images(
