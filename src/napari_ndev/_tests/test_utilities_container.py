@@ -117,7 +117,9 @@ def test_save_ome_tiff(make_napari_viewer, test_data, tmp_path: Path):
 
 @pytest.fixture
 def test_rgb_image():
-    path = os.path.join("src", "napari_ndev", "_tests", "resources", "RGB.tif")
+    path = os.path.join(
+        "src", "napari_ndev", "_tests", "resources", "RGB.tiff"
+    )
     img = AICSImage(path)
     return path, img
 
@@ -129,7 +131,7 @@ def test_update_metadata_from_file(make_napari_viewer, test_rgb_image):
     path, _ = test_rgb_image
     container._files.value = path
 
-    assert container._save_name.value == "RGB.tif"
+    assert container._save_name.value == "RGB.tiff"
     assert container._img.dims.order == "TCZYXS"
     assert container._squeezed_dims == "YX"
     assert container._channel_names.value == "['red', 'green', 'blue']"
