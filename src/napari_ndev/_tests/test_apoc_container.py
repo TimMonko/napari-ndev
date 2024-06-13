@@ -172,7 +172,7 @@ def test_batch_predict_normal_operation(make_napari_viewer, tmp_path):
     image_directory = pathlib.Path(
         "src/napari_ndev/_tests/resources/Apoc/Images"
     )
-    num_files = len(list(image_directory.glob("*.tif")))
+    num_files = len(list(image_directory.glob("*.tiff")))
     output_directory = tmp_path / "output"
     output_directory.mkdir()
 
@@ -185,7 +185,8 @@ def test_batch_predict_normal_operation(make_napari_viewer, tmp_path):
     container = ApocContainer(make_napari_viewer())
     container._image_directory.value = image_directory
     container._output_directory.value = output_directory
-    container._image_channels.value = ["IBA1"]
+    # container._image_channels.value = ["IBA1"] # images need fixed
+    container._image_channels.value = ['Labels']
     container._classifier_file.value = classifier
 
     container.batch_predict()
@@ -226,7 +227,7 @@ def test_batch_predict_exception_logging(make_napari_viewer, tmp_path):
         "src/napari_ndev/_tests/resources/Apoc/Images"
     )
 
-    num_files = len(list(image_directory.glob("*.tif")))
+    num_files = len(list(image_directory.glob("*.tiff")))
     output_directory = tmp_path / "output"
     output_directory.mkdir()
 
@@ -234,7 +235,8 @@ def test_batch_predict_exception_logging(make_napari_viewer, tmp_path):
     container = ApocContainer(make_napari_viewer())
     container._image_directory.value = image_directory
     container._output_directory.value = output_directory
-    container._image_channels.value = ["IBA1"]
+    # container._image_channels.value = ["IBA1"] # fix these images
+    container._image_channels.value = ['Labels']
 
     # Mock the custom_classifier.predict() method to raise an exception
     class MockClassifier:
