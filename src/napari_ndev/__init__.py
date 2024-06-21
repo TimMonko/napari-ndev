@@ -3,19 +3,26 @@ try:
 except ImportError:
     __version__ = "unknown"
 
-from ._apoc_container import ApocContainer
-from ._apoc_feature_stack import ApocFeatureStack
-from ._plate_mapper import PlateMapper
-from ._rescale_by import RescaleBy
-from ._utilities_container import UtilitiesContainer
-from ._workflow_container import WorkflowContainer
-# from .helpers import (
-#     check_for_missing_files,
-#     get_channel_names,
-#     get_directory_and_files,
-#     get_squeezed_dim_order,
-#     setup_logger,
-# )
+from importlib import import_module
+
+
+class LazyImport:
+    def __init__(self, module_name):
+        self.module_name = module_name
+        self.module = None
+
+    def __getattr__(self, name):
+        if self.module is None:
+            self.module = import_module(self.module_name)
+        return getattr(self.module, name)
+
+
+ApocContainer = LazyImport('._apoc_container')
+ApocFeatureStack = LazyImport('._apoc_feature_stack')
+PlateMapper = LazyImport('._plate_mapper')
+RescaleBy = LazyImport('._rescale_by')
+UtilitiesContainer = LazyImport('._utilities_container')
+WorkflowContainer = LazyImport('._workflow_container')
 
 __all__ = [
     "WorkflowContainer",
@@ -24,9 +31,4 @@ __all__ = [
     "ApocFeatureStack",
     "RescaleBy",
     "PlateMapper",
-    # "get_directory_and_files",
-    # "check_for_missing_files",
-    # "setup_logger",
-    # "get_squeezed_dim_order",
-    # "get_channel_names",
 ]
