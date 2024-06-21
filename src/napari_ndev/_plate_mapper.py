@@ -2,7 +2,7 @@ import itertools
 import string
 
 import pandas as pd
-import seaborn as sns
+from seaborn import color_palette
 
 
 class PlateMapper:
@@ -150,9 +150,9 @@ class PlateMapper:
         unique_values = pd.unique(self.plate_map_pivot.values.flatten())
         unique_values = unique_values[pd.notna(unique_values)]
 
-        color_palette = sns.color_palette(palette).as_hex()
+        color_palette_hex = color_palette(palette).as_hex()
         # Create an infinite iterator that cycles through the palette
-        palette_cycle = itertools.cycle(color_palette)
+        palette_cycle = itertools.cycle(color_palette_hex)
         # Use next() to get the next color
         color_dict = {value: next(palette_cycle) for value in unique_values}
 
