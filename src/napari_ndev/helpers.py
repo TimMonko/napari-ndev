@@ -5,6 +5,14 @@ from typing import List, Tuple, Union
 
 from aicsimageio import AICSImage
 
+__all__ = [
+    "check_for_missing_files",
+    "get_channel_names",
+    "get_directory_and_files",
+    "get_squeezed_dim_order",
+    "setup_logger",
+]
+
 
 def get_directory_and_files(
     dir: Union[str, Path],
