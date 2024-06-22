@@ -1,6 +1,5 @@
 from typing import TYPE_CHECKING
 
-import apoc
 from magicgui.widgets import (
     CheckBox,
     Container,
@@ -113,8 +112,10 @@ class ApocFeatureStack(Container):
         self._feature_string.value = " ".join(feature_list)
 
     def layer_to_feature_stack(self):
+        from apoc import generate_feature_stack
+
         image = self._image_layer.value.data
-        feature_stack = apoc.generate_feature_stack(
+        feature_stack = generate_feature_stack(
             image, self._feature_string.value
         )
 
