@@ -162,9 +162,9 @@ class ApocContainer(Container):
         # Lazy Imports
         ##############################
         import apoc
+        from napari.layers import Image as ImageLayer
 
         self.apoc = apoc
-        from napari.layers import Image as ImageLayer
 
         ##############################
         # Attributes
