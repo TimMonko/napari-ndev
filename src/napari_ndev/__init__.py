@@ -8,6 +8,7 @@ from ._apoc_container import ApocContainer
 from ._apoc_feature_stack import ApocFeatureStack
 from ._plate_mapper import PlateMapper
 from ._rescale_by import RescaleBy
+from ._utilities_container import UtilitiesContainer
 
 # Lazy load in widgets in order to speed up import time
 # This package does not typically use the widgets directly, so this should not
@@ -17,7 +18,6 @@ from ._rescale_by import RescaleBy
 
 def __getattr__(name):
     module_map = {
-        "UtilitiesContainer": ("._utilities_container", "UtilitiesContainer"),
         "WorkflowContainer": ("._workflow_container", "WorkflowContainer"),
     }
 
