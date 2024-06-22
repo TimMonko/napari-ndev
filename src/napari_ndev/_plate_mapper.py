@@ -2,7 +2,6 @@ import itertools
 import string
 
 import pandas as pd
-from seaborn import color_palette
 
 
 class PlateMapper:
@@ -145,6 +144,8 @@ class PlateMapper:
             map DataFrame with different background colors for each unique
             value.
         """
+        from seaborn import color_palette
+
         self.plate_map_pivot = self.get_pivoted_plate_map(treatment)
 
         unique_values = pd.unique(self.plate_map_pivot.values.flatten())
