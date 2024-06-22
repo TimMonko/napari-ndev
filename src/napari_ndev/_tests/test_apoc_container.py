@@ -186,7 +186,7 @@ def test_batch_predict_normal_operation(make_napari_viewer, tmp_path):
     container._image_directory.value = image_directory
     container._output_directory.value = output_directory
     # container._image_channels.value = ["IBA1"] # images need fixed
-    container._image_channels.value = ['Labels']
+    container._image_channels.value = ["Labels"]
     container._classifier_file.value = classifier
 
     container.batch_predict()
@@ -210,7 +210,7 @@ def test_update_metadata_from_file(make_napari_viewer):
         )
 
         # Mock the AICSImage class to return sample channel names
-        with patch("napari_ndev._apoc_container.AICSImage") as mock_AICSImage:
+        with patch("aicsimageio.AICSImage") as mock_AICSImage:
             mock_AICSImage.return_value.channel_names = ["C0", "C1", "C2"]
 
             # Call the _update_metadata_from_file method
@@ -236,7 +236,7 @@ def test_batch_predict_exception_logging(make_napari_viewer, tmp_path):
     container._image_directory.value = image_directory
     container._output_directory.value = output_directory
     # container._image_channels.value = ["IBA1"] # fix these images
-    container._image_channels.value = ['Labels']
+    container._image_channels.value = ["Labels"]
 
     # Mock the custom_classifier.predict() method to raise an exception
     class MockClassifier:

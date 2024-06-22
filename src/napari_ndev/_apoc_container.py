@@ -3,12 +3,8 @@ import re
 from enum import Enum
 from typing import TYPE_CHECKING
 
-import apoc
 import numpy as np
 import pandas as pd
-import pyclesperanto_prototype as cle
-from aicsimageio import AICSImage
-from aicsimageio.writers import OmeTiffWriter
 from magicgui.widgets import (
     CheckBox,
     ComboBox,
@@ -24,12 +20,18 @@ from magicgui.widgets import (
     Table,
     create_widget,
 )
-from napari import layers
+from pyclesperanto_prototype import set_wait_for_kernel_finish
 
 from napari_ndev import helpers
 
 if TYPE_CHECKING:
     import napari
+
+# Lazy Imports:
+# from aicsimageio import AICSImage
+# from aicsimageio.writers import OmeTiffWriter
+# from napari import layers
+# import apoc
 
 
 class ApocContainer(Container):
@@ -155,6 +157,15 @@ class ApocContainer(Container):
         # viewer = napari_viewer
     ):
         super().__init__()
+
+        ##############################
+        # Lazy Imports
+        ##############################
+        import apoc
+        from napari.layers import Image as ImageLayer
+
+        self.apoc = apoc
+
         ##############################
         # Attributes
         ##############################
@@ -250,7 +261,7 @@ class ApocContainer(Container):
 
         def current_layers(_):
             return [
-                x for x in self._viewer.layers if isinstance(x, layers.Image)
+                x for x in self._viewer.layers if isinstance(x, ImageLayer)
             ]
 
         self._image_layer = Select(
@@ -308,6 +319,8 @@ class ApocContainer(Container):
         self._predict_image_layer.clicked.connect(self.image_predict)
 
     def _update_metadata_from_file(self):
+        from aicsimageio import AICSImage
+
         _, files = helpers.get_directory_and_files(self._image_directory.value)
         img = AICSImage(files[0])
         self._image_channels.choices = helpers.get_channel_names(img)
@@ -389,20 +402,20 @@ class ApocContainer(Container):
         if self._predefined_features.value.value == 1:
             return self._custom_features.value
         else:
-            return apoc.PredefinedFeatureSet[
+            return self.apoc.PredefinedFeatureSet[
                 self._predefined_features.value.name
             ].value
 
     def _get_training_classifier_instance(self):
         if self._classifier_type.value == "PixelClassifier":
-            return apoc.PixelClassifier(
+            return self.apoc.PixelClassifier(
                 opencl_filename=self._classifier_file.value,
                 max_depth=self._max_depth.value,
                 num_ensembles=self._num_trees.value,
             )
 
         if self._classifier_type.value == "ObjectSegmenter":
-            return apoc.ObjectSegmenter(
+            return self.apoc.ObjectSegmenter(
                 opencl_filename=self._classifier_file.value,
                 positive_class_identifier=self._positive_class_id.value,
                 max_depth=self._max_depth.value,
@@ -420,6 +433,8 @@ class ApocContainer(Container):
         return channel_img
 
     def batch_train(self):
+        from aicsimageio import AICSImage
+
         image_directory, image_files = helpers.get_directory_and_files(
             self._image_directory.value
         )
@@ -442,14 +457,14 @@ class ApocContainer(Container):
         )
 
         # https://github.com/clEsperanto/pyclesperanto_prototype/issues/163
-        cle.set_wait_for_kernel_finish(True)
+        set_wait_for_kernel_finish(True)
 
         self._progress_bar.label = f"Training on {len(image_files)} Images"
         self._progress_bar.value = 0
         self._progress_bar.max = len(image_files)
 
         if not self._continue_training:
-            apoc.erase_classifier(self._classifier_file.value)
+            self.apoc.erase_classifier(self._classifier_file.value)
 
         custom_classifier = self._get_training_classifier_instance()
         feature_set = self._get_feature_set()
@@ -506,10 +521,10 @@ class ApocContainer(Container):
         label = self._label_layer.value.data
 
         # https://github.com/clEsperanto/pyclesperanto_prototype/issues/163
-        cle.set_wait_for_kernel_finish(True)
+        set_wait_for_kernel_finish(True)
 
         if not self._continue_training:
-            apoc.erase_classifier(self._classifier_file.value)
+            self.apoc.erase_classifier(self._classifier_file.value)
 
         custom_classifier = self._get_training_classifier_instance()
         feature_set = self._get_feature_set()
@@ -535,6 +550,9 @@ class ApocContainer(Container):
             return None
 
     def batch_predict(self):
+        from aicsimageio import AICSImage
+        from aicsimageio.writers import OmeTiffWriter
+
         image_directory, image_files = helpers.get_directory_and_files(
             dir=self._image_directory.value,
         )
@@ -552,7 +570,7 @@ class ApocContainer(Container):
         )
 
         # https://github.com/clEsperanto/pyclesperanto_prototype/issues/163
-        cle.set_wait_for_kernel_finish(True)
+        set_wait_for_kernel_finish(True)
 
         self._progress_bar.label = f"Predicting {len(image_files)} Images"
         self._progress_bar.value = 0
@@ -583,7 +601,7 @@ class ApocContainer(Container):
                 self._progress_bar.value = idx + 1
                 continue
 
-            save_data = cle.pull(result)
+            save_data = np.asarray(result)
             if save_data.max() > 65535:
                 save_data = save_data.astype(np.int32)
             else:
@@ -607,7 +625,7 @@ class ApocContainer(Container):
         layer_name = self._image_layer.value[0].name
         print(f"Predicting {layer_name}")
         # https://github.com/clEsperanto/pyclesperanto_prototype/issues/163
-        cle.set_wait_for_kernel_finish(True)
+        set_wait_for_kernel_finish(True)
 
         image_list = [image.data for image in self._image_layer.value]
         image_stack = np.stack(image_list, axis=0)

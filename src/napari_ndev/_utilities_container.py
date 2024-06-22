@@ -3,9 +3,6 @@ from pathlib import Path
 from typing import TYPE_CHECKING, List, Union
 
 import numpy as np
-from aicsimageio import AICSImage
-from aicsimageio.types import PhysicalPixelSizes
-from aicsimageio.writers import OmeTiffWriter
 from magicgui.widgets import (
     CheckBox,
     Container,
@@ -18,12 +15,12 @@ from magicgui.widgets import (
     TextEdit,
     create_widget,
 )
-from napari import layers
 
 from napari_ndev import helpers
 
 if TYPE_CHECKING:
     import napari
+    from napari.layers import Image as ImageLayer
 
 
 class UtilitiesContainer(Container):
@@ -117,6 +114,7 @@ class UtilitiesContainer(Container):
         viewer: "napari.viewer.Viewer",
     ):
         super().__init__()
+
         ##############################
         # Attributes
         ##############################
@@ -182,8 +180,10 @@ class UtilitiesContainer(Container):
         # Use a function for layer inputs so that it is constantly updated
         # when the dependency changes
         def current_layers(_):
+            from napari.layers import Image as ImageLayer
+
             return [
-                x for x in self._viewer.layers if isinstance(x, layers.Image)
+                x for x in self._viewer.layers if isinstance(x, ImageLayer)
             ]
 
         self._image_layer = Select(
@@ -285,12 +285,13 @@ class UtilitiesContainer(Container):
         self._physical_pixel_sizes_x.value = img.physical_pixel_sizes.X
 
     def update_metadata_from_file(self):
+        from aicsimageio import AICSImage
+
         img = AICSImage(self._files.value[0])
         self._img = img
         self._update_metadata(img)
         self._save_name.value = str(self._files.value[0].stem + ".tiff")
         self._scenes.value = len(img.scenes)
-
 
     def update_metadata_from_layer(self):
         try:
@@ -308,8 +309,10 @@ class UtilitiesContainer(Container):
         concatenate_files: bool,
         files: List[Union[str, Path]],
         concatenate_layers: bool,
-        layers: List[layers.Image],
+        layers: List["ImageLayer"],
     ):
+        from aicsimageio import AICSImage
+
         array_list = []
         if concatenate_files:
             for file in files:
@@ -338,6 +341,8 @@ class UtilitiesContainer(Container):
 
     @property
     def p_sizes(self):
+        from aicsimageio.types import PhysicalPixelSizes
+
         return PhysicalPixelSizes(
             self._physical_pixel_sizes_z.value,
             self._physical_pixel_sizes_y.value,
@@ -357,6 +362,8 @@ class UtilitiesContainer(Container):
         channel_names: List[str],
         layer: str,
     ) -> None:
+        from aicsimageio.writers import OmeTiffWriter
+
         # AICSImage does not allow saving labels as np.int64
         # napari generates labels differently depending on the OS
         # so we need to convert to np.int32 in case np.int64 generated
@@ -393,6 +400,8 @@ class UtilitiesContainer(Container):
         return
 
     def save_scenes_ome_tiff(self) -> None:
+        from aicsimageio import AICSImage
+
         img = AICSImage(self._files.value[0])
         scenes = self._scenes_to_extract.value
         scenes_list = ast.literal_eval(scenes) if scenes else None
@@ -401,8 +410,10 @@ class UtilitiesContainer(Container):
         for scene in scenes_list:
             img.set_scene(scene)
 
-            img_save_name = (f'{self._save_name.value.split(".")[0]}'
-                             f'_scene_{img.current_scene}.ome.tiff')
+            img_save_name = (
+                f'{self._save_name.value.split(".")[0]}'
+                f"_scene_{img.current_scene}.ome.tiff"
+            )
             img_save_loc = save_directory / img_save_name
 
             # get channel names from widget if truthy
