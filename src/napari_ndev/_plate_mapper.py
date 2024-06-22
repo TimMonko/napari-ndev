@@ -2,7 +2,6 @@ import itertools
 import string
 
 import pandas as pd
-import seaborn as sns
 
 
 class PlateMapper:
@@ -145,14 +144,16 @@ class PlateMapper:
             map DataFrame with different background colors for each unique
             value.
         """
+        from seaborn import color_palette
+
         self.plate_map_pivot = self.get_pivoted_plate_map(treatment)
 
         unique_values = pd.unique(self.plate_map_pivot.values.flatten())
         unique_values = unique_values[pd.notna(unique_values)]
 
-        color_palette = sns.color_palette(palette).as_hex()
+        color_palette_hex = color_palette(palette).as_hex()
         # Create an infinite iterator that cycles through the palette
-        palette_cycle = itertools.cycle(color_palette)
+        palette_cycle = itertools.cycle(color_palette_hex)
         # Use next() to get the next color
         color_dict = {value: next(palette_cycle) for value in unique_values}
 

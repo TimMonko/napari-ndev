@@ -1,9 +1,18 @@
 import logging
 import time
 from pathlib import Path
-from typing import List, Tuple, Union
+from typing import List, Tuple, Union, TYPE_CHECKING
 
-from aicsimageio import AICSImage
+if TYPE_CHECKING:
+    from aicsimageio import AICSImage
+
+__all__ = [
+    "check_for_missing_files",
+    "get_channel_names",
+    "get_directory_and_files",
+    "get_squeezed_dim_order",
+    "setup_logger",
+]
 
 
 def get_directory_and_files(
@@ -50,7 +59,7 @@ def get_directory_and_files(
     return directory, files
 
 
-def get_channel_names(img: AICSImage) -> List[str]:
+def get_channel_names(img: "AICSImage") -> List[str]:
     """
     Get the channel names from an AICSImage object.
 
@@ -71,7 +80,7 @@ def get_channel_names(img: AICSImage) -> List[str]:
 
 
 def get_squeezed_dim_order(
-    img: AICSImage, skip_dims: Union[List[str], str] = ["C", "S"]
+    img: "AICSImage", skip_dims: Union[List[str], str] = ["C", "S"]
 ) -> str:
     """
     Returns a string containing the squeezed dimensions of the given AICSImage
