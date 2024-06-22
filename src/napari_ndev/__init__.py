@@ -9,25 +9,7 @@ from ._apoc_feature_stack import ApocFeatureStack
 from ._plate_mapper import PlateMapper
 from ._rescale_by import RescaleBy
 from ._utilities_container import UtilitiesContainer
-
-# Lazy load in widgets in order to speed up import time
-# This package does not typically use the widgets directly, so this should not
-# be too confusing for the end user. The goal is to allow directly calling the
-# widgets without having to know the underlying package structure.
-
-
-def __getattr__(name):
-    module_map = {
-        "WorkflowContainer": ("._workflow_container", "WorkflowContainer"),
-    }
-
-    if name in module_map:
-        module_path, class_name = module_map[name]
-        module = __import__(module_path, fromlist=[class_name])
-        return getattr(module, class_name)
-    else:
-        raise AttributeError(f"module {__name__} has no attribute {name}")
-
+from ._workflow_container import WorkflowContainer
 
 __all__ = [
     "WorkflowContainer",

@@ -1,10 +1,6 @@
 from typing import TYPE_CHECKING
 
-import dask.array as da
 import numpy as np
-import pyclesperanto_prototype as cle
-from aicsimageio import AICSImage, transforms
-from aicsimageio.writers import OmeTiffWriter
 from magicgui.widgets import (
     CheckBox,
     ComboBox,
@@ -14,7 +10,6 @@ from magicgui.widgets import (
     ProgressBar,
     PushButton,
 )
-from napari_workflows._io_yaml_v1 import load_workflow
 
 from napari_ndev import helpers
 
@@ -125,6 +120,8 @@ class WorkflowContainer(Container):
 
     # Get Channel names and image dimensions without C
     def _get_image_info(self):
+        from aicsimageio import AICSImage
+
         self.image_dir, self.image_files = helpers.get_directory_and_files(
             self.image_directory.value,
         )
@@ -156,12 +153,18 @@ class WorkflowContainer(Container):
         return
 
     def _get_workflow_info(self):
+        from napari_workflows._io_yaml_v1 import load_workflow
+
         self.workflow = load_workflow(self.workflow_file.value)
         self._workflow_roots.value = self.workflow.roots()
         self._update_roots()
         return
 
     def batch_workflow(self):
+        import dask.array as da
+        from aicsimageio import AICSImage, transforms
+        from aicsimageio.writers import OmeTiffWriter
+
         result_dir = self.result_directory.value
         image_files = self.image_files
         workflow = self.workflow
@@ -211,7 +214,7 @@ class WorkflowContainer(Container):
             leaf_names = workflow.leafs()
             result = workflow.get(name=leaf_names)
 
-            result_stack = cle.pull(
+            result_stack = np.asarray(
                 result
             )  # cle.pull stacks the results on the 0th axis as "C"
             # transform result_stack to TCZYX
