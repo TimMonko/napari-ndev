@@ -4,6 +4,7 @@ except ImportError:
     __version__ = "unknown"
 
 from . import helpers
+from ._apoc_container import ApocContainer
 
 # Lazy load in widgets in order to speed up import time
 # This package does not typically use the widgets directly, so this should not
@@ -13,12 +14,12 @@ from . import helpers
 
 def __getattr__(name):
     module_map = {
-        'ApocContainer': ('._apoc_container', 'ApocContainer'),
-        'ApocFeatureStack': ('._apoc_feature_stack', 'ApocFeatureStack'),
-        'PlateMapper': ('._plate_mapper', 'PlateMapper'),
-        'RescaleBy': ('._rescale_by', 'RescaleBy'),
-        'UtilitiesContainer': ('._utilities_container', 'UtilitiesContainer'),
-        'WorkflowContainer': ('._workflow_container', 'WorkflowContainer'),
+        # 'ApocContainer': ('._apoc_container', 'ApocContainer'),
+        "ApocFeatureStack": ("._apoc_feature_stack", "ApocFeatureStack"),
+        "PlateMapper": ("._plate_mapper", "PlateMapper"),
+        "RescaleBy": ("._rescale_by", "RescaleBy"),
+        "UtilitiesContainer": ("._utilities_container", "UtilitiesContainer"),
+        "WorkflowContainer": ("._workflow_container", "WorkflowContainer"),
     }
 
     if name in module_map:
