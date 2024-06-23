@@ -1,1 +1,0 @@
-::: napari_ndev._widget.annotation_saver
