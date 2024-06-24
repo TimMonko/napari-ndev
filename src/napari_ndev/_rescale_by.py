@@ -6,6 +6,8 @@ from magicgui.widgets import (
     Container,
     FloatSpinBox,
     PushButton,
+    TupleEdit,
+    ToolBar,
 )
 
 if TYPE_CHECKING:
@@ -26,6 +28,8 @@ class RescaleBy(Container):
         ##############################
         # Widgets
         ##############################
+        self._tb = ToolBar()
+        self._tuple = TupleEdit(value=(1.0, 1.0, 1.0), label="Scale")
         self._scale_x = FloatSpinBox(
             value=1.0, step=0.00000001, label="Scale X"
         )
@@ -57,6 +61,8 @@ class RescaleBy(Container):
 
         self.extend(
             [
+                self._tb,
+                self._tuple,
                 self._layer_to_scale,
                 self._inherit_from_layer,
                 self._scale_z,
@@ -85,6 +91,7 @@ class RescaleBy(Container):
             self._scale_z.value = scale[-3]
 
     def rescale_by(self):
+        # redo to depend not on a boolean but on the length of self_layer_to_scale.value.scale
         if self._scale_in_z.value is False:
             scale_factors = (self._scale_y.value, self._scale_x.value)
         elif self._scale_in_z.value is True:
