@@ -18,8 +18,6 @@ from magicgui.widgets import (
 
 from napari_ndev import helpers
 
-from ._rescale_by import RescaleBy
-
 if TYPE_CHECKING:
     import napari
     from aicsimageio import AICSImage
@@ -131,28 +129,29 @@ class UtilitiesContainer(Container):
         ##############################
         # Widgets
         ##############################
-        self._rescale_by = RescaleBy(viewer=self._viewer)
-        self._metadata_container = Container(
-            # [
-            #     PushButton(label="Update Metadata from Selected Layer"),
-            #     PushButton(label="Update Metadata from File"),
-            # ],
-            layout="horizontal",
-        )
-        self._file_update_button = PushButton(
+
+        self._file_metadata_update = PushButton(
             label="Update Metadata from File"
         )
-        self._layer_update_button = PushButton(
+        self._layer_metadata_update = PushButton(
             label="Update Metadata from Selected Layer"
         )
-        self._metadata_container.append(self._file_update_button)
-        self._metadata_container.append(self._layer_update_button)
+        self._metadata_container = Container(layout="horizontal")
+        self._metadata_container.append(self._file_metadata_update)
+        self._metadata_container.append(self._layer_metadata_update)
+
         self._files = FileEdit(
             label="File(s)",
             mode="rm",
             tooltip="Select file(s) to load.",
         )
-        self._open_image_button = PushButton(label="Open Images")
+        self._open_image_button = PushButton(label="Open File(s)")
+        self._open_image_update_metadata = CheckBox(
+            value=True, label="Update Metadata on Open"
+        )
+        self._open_image_container = Container(layout="horizontal")
+        self._open_image_container.append(self._open_image_button)
+        self._open_image_container.append(self._open_image_update_metadata)
 
         self._save_directory = FileEdit(
             label="Save Directory",
@@ -255,9 +254,9 @@ class UtilitiesContainer(Container):
         self.extend(
             [
                 self._metadata_container,
-                self._rescale_by,
                 self._save_directory,
                 self._files,
+                self._open_image_container,
                 self._open_image_button,
                 self._dim_order,
                 self._scenes,
@@ -283,10 +282,13 @@ class UtilitiesContainer(Container):
         ##############################
         # Event Handling
         ##############################
-        self._files.changed.connect(self.update_metadata_from_file)
+        # self._files.changed.connect(self.update_metadata_from_file)
         self._open_image_button.clicked.connect(self.open_images)
-        self._metadata_from_selected_layer.clicked.connect(
+        self._layer_metadata_update.clicked.connect(
             self.update_metadata_from_layer
+        )
+        self._file_metadata_update.clicked.connect(
+            self.update_metadata_from_file
         )
 
         self._extract_scenes.clicked.connect(self.save_scenes_ome_tiff)
