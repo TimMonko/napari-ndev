@@ -124,6 +124,7 @@ class UtilitiesContainer(Container):
         self._image_save_dims = None
         self._label_save_dims = None
         self._p_sizes = None
+        self._squeezed_dims = None
 
         ##############################
         # Widgets
@@ -180,7 +181,7 @@ class UtilitiesContainer(Container):
         )
 
         self._scale_tuple = TupleEdit(
-            value=(0.0, 1.0, 1.0),
+            value=(0.0000, 1.0000, 1.0000),
             label="Scale ZYX",
             tooltip="Pixel size, usually in μm",
         )
@@ -199,14 +200,21 @@ class UtilitiesContainer(Container):
         # )  # use no value and allow user to deselect layers
 
         self._scenes_to_extract = LineEdit(
-            label="Scenes to Extract",
+            # label="Scenes to Extract",
             tooltip="Enter the scenes to extract as a list. If left blank "
             "then all scenes will be extracted.",
         )
         self._extract_scenes = PushButton(
-            label="Extract Scenes",
+            label="Extract and Save Scenes",
             tooltip="Extract scenes from a single selected file.",
         )
+        self._scene_container = Container(
+            layout="horizontal",
+            label="Extract Scenes",
+            tooltip="Must be in list index format. Ex: [0, 1, 2] or [5:10]",
+        )
+        self._scene_container.append(self._scenes_to_extract)
+        self._scene_container.append(self._extract_scenes)
 
         self._concatenate_image_files = CheckBox(
             label="Concatenate Files",
@@ -246,7 +254,7 @@ class UtilitiesContainer(Container):
         )
         self._save_container = Container(
             layout="horizontal",
-            label="Save",
+            label="Save Selected Layers",
         )
         self._save_container.append(self._save_image_button)
         self._save_container.append(self._save_labels_button)
@@ -265,17 +273,8 @@ class UtilitiesContainer(Container):
                 self._info_container,
                 self._channel_names,
                 self._scale_tuple,
-                # self._image_layer,
-                self._scenes_to_extract,
-                self._extract_scenes,
-                # self._concatenate_image_files,
-                # self._concatenate_image_layers,
+                self._scene_container,
                 self._concatenate_container,
-                # self._save_image_button,
-                self._labels_layer,
-                # self._save_labels_button,
-                self._shapes_layer,
-                # self._save_shapes_button,
                 self._save_container,
                 self._results,
             ]
@@ -382,7 +381,11 @@ class UtilitiesContainer(Container):
     def p_sizes(self):
         from aicsimageio.types import PhysicalPixelSizes
 
-        return PhysicalPixelSizes(self._scale_tuple.value)
+        return PhysicalPixelSizes(
+            self._scale_tuple.value[0],
+            self._scale_tuple.value[1],
+            self._scale_tuple.value[2],
+        )
 
     def _get_save_loc(self, parent):
         save_directory = self._save_directory.value / parent
@@ -469,7 +472,7 @@ class UtilitiesContainer(Container):
             self._concatenate_image_files.value,
             self._files.value,
             self._concatenate_image_layers.value,
-            self._image_layer.value,
+            list(self._viewer.layers.selection),
         )
         img_save_loc = self._get_save_loc("Images")
         # get channel names from widget if truthy
@@ -486,7 +489,7 @@ class UtilitiesContainer(Container):
         return self._img_data
 
     def save_labels(self) -> None:
-        label_data = self._labels_layer.value.data
+        label_data = self._viewer.layers.selection.active.data
 
         if label_data.max() > 65535:
             label_data = label_data.astype(np.int32)
@@ -506,10 +509,10 @@ class UtilitiesContainer(Container):
 
     def save_shapes_as_labels(self) -> None:
         # inherit shape from selected image layer or else a default
-        if self._image_layer.value:
-            label_dim = self._image_layer.value[0].data.shape
-        else:
-            label_dim = self._image_layer.choices[0].data.shape
+        image_layers = [
+            x for x in self._viewer.layers if isinstance(x, ImageLayer)
+        ]
+        label_dim = image_layers[0].data.shape
 
         # drop last axis if represents RGB image
         label_dim = label_dim[:-1] if label_dim[-1] == 3 else label_dim
