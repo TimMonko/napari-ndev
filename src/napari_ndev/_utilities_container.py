@@ -217,6 +217,12 @@ class UtilitiesContainer(Container):
             label="Concatenate Image Layers",
             tooltip="Concatenate image layers in the viewer. Removes empty.",
         )
+        self._concatenate_container = Container(
+            layout="horizontal",
+            label="Image Save Options",
+        )
+        self._concatenate_container.append(self._concatenate_image_files)
+        self._concatenate_container.append(self._concatenate_image_layers)
 
         self._save_image_button = PushButton(
             label="Save Images",
@@ -238,6 +244,14 @@ class UtilitiesContainer(Container):
             tooltip="Save the shapes data as labels (OME-TIFF) according to "
             "selected image layer dimensions.",
         )
+        self._save_container = Container(
+            layout="horizontal",
+            label="Save",
+        )
+        self._save_container.append(self._save_image_button)
+        self._save_container.append(self._save_labels_button)
+        self._save_container.append(self._save_shapes_button)
+
         self._results = TextEdit(label="Info")
 
         # Container Widget Order
@@ -254,13 +268,15 @@ class UtilitiesContainer(Container):
                 # self._image_layer,
                 self._scenes_to_extract,
                 self._extract_scenes,
-                self._concatenate_image_files,
-                self._concatenate_image_layers,
-                self._save_image_button,
+                # self._concatenate_image_files,
+                # self._concatenate_image_layers,
+                self._concatenate_container,
+                # self._save_image_button,
                 self._labels_layer,
-                self._save_labels_button,
+                # self._save_labels_button,
                 self._shapes_layer,
-                self._save_shapes_button,
+                # self._save_shapes_button,
+                self._save_container,
                 self._results,
             ]
         )
