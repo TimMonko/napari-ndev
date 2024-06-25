@@ -11,8 +11,8 @@ from magicgui.widgets import (
     Label,
     LineEdit,
     PushButton,
-    Select,
     TextEdit,
+    TupleEdit,
     create_widget,
 )
 
@@ -130,15 +130,13 @@ class UtilitiesContainer(Container):
         # Widgets
         ##############################
 
-        self._file_metadata_update = PushButton(
-            label="Update Metadata from File"
+        self._file_metadata_update = PushButton(label="File")
+        self._layer_metadata_update = PushButton(label="Selected Layer")
+        self._metadata_container = Container(
+            layout="horizontal", label="Update Metadata from:"
         )
-        self._layer_metadata_update = PushButton(
-            label="Update Metadata from Selected Layer"
-        )
-        self._metadata_container = Container(layout="horizontal")
-        self._metadata_container.append(self._file_metadata_update)
         self._metadata_container.append(self._layer_metadata_update)
+        self._metadata_container.append(self._file_metadata_update)
 
         self._files = FileEdit(
             label="File(s)",
@@ -164,19 +162,16 @@ class UtilitiesContainer(Container):
             ".ome/.tif/.tiff extension.",
         )
 
-        self._metadata_from_selected_layer = PushButton(
-            label="Update Metadata from Selected Layer",
-            tooltip="Gets pixel sizes, dim order from selected layer.",
-        )
-
         self._dim_order = Label(
-            label="Dimension Order",
+            label="Dimension Order: ",
             tooltip="Sanity check for available dimensions.",
         )
-
         self._scenes = Label(
-            label="Number of Scenes",
+            label="Number of Scenes: ",
         )
+        self._info_container = Container(layout="horizontal")
+        self._info_container.append(self._dim_order)
+        self._info_container.append(self._scenes)
 
         self._channel_names = LineEdit(
             label="Channel Name(s)",
@@ -185,6 +180,11 @@ class UtilitiesContainer(Container):
             "names will be used.",
         )
 
+        self._scale_tuple = TupleEdit(
+            value=(0.0, 1.0, 1.0),
+            label="Scale ZYX",
+            tooltip="Pixel size, usually in μm",
+        )
         self._physical_pixel_sizes_z = FloatSpinBox(
             value=1, step=0.00000001, label="Z Pixel Size, um"
         )
@@ -197,16 +197,16 @@ class UtilitiesContainer(Container):
 
         # Use a function for layer inputs so that it is constantly updated
         # when the dependency changes
-        def current_layers(_):
-            from napari.layers import Image as ImageLayer
+        # def current_layers(_):
+        #     from napari.layers import Image as ImageLayer
 
-            return [
-                x for x in self._viewer.layers if isinstance(x, ImageLayer)
-            ]
+        #     return [
+        #         x for x in self._viewer.layers if isinstance(x, ImageLayer)
+        #     ]
 
-        self._image_layer = Select(
-            choices=current_layers, nullable=False, label="Images"
-        )  # use no value and allow user to deselect layers
+        # self._image_layer = Select(
+        #     choices=current_layers, nullable=False, label="Images"
+        # )  # use no value and allow user to deselect layers
 
         self._scenes_to_extract = LineEdit(
             label="Scenes to Extract",
@@ -253,24 +253,22 @@ class UtilitiesContainer(Container):
         # Container Widget Order
         self.extend(
             [
-                self._metadata_container,
                 self._save_directory,
                 self._files,
                 self._open_image_container,
-                self._open_image_button,
-                self._dim_order,
-                self._scenes,
+                self._save_name,
+                self._metadata_container,
+                self._info_container,
                 self._channel_names,
-                self._physical_pixel_sizes_z,
-                self._physical_pixel_sizes_y,
-                self._physical_pixel_sizes_x,
-                self._image_layer,
-                self._metadata_from_selected_layer,
+                self._scale_tuple,
+                # self._physical_pixel_sizes_z,
+                # self._physical_pixel_sizes_y,
+                # self._physical_pixel_sizes_x,
+                # self._image_layer,
                 self._scenes_to_extract,
                 self._extract_scenes,
                 self._concatenate_image_files,
                 self._concatenate_image_layers,
-                self._save_name,
                 self._save_image_button,
                 self._labels_layer,
                 self._save_labels_button,
@@ -303,9 +301,15 @@ class UtilitiesContainer(Container):
         self._squeezed_dims = helpers.get_squeezed_dim_order(img)
         self._channel_names.value = helpers.get_channel_names(img)
 
-        self._physical_pixel_sizes_z.value = img.physical_pixel_sizes.Z or 0
-        self._physical_pixel_sizes_y.value = img.physical_pixel_sizes.Y
-        self._physical_pixel_sizes_x.value = img.physical_pixel_sizes.X
+        self._scale_tuple.value = (
+            img.physical_pixel_sizes.Z or 0,
+            img.physical_pixel_sizes.Y,
+            img.physical_pixel_sizes.X,
+        )
+
+        # self._physical_pixel_sizes_z.value = img.physical_pixel_sizes.Z or 0
+        # self._physical_pixel_sizes_y.value = img.physical_pixel_sizes.Y
+        # self._physical_pixel_sizes_x.value = img.physical_pixel_sizes.X
 
     def update_metadata_from_file(self):
         from aicsimageio import AICSImage
@@ -325,18 +329,25 @@ class UtilitiesContainer(Container):
                 "Tried to update metadata, but no layer selected."
             )
         except KeyError:
-            layer_scale = selected_layer.scale
-            self._physical_pixel_sizes_x.value = layer_scale[-1]
-            self._physical_pixel_sizes_y.value = layer_scale[-2]
-            self._physical_pixel_sizes_z.value = (
-                layer_scale[-3] if len(layer_scale) >= 3 else 0
+            scale = selected_layer.scale
+            self._scale_tuple.value = (
+                scale[-3] if len(scale) >= 3 else 0.0,
+                scale[-2],
+                scale[-1],
             )
+            # self._physical_pixel_sizes_x.value = layer_scale[-1]
+            # self._physical_pixel_sizes_y.value = layer_scale[-2]
+            # self._physical_pixel_sizes_z.value = (
+            #     layer_scale[-3] if len(layer_scale) >= 3 else 0
+            # )
             self._results.value = (
                 "Tried to update metadata, but could only update scale"
                 " because layer not opened with aicsimageio"
             )
 
     def open_images(self):
+        if self._open_image_update_metadata.value:
+            self.update_metadata_from_file()
         self._viewer.open(self._files.value, plugin="napari-aicsimageio")
 
     def concatenate_images(
@@ -378,11 +389,7 @@ class UtilitiesContainer(Container):
     def p_sizes(self):
         from aicsimageio.types import PhysicalPixelSizes
 
-        return PhysicalPixelSizes(
-            self._physical_pixel_sizes_z.value,
-            self._physical_pixel_sizes_y.value,
-            self._physical_pixel_sizes_x.value,
-        )
+        return PhysicalPixelSizes(self._scale_tuple.value)
 
     def _get_save_loc(self, parent):
         save_directory = self._save_directory.value / parent
