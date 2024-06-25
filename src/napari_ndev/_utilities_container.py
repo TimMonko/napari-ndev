@@ -7,7 +7,6 @@ from magicgui.widgets import (
     CheckBox,
     Container,
     FileEdit,
-    FloatSpinBox,
     Label,
     LineEdit,
     PushButton,
@@ -133,7 +132,7 @@ class UtilitiesContainer(Container):
         self._file_metadata_update = PushButton(label="File")
         self._layer_metadata_update = PushButton(label="Selected Layer")
         self._metadata_container = Container(
-            layout="horizontal", label="Update Metadata from:"
+            layout="horizontal", label="Update Metadata from"
         )
         self._metadata_container.append(self._layer_metadata_update)
         self._metadata_container.append(self._file_metadata_update)
@@ -184,15 +183,6 @@ class UtilitiesContainer(Container):
             value=(0.0, 1.0, 1.0),
             label="Scale ZYX",
             tooltip="Pixel size, usually in μm",
-        )
-        self._physical_pixel_sizes_z = FloatSpinBox(
-            value=1, step=0.00000001, label="Z Pixel Size, um"
-        )
-        self._physical_pixel_sizes_y = FloatSpinBox(
-            value=1, step=0.00000001, label="Y Pixel Size, um"
-        )
-        self._physical_pixel_sizes_x = FloatSpinBox(
-            value=1, step=0.00000001, label="X Pixel Size, um"
         )
 
         # Use a function for layer inputs so that it is constantly updated
@@ -261,9 +251,6 @@ class UtilitiesContainer(Container):
                 self._info_container,
                 self._channel_names,
                 self._scale_tuple,
-                # self._physical_pixel_sizes_z,
-                # self._physical_pixel_sizes_y,
-                # self._physical_pixel_sizes_x,
                 # self._image_layer,
                 self._scenes_to_extract,
                 self._extract_scenes,
@@ -280,7 +267,6 @@ class UtilitiesContainer(Container):
         ##############################
         # Event Handling
         ##############################
-        # self._files.changed.connect(self.update_metadata_from_file)
         self._open_image_button.clicked.connect(self.open_images)
         self._layer_metadata_update.clicked.connect(
             self.update_metadata_from_layer
@@ -307,10 +293,6 @@ class UtilitiesContainer(Container):
             img.physical_pixel_sizes.X,
         )
 
-        # self._physical_pixel_sizes_z.value = img.physical_pixel_sizes.Z or 0
-        # self._physical_pixel_sizes_y.value = img.physical_pixel_sizes.Y
-        # self._physical_pixel_sizes_x.value = img.physical_pixel_sizes.X
-
     def update_metadata_from_file(self):
         from aicsimageio import AICSImage
 
@@ -335,11 +317,6 @@ class UtilitiesContainer(Container):
                 scale[-2],
                 scale[-1],
             )
-            # self._physical_pixel_sizes_x.value = layer_scale[-1]
-            # self._physical_pixel_sizes_y.value = layer_scale[-2]
-            # self._physical_pixel_sizes_z.value = (
-            #     layer_scale[-3] if len(layer_scale) >= 3 else 0
-            # )
             self._results.value = (
                 "Tried to update metadata, but could only update scale"
                 " because layer not opened with aicsimageio"
