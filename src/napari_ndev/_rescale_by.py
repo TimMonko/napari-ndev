@@ -58,7 +58,7 @@ class RescaleBy(Container):
         scale = self._inherit_from_layer.value.scale
         # Directly create a new tuple with the desired order
         self._scale_tuple.value = (
-            self._scale_tuple.value[0] if len(scale) >= 3 else 0.0,
+            scale[-3] if len(scale) >= 3 else 0.0,
             scale[-2],
             scale[-1],
         )
