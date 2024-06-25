@@ -18,8 +18,11 @@ from magicgui.widgets import (
 
 from napari_ndev import helpers
 
+from ._rescale_by import RescaleBy
+
 if TYPE_CHECKING:
     import napari
+    from aicsimageio import AICSImage
     from napari.layers import Image as ImageLayer
 
 
@@ -128,6 +131,22 @@ class UtilitiesContainer(Container):
         ##############################
         # Widgets
         ##############################
+        self._rescale_by = RescaleBy(viewer=self._viewer)
+        self._metadata_container = Container(
+            # [
+            #     PushButton(label="Update Metadata from Selected Layer"),
+            #     PushButton(label="Update Metadata from File"),
+            # ],
+            layout="horizontal",
+        )
+        self._file_update_button = PushButton(
+            label="Update Metadata from File"
+        )
+        self._layer_update_button = PushButton(
+            label="Update Metadata from Selected Layer"
+        )
+        self._metadata_container.append(self._file_update_button)
+        self._metadata_container.append(self._layer_update_button)
         self._files = FileEdit(
             label="File(s)",
             mode="rm",
@@ -235,6 +254,8 @@ class UtilitiesContainer(Container):
         # Container Widget Order
         self.extend(
             [
+                self._metadata_container,
+                self._rescale_by,
                 self._save_directory,
                 self._files,
                 self._open_image_button,
@@ -274,7 +295,7 @@ class UtilitiesContainer(Container):
         self._save_shapes_button.clicked.connect(self.save_shapes_as_labels)
         self._results._on_value_change()
 
-    def _update_metadata(self, img):
+    def _update_metadata(self, img: "AICSImage"):
         self._dim_order.value = img.dims.order
 
         self._squeezed_dims = helpers.get_squeezed_dim_order(img)
@@ -294,12 +315,24 @@ class UtilitiesContainer(Container):
         self._scenes.value = len(img.scenes)
 
     def update_metadata_from_layer(self):
+        selected_layer = self._viewer.layers.selection.active
         try:
-            img = self._image_layer.value[0].metadata["aicsimage"]
-            self._img = img
-            self._update_metadata(img)
-        except KeyError as e:
-            self._results.value = "KeyError: " + str(e)
+            self._update_metadata(selected_layer.metadata["aicsimage"])
+        except AttributeError:
+            self._results.value = (
+                "Tried to update metadata, but no layer selected."
+            )
+        except KeyError:
+            layer_scale = selected_layer.scale
+            self._physical_pixel_sizes_x.value = layer_scale[-1]
+            self._physical_pixel_sizes_y.value = layer_scale[-2]
+            self._physical_pixel_sizes_z.value = (
+                layer_scale[-3] if len(layer_scale) >= 3 else 0
+            )
+            self._results.value = (
+                "Tried to update metadata, but could only update scale"
+                " because layer not opened with aicsimageio"
+            )
 
     def open_images(self):
         self._viewer.open(self._files.value, plugin="napari-aicsimageio")
