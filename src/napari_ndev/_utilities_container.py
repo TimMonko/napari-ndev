@@ -274,13 +274,13 @@ class UtilitiesContainer(Container):
                 self._scale_container,
                 self._scene_container,
                 self._concatenate_container,
-                # self._save_container,
+                self._save_container,
                 self._results,
             ]
         )
-        
+
         # tabs = QTabWidget()
-        
+
         # from napari_ndev import RescaleBy
         # rescale_by_tab = RescaleBy(self._viewer)
         # tabs.addTab(rescale_by_tab.native, "Rescale By")
