@@ -112,7 +112,7 @@ class UtilitiesContainer(Container):
 
     def __init__(
         self,
-        viewer: "napari.viewer.Viewer",
+        viewer: "napari.viewer.Viewer" = None,
     ):
         super().__init__()
 
@@ -120,7 +120,7 @@ class UtilitiesContainer(Container):
         # Attributes
         ##############################
         self
-        self._viewer = viewer
+        self._viewer = viewer if viewer is not None else None
         self._img_data = None
         self._image_save_dims = None
         self._label_save_dims = None
@@ -279,16 +279,16 @@ class UtilitiesContainer(Container):
             ]
         )
         
-        tabs = QTabWidget()
+        # tabs = QTabWidget()
         
-        from napari_ndev import RescaleBy
-        rescale_by_tab = RescaleBy(self._viewer)
-        tabs.addTab(rescale_by_tab.native, "Rescale By")
-        from napari_ndev import ApocContainer
-        apoc_container_tab = ApocContainer(self._viewer)
-        tabs.addTab(apoc_container_tab.native, "Apoc")
-        tabs.addTab(self._save_container.native, "Save")
-        self.native.layout().addWidget(tabs)
+        # from napari_ndev import RescaleBy
+        # rescale_by_tab = RescaleBy(self._viewer)
+        # tabs.addTab(rescale_by_tab.native, "Rescale By")
+        # from napari_ndev import ApocContainer
+        # apoc_container_tab = ApocContainer(self._viewer)
+        # tabs.addTab(apoc_container_tab.native, "Apoc")
+        # tabs.addTab(self._save_container.native, "Save")
+        # self.native.layout().addWidget(tabs)
         ##############################
         # Event Handling
         ##############################

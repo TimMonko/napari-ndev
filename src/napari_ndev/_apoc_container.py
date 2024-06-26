@@ -153,7 +153,7 @@ class ApocContainer(Container):
 
     def __init__(
         self,
-        viewer: "napari.viewer.Viewer",
+        viewer: "napari.viewer.Viewer" = None,
         # viewer = napari_viewer
     ):
         super().__init__()
@@ -170,7 +170,7 @@ class ApocContainer(Container):
         # Attributes
         ##############################
         self
-        self._viewer = viewer
+        self._viewer = viewer if viewer is not None else None
 
         ##############################
         # Widgets
