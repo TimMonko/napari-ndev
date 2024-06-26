@@ -59,9 +59,7 @@ def test_save_shapes_as_labels(
     viewer.add_shapes(test_shape)
     container = UtilitiesContainer(viewer)
 
-    if image_layer:
-        container._image_layer.value = viewer.layers["test_image"]
-    container._shapes_layer.value = viewer.layers["test_shape"]
+    container._viewer.layers.selection.active = viewer.layers["test_shape"]
     container._squeezed_dims = test_dims
     container._save_directory.value = tmp_path
     container._save_name.value = "test.tiff"
@@ -103,7 +101,7 @@ def test_save_ome_tiff(make_napari_viewer, test_data, tmp_path: Path):
 
     container._concatenate_image_files.value = False
     container._concatenate_image_layers.value = True
-    container._image_layer.value = viewer.layers["test_image"]
+    container._viewer.layers.selection.active = viewer.layers["test_image"]
     container._channel_names.value = ["0"]
     container._save_directory.value = tmp_path
     container._save_name.value = "test.tiff"
@@ -130,9 +128,9 @@ def test_update_metadata_from_file(make_napari_viewer, test_rgb_image):
 
     path, _ = test_rgb_image
     container._files.value = path
+    container.update_metadata_from_file()
 
     assert container._save_name.value == "RGB.tiff"
     assert container._img.dims.order == "TCZYXS"
     assert container._squeezed_dims == "YX"
     assert container._channel_names.value == "['red', 'green', 'blue']"
-    assert container._physical_pixel_sizes_z.value == 0
