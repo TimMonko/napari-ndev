@@ -1,6 +1,7 @@
 import ast
 from pathlib import Path
 from typing import TYPE_CHECKING, List, Union
+from qtpy.QtWidgets import QTabWidget
 
 import numpy as np
 from magicgui.widgets import (
@@ -273,10 +274,21 @@ class UtilitiesContainer(Container):
                 self._scale_container,
                 self._scene_container,
                 self._concatenate_container,
-                self._save_container,
+                # self._save_container,
                 self._results,
             ]
         )
+        
+        tabs = QTabWidget()
+        
+        from napari_ndev import RescaleBy
+        rescale_by_tab = RescaleBy(self._viewer)
+        tabs.addTab(rescale_by_tab.native, "Rescale By")
+        from napari_ndev import ApocContainer
+        apoc_container_tab = ApocContainer(self._viewer)
+        tabs.addTab(apoc_container_tab.native, "Apoc")
+        tabs.addTab(self._save_container.native, "Save")
+        self.native.layout().addWidget(tabs)
         ##############################
         # Event Handling
         ##############################
