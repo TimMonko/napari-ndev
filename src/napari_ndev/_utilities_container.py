@@ -7,12 +7,11 @@ from magicgui.widgets import (
     CheckBox,
     Container,
     FileEdit,
-    FloatSpinBox,
     Label,
     LineEdit,
     PushButton,
-    Select,
     TextEdit,
+    TupleEdit,
     create_widget,
 )
 
@@ -20,6 +19,7 @@ from napari_ndev import helpers
 
 if TYPE_CHECKING:
     import napari
+    from aicsimageio import AICSImage
     from napari.layers import Image as ImageLayer
 
 
@@ -124,16 +124,32 @@ class UtilitiesContainer(Container):
         self._image_save_dims = None
         self._label_save_dims = None
         self._p_sizes = None
+        self._squeezed_dims = None
 
         ##############################
         # Widgets
         ##############################
+
+        self._file_metadata_update = PushButton(label="File")
+        self._layer_metadata_update = PushButton(label="Selected Layer")
+        self._metadata_container = Container(
+            layout="horizontal", label="Update Metadata from"
+        )
+        self._metadata_container.append(self._layer_metadata_update)
+        self._metadata_container.append(self._file_metadata_update)
+
         self._files = FileEdit(
             label="File(s)",
             mode="rm",
             tooltip="Select file(s) to load.",
         )
-        self._open_image_button = PushButton(label="Open Images")
+        self._open_image_button = PushButton(label="Open File(s)")
+        self._open_image_update_metadata = CheckBox(
+            value=True, label="Update Metadata on Open"
+        )
+        self._open_image_container = Container(layout="horizontal")
+        self._open_image_container.append(self._open_image_button)
+        self._open_image_container.append(self._open_image_update_metadata)
 
         self._save_directory = FileEdit(
             label="Save Directory",
@@ -146,19 +162,16 @@ class UtilitiesContainer(Container):
             ".ome/.tif/.tiff extension.",
         )
 
-        self._metadata_from_selected_layer = PushButton(
-            label="Update Metadata from Selected Layer",
-            tooltip="Gets pixel sizes, dim order from selected layer.",
-        )
-
         self._dim_order = Label(
-            label="Dimension Order",
+            label="Dimension Order: ",
             tooltip="Sanity check for available dimensions.",
         )
-
         self._scenes = Label(
-            label="Number of Scenes",
+            label="Number of Scenes: ",
         )
+        self._info_container = Container(layout="horizontal")
+        self._info_container.append(self._dim_order)
+        self._info_container.append(self._scenes)
 
         self._channel_names = LineEdit(
             label="Channel Name(s)",
@@ -167,38 +180,38 @@ class UtilitiesContainer(Container):
             "names will be used.",
         )
 
-        self._physical_pixel_sizes_z = FloatSpinBox(
-            value=1, step=0.00000001, label="Z Pixel Size, um"
+        self._scale_tuple = TupleEdit(
+            value=(0.0000, 1.0000, 1.0000),
+            label="Scale, ZYX",
+            tooltip="Pixel size, usually in μm",
+            options={"step": 0.0001},
         )
-        self._physical_pixel_sizes_y = FloatSpinBox(
-            value=1, step=0.00000001, label="Y Pixel Size, um"
+        self._scale_layers = PushButton(
+            label="Scale Layer(s)",
+            tooltip="Scale the selected layer(s) based on the given scale.",
         )
-        self._physical_pixel_sizes_x = FloatSpinBox(
-            value=1, step=0.00000001, label="X Pixel Size, um"
+        self._scale_container = Container(
+            layout="horizontal",
+            label="Scale Selected",
         )
-
-        # Use a function for layer inputs so that it is constantly updated
-        # when the dependency changes
-        def current_layers(_):
-            from napari.layers import Image as ImageLayer
-
-            return [
-                x for x in self._viewer.layers if isinstance(x, ImageLayer)
-            ]
-
-        self._image_layer = Select(
-            choices=current_layers, nullable=False, label="Images"
-        )  # use no value and allow user to deselect layers
+        self._scale_container.append(self._scale_layers)
 
         self._scenes_to_extract = LineEdit(
-            label="Scenes to Extract",
+            # label="Scenes to Extract",
             tooltip="Enter the scenes to extract as a list. If left blank "
             "then all scenes will be extracted.",
         )
         self._extract_scenes = PushButton(
-            label="Extract Scenes",
+            label="Extract and Save Scenes",
             tooltip="Extract scenes from a single selected file.",
         )
+        self._scene_container = Container(
+            layout="horizontal",
+            label="Extract Scenes",
+            tooltip="Must be in list index format. Ex: [0, 1, 2] or [5:10]",
+        )
+        self._scene_container.append(self._scenes_to_extract)
+        self._scene_container.append(self._extract_scenes)
 
         self._concatenate_image_files = CheckBox(
             label="Concatenate Files",
@@ -209,6 +222,12 @@ class UtilitiesContainer(Container):
             label="Concatenate Image Layers",
             tooltip="Concatenate image layers in the viewer. Removes empty.",
         )
+        self._concatenate_container = Container(
+            layout="horizontal",
+            label="Image Save Options",
+        )
+        self._concatenate_container.append(self._concatenate_image_files)
+        self._concatenate_container.append(self._concatenate_image_layers)
 
         self._save_image_button = PushButton(
             label="Save Images",
@@ -230,6 +249,14 @@ class UtilitiesContainer(Container):
             tooltip="Save the shapes data as labels (OME-TIFF) according to "
             "selected image layer dimensions.",
         )
+        self._save_container = Container(
+            layout="horizontal",
+            label="Save Selected Layers",
+        )
+        self._save_container.append(self._save_image_button)
+        self._save_container.append(self._save_labels_button)
+        self._save_container.append(self._save_shapes_button)
+
         self._results = TextEdit(label="Info")
 
         # Container Widget Order
@@ -237,52 +264,47 @@ class UtilitiesContainer(Container):
             [
                 self._save_directory,
                 self._files,
-                self._open_image_button,
-                self._dim_order,
-                self._scenes,
-                self._channel_names,
-                self._physical_pixel_sizes_z,
-                self._physical_pixel_sizes_y,
-                self._physical_pixel_sizes_x,
-                self._image_layer,
-                self._metadata_from_selected_layer,
-                self._scenes_to_extract,
-                self._extract_scenes,
-                self._concatenate_image_files,
-                self._concatenate_image_layers,
+                self._open_image_container,
                 self._save_name,
-                self._save_image_button,
-                self._labels_layer,
-                self._save_labels_button,
-                self._shapes_layer,
-                self._save_shapes_button,
+                self._metadata_container,
+                self._info_container,
+                self._channel_names,
+                self._scale_tuple,
+                self._scale_container,
+                self._scene_container,
+                self._concatenate_container,
+                self._save_container,
                 self._results,
             ]
         )
         ##############################
         # Event Handling
         ##############################
-        self._files.changed.connect(self.update_metadata_from_file)
         self._open_image_button.clicked.connect(self.open_images)
-        self._metadata_from_selected_layer.clicked.connect(
+        self._layer_metadata_update.clicked.connect(
             self.update_metadata_from_layer
         )
-
+        self._file_metadata_update.clicked.connect(
+            self.update_metadata_from_file
+        )
+        self._scale_layers.clicked.connect(self.rescale_by)
         self._extract_scenes.clicked.connect(self.save_scenes_ome_tiff)
         self._save_image_button.clicked.connect(self.save_ome_tiff)
         self._save_labels_button.clicked.connect(self.save_labels)
         self._save_shapes_button.clicked.connect(self.save_shapes_as_labels)
         self._results._on_value_change()
 
-    def _update_metadata(self, img):
+    def _update_metadata(self, img: "AICSImage"):
         self._dim_order.value = img.dims.order
 
         self._squeezed_dims = helpers.get_squeezed_dim_order(img)
         self._channel_names.value = helpers.get_channel_names(img)
 
-        self._physical_pixel_sizes_z.value = img.physical_pixel_sizes.Z or 0
-        self._physical_pixel_sizes_y.value = img.physical_pixel_sizes.Y
-        self._physical_pixel_sizes_x.value = img.physical_pixel_sizes.X
+        self._scale_tuple.value = (
+            img.physical_pixel_sizes.Z or 0,
+            img.physical_pixel_sizes.Y,
+            img.physical_pixel_sizes.X,
+        )
 
     def update_metadata_from_file(self):
         from aicsimageio import AICSImage
@@ -294,15 +316,42 @@ class UtilitiesContainer(Container):
         self._scenes.value = len(img.scenes)
 
     def update_metadata_from_layer(self):
+        selected_layer = self._viewer.layers.selection.active
         try:
-            img = self._image_layer.value[0].metadata["aicsimage"]
-            self._img = img
-            self._update_metadata(img)
-        except KeyError as e:
-            self._results.value = "KeyError: " + str(e)
+            self._update_metadata(selected_layer.metadata["aicsimage"])
+        except AttributeError:
+            self._results.value = (
+                "Tried to update metadata, but no layer selected."
+            )
+        except KeyError:
+            scale = selected_layer.scale
+            self._scale_tuple.value = (
+                scale[-3] if len(scale) >= 3 else 0.0,
+                scale[-2],
+                scale[-1],
+            )
+            self._results.value = (
+                "Tried to update metadata, but could only update scale"
+                " because layer not opened with aicsimageio"
+            )
 
     def open_images(self):
+        if self._open_image_update_metadata.value:
+            self.update_metadata_from_file()
         self._viewer.open(self._files.value, plugin="napari-aicsimageio")
+
+    def rescale_by(self):
+        from napari.layers import Image as ImageLayer
+        from napari.layers import Labels as LabelsLayer
+
+        layers = self._viewer.layers.selection
+        scale_tup = self._scale_tuple.value
+        for layer in layers:
+            if isinstance(layer, (ImageLayer, LabelsLayer)):
+                scale_len = len(layer.scale)
+                layer.scale = scale_tup[1:3] if scale_len == 2 else scale_tup
+            else:
+                continue
 
     def concatenate_images(
         self,
@@ -344,9 +393,9 @@ class UtilitiesContainer(Container):
         from aicsimageio.types import PhysicalPixelSizes
 
         return PhysicalPixelSizes(
-            self._physical_pixel_sizes_z.value,
-            self._physical_pixel_sizes_y.value,
-            self._physical_pixel_sizes_x.value,
+            self._scale_tuple.value[0],
+            self._scale_tuple.value[1],
+            self._scale_tuple.value[2],
         )
 
     def _get_save_loc(self, parent):
@@ -434,7 +483,7 @@ class UtilitiesContainer(Container):
             self._concatenate_image_files.value,
             self._files.value,
             self._concatenate_image_layers.value,
-            self._image_layer.value,
+            list(self._viewer.layers.selection),
         )
         img_save_loc = self._get_save_loc("Images")
         # get channel names from widget if truthy
@@ -451,7 +500,7 @@ class UtilitiesContainer(Container):
         return self._img_data
 
     def save_labels(self) -> None:
-        label_data = self._labels_layer.value.data
+        label_data = self._viewer.layers.selection.active.data
 
         if label_data.max() > 65535:
             label_data = label_data.astype(np.int32)
@@ -470,16 +519,18 @@ class UtilitiesContainer(Container):
         return label_data
 
     def save_shapes_as_labels(self) -> None:
+        from napari.layers import Image as ImageLayer
+
         # inherit shape from selected image layer or else a default
-        if self._image_layer.value:
-            label_dim = self._image_layer.value[0].data.shape
-        else:
-            label_dim = self._image_layer.choices[0].data.shape
+        image_layers = [
+            x for x in self._viewer.layers if isinstance(x, ImageLayer)
+        ]
+        label_dim = image_layers[0].data.shape
 
         # drop last axis if represents RGB image
         label_dim = label_dim[:-1] if label_dim[-1] == 3 else label_dim
 
-        shapes = self._shapes_layer.value
+        shapes = self._viewer.layers.selection.active
         shapes_as_labels = shapes.to_labels(labels_shape=label_dim)
         shapes_as_labels = shapes_as_labels.astype(np.int16)
 
