@@ -338,21 +338,6 @@ class ApocContainer(Container):
                 self._predefined_features,
                 self._custom_features,
                 self._open_custom_feature_generator,
-                
-                # self._image_directory,
-                # self._image_channels,
-                # self._channel_order_label,
-                # self._label_directory,
-                
-                # self._batch_train_button,
-                # self._output_directory,
-                # self._batch_predict_button,
-                # self._progress_bar,
-                # self._image_layer,
-                # self._label_layer,
-                # self._train_image_button,
-                # self._predict_image_layer,
-                # self._single_result_label,
             ]
         )
         
