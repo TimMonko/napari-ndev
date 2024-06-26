@@ -182,22 +182,19 @@ class UtilitiesContainer(Container):
 
         self._scale_tuple = TupleEdit(
             value=(0.0000, 1.0000, 1.0000),
-            label="Scale ZYX",
+            label="Scale, ZYX",
             tooltip="Pixel size, usually in μm",
+            options={"step": 0.0001},
         )
-
-        # Use a function for layer inputs so that it is constantly updated
-        # when the dependency changes
-        # def current_layers(_):
-        #     from napari.layers import Image as ImageLayer
-
-        #     return [
-        #         x for x in self._viewer.layers if isinstance(x, ImageLayer)
-        #     ]
-
-        # self._image_layer = Select(
-        #     choices=current_layers, nullable=False, label="Images"
-        # )  # use no value and allow user to deselect layers
+        self._scale_layers = PushButton(
+            label="Scale Layer(s)",
+            tooltip="Scale the selected layer(s) based on the given scale.",
+        )
+        self._scale_container = Container(
+            layout="horizontal",
+            label="Scale Selected",
+        )
+        self._scale_container.append(self._scale_layers)
 
         self._scenes_to_extract = LineEdit(
             # label="Scenes to Extract",
@@ -273,6 +270,7 @@ class UtilitiesContainer(Container):
                 self._info_container,
                 self._channel_names,
                 self._scale_tuple,
+                self._scale_container,
                 self._scene_container,
                 self._concatenate_container,
                 self._save_container,
@@ -289,7 +287,7 @@ class UtilitiesContainer(Container):
         self._file_metadata_update.clicked.connect(
             self.update_metadata_from_file
         )
-
+        self._scale_layers.clicked.connect(self.rescale_by)
         self._extract_scenes.clicked.connect(self.save_scenes_ome_tiff)
         self._save_image_button.clicked.connect(self.save_ome_tiff)
         self._save_labels_button.clicked.connect(self.save_labels)
@@ -341,6 +339,19 @@ class UtilitiesContainer(Container):
         if self._open_image_update_metadata.value:
             self.update_metadata_from_file()
         self._viewer.open(self._files.value, plugin="napari-aicsimageio")
+
+    def rescale_by(self):
+        from napari.layers import Image as ImageLayer
+        from napari.layers import Labels as LabelsLayer
+
+        layers = self._viewer.layers.selection
+        scale_tup = self._scale_tuple.value
+        for layer in layers:
+            if isinstance(layer, (ImageLayer, LabelsLayer)):
+                scale_len = len(layer.scale)
+                layer.scale = scale_tup[1:3] if scale_len == 2 else scale_tup
+            else:
+                continue
 
     def concatenate_images(
         self,
@@ -508,6 +519,8 @@ class UtilitiesContainer(Container):
         return label_data
 
     def save_shapes_as_labels(self) -> None:
+        from napari.layers import Image as ImageLayer
+
         # inherit shape from selected image layer or else a default
         image_layers = [
             x for x in self._viewer.layers if isinstance(x, ImageLayer)
@@ -517,7 +530,7 @@ class UtilitiesContainer(Container):
         # drop last axis if represents RGB image
         label_dim = label_dim[:-1] if label_dim[-1] == 3 else label_dim
 
-        shapes = self._shapes_layer.value
+        shapes = self._viewer.layers.selection.active
         shapes_as_labels = shapes.to_labels(labels_shape=label_dim)
         shapes_as_labels = shapes_as_labels.astype(np.int16)
 
