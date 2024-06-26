@@ -9,14 +9,14 @@ if TYPE_CHECKING:
 class RescaleBy(Container):
     def __init__(
         self,
-        viewer: "napari.viewer.Viewer",
+        viewer: "napari.viewer.Viewer" = None,
     ):
         super().__init__()
         ##############################
         # Attributes
         ##############################
         self
-        self._viewer = viewer
+        self._viewer = viewer if viewer is not None else None
         ##############################
         # Widgets
         ##############################
