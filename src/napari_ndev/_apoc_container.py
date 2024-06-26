@@ -23,6 +23,7 @@ from magicgui.widgets import (
 from pyclesperanto_prototype import set_wait_for_kernel_finish
 
 from napari_ndev import helpers
+from qtpy.QtWidgets import QTabWidget
 
 if TYPE_CHECKING:
     import napari
@@ -175,13 +176,18 @@ class ApocContainer(Container):
         ##############################
         # Widgets
         ##############################
-        self._image_directory = FileEdit(label="Image Directory", mode="d")
-        self._label_directory = FileEdit(label="Label Directory", mode="d")
-        self._output_directory = FileEdit(label="Output Directory", mode="d")
         self._classifier_file = FileEdit(
             label="Classifier File (.cl)",
             mode="r",
             tooltip="Create a .txt file and rename it to .cl ending.",
+        )
+
+        self._continue_training = CheckBox(
+            label="Continue Training?",
+            value=True,
+            tooltip=(
+                "Continue training only matters if classifier already exists."
+            ),
         )
 
         self._classifier_type_mapping = {
@@ -217,14 +223,7 @@ class ApocContainer(Container):
             tooltip="Only used with ObjectSegmenter, otherwise ignored.",
         )
 
-        self._image_channels = Select(
-            label="Image Channels",
-            choices=[],
-            tooltip=(
-                "Channel order should be same for training and prediction."
-            ),
-        )
-        self._channel_order_label = Label(value="Select an Image Channel!")
+        
 
         self._PDFS = Enum("PDFS", apoc.PredefinedFeatureSet._member_names_)
         self._predefined_features = ComboBox(
@@ -244,21 +243,56 @@ class ApocContainer(Container):
             label="Open Custom Feature Generator Widget"
         )
 
-        self._continue_training = CheckBox(
-            label="Continue Training?",
-            value=True,
+        ######
+        # Batch Container
+        ######
+        self._image_directory = FileEdit(label="Image Directory", mode="d")
+        self._label_directory = FileEdit(label="Label Directory", mode="d")
+        self._output_directory = FileEdit(label="Output Directory", mode="d")
+        
+        self._image_channels = Select(
+            label="Image Channels",
+            choices=[],
             tooltip=(
-                "Continue training only matters if classifier already exists."
+                "Channel order should be same for training and prediction."
             ),
         )
+        self._channel_order_label = Label(value="Select an Image Channel!")
+        
         self._batch_train_button = PushButton(
             label="Train Classifier on Image-Label Pairs"
         )
         self._batch_predict_button = PushButton(
-            label="Predict Labels with Classifier"
+            label="Predict Labels with Classifier on Images"
         )
+        
+        self._batch_train_container = Container(layout="horizontal")
+        self._batch_train_container.extend(
+            [self._label_directory, self._batch_train_button]
+        )
+        
+        self._batch_predict_container = Container(layout="horizontal")
+        self._batch_predict_container.extend(
+            [self._output_directory, self._batch_predict_button]
+        )
+        
         self._progress_bar = ProgressBar(label="Progress:")
-
+        
+        self._batch_container = Container(layout="vertical")
+        self._batch_container.extend(
+            [
+                self._image_directory,
+                self._image_channels,
+                self._channel_order_label,
+                self._batch_train_container,
+                self._batch_predict_container,
+                self._progress_bar,
+            ]
+        )
+        ####### 
+        # Viewer Container
+        #######
+        
         def current_layers(_):
             return [
                 x for x in self._viewer.layers if isinstance(x, ImageLayer)
@@ -277,26 +311,10 @@ class ApocContainer(Container):
             label="Predict using classifier on selected layers"
         )
         self._single_result_label = Label()
-
-        self.extend(
+        
+        self._viewer_container = Container(layout="vertical")
+        self._viewer_container.extend(
             [
-                self._classifier_file,
-                self._classifier_type,
-                self._positive_class_id,
-                self._max_depth,
-                self._num_trees,
-                self._predefined_features,
-                self._custom_features,
-                self._open_custom_feature_generator,
-                self._image_directory,
-                self._image_channels,
-                self._channel_order_label,
-                self._label_directory,
-                self._continue_training,
-                self._batch_train_button,
-                self._output_directory,
-                self._batch_predict_button,
-                self._progress_bar,
                 self._image_layer,
                 self._label_layer,
                 self._train_image_button,
@@ -304,6 +322,46 @@ class ApocContainer(Container):
                 self._single_result_label,
             ]
         )
+
+        ######
+        # Widget Layout
+        ######
+        
+        self.extend(
+            [
+                self._classifier_file,
+                self._continue_training,
+                self._classifier_type,
+                self._positive_class_id,
+                self._max_depth,
+                self._num_trees,
+                self._predefined_features,
+                self._custom_features,
+                self._open_custom_feature_generator,
+                
+                # self._image_directory,
+                # self._image_channels,
+                # self._channel_order_label,
+                # self._label_directory,
+                
+                # self._batch_train_button,
+                # self._output_directory,
+                # self._batch_predict_button,
+                # self._progress_bar,
+                # self._image_layer,
+                # self._label_layer,
+                # self._train_image_button,
+                # self._predict_image_layer,
+                # self._single_result_label,
+            ]
+        )
+        
+        tabs = QTabWidget()
+        
+        tabs.addTab(self._batch_container.native, "Batch")
+        tabs.addTab(self._viewer_container.native, "Viewer")
+        self.native.layout().addWidget(tabs)
+        
         ##############################
         # Event Handling
         ##############################
