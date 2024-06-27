@@ -118,7 +118,7 @@ def test_image_train(make_napari_viewer, test_data, empty_classifier_file):
 
     wdg = ApocContainer(viewer)
 
-    wdg._image_layer.value = viewer.layers["test_image"]
+    wdg._viewer.layers.selection = [viewer.layers["test_image"]]
     wdg._label_layer.value = viewer.layers["test_labels"]
     wdg._classifier_type.value = "ObjectSegmenter"
     wdg._continue_training.value = False
@@ -157,7 +157,7 @@ def test_image_predict(make_napari_viewer, test_data, trained_classifier_file):
 
     wdg = ApocContainer(viewer)
 
-    wdg._image_layer.value = viewer.layers["test_image"]
+    wdg._viewer.layers.selection = [viewer.layers["test_image"]]
     wdg._classifier_file.value = trained_classifier_file
 
     result = wdg.image_predict()
@@ -168,7 +168,8 @@ def test_image_predict(make_napari_viewer, test_data, trained_classifier_file):
 
 
 @pytest.mark.notox
-def test_batch_predict_normal_operation(make_napari_viewer, tmp_path):
+# def test_batch_predict_normal_operation(make_napari_viewer, tmp_path):
+def test_batch_predict_normal_operation(tmp_path):
     image_directory = pathlib.Path(
         "src/napari_ndev/_tests/resources/Apoc/Images"
     )
@@ -182,7 +183,8 @@ def test_batch_predict_normal_operation(make_napari_viewer, tmp_path):
     )
 
     # Create an instance of ApocContainer
-    container = ApocContainer(make_napari_viewer())
+    # container = ApocContainer(make_napari_viewer())
+    container = ApocContainer()
     container._image_directory.value = image_directory
     container._output_directory.value = output_directory
     # container._image_channels.value = ["IBA1"] # images need fixed
@@ -196,9 +198,9 @@ def test_batch_predict_normal_operation(make_napari_viewer, tmp_path):
     assert container._progress_bar.label == f"Predicted {num_files} Images"
 
 
-def test_update_metadata_from_file(make_napari_viewer):
+def test_update_metadata_from_file():
     # Create an instance of ApocContainer
-    wdg = ApocContainer(make_napari_viewer())
+    wdg = ApocContainer()
 
     # Mock the get_directory_and_files function to return a sample file
     with patch(
@@ -221,7 +223,7 @@ def test_update_metadata_from_file(make_napari_viewer):
 
 
 @pytest.mark.notox
-def test_batch_predict_exception_logging(make_napari_viewer, tmp_path):
+def test_batch_predict_exception_logging(tmp_path):
 
     image_directory = pathlib.Path(
         "src/napari_ndev/_tests/resources/Apoc/Images"
@@ -232,7 +234,7 @@ def test_batch_predict_exception_logging(make_napari_viewer, tmp_path):
     output_directory.mkdir()
 
     # Create an instance of ApocContainer
-    container = ApocContainer(make_napari_viewer())
+    container = ApocContainer()
     container._image_directory.value = image_directory
     container._output_directory.value = output_directory
     # container._image_channels.value = ["IBA1"] # fix these images
