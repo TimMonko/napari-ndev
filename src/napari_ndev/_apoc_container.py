@@ -258,19 +258,21 @@ class ApocContainer(Container):
         )
         self._channel_order_label = Label(value="Select an Image Channel!")
 
-        self._batch_train_button = PushButton(
-            label="Train Classifier on Image-Label Pairs"
-        )
-        self._batch_predict_button = PushButton(
-            label="Predict Labels with Classifier on Images"
-        )
+        self._batch_train_button = PushButton(label="Train")
+        self._batch_predict_button = PushButton(label="Predict")
 
-        self._batch_train_container = Container(layout="horizontal")
+        self._batch_train_container = Container(
+            layout="horizontal",
+            # label="Train Classifier on Image-Label Pairs",
+        )
         self._batch_train_container.extend(
             [self._label_directory, self._batch_train_button]
         )
 
-        self._batch_predict_container = Container(layout="horizontal")
+        self._batch_predict_container = Container(
+            layout="horizontal",
+            # label="Predict Labels with Classifier on Images"
+        )
         self._batch_predict_container.extend(
             [self._output_directory, self._batch_predict_button]
         )
@@ -291,16 +293,6 @@ class ApocContainer(Container):
         #######
         # Viewer Container
         #######
-
-        # def current_layers(_):
-        #     return [
-        #         x for x in self._viewer.layers if isinstance(x, ImageLayer)
-        #     ]
-        # self._viewer
-
-        # self._image_layer = Select(
-        #     choices=current_layers, nullable=False, label="Images"
-        # )
         self._label_layer = create_widget(
             annotation="napari.layers.Labels", label="Labels"
         )
