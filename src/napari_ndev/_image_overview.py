@@ -1,51 +1,59 @@
-import matplotlib.pyplot as plt
-from skimage import io
-
-class ImageSet:
+class ImageOverview:
     def __init__(self, image_sets):
         self.image_sets = image_sets
-        self.fig, self.axs = self._construct_subplot()
-    
-    def _construct_subplot(self):
+        self.fig, self.axs = self._construct_overview()
+
+    def _construct_overview(self):
+        import stackview
+        import matplotlib.pyplot as plt
+        from numpy import zeros
+
+        # create the subplot grid
         num_rows = len(self.image_sets)
-        num_columns = max(len(image_set['images']) for image_set in self.image_sets)
-        
-        fig, axs = plt.subplots(num_rows, num_columns, figsize=(5 * num_columns, 5 * num_rows))
-        
+        num_columns = max(
+            [len(image_set['image']) for image_set in self.image_sets]
+        )
+
+        fig, axs = plt.subplots(
+            num_rows,
+            num_columns,
+            figsize=(num_columns * 5, num_rows * 5)
+        )
+
         if num_rows == 1:
             axs = [axs]
         if num_columns == 1:
             axs = [[ax] for ax in axs]
-        
+
+        # iterate through the image sets
         for row, image_set in enumerate(self.image_sets):
-            images = image_set['images']
-            colormaps = image_set.get('colormaps', ['gray'] * len(images))
-            titles = image_set.get('titles', [''] * len(images))
-            
-            for col, image in enumerate(images):
-                ax = axs[row][col]
-                ax.imshow(image, cmap=colormaps[col])
-                ax.set_title(titles[col])
-                ax.axis('off')
-        
-        plt.tight_layout()
+            # print(image_set)
+            # for col, image in enumerate(image_set):
+            for col in range(len(image_set['image'])):
+                # create a dictionary from the col-th values of each key
+                image_dict = {
+                    key: value[col] for key, value in image_set.items()
+                }
+
+                if image_dict['image'] is None:
+                    image_dict['image'] = zeros((1, 1))
+
+                # create a labels key if it doesn't exist, but does in colormap
+                cmap = image_dict.get('colormap')
+                if cmap is not None and cmap.lower() == 'labels':
+                    image_dict['labels'] = True
+
+                stackview.imshow(**image_dict, plot=axs[row][col])
+
+        plt.subplots_adjust(wspace=0.1, hspace=0.1)
         return fig, axs
 
-    def display(self):
-        # Display the constructed subplot
-        plt.show()
+    def show(self):
+        self.fig.show()
 
-    def save(self, filepath):
-        # Save the constructed subplot to a file
-        # Note: This saves the entire figure as a single image
+    def save(self, directory: str = None, filename: str = None, ):
+        import pathlib
+        dir = pathlib.Path(directory)
+        dir.mkdir(parents=True, exist_ok=True)
+        filepath = dir / filename
         self.fig.savefig(filepath)
-        print(f"Saved figure to {filepath}")
-
-# Example usage:
-# image_sets = [
-#     {'images': [img1, img2], 'colormaps': ['gray', 'viridis'], 'titles': ['First', 'Second']},
-#     {'images': [img3], 'titles': ['Third']}
-# ]
-# img_set = ImageSet(image_sets)
-# img_set.display()
-# img_set.save('path/to/save/overview.png')
