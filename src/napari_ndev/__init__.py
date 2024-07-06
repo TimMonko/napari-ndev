@@ -10,6 +10,7 @@ from ._plate_mapper import PlateMapper
 from ._rescale_by import RescaleBy
 from ._utilities_container import UtilitiesContainer
 from ._workflow_container import WorkflowContainer
+from ._image_overview import ImageOverview
 
 __all__ = [
     "WorkflowContainer",
@@ -18,5 +19,6 @@ __all__ = [
     "ApocFeatureStack",
     "RescaleBy",
     "PlateMapper",
+    "ImageOverview",
     "helpers",
 ]
