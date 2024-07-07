@@ -1,0 +1,52 @@
+import matplotlib.pyplot as plt
+import numpy as np
+import pytest
+from bioio import BioImage
+
+from napari_ndev.image_overview import image_overview
+
+
+@pytest.fixture
+def image_and_label_sets():
+    img = BioImage(
+        r".\src\napari_ndev\_tests\resources\Workflow\Images\cells3d2ch.tiff"
+    )
+    image_data = np.squeeze(img.data)
+
+    image_set1 = {
+        "image": [image_data[0], image_data[1]],
+        "colormap": ["PiYG", "viridis"],
+        "title": ["Image 1", "Image 2"],
+    }
+
+    lbl = BioImage(
+        r".\src\napari_ndev\_tests\resources\Workflow\Labels\cells3d2ch.tiff"
+    )
+
+    label_set = {
+        "image": [None, np.squeeze(lbl.data)],
+        "colormap": [None, "Labels"],
+        "title": [None, "Labels"],
+    }
+
+    return image_set1, label_set
+
+
+def test_image_overview(image_and_label_sets):
+    fig = image_overview(image_and_label_sets)
+
+    assert isinstance(fig, plt.Figure)
+    assert len(fig.axes) == 4
+
+    # Check the properties of each subplot
+    assert fig.axes[0].get_title() == "Image 1"
+    assert fig.axes[0].get_images()[0].get_cmap().name == "PiYG"
+
+    assert fig.axes[1].get_title() == "Image 2"
+    assert fig.axes[1].get_images()[0].get_cmap().name == "viridis"
+
+    # fig. axes[2] should be empty
+    assert not fig.axes[2].get_title()
+    assert not fig.axes[2].get_images()
+
+    assert fig.axes[3].get_title() == "Labels"
