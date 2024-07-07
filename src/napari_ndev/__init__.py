@@ -6,11 +6,11 @@ except ImportError:
 from . import helpers
 from ._apoc_container import ApocContainer
 from ._apoc_feature_stack import ApocFeatureStack
+from ._image_overview import ImageOverview, image_overview
 from ._plate_mapper import PlateMapper
 from ._rescale_by import RescaleBy
 from ._utilities_container import UtilitiesContainer
 from ._workflow_container import WorkflowContainer
-from ._image_overview import ImageOverview
 
 __all__ = [
     "WorkflowContainer",
@@ -20,5 +20,6 @@ __all__ = [
     "RescaleBy",
     "PlateMapper",
     "ImageOverview",
+    "image_overview",
     "helpers",
 ]
