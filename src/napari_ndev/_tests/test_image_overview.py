@@ -1,9 +1,11 @@
+import pathlib
+
 import matplotlib.pyplot as plt
 import numpy as np
 import pytest
 from bioio import BioImage
 
-from napari_ndev.image_overview import image_overview
+from napari_ndev.image_overview import ImageOverview, image_overview
 
 
 @pytest.fixture
@@ -50,3 +52,22 @@ def test_image_overview(image_and_label_sets):
     assert not fig.axes[2].get_images()
 
     assert fig.axes[3].get_title() == "Labels"
+
+
+def test_imageoverview_init(image_and_label_sets):
+    im = ImageOverview(image_and_label_sets, show=False)
+    assert isinstance(im.fig, plt.Figure)
+
+
+def test_imageoverview_save(image_and_label_sets):
+    im = ImageOverview(image_and_label_sets, show=False)
+    # test that the figure can be saved with .save()
+    im.save(r".\src\napari_ndev\_tests\resources", "image_overview.png")
+    # assert that it was saved
+    assert pathlib.Path(
+        r".\src\napari_ndev\_tests\resources\image_overview.png"
+    ).exists()
+    # remove the saved file
+    pathlib.Path(
+        r".\src\napari_ndev\_tests\resources\image_overview.png"
+    ).unlink()
