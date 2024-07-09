@@ -344,17 +344,22 @@ class UtilitiesContainer(Container):
         self._viewer.open(self._files.value, plugin="napari-aicsimageio")
 
     def rescale_by(self):
-        from napari.layers import Image as ImageLayer
-        from napari.layers import Labels as LabelsLayer
-
         layers = self._viewer.layers.selection
         scale_tup = self._scale_tuple.value
         for layer in layers:
-            if isinstance(layer, (ImageLayer, LabelsLayer)):
-                scale_len = len(layer.scale)
-                layer.scale = scale_tup[1:3] if scale_len == 2 else scale_tup
-            else:
-                continue
+            scale_len = len(layer.scale)
+            layer.scale = scale_tup[1:3] if scale_len == 2 else scale_tup
+        # from napari.layers import Image as ImageLayer
+        # from napari.layers import Labels as LabelsLayer
+
+        # layers = self._viewer.layers.selection
+        # scale_tup = self._scale_tuple.value
+        # for layer in layers:
+        #     if isinstance(layer, (ImageLayer, LabelsLayer)):
+        #         scale_len = len(layer.scale)
+        #         layer.scale = scale_tup[1:3] if scale_len == 2 else scale_tup
+        #     else:
+        #         continue
 
     def concatenate_images(
         self,
