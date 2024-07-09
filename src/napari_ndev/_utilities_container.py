@@ -145,7 +145,7 @@ class UtilitiesContainer(Container):
         )
         self._open_image_button = PushButton(label="Open File(s)")
         self._open_image_update_metadata = CheckBox(
-            value=True, label="Update Metadata on Open"
+            value=True, label="Update Metadata on File Selection"
         )
         self._open_image_container = Container(layout="horizontal")
         self._open_image_container.append(self._open_image_button)
@@ -214,6 +214,7 @@ class UtilitiesContainer(Container):
         self._scene_container.append(self._extract_scenes)
 
         self._concatenate_image_files = CheckBox(
+            value=True,
             label="Concatenate Files",
             tooltip="Concatenate files in the selected directory. Removes "
             "blank channels.",
@@ -281,6 +282,7 @@ class UtilitiesContainer(Container):
         ##############################
         # Event Handling
         ##############################
+        self._files.changed.connect(self.update_metadata_from_file)
         self._open_image_button.clicked.connect(self.open_images)
         self._layer_metadata_update.clicked.connect(
             self.update_metadata_from_layer
@@ -310,11 +312,13 @@ class UtilitiesContainer(Container):
     def update_metadata_from_file(self):
         from aicsimageio import AICSImage
 
-        img = AICSImage(self._files.value[0])
-        self._img = img
-        self._update_metadata(img)
         self._save_name.value = str(self._files.value[0].stem + ".tiff")
-        self._scenes.value = len(img.scenes)
+
+        if self._open_image_update_metadata.value:
+            img = AICSImage(self._files.value[0])
+            self._img = img
+            self._update_metadata(img)
+            self._scenes.value = len(img.scenes)
 
     def update_metadata_from_layer(self):
         selected_layer = self._viewer.layers.selection.active
@@ -337,8 +341,6 @@ class UtilitiesContainer(Container):
             )
 
     def open_images(self):
-        if self._open_image_update_metadata.value:
-            self.update_metadata_from_file()
         self._viewer.open(self._files.value, plugin="napari-aicsimageio")
 
     def rescale_by(self):
