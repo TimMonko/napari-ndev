@@ -303,8 +303,8 @@ class UtilitiesContainer(Container):
 
         self._scale_tuple.value = (
             img.physical_pixel_sizes.Z or 0,
-            img.physical_pixel_sizes.Y,
-            img.physical_pixel_sizes.X,
+            img.physical_pixel_sizes.Y or 1,
+            img.physical_pixel_sizes.X or 1,
         )
 
     def update_metadata_from_file(self):
