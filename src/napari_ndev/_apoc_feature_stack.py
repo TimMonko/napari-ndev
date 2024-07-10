@@ -17,11 +17,11 @@ if TYPE_CHECKING:
 class ApocFeatureStack(Container):
     def __init__(
         self,
-        viewer: "napari.viewer.Viewer",
+        viewer: "napari.viewer.Viewer" = None,
     ):
         super().__init__()
         self
-        self._viewer = viewer
+        self._viewer = viewer if viewer is not None else None
 
         self._original = CheckBox(label="Keep Original Image")
         self._gaussian_blur = LineEdit(label="Gaussian Blur")
