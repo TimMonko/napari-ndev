@@ -11,7 +11,7 @@ from napari_ndev.image_overview import ImageOverview, image_overview
 @pytest.fixture
 def image_and_label_sets():
     img = BioImage(
-        r".\src\napari_ndev\_tests\resources\Workflow\Images\cells3d2ch.tiff"
+        r"src\napari_ndev\_tests\resources\Workflow\Images\cells3d2ch.tiff"
     )
     image_data = np.squeeze(img.data)
 
@@ -22,7 +22,7 @@ def image_and_label_sets():
     }
 
     lbl = BioImage(
-        r".\src\napari_ndev\_tests\resources\Workflow\Labels\cells3d2ch.tiff"
+        r"src\napari_ndev\_tests\resources\Workflow\Labels\cells3d2ch.tiff"
     )
 
     label_set = {
@@ -62,12 +62,12 @@ def test_imageoverview_init(image_and_label_sets):
 def test_imageoverview_save(image_and_label_sets):
     im = ImageOverview(image_and_label_sets, show=False)
     # test that the figure can be saved with .save()
-    im.save(r".\src\napari_ndev\_tests\resources", "image_overview.png")
+    im.save(r"src\napari_ndev\_tests\resources", "image_overview.png")
     # assert that it was saved
     assert pathlib.Path(
-        r".\src\napari_ndev\_tests\resources\image_overview.png"
+        r"src\napari_ndev\_tests\resources\image_overview.png"
     ).exists()
     # remove the saved file
     pathlib.Path(
-        r".\src\napari_ndev\_tests\resources\image_overview.png"
+        r"src\napari_ndev\_tests\resources\image_overview.png"
     ).unlink()
