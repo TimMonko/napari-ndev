@@ -11,7 +11,9 @@ from napari_ndev.image_overview import ImageOverview, image_overview
 @pytest.fixture
 def image_and_label_sets():
     img = BioImage(
-        r"src\napari_ndev\_tests\resources\Workflow\Images\cells3d2ch.tiff"
+        pathlib.Path(
+            r"src\napari_ndev\_tests\resources\Workflow\Images\cells3d2ch.tiff"
+        )
     )
     image_data = np.squeeze(img.data)
 
@@ -22,7 +24,9 @@ def image_and_label_sets():
     }
 
     lbl = BioImage(
-        r"src\napari_ndev\_tests\resources\Workflow\Labels\cells3d2ch.tiff"
+        pathlib.Path(
+            r"src\napari_ndev\_tests\resources\Workflow\Labels\cells3d2ch.tiff"
+        )
     )
 
     label_set = {
