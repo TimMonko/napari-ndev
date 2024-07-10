@@ -12,7 +12,7 @@ from napari_ndev.image_overview import ImageOverview, image_overview
 def image_and_label_sets():
     img = BioImage(
         pathlib.Path(
-            r"src\napari_ndev\_tests\resources\Workflow\Images\cells3d2ch.tiff"
+            r"src/napari_ndev/_tests/resources/Workflow/Images/cells3d2ch.tiff"
         )
     )
     image_data = np.squeeze(img.data)
@@ -25,7 +25,7 @@ def image_and_label_sets():
 
     lbl = BioImage(
         pathlib.Path(
-            r"src\napari_ndev\_tests\resources\Workflow\Labels\cells3d2ch.tiff"
+            r"src/napari_ndev/_tests/resources/Workflow/Labels/cells3d2ch.tiff"
         )
     )
 
