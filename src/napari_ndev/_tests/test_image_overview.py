@@ -66,12 +66,11 @@ def test_imageoverview_init(image_and_label_sets):
 def test_imageoverview_save(image_and_label_sets):
     im = ImageOverview(image_and_label_sets, show=False)
     # test that the figure can be saved with .save()
-    im.save(r"src\napari_ndev\_tests\resources", "image_overview.png")
+    save_path = pathlib.Path(r"src\napari_ndev\_tests\resources")
+    save_file_path = save_path / "image_overview.png"
+
+    im.save(str(save_path), "image_overview.png")
     # assert that it was saved
-    assert pathlib.Path(
-        r"src\napari_ndev\_tests\resources\image_overview.png"
-    ).exists()
+    assert save_file_path.exists()
     # remove the saved file
-    pathlib.Path(
-        r"src\napari_ndev\_tests\resources\image_overview.png"
-    ).unlink()
+    save_file_path.unlink()
