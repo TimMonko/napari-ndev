@@ -304,7 +304,7 @@ class UtilitiesContainer(Container):
         self._channel_names.value = helpers.get_channel_names(img)
 
         self._scale_tuple.value = (
-            img.physical_pixel_sizes.Z or 0,
+            img.physical_pixel_sizes.Z or 1,
             img.physical_pixel_sizes.Y or 1,
             img.physical_pixel_sizes.X or 1,
         )
@@ -331,7 +331,7 @@ class UtilitiesContainer(Container):
         except KeyError:
             scale = selected_layer.scale
             self._scale_tuple.value = (
-                scale[-3] if len(scale) >= 3 else 0.0,
+                scale[-3] if len(scale) >= 3 else 1,
                 scale[-2],
                 scale[-1],
             )
@@ -346,20 +346,12 @@ class UtilitiesContainer(Container):
     def rescale_by(self):
         layers = self._viewer.layers.selection
         scale_tup = self._scale_tuple.value
+
         for layer in layers:
             scale_len = len(layer.scale)
-            layer.scale = scale_tup[1:3] if scale_len == 2 else scale_tup
-        # from napari.layers import Image as ImageLayer
-        # from napari.layers import Labels as LabelsLayer
-
-        # layers = self._viewer.layers.selection
-        # scale_tup = self._scale_tuple.value
-        # for layer in layers:
-        #     if isinstance(layer, (ImageLayer, LabelsLayer)):
-        #         scale_len = len(layer.scale)
-        #         layer.scale = scale_tup[1:3] if scale_len == 2 else scale_tup
-        #     else:
-        #         continue
+            # get the scale_tup from the back of the tuple first, in case dims
+            # are missing in the new layer
+            layer.scale = scale_tup[-scale_len:]
 
     def concatenate_images(
         self,
