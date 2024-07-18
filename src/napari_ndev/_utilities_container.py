@@ -148,8 +148,8 @@ class UtilitiesContainer(Container):
             value=True, label="Update Metadata on File Selection"
         )
         self._open_image_container = Container(layout="horizontal")
-        self._open_image_container.append(self._open_image_button)
         self._open_image_container.append(self._open_image_update_metadata)
+        self._open_image_container.append(self._open_image_button)
 
         self._save_directory = FileEdit(
             label="Save Directory",
