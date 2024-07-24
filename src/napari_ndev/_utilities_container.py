@@ -321,16 +321,19 @@ class UtilitiesContainer(Container):
             img.physical_pixel_sizes.X or 1,
         )
 
-    def update_metadata_from_file(self):
+    def _bioimage_metadata(self):
         from aicsimageio import AICSImage
 
+        img = AICSImage(self._files.value[0])
+        self._img = img
+        self._update_metadata(img)
+        self._scenes.value = len(img.scenes)
+
+    def update_metadata_from_file(self):
         self._save_name.value = str(self._files.value[0].stem + ".tiff")
 
         if self._open_image_update_metadata.value:
-            img = AICSImage(self._files.value[0])
-            self._img = img
-            self._update_metadata(img)
-            self._scenes.value = len(img.scenes)
+            self._bioimage_metadata()
 
     def update_metadata_from_layer(self):
         selected_layer = self._viewer.layers.selection.active
@@ -366,6 +369,12 @@ class UtilitiesContainer(Container):
         idx = files.index(first_file)
         # get the next file(s) in the list after the number of files
         next_files = files[idx + num_files : idx + num_files + num_files]
+        # set the nwe save names, and update the file value
+        self._save_name.value = str(next_files[0].stem + ".tiff")
+        self._files.value = next_files
+        if self._open_image_update_metadata.value:
+            self._bioimage_metadata()
+
         self._viewer.open(next_files, plugin="napari-aicsimageio")
 
     def rescale_by(self):
