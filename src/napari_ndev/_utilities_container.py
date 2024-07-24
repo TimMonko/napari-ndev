@@ -143,13 +143,24 @@ class UtilitiesContainer(Container):
             mode="rm",
             tooltip="Select file(s) to load.",
         )
-        self._open_image_button = PushButton(label="Open File(s)")
         self._open_image_update_metadata = CheckBox(
-            value=True, label="Update Metadata on File Selection"
+            value=True,
+            label="Update Metadata",
+            tooltip="Update metadata during initial file selection.",
         )
+        self._open_image_button = PushButton(label="Open File(s)")
+        self._open_next_image_button = PushButton(
+            label="Open Next",
+            tooltip="Open the next file(s) in the directory. "
+            "The files are sorted alphabetically, which may not be consistent "
+            "with your file viewer. But, opening related consecutive files "
+            "should work as expected.",
+        )
+
         self._open_image_container = Container(layout="horizontal")
-        self._open_image_container.append(self._open_image_button)
         self._open_image_container.append(self._open_image_update_metadata)
+        self._open_image_container.append(self._open_image_button)
+        self._open_image_container.append(self._open_next_image_button)
 
         self._save_directory = FileEdit(
             label="Save Directory",
@@ -231,7 +242,7 @@ class UtilitiesContainer(Container):
         self._concatenate_container.append(self._concatenate_image_layers)
 
         self._save_image_button = PushButton(
-            label="Save Images",
+            label="Images",
             tooltip="Save the concatenated image data as OME-TIFF.",
         )
 
@@ -239,14 +250,14 @@ class UtilitiesContainer(Container):
             annotation="napari.layers.Labels", label="Labels"
         )
         self._save_labels_button = PushButton(
-            label="Save Labels", tooltip="Save the labels data as OME-TIFF."
+            label="Labels", tooltip="Save the labels data as OME-TIFF."
         )
 
         self._shapes_layer = create_widget(
             annotation="napari.layers.Shapes", label="Shapes"
         )
         self._save_shapes_button = PushButton(
-            label="Save Shapes as Labels",
+            label="Shapes as Labels",
             tooltip="Save the shapes data as labels (OME-TIFF) according to "
             "selected image layer dimensions.",
         )
@@ -284,6 +295,7 @@ class UtilitiesContainer(Container):
         ##############################
         self._files.changed.connect(self.update_metadata_from_file)
         self._open_image_button.clicked.connect(self.open_images)
+        self._open_next_image_button.clicked.connect(self.open_next_images)
         self._layer_metadata_update.clicked.connect(
             self.update_metadata_from_layer
         )
@@ -304,7 +316,7 @@ class UtilitiesContainer(Container):
         self._channel_names.value = helpers.get_channel_names(img)
 
         self._scale_tuple.value = (
-            img.physical_pixel_sizes.Z or 0,
+            img.physical_pixel_sizes.Z or 1,
             img.physical_pixel_sizes.Y or 1,
             img.physical_pixel_sizes.X or 1,
         )
@@ -331,7 +343,7 @@ class UtilitiesContainer(Container):
         except KeyError:
             scale = selected_layer.scale
             self._scale_tuple.value = (
-                scale[-3] if len(scale) >= 3 else 0.0,
+                scale[-3] if len(scale) >= 3 else 1,
                 scale[-2],
                 scale[-1],
             )
@@ -343,23 +355,28 @@ class UtilitiesContainer(Container):
     def open_images(self):
         self._viewer.open(self._files.value, plugin="napari-aicsimageio")
 
+    def open_next_images(self):
+        num_files = self._files.value.__len__()
+        # get the parent directory of the first file
+        first_file = self._files.value[0]
+        parent_dir = first_file.parent
+        # get the list of files in the parent directory
+        files = list(parent_dir.glob(f"*{first_file.suffix}"))
+        # get the index of the first file in the list
+        idx = files.index(first_file)
+        # get the next file(s) in the list after the number of files
+        next_files = files[idx + num_files : idx + num_files + num_files]
+        self._viewer.open(next_files, plugin="napari-aicsimageio")
+
     def rescale_by(self):
         layers = self._viewer.layers.selection
         scale_tup = self._scale_tuple.value
+
         for layer in layers:
             scale_len = len(layer.scale)
-            layer.scale = scale_tup[1:3] if scale_len == 2 else scale_tup
-        # from napari.layers import Image as ImageLayer
-        # from napari.layers import Labels as LabelsLayer
-
-        # layers = self._viewer.layers.selection
-        # scale_tup = self._scale_tuple.value
-        # for layer in layers:
-        #     if isinstance(layer, (ImageLayer, LabelsLayer)):
-        #         scale_len = len(layer.scale)
-        #         layer.scale = scale_tup[1:3] if scale_len == 2 else scale_tup
-        #     else:
-        #         continue
+            # get the scale_tup from the back of the tuple first, in case dims
+            # are missing in the new layer
+            layer.scale = scale_tup[-scale_len:]
 
     def concatenate_images(
         self,
