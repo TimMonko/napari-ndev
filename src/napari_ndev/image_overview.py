@@ -3,7 +3,10 @@ import stackview
 
 
 def image_overview(
-    image_sets: list[dict], xscale: float = 3, yscale: float = 3
+    image_sets: list[dict],
+    xscale: float = 3,
+    yscale: float = 3,
+    plot_title: str = "",
 ):
     """
     Create an overview of images.
@@ -53,7 +56,9 @@ def image_overview(
 
             stackview.imshow(**image_dict, plot=axs[row][col])
 
-    plt.subplots_adjust(wspace=0.1, hspace=0.1)
+    plt.suptitle(plot_title, fontsize=16)
+    plt.tight_layout()
+    # plt.subplots_adjust(wspace=0.1, hspace=0.1)
 
     return fig
 
@@ -75,10 +80,11 @@ class ImageOverview:
         image_sets: list[dict],
         xscale: float = 3,
         yscale: float = 3,
+        image_title: str = "",
         show: bool = False,
     ):
         plt.ioff()
-        self.fig = image_overview(image_sets, xscale, yscale)
+        self.fig = image_overview(image_sets, xscale, yscale, image_title)
         if show:
             plt.show()
         plt.close()
