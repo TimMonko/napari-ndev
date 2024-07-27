@@ -18,8 +18,8 @@ from magicgui.widgets import (
     Select,
     SpinBox,
     Table,
-    create_widget,
 )
+from napari import layers
 from pyclesperanto_prototype import set_wait_for_kernel_finish
 from qtpy.QtWidgets import QTabWidget
 
@@ -288,8 +288,10 @@ class ApocContainer(Container):
         )
 
     def _initialize_viewer_container(self):
-        self._label_layer = create_widget(
-            annotation="napari.layers.Labels", label="Labels"
+        self._label_layer = ComboBox(
+            choices=lambda _: [
+                x for x in self._viewer.layers if isinstance(x, layers.Labels)
+            ],
         )
         self._train_image_button = PushButton(
             label="Train classifier on selected layers using label"
@@ -341,6 +343,15 @@ class ApocContainer(Container):
         self._batch_predict_button.clicked.connect(self.batch_predict)
         self._train_image_button.clicked.connect(self.image_train)
         self._predict_image_layer.clicked.connect(self.image_predict)
+
+        # when self._viewer.layers is updated, update the choices in the ComboBox
+        self._viewer.layers.events.removed.connect(self._update_layer_choices)
+        self._viewer.layers.events.inserted.connect(self._update_layer_choices)
+
+    def _update_layer_choices(self):
+        self._label_layer.choices = [
+            x for x in self._viewer.layers if isinstance(x, layers.Labels)
+        ]
 
     def _update_metadata_from_file(self):
         from aicsimageio import AICSImage
