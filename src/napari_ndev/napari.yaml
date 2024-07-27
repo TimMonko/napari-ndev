@@ -20,8 +20,8 @@ contributions:
     - command: napari-ndev.make_utilities_container
       display_name: Image Utilities
     - command: napari-ndev.make_workflow_container
-      display_name: Batch Workflow
+      display_name: Workflow Widget
     - command: napari-ndev.make_apoc_container
-      display_name: Batch APOC
+      display_name: APOC Widget
     - command: napari-ndev.make_custom_apoc
-      display_name: Custom APOC Feature Set
+      display_name: CustomAPOC Feature Set
