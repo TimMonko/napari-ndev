@@ -549,7 +549,7 @@ class ApocContainer(Container):
         logger.removeHandler(handler)
 
     def image_train(self):
-        layer_name = self._viewer.layers.selection.active.name
+        layer_name = list(self._viewer.layers.selection)[0].name
 
         # layer_name = self._image_layer.value[0].name
         print(f"Training on {layer_name}")
@@ -660,14 +660,17 @@ class ApocContainer(Container):
         logger.removeHandler(handler)
 
     def image_predict(self):
-        layer_name = self._viewer.layers.selection.active.name
-        print(f"Predicting {layer_name}")
+        if self._viewer.layers.selection is not None:
+            layer_name = list(self._viewer.layers.selection)[0].name
+            print(f"Predicting {layer_name}")
+        else:
+            print("No layers selected for prediction")
         # https://github.com/clEsperanto/pyclesperanto_prototype/issues/163
         set_wait_for_kernel_finish(True)
 
         image_list = [image.data for image in self._viewer.layers.selection]
         image_stack = np.stack(image_list, axis=0)
-        scale = self._viewer.layers.selection.active.scale
+        scale = list(self._viewer.layers.selection)[0].scale
 
         custom_classifier = self._get_prediction_classifier_instance()
 
