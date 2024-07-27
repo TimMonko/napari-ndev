@@ -158,25 +158,21 @@ class ApocContainer(Container):
         # viewer = napari_viewer
     ):
         super().__init__()
+        self
+        self._viewer = viewer if viewer is not None else None
+        self._lazy_imports()
+        self._initialize_widgets()
+        self._initialize_batch_container()
+        self._initialize_viewer_container()
+        self._setup_widget_layout()
+        self._connect_events()
 
-        ##############################
-        # Lazy Imports
-        ##############################
+    def _lazy_imports(self):
         import apoc
-
-        # from napari.layers import Image as ImageLayer
 
         self.apoc = apoc
 
-        ##############################
-        # Attributes
-        ##############################
-        self
-        self._viewer = viewer if viewer is not None else None
-
-        ##############################
-        # Widgets
-        ##############################
+    def _initialize_widgets(self):
         self._classifier_file = FileEdit(
             label="Classifier File (.cl)",
             mode="r",
@@ -192,8 +188,8 @@ class ApocContainer(Container):
         )
 
         self._classifier_type_mapping = {
-            "PixelClassifier": apoc.PixelClassifier,
-            "ObjectSegmenter": apoc.ObjectSegmenter,
+            "PixelClassifier": self.apoc.PixelClassifier,
+            "ObjectSegmenter": self.apoc.ObjectSegmenter,
         }
 
         self._classifier_type = RadioButtons(
@@ -224,7 +220,7 @@ class ApocContainer(Container):
             tooltip="Only used with ObjectSegmenter, otherwise ignored.",
         )
 
-        self._PDFS = Enum("PDFS", apoc.PredefinedFeatureSet._member_names_)
+        self._PDFS = Enum("PDFS", self.apoc.PredefinedFeatureSet._member_names_)
         self._predefined_features = ComboBox(
             label="Features",
             choices=self._PDFS,
@@ -242,9 +238,7 @@ class ApocContainer(Container):
             label="Open Custom Feature Generator Widget"
         )
 
-        ######
-        # Batch Container
-        ######
+    def _initialize_batch_container(self):
         self._image_directory = FileEdit(label="Image Directory", mode="d")
         self._label_directory = FileEdit(label="Label Directory", mode="d")
         self._output_directory = FileEdit(label="Output Directory", mode="d")
@@ -290,9 +284,8 @@ class ApocContainer(Container):
                 self._progress_bar,
             ]
         )
-        #######
-        # Viewer Container
-        #######
+
+    def _initialize_viewer_container(self):
         self._label_layer = create_widget(
             annotation="napari.layers.Labels", label="Labels"
         )
@@ -315,10 +308,7 @@ class ApocContainer(Container):
             ]
         )
 
-        ######
-        # Widget Layout
-        ######
-
+    def _setup_widget_layout(self):
         self.extend(
             [
                 self._classifier_file,
@@ -334,14 +324,11 @@ class ApocContainer(Container):
         )
 
         tabs = QTabWidget()
-
         tabs.addTab(self._batch_container.native, "Batch")
         tabs.addTab(self._viewer_container.native, "Viewer")
         self.native.layout().addWidget(tabs)
 
-        ##############################
-        # Event Handling
-        ##############################
+    def _connect_events(self):
         self._image_directory.changed.connect(self._update_metadata_from_file)
         self._image_channels.changed.connect(self._update_channel_order)
         self._classifier_file.changed.connect(self._update_classifier_metadata)
