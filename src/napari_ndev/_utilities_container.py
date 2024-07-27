@@ -12,7 +12,6 @@ from magicgui.widgets import (
     PushButton,
     TextEdit,
     TupleEdit,
-    create_widget,
 )
 
 from napari_ndev import helpers
