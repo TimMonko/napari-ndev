@@ -220,7 +220,9 @@ class ApocContainer(Container):
             tooltip="Only used with ObjectSegmenter, otherwise ignored.",
         )
 
-        self._PDFS = Enum("PDFS", self.apoc.PredefinedFeatureSet._member_names_)
+        self._PDFS = Enum(
+            "PDFS", self.apoc.PredefinedFeatureSet._member_names_
+        )
         self._predefined_features = ComboBox(
             label="Features",
             choices=self._PDFS,
