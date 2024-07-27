@@ -24,4 +24,4 @@ contributions:
     - command: napari-ndev.make_apoc_container
       display_name: APOC Widget
     - command: napari-ndev.make_custom_apoc
-      display_name: CustomAPOC Feature Set
+      display_name: Custom APOC Feature Set
