@@ -136,3 +136,32 @@ def test_update_metadata_from_file(make_napari_viewer, test_rgb_image):
     assert container._img.dims.order == "TCZYXS"
     assert container._squeezed_dims == "YX"
     assert container._channel_names.value == "['red', 'green', 'blue']"
+
+
+def test_update_metadata_from_layer(make_napari_viewer, test_data):
+    test_image, _, _, _ = test_data
+    viewer = make_napari_viewer()
+    viewer.add_image(test_image, scale=(2, 3))
+    container = UtilitiesContainer(viewer)
+
+    container._viewer.layers.selection.active = viewer.layers["test_image"]
+    container.update_metadata_from_layer()
+
+    assert container._results.value == (
+        "Tried to update metadata, but could only update scale"
+        " because layer not opened with aicsimageio"
+    )
+    assert container._scale_tuple.value == (1, 2, 3)
+
+
+def test_open_images(make_napari_viewer, test_rgb_image):
+    viewer = make_napari_viewer()
+    container = UtilitiesContainer(viewer)
+
+    path, _ = test_rgb_image
+    container._files.value = path
+    container.open_images()
+
+    assert container._img.dims.order == "TCZYXS"
+    assert container._squeezed_dims == "YX"
+    assert container._channel_names.value == "['red', 'green', 'blue']"
