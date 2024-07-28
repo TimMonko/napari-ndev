@@ -231,7 +231,7 @@ class ApocContainer(Container):
             value=None,
             tooltip="All featuresets except 'custom' are premade",
         )
-        self._custom_features = LineEdit(
+        self._feature_string = LineEdit(
             label="Feature String",
             tooltip=(
                 "A string in the form of " "'filter1=radius1 filter2=radius2'."
@@ -329,7 +329,7 @@ class ApocContainer(Container):
                 self._max_depth,
                 self._num_trees,
                 self._predefined_features,
-                self._custom_features,
+                self._feature_string,
                 # self._open_custom_feature_generator,
             ]
         )
@@ -359,6 +359,7 @@ class ApocContainer(Container):
         self._custom_apoc_container._generate_string_button.clicked.connect(
             self.insert_custom_feature_string
         )
+        self._predefined_features.changed.connect(self._get_feature_set)
 
         # when self._viewer.layers is updated, update the choices in the ComboBox
         self._viewer.layers.events.removed.connect(self._update_layer_choices)
@@ -451,11 +452,13 @@ class ApocContainer(Container):
 
     def _get_feature_set(self):
         if self._predefined_features.value.value == 1:
-            return self._custom_features.value
+            feature_set = ""
         else:
-            return self.apoc.PredefinedFeatureSet[
+            feature_set = self.apoc.PredefinedFeatureSet[
                 self._predefined_features.value.name
             ].value
+        self._feature_string.value = feature_set
+        return feature_set
 
     def _get_training_classifier_instance(self):
         if self._classifier_type.value == "PixelClassifier":
@@ -518,7 +521,7 @@ class ApocContainer(Container):
             self.apoc.erase_classifier(self._classifier_file.value)
 
         custom_classifier = self._get_training_classifier_instance()
-        feature_set = self._get_feature_set()
+        feature_set = self._feature_string.value
 
         channel_index_list = [
             self._image_channels.choices.index(channel)
@@ -581,7 +584,7 @@ class ApocContainer(Container):
             self.apoc.erase_classifier(self._classifier_file.value)
 
         custom_classifier = self._get_training_classifier_instance()
-        feature_set = self._get_feature_set()
+        feature_set = self._feature_string.value
 
         custom_classifier.train(
             features=feature_set,
@@ -715,8 +718,7 @@ class ApocContainer(Container):
     #         return
 
     def insert_custom_feature_string(self):
-        self._custom_features.value = (
+        self._feature_string.value = (
             self._custom_apoc_container._feature_string.value
         )
-        # self._custom_apoc_container.close()
-        return self._custom_features.value
+        return self._feature_string.value
