@@ -77,7 +77,9 @@ def test_save_labels(make_napari_viewer, tmp_path: Path, test_data):
     _, _, test_labels, test_dims = test_data
 
     viewer = make_napari_viewer()
-    viewer.add_labels(test_labels) # <- should add a way to specify this is the selected layer in the viewer
+    viewer.add_labels(
+        test_labels
+    )  # <- should add a way to specify this is the selected layer in the viewer
     viewer.layers.selection.active = viewer.layers["test_labels"]
     container = UtilitiesContainer(viewer)
 
