@@ -173,6 +173,9 @@ class ApocContainer(Container):
 
         self.apoc = apoc
 
+    def _filter_layers(self, layer_type):
+        return [x for x in self._viewer.layers if isinstance(x, layer_type)]
+
     def _initialize_widgets(self):
         self._classifier_file = FileEdit(
             label="Classifier File (.cl)",
@@ -237,9 +240,6 @@ class ApocContainer(Container):
                 "A string in the form of " "'filter1=radius1 filter2=radius2'."
             ),
         )
-        # self._open_custom_feature_generator = PushButton(
-        #     label="Open Custom Feature Generator Widget"
-        # )
 
     def _initialize_batch_container(self):
         self._image_directory = FileEdit(label="Image Directory", mode="d")
@@ -289,10 +289,13 @@ class ApocContainer(Container):
         )
 
     def _initialize_viewer_container(self):
+        self._image_layers = Select(
+            choices=self._filter_layers(layers.Image),
+            label="Image Layers",
+        )
         self._label_layer = ComboBox(
-            choices=lambda _: [
-                x for x in self._viewer.layers if isinstance(x, layers.Labels)
-            ],
+            choices=self._filter_layers(layers.Labels),
+            label="Label Layer",
         )
         self._train_image_button = PushButton(
             label="Train classifier on selected layers using label"
@@ -305,7 +308,7 @@ class ApocContainer(Container):
         self._viewer_container = Container(layout="vertical")
         self._viewer_container.extend(
             [
-                # self._image_layer,
+                self._image_layers,
                 self._label_layer,
                 self._train_image_button,
                 self._predict_image_layer,
@@ -330,27 +333,20 @@ class ApocContainer(Container):
                 self._num_trees,
                 self._predefined_features,
                 self._feature_string,
-                # self._open_custom_feature_generator,
             ]
         )
 
         tabs = QTabWidget()
         tabs.addTab(self._batch_container.native, "Batch")
         tabs.addTab(self._viewer_container.native, "Viewer")
-        # add Custom APOC Feature Set widget
-        tabs.addTab(
-            self._custom_apoc_container.native,
-            "Custom APOC Feature Set",
-        )
+        tabs.addTab(self._custom_apoc_container.native, "Custom Feature Set")
         self.native.layout().addWidget(tabs)
 
     def _connect_events(self):
         self._image_directory.changed.connect(self._update_metadata_from_file)
         self._image_channels.changed.connect(self._update_channel_order)
         self._classifier_file.changed.connect(self._update_classifier_metadata)
-        # self._open_custom_feature_generator.clicked.connect(
-        #     self._custom_apoc_widget
-        # )
+
         self._batch_train_button.clicked.connect(self.batch_train)
         self._batch_predict_button.clicked.connect(self.batch_predict)
         self._train_image_button.clicked.connect(self.image_train)
@@ -366,9 +362,8 @@ class ApocContainer(Container):
         self._viewer.layers.events.inserted.connect(self._update_layer_choices)
 
     def _update_layer_choices(self):
-        self._label_layer.choices = [
-            x for x in self._viewer.layers if isinstance(x, layers.Labels)
-        ]
+        self._label_layer.choices = self._filter_layers(layers.Labels)
+        self._image_layers.choices = self._filter_layers(layers.Image)
 
     def _update_metadata_from_file(self):
         from aicsimageio import AICSImage
@@ -458,6 +453,9 @@ class ApocContainer(Container):
                 self._predefined_features.value.name
             ].value
         self._feature_string.value = feature_set
+        self._custom_apoc_container._feature_string.value = (
+            feature_set  # <- potentially deprecated in future
+        )
         return feature_set
 
     def _get_training_classifier_instance(self):
@@ -707,15 +705,6 @@ class ApocContainer(Container):
         self._single_result_label.value = f"Predicted {layer_name}"
 
         return result
-
-    # def _custom_apoc_widget(self):
-    #     if self._viewer is not None:
-    #         self._viewer.window.add_plugin_dock_widget(
-    #             plugin_name="napari-ndev",
-    #             widget_name="Custom APOC Feature Set",
-    #         )
-    #     else:
-    #         return
 
     def insert_custom_feature_string(self):
         self._feature_string.value = (
