@@ -565,34 +565,6 @@ class ApocContainer(Container):
         self._progress_bar.label = f"Trained on {len(image_files)} Images"
         logger.removeHandler(handler)
 
-    def image_train(self):
-        layer_name = list(self._viewer.layers.selection)[0].name
-
-        # layer_name = self._image_layer.value[0].name
-        print(f"Training on {layer_name}")
-        image_list = [image.data for image in self._viewer.layers.selection]
-        # image_list = [image.data for image in self._image_layer.value]
-        image_stack = np.stack(image_list, axis=0)
-        label = self._label_layer.value.data
-
-        # https://github.com/clEsperanto/pyclesperanto_prototype/issues/163
-        set_wait_for_kernel_finish(True)
-
-        if not self._continue_training:
-            self.apoc.erase_classifier(self._classifier_file.value)
-
-        custom_classifier = self._get_training_classifier_instance()
-        feature_set = self._feature_string.value
-
-        custom_classifier.train(
-            features=feature_set,
-            image=np.squeeze(image_stack),
-            ground_truth=np.squeeze(label),
-            continue_training=True,
-        )
-
-        self._single_result_label.value = f"Trained on {layer_name}"
-
     def _get_prediction_classifier_instance(self):
         if self._classifier_type.value in self._classifier_type_mapping:
             classifier_class = self._classifier_type_mapping[
@@ -676,18 +648,47 @@ class ApocContainer(Container):
         self._progress_bar.label = f"Predicted {len(image_files)} Images"
         logger.removeHandler(handler)
 
-    def image_predict(self):
-        if self._viewer.layers.selection is not None:
-            layer_name = list(self._viewer.layers.selection)[0].name
-            print(f"Predicting {layer_name}")
-        else:
-            print("No layers selected for prediction")
+    def image_train(self):
+        image_names = [image.name for image in self._image_layers.value]
+        label_name = self._label_layer.value.name
+        self._single_result_label.value = (
+            f"Training on {image_names} using {label_name}"
+        )
+
+        image_list = [image.data for image in self._image_layers.value]
+        image_stack = np.stack(image_list, axis=0)
+        label = self._label_layer.value.data
+
         # https://github.com/clEsperanto/pyclesperanto_prototype/issues/163
         set_wait_for_kernel_finish(True)
 
-        image_list = [image.data for image in self._viewer.layers.selection]
+        if not self._continue_training:
+            self.apoc.erase_classifier(self._classifier_file.value)
+
+        custom_classifier = self._get_training_classifier_instance()
+        feature_set = self._feature_string.value
+
+        custom_classifier.train(
+            features=feature_set,
+            image=np.squeeze(image_stack),
+            ground_truth=np.squeeze(label),
+            continue_training=True,
+        )
+
+        self._single_result_label.value = (
+            f"Trained on {image_names} using {label_name}"
+        )
+
+    def image_predict(self):
+        set_wait_for_kernel_finish(
+            True
+        )  # https://github.com/clEsperanto/pyclesperanto_prototype/issues/163
+
+        image_names = [image.name for image in self._image_layers.value]
+        self._single_result_label.value = f"Predicting {image_names}"
+        image_list = [image.data for image in self._image_layers.value]
         image_stack = np.stack(image_list, axis=0)
-        scale = list(self._viewer.layers.selection)[0].scale
+        scale = self._image_layers.value[0].scale
 
         custom_classifier = self._get_prediction_classifier_instance()
 
@@ -702,7 +703,7 @@ class ApocContainer(Container):
 
         self._viewer.add_labels(result, scale=scale)
 
-        self._single_result_label.value = f"Predicted {layer_name}"
+        self._single_result_label.value = f"Predicted {image_names}"
 
         return result
 
