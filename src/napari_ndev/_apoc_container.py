@@ -232,14 +232,14 @@ class ApocContainer(Container):
             tooltip="All featuresets except 'custom' are premade",
         )
         self._custom_features = LineEdit(
-            label="Custom Feature String",
+            label="Feature String",
             tooltip=(
                 "A string in the form of " "'filter1=radius1 filter2=radius2'."
             ),
         )
-        self._open_custom_feature_generator = PushButton(
-            label="Open Custom Feature Generator Widget"
-        )
+        # self._open_custom_feature_generator = PushButton(
+        #     label="Open Custom Feature Generator Widget"
+        # )
 
     def _initialize_batch_container(self):
         self._image_directory = FileEdit(label="Image Directory", mode="d")
@@ -330,7 +330,7 @@ class ApocContainer(Container):
                 self._num_trees,
                 self._predefined_features,
                 self._custom_features,
-                self._open_custom_feature_generator,
+                # self._open_custom_feature_generator,
             ]
         )
 
@@ -339,9 +339,7 @@ class ApocContainer(Container):
         tabs.addTab(self._viewer_container.native, "Viewer")
         # add Custom APOC Feature Set widget
         tabs.addTab(
-            # ApocFeatureStack(viewer=self._viewer).native,
             self._custom_apoc_container.native,
-            # self._viewer.window.add_plugin_dock_widget["napari-ndev"]["Custom APOC Feature Set"],
             "Custom APOC Feature Set",
         )
         self.native.layout().addWidget(tabs)
