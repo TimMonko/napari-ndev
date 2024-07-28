@@ -174,6 +174,9 @@ class ApocContainer(Container):
         self.apoc = apoc
 
     def _filter_layers(self, layer_type):
+        # only do this if the viewer is not None
+        if self._viewer is None:
+            return []
         return [x for x in self._viewer.layers if isinstance(x, layer_type)]
 
     def _initialize_widgets(self):
@@ -358,8 +361,13 @@ class ApocContainer(Container):
         self._predefined_features.changed.connect(self._get_feature_set)
 
         # when self._viewer.layers is updated, update the choices in the ComboBox
-        self._viewer.layers.events.removed.connect(self._update_layer_choices)
-        self._viewer.layers.events.inserted.connect(self._update_layer_choices)
+        if self._viewer is not None:
+            self._viewer.layers.events.removed.connect(
+                self._update_layer_choices
+            )
+            self._viewer.layers.events.inserted.connect(
+                self._update_layer_choices
+            )
 
     def _update_layer_choices(self):
         self._label_layer.choices = self._filter_layers(layers.Labels)
