@@ -164,6 +164,7 @@ class ApocContainer(Container):
         self._initialize_widgets()
         self._initialize_batch_container()
         self._initialize_viewer_container()
+        self._initialize_custom_apoc_container()
         self._setup_widget_layout()
         self._connect_events()
 
@@ -312,7 +313,13 @@ class ApocContainer(Container):
             ]
         )
 
+    def _initialize_custom_apoc_container(self):
+        from napari_ndev import ApocFeatureStack
+
+        self._custom_apoc_container = ApocFeatureStack(viewer=self._viewer)
+
     def _setup_widget_layout(self):
+        # from napari_ndev import ApocFeatureStack
         self.extend(
             [
                 self._classifier_file,
@@ -330,19 +337,30 @@ class ApocContainer(Container):
         tabs = QTabWidget()
         tabs.addTab(self._batch_container.native, "Batch")
         tabs.addTab(self._viewer_container.native, "Viewer")
+        # add Custom APOC Feature Set widget
+        tabs.addTab(
+            # ApocFeatureStack(viewer=self._viewer).native,
+            self._custom_apoc_container.native,
+            # self._viewer.window.add_plugin_dock_widget["napari-ndev"]["Custom APOC Feature Set"],
+            "Custom APOC Feature Set",
+        )
         self.native.layout().addWidget(tabs)
 
     def _connect_events(self):
         self._image_directory.changed.connect(self._update_metadata_from_file)
         self._image_channels.changed.connect(self._update_channel_order)
         self._classifier_file.changed.connect(self._update_classifier_metadata)
-        self._open_custom_feature_generator.clicked.connect(
-            self._custom_apoc_widget
-        )
+        # self._open_custom_feature_generator.clicked.connect(
+        #     self._custom_apoc_widget
+        # )
         self._batch_train_button.clicked.connect(self.batch_train)
         self._batch_predict_button.clicked.connect(self.batch_predict)
         self._train_image_button.clicked.connect(self.image_train)
         self._predict_image_layer.clicked.connect(self.image_predict)
+
+        self._custom_apoc_container._generate_string_button.clicked.connect(
+            self.insert_custom_feature_string
+        )
 
         # when self._viewer.layers is updated, update the choices in the ComboBox
         self._viewer.layers.events.removed.connect(self._update_layer_choices)
@@ -689,11 +707,18 @@ class ApocContainer(Container):
 
         return result
 
-    def _custom_apoc_widget(self):
-        if self._viewer is not None:
-            self._viewer.window.add_plugin_dock_widget(
-                plugin_name="napari-ndev",
-                widget_name="Custom APOC Feature Set",
-            )
-        else:
-            return
+    # def _custom_apoc_widget(self):
+    #     if self._viewer is not None:
+    #         self._viewer.window.add_plugin_dock_widget(
+    #             plugin_name="napari-ndev",
+    #             widget_name="Custom APOC Feature Set",
+    #         )
+    #     else:
+    #         return
+
+    def insert_custom_feature_string(self):
+        self._custom_features.value = (
+            self._custom_apoc_container._feature_string.value
+        )
+        # self._custom_apoc_container.close()
+        return self._custom_features.value
