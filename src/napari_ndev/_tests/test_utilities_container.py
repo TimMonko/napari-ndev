@@ -77,10 +77,10 @@ def test_save_labels(make_napari_viewer, tmp_path: Path, test_data):
     _, _, test_labels, test_dims = test_data
 
     viewer = make_napari_viewer()
-    viewer.add_labels(test_labels)
+    viewer.add_labels(test_labels) # <- should add a way to specify this is the selected layer in the viewer
+    viewer.layers.selection.active = viewer.layers["test_labels"]
     container = UtilitiesContainer(viewer)
 
-    container._labels_layer.value = viewer.layers["test_labels"]
     container._squeezed_dims = test_dims
     container._save_directory.value = tmp_path
     container._save_name.value = "test.tiff"
