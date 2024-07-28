@@ -118,7 +118,7 @@ def test_image_train(make_napari_viewer, test_data, empty_classifier_file):
 
     wdg = ApocContainer(viewer)
 
-    wdg._viewer.layers.selection = [viewer.layers["test_image"]]
+    wdg._image_layers.value = [viewer.layers["test_image"]]
     wdg._label_layer.value = viewer.layers["test_labels"]
     wdg._classifier_type.value = "ObjectSegmenter"
     wdg._continue_training.value = False
@@ -133,7 +133,10 @@ def test_image_train(make_napari_viewer, test_data, empty_classifier_file):
     wdg.image_train()
     result_classifier = open(empty_classifier_file).read()
 
-    assert wdg._single_result_label.value == "Trained on test_image"
+    assert (
+        wdg._single_result_label.value
+        == "Trained on ['test_image'] using test_labels"
+    )
     # check classifier contents after wdg.image_train()
     assert "ObjectSegmenter" in result_classifier
     assert "num_trees = 50" in result_classifier
@@ -157,12 +160,12 @@ def test_image_predict(make_napari_viewer, test_data, trained_classifier_file):
 
     wdg = ApocContainer(viewer)
 
-    wdg._viewer.layers.selection = [viewer.layers["test_image"]]
+    wdg._image_layers.value = [viewer.layers["test_image"]]
     wdg._classifier_file.value = trained_classifier_file
 
     result = wdg.image_predict()
 
-    assert wdg._single_result_label.value == "Predicted test_image"
+    assert wdg._single_result_label.value == "Predicted ['test_image']"
     assert cle.pull(result).any() > 0
     assert cle.pull(wdg._viewer.layers["result"].data).any() > 0
 
