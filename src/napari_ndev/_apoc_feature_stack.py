@@ -74,9 +74,12 @@ class ApocFeatureStack(Container):
         self._viewer.layers.events.inserted.connect(self._update_layer_choices)
 
     def _update_layer_choices(self):
-        self._image_layer.choices = [
-            x for x in self._viewer.layers if isinstance(x, layers.Image)
-        ]
+        def filter_layers(layer_type):
+            return [
+                x for x in self._viewer.layers if isinstance(x, layer_type)
+            ]
+
+        self._image_layer.choices = filter_layers(layers.Image)
 
     def generate_feature_string(self):
         def process_feature(prefix, input_str):
