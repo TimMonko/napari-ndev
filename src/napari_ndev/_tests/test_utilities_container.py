@@ -77,10 +77,12 @@ def test_save_labels(make_napari_viewer, tmp_path: Path, test_data):
     _, _, test_labels, test_dims = test_data
 
     viewer = make_napari_viewer()
-    viewer.add_labels(test_labels)
+    viewer.add_labels(
+        test_labels
+    )  # <- should add a way to specify this is the selected layer in the viewer
+    viewer.layers.selection.active = viewer.layers["test_labels"]
     container = UtilitiesContainer(viewer)
 
-    container._labels_layer.value = viewer.layers["test_labels"]
     container._squeezed_dims = test_dims
     container._save_directory.value = tmp_path
     container._save_name.value = "test.tiff"
@@ -134,3 +136,33 @@ def test_update_metadata_from_file(make_napari_viewer, test_rgb_image):
     assert container._img.dims.order == "TCZYXS"
     assert container._squeezed_dims == "YX"
     assert container._channel_names.value == "['red', 'green', 'blue']"
+
+
+def test_update_metadata_from_layer(make_napari_viewer, test_data):
+    test_image, _, _, _ = test_data
+    viewer = make_napari_viewer()
+    viewer.add_image(test_image, scale=(2, 3))
+    container = UtilitiesContainer(viewer)
+
+    container._viewer.layers.selection.active = viewer.layers["test_image"]
+    container.update_metadata_from_layer()
+
+    assert container._results.value == (
+        "Tried to update metadata, but could only update scale"
+        " because layer not opened with aicsimageio"
+    )
+    assert container._scale_tuple.value == (1, 2, 3)
+
+
+# failing tox because no napari-aicsimageio in requirements
+# def test_open_images(make_napari_viewer, test_rgb_image):
+#     viewer = make_napari_viewer()
+#     container = UtilitiesContainer(viewer)
+
+#     path, _ = test_rgb_image
+#     container._files.value = path
+#     container.open_images()
+
+#     assert container._img.dims.order == "TCZYXS"
+#     assert container._squeezed_dims == "YX"
+#     assert container._channel_names.value == "['red', 'green', 'blue']"
