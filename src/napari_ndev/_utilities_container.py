@@ -12,7 +12,6 @@ from magicgui.widgets import (
     PushButton,
     TextEdit,
     TupleEdit,
-    create_widget,
 )
 
 from napari_ndev import helpers
@@ -245,16 +244,8 @@ class UtilitiesContainer(Container):
             label="Images",
             tooltip="Save the concatenated image data as OME-TIFF.",
         )
-
-        self._labels_layer = create_widget(
-            annotation="napari.layers.Labels", label="Labels"
-        )
         self._save_labels_button = PushButton(
             label="Labels", tooltip="Save the labels data as OME-TIFF."
-        )
-
-        self._shapes_layer = create_widget(
-            annotation="napari.layers.Shapes", label="Shapes"
         )
         self._save_shapes_button = PushButton(
             label="Shapes as Labels",
