@@ -2,13 +2,14 @@ from typing import TYPE_CHECKING
 
 from magicgui.widgets import (
     CheckBox,
+    ComboBox,
     Container,
     LineEdit,
     ProgressBar,
     PushButton,
     TextEdit,
-    create_widget,
 )
+from napari import layers
 
 if TYPE_CHECKING:
     import napari
@@ -38,8 +39,8 @@ class ApocFeatureStack(Container):
         )
         self._feature_string = TextEdit(label="Custom Feature String")
 
-        self._image_layer = create_widget(
-            annotation="napari.layers.Image", label="Image"
+        self._image_layer = ComboBox(
+            choices=self._filter_layers(layers.Image), label="Image Layer"
         )
         self._apply_button = PushButton(label="Apply to selected image")
         self._progress_bar = ProgressBar(label="Progress: ")
@@ -67,6 +68,22 @@ class ApocFeatureStack(Container):
             self.generate_feature_string
         )
         self._apply_button.clicked.connect(self.layer_to_feature_stack)
+
+        if self._viewer is not None:
+            self._viewer.layers.events.removed.connect(
+                self._update_layer_choices
+            )
+            self._viewer.layers.events.inserted.connect(
+                self._update_layer_choices
+            )
+
+    def _filter_layers(self, layer_type):
+        if self._viewer is None:
+            return []
+        return [x for x in self._viewer.layers if isinstance(x, layer_type)]
+
+    def _update_layer_choices(self):
+        self._image_layer.choices = self._filter_layers(layers.Image)
 
     def generate_feature_string(self):
         def process_feature(prefix, input_str):
