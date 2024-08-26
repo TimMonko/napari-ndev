@@ -517,28 +517,31 @@ class ApocContainer(Container):
         )
         return feature_set
 
-    def _get_training_classifier_instance(self):
-        if self._classifier_type.value == "PixelClassifier":
-            return self.apoc.PixelClassifier(
-                opencl_filename=self._classifier_file.value,
-                max_depth=self._max_depth.value,
-                num_ensembles=self._num_trees.value,
-            )
+    def _get_classifier_instance(self, is_training=True):
+        classifier_class = self._classifier_type_mapping.get(
+            self._classifier_type.value
+        )
+        if not classifier_class:
+            return None
 
-        if self._classifier_type.value == "ObjectSegmenter":
-            return self.apoc.ObjectSegmenter(
-                opencl_filename=self._classifier_file.value,
-                positive_class_identifier=self._positive_class_id.value,
-                max_depth=self._max_depth.value,
-                num_ensembles=self._num_trees.value,
-            )
+        common_params = {
+            "opencl_filename": self._classifier_file.value,
+        }
 
-        if self._classifier_type.value == "ObjectClassifier":
-            return self.apoc.ObjectClassifier(
-                opencl_filename=self._classifier_file.value,
-                max_depth=self._max_depth.value,
-                num_ensembles=self._num_trees.value,
+        if is_training:
+            common_params.update(
+                {
+                    "max_depth": self._max_depth.value,
+                    "num_ensembles": self._num_trees.value,
+                }
             )
+            if classifier_class is self.apoc.ObjectSegmenter:
+                return classifier_class(
+                    positive_class_identifier=self._positive_class_id.value,
+                    **common_params,
+                )
+
+        return classifier_class(**common_params)
 
     ##############################
     # Training and Prediction
@@ -588,7 +591,9 @@ class ApocContainer(Container):
         if not self._continue_training:
             self.apoc.erase_classifier(self._classifier_file.value)
 
-        custom_classifier = self._get_training_classifier_instance()
+        custom_classifier = self._get_classifier_instance(is_training=True)
+        classifier_type = type(custom_classifier)
+
         feature_set = self._feature_string.value
 
         channel_index_list = [
@@ -622,25 +627,28 @@ class ApocContainer(Container):
 
             # <- this is where setting up dask processing would be useful
 
+            classifier_common_params = {
+                "features": feature_set,
+                "image": np.squeeze(channel_img),
+                "continue_training": True,
+            }
+
             try:
-                if isinstance(
-                    custom_classifier, self.apoc.ObjectSegmenter
-                ) or isinstance(custom_classifier, self.apoc.PixelClassifier):
+                if classifier_type in [
+                    self.apoc.ObjectSegmenter,
+                    self.apoc.PixelClassifier,
+                ]:
                     custom_classifier.train(
-                        features=feature_set,
-                        image=np.squeeze(channel_img),
                         ground_truth=np.squeeze(label),
-                        continue_training=True,
+                        **classifier_common_params,
                     )
-                    self._progress_bar.value = idx + 1
-                elif isinstance(custom_classifier, self.apoc.ObjectClassifier):
+                elif classifier_type is self.apoc.ObjectClassifier:
                     custom_classifier.train(
-                        features=feature_set,
-                        image=np.squeeze(channel_img),
                         labels=np.squeeze(segmented_objects),
                         sparse_annotation=np.squeeze(label),
-                        continue_training=True,
+                        **classifier_common_params,
                     )
+
                     self._progress_bar.value = idx + 1
 
             except Exception as e:
@@ -651,17 +659,6 @@ class ApocContainer(Container):
         self._classifier_statistics_table(custom_classifier)
         self._progress_bar.label = f"Trained on {len(image_files)} Images"
         logger.removeHandler(handler)
-
-    def _get_prediction_classifier_instance(self):
-        if self._classifier_type.value in self._classifier_type_mapping:
-            classifier_class = self._classifier_type_mapping[
-                self._classifier_type.value
-            ]
-            return classifier_class(
-                opencl_filename=self._classifier_file.value
-            )
-        else:
-            return None
 
     def batch_predict(self):
         from aicsimageio import AICSImage
@@ -694,7 +691,8 @@ class ApocContainer(Container):
         self._progress_bar.value = 0
         self._progress_bar.max = len(image_files)
 
-        custom_classifier = self._get_prediction_classifier_instance()
+        custom_classifier = self._get_classifier_instance(is_training=False)
+        classifier_type = type(custom_classifier)
 
         channel_index_list = [
             self._image_channels.choices.index(channel)
@@ -715,19 +713,21 @@ class ApocContainer(Container):
                 )
 
             # <- this is where setting up dask processing would be useful
+            common_params = {
+                "image": np.squeeze(channel_img),
+            }
 
             try:
-                if isinstance(
-                    custom_classifier, self.apoc.ObjectSegmenter
-                ) or isinstance(custom_classifier, self.apoc.PixelClassifier):
+                if classifier_type in [
+                    self.apoc.ObjectSegmenter,
+                    self.apoc.PixelClassifier,
+                ]:
+                    result = custom_classifier.predict(**common_params)
+                elif classifier_type is self.apoc.ObjectClassifier:
                     result = custom_classifier.predict(
-                        image=np.squeeze(channel_img)
+                        labels=np.squeeze(segmented_objects), **common_params
                     )
-                elif isinstance(custom_classifier, self.apoc.ObjectClassifier):
-                    result = custom_classifier.predict(
-                        image=np.squeeze(channel_img),
-                        labels=np.squeeze(segmented_objects),
-                    )
+
             except Exception as e:
                 logger.error(f"Error predicting {file}: {e}")
                 self._progress_bar.value = idx + 1
@@ -772,26 +772,31 @@ class ApocContainer(Container):
         if not self._continue_training:
             self.apoc.erase_classifier(self._classifier_file.value)
 
-        custom_classifier = self._get_training_classifier_instance()
+        custom_classifier = self._get_classifier_instance(is_training=True)
+        classifier_type = type(custom_classifier)
         feature_set = self._feature_string.value
 
-        if isinstance(
-            custom_classifier, self.apoc.ObjectSegmenter
-        ) or isinstance(custom_classifier, self.apoc.PixelClassifier):
+        common_params = {
+            "features": feature_set,
+            "continue_training": self._continue_training.value,
+            "image": np.squeeze(image_stack),
+        }
+
+        if classifier_type in [
+            self.apoc.ObjectSegmenter,
+            self.apoc.PixelClassifier,
+        ]:
             custom_classifier.train(
-                features=feature_set,
-                image=np.squeeze(image_stack),
-                ground_truth=np.squeeze(label),
-                continue_training=True,
+                ground_truth=np.squeeze(label), **common_params
             )
-        elif isinstance(custom_classifier, self.apoc.ObjectClassifier):
+        elif classifier_type is self.apoc.ObjectClassifier:
             custom_classifier.train(
-                features=feature_set,
-                image=np.squeeze(image_stack),
                 labels=np.squeeze(seg_obj),
                 sparse_annotation=np.squeeze(label),
-                continue_training=True,
+                **common_params,
             )
+
+        self._classifier_statistics_table(custom_classifier)
 
         self._single_result_label.value = (
             f"Trained on {image_names} using {label_name}"
@@ -808,16 +813,21 @@ class ApocContainer(Container):
         image_stack = np.stack(image_list, axis=0)
         scale = self._image_layers.value[0].scale
 
-        custom_classifier = self._get_prediction_classifier_instance()
+        custom_classifier = self._get_classifier_instance(is_training=False)
+        classifier_type = type(custom_classifier)
+        common_params = {
+            "image": np.squeeze(image_stack),
+        }
 
-        if isinstance(
-            custom_classifier, self.apoc.ObjectSegmenter
-        ) or isinstance(custom_classifier, self.apoc.PixelClassifier):
-            result = custom_classifier.predict(image=np.squeeze(image_stack))
-        elif isinstance(custom_classifier, self.apoc.ObjectClassifier):
+        if classifier_type in [
+            self.apoc.ObjectSegmenter,
+            self.apoc.PixelClassifier,
+        ]:
+            result = custom_classifier.predict(**common_params)
+        elif classifier_type is self.apoc.ObjectClassifier:
             result = custom_classifier.predict(
-                image=np.squeeze(image_stack),
                 labels=np.squeeze(self._object_layer.value.data),
+                **common_params,
             )
 
         # sometimes, input layers may have shape with 1s, like (1,1,10,10)
