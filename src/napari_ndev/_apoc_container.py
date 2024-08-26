@@ -594,8 +594,6 @@ class ApocContainer(Container):
             self.apoc.erase_classifier(self._classifier_file.value)
 
         custom_classifier = self._get_classifier_instance(is_training=True)
-        classifier_type = type(custom_classifier)
-
         feature_set = self._feature_string.value
 
         channel_index_list = [
@@ -636,7 +634,7 @@ class ApocContainer(Container):
             }
 
             try:
-                if classifier_type in [
+                if type(custom_classifier) in [
                     self.apoc.ObjectSegmenter,
                     self.apoc.PixelClassifier,
                 ]:
@@ -644,7 +642,7 @@ class ApocContainer(Container):
                         ground_truth=np.squeeze(label),
                         **classifier_common_params,
                     )
-                elif classifier_type is self.apoc.ObjectClassifier:
+                elif type(custom_classifier) is self.apoc.ObjectClassifier:
                     custom_classifier.train(
                         labels=np.squeeze(segmented_objects),
                         sparse_annotation=np.squeeze(label),
@@ -695,7 +693,6 @@ class ApocContainer(Container):
         self._progress_bar.max = len(image_files)
 
         custom_classifier = self._get_classifier_instance(is_training=False)
-        classifier_type = type(custom_classifier)
 
         channel_index_list = [
             self._image_channels.choices.index(channel)
@@ -721,12 +718,12 @@ class ApocContainer(Container):
             }
 
             try:
-                if classifier_type in [
+                if type(custom_classifier) in [
                     self.apoc.ObjectSegmenter,
                     self.apoc.PixelClassifier,
                 ]:
                     result = custom_classifier.predict(**common_params)
-                elif classifier_type is self.apoc.ObjectClassifier:
+                elif type(custom_classifier) is self.apoc.ObjectClassifier:
                     result = custom_classifier.predict(
                         labels=np.squeeze(segmented_objects), **common_params
                     )
@@ -776,7 +773,6 @@ class ApocContainer(Container):
             self.apoc.erase_classifier(self._classifier_file.value)
 
         custom_classifier = self._get_classifier_instance(is_training=True)
-        classifier_type = type(custom_classifier)
         feature_set = self._feature_string.value
 
         common_params = {
@@ -785,14 +781,14 @@ class ApocContainer(Container):
             "image": np.squeeze(image_stack),
         }
 
-        if classifier_type in [
+        if type(custom_classifier) in [
             self.apoc.ObjectSegmenter,
             self.apoc.PixelClassifier,
         ]:
             custom_classifier.train(
                 ground_truth=np.squeeze(label), **common_params
             )
-        elif classifier_type is self.apoc.ObjectClassifier:
+        elif type(custom_classifier) is self.apoc.ObjectClassifier:
             custom_classifier.train(
                 labels=np.squeeze(seg_obj),
                 sparse_annotation=np.squeeze(label),
@@ -817,17 +813,16 @@ class ApocContainer(Container):
         scale = self._image_layers.value[0].scale
 
         custom_classifier = self._get_classifier_instance(is_training=False)
-        classifier_type = type(custom_classifier)
         common_params = {
             "image": np.squeeze(image_stack),
         }
 
-        if classifier_type in [
+        if type(custom_classifier) in [
             self.apoc.ObjectSegmenter,
             self.apoc.PixelClassifier,
         ]:
             result = custom_classifier.predict(**common_params)
-        elif classifier_type is self.apoc.ObjectClassifier:
+        elif type(custom_classifier) is self.apoc.ObjectClassifier:
             result = custom_classifier.predict(
                 labels=np.squeeze(self._object_layer.value.data),
                 **common_params,
