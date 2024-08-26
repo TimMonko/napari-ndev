@@ -1,3 +1,4 @@
+# import logging
 import os
 import pathlib
 import tempfile
@@ -230,10 +231,6 @@ def test_update_metadata_from_file():
 #     image_directory = pathlib.Path(
 #         "src/napari_ndev/_tests/resources/Apoc/Images"
 #     )
-#     classifier = pathlib.Path(
-#         "src/napari_ndev/_tests/resources/Apoc"
-#         "/Classifiers/newlabels_pixel_classifier.cl"
-#     )
 
 #     num_files = len(list(image_directory.glob("*.tiff")))
 #     output_directory = tmp_path / "output"
@@ -243,7 +240,6 @@ def test_update_metadata_from_file():
 #     container = ApocContainer()
 #     container._image_directory.value = image_directory
 #     container._output_directory.value = output_directory
-#     container._classifier_file.value = classifier
 #     # container._image_channels.value = ["IBA1"] # fix these images
 #     container._image_channels.value = ["Labels"]
 
@@ -268,7 +264,7 @@ def test_update_metadata_from_file():
 #     container.batch_predict()
 
 #     # Check if the exception is logged
-#     with open(log_file, 'r') as f:
+#     with open(log_file) as f:
 #         log_contents = f.read()
 #         assert "Error predicting" in log_contents
 

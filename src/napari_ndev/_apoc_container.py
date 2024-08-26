@@ -250,7 +250,9 @@ class ApocContainer(Container):
     def _initialize_batch_container(self):
         self._image_directory = FileEdit(label="Image Directory", mode="d")
         self._label_directory = FileEdit(label="Label Directory", mode="d")
-        self._object_directory = FileEdit(label="Object Directory", mode="d")
+        self._object_directory = FileEdit(
+            label="Object Directory", mode="d", nullable=True
+        )
         self._output_directory = FileEdit(label="Output Directory", mode="d")
 
         self._image_channels = Select(
@@ -667,6 +669,7 @@ class ApocContainer(Container):
         image_directory, image_files = helpers.get_directory_and_files(
             dir=self._image_directory.value,
         )
+
         if self._object_directory.value:
             obj_directory, _ = helpers.get_directory_and_files(
                 self._object_directory.value
