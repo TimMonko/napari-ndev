@@ -15,6 +15,9 @@ contributions:
     - id: napari-ndev.make_custom_apoc
       python_name: napari_ndev._apoc_feature_stack:ApocFeatureStack
       title: Make Custom APOC Feature Set
+    - id: napari-ndev.make_measure_container
+      python_name: napari_ndev._measure_container:MeasureContainer
+      title: Make Measure Container
 
   widgets:
     - command: napari-ndev.make_utilities_container
@@ -25,3 +28,5 @@ contributions:
       display_name: APOC Widget
     - command: napari-ndev.make_custom_apoc
       display_name: Custom APOC Feature Set
+    - command: napari-ndev.make_measure_container
+      display_name: Measure Widget
