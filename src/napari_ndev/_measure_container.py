@@ -54,6 +54,7 @@ class MeasureContainer(Container):
     def _init_widgets(self):
         self._image_directory = FileEdit(label="Image directory", mode="d")
         self._label_directory = FileEdit(label="Label directory", mode="d")
+        self._region_directory = FileEdit(label="Region directory", mode="d")
         self._output_directory = FileEdit(label="Output directory", mode="d")
         
         self._label_image = ComboBox(
@@ -115,6 +116,7 @@ class MeasureContainer(Container):
         self.extend([
             self._label_directory,
             self._image_directory,
+            self._region_directory,
             self._output_directory,
             self._label_image,
             self._intensity_images,
@@ -127,6 +129,7 @@ class MeasureContainer(Container):
     def _connect_events(self):
         self._image_directory.changed.connect(self._update_image_choices)
         self._label_directory.changed.connect(self._update_label_choices)
+        self._region_directory.changed.connect(self._update_region_choices)
         self._measure_button.clicked.connect(self.batch_measure)
     
     
@@ -170,7 +173,7 @@ class MeasureContainer(Container):
         # get all the files in the label directory
         label_dir, label_files = helpers.get_directory_and_files(self._label_directory.value)
         image_dir, image_files = helpers.get_directory_and_files(self._image_directory.value)
-
+        # TODO: add an optional region directory
         # check if the label files are the same as the image files
         if len(label_files) != len(image_files):
             raise ValueError("Number of label files and image files do not match")
