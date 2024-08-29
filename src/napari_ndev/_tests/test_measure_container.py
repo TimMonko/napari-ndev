@@ -12,6 +12,7 @@ from napari_ndev._measure_container import MeasureContainer
 def test_widg_init(viewer):
     wdg = MeasureContainer(viewer)
     assert wdg._image_directory.label == "Image directory"
+    assert wdg._image_directory.value is None
     assert len(wdg._props_container) == len(wdg._sk_props)
     assert hasattr(wdg._prop, "area")
     assert hasattr(wdg._prop, "intensity_min")
@@ -41,42 +42,35 @@ def test_update_dim_and_scales():
     assert container._scale_tuple.value == (1.0, 0.2634, 0.2634)
 
 
-# def test_update_choices(tmp_path):
-#     # Create an instance of MeasureContainer
-#     container = MeasureContainer()
+def test_update_choices():
+    container = MeasureContainer()
+    image_directory = pathlib.Path(
+        "src/napari_ndev/_tests/resources/Workflow/Images"
+    )
+    label_directory = pathlib.Path(
+        "src/napari_ndev/_tests/resources/Workflow/Labels"
+    )
+    region_directory = pathlib.Path(
+        "src/napari_ndev/_tests/resources/Workflow/ShapesAsLabels"
+    )
+    container._image_directory.value = image_directory
+    container._label_directory.value = label_directory
+    container._region_directory.value = region_directory
 
-#     # Set up the test directories
-#     image_directory = tmp_path / "images"
-#     image_directory.mkdir()
-#     label_directory = tmp_path / "labels"
-#     label_directory.mkdir()
-#     region_directory = tmp_path / "regions"
-#     region_directory.mkdir()
+    container._update_choices(image_directory, "Intensity")
+    container._update_choices(label_directory, "Labels", update_label=True)
+    container._update_choices(region_directory, "Region")
+    print(container._label_choices)
+    print(container._intensity_choices)
 
-#     # Create some test files in the directories
-#     image_file = image_directory / "image.tif"
-#     image_file.touch()
-#     label_file = label_directory / "label.tif"
-#     label_file.touch()
-#     region_file = region_directory / "region.tif"
-#     region_file.touch()
+    # Check the choices in the label image ComboBox
+    assert container._label_image.choices == ("Labels: Labels",)
 
-#     # Set the directory values in the container
-#     container._image_directory.value = str(image_directory)
-#     container._label_directory.value = str(label_directory)
-#     container._region_directory.value = str(region_directory)
-
-#     # Call the _update_choices method
-#     container._update_choices(image_directory, "Intensity")
-#     container._update_choices(label_directory, "Labels", update_label=True)
-#     container._update_choices(region_directory, "Region")
-
-#     # Check the choices in the label image ComboBox
-#     assert container._label_image.choices == ["Intensity: image.tif"]
-
-#     # Check the choices in the intensity images Select widget
-#     assert container._intensity_images.choices == [
-#         "Intensity: image.tif",
-#         "Labels: label.tif",
-#         "Region: region.tif",
-#     ]
+    # Check the choices in the intensity images Select widget
+    assert container._intensity_images.choices == (
+        None,  # The default choice
+        "Intensity: membrane",
+        "Intensity: nuclei",
+        "Labels: Labels",
+        "Region: Shapes",
+    )
