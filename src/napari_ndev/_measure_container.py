@@ -43,9 +43,13 @@ class MeasureContainer(Container):
         self._connect_events()
 
     def _init_widgets(self):
-        self._image_directory = FileEdit(label="Image directory", mode="d")
         self._label_directory = FileEdit(label="Label directory", mode="d")
-        self._region_directory = FileEdit(label="Region directory", mode="d")
+        self._image_directory = FileEdit(
+            label="Image directory", mode="d", nullable=True
+        )
+        self._region_directory = FileEdit(
+            label="Region directory", mode="d", nullable=True
+        )
         self._output_directory = FileEdit(label="Output directory", mode="d")
 
         self._label_image = ComboBox(
@@ -173,12 +177,20 @@ class MeasureContainer(Container):
         image_dir, image_files = helpers.get_directory_and_files(
             self._image_directory.value
         )
-        # TODO: add an optional region directory
+        region_dir, region_files = helpers.get_directory_and_files(
+            self._region_directory.value
+        )
         # check if the label files are the same as the image files
-        if len(label_files) != len(image_files):
-            raise ValueError(
-                "Number of label files and image files do not match"
-            )
+        if self._image_directory.value is not None:
+            if len(label_files) != len(image_files):
+                raise ValueError(
+                    "Number of label files and image files do not match"
+                )
+        if self._region_directory.value is not None:
+            if len(label_files) != len(region_files):
+                raise ValueError(
+                    "Number of label files and region files do not match"
+                )
 
         log_loc = self._output_directory.value / ".log.txt"
         logger, handler = helpers.setup_logger(log_loc)
