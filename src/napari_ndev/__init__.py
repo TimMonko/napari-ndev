@@ -11,6 +11,7 @@ from ._utilities_container import UtilitiesContainer
 from ._workflow_container import WorkflowContainer
 from .image_overview import ImageOverview, image_overview
 from ._measure_container import MeasureContainer
+from . import measure
 
 __all__ = [
     "WorkflowContainer",
@@ -22,4 +23,5 @@ __all__ = [
     "ImageOverview",
     "image_overview",
     "helpers",
+    "measure",
 ]
