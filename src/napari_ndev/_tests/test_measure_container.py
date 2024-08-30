@@ -1,6 +1,4 @@
 import pathlib
-
-import pytest
 from bioio import BioImage
 
 from napari_ndev._measure_container import MeasureContainer
