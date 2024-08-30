@@ -13,7 +13,6 @@ from magicgui.widgets import (
     TupleEdit,
     TextEdit,
     LineEdit,
-    SpinBox,
 )
 
 from napari_ndev import helpers
@@ -184,7 +183,6 @@ class MeasureContainer(Container):
         from bioio import BioImage
 
         _, files = helpers.get_directory_and_files(directory)
-        print(files)
         return BioImage(files[0]), files[0]
 
     def _update_dim_and_scales(self, img):
@@ -216,7 +214,7 @@ class MeasureContainer(Container):
             self._label_directory.value, "Labels", update_label=True
         )
         img, id = self._get_0th_img_from_dir(self._label_directory.value)
-        id_string = self._create_id_string(img, id)
+        id_string = self._create_id_string(img, id.name)
         self._example_id_string.value = id_string
 
     def _create_id_string(self, img, id):
@@ -320,7 +318,6 @@ class MeasureContainer(Container):
             properties = [
                 prop.label for prop in self._props_container if prop.value
             ]
-            print(properties)
             # start the measuring here
             measure_props = measure.regionprops_table(
                 label_image=label,
