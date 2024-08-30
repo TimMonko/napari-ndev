@@ -12,7 +12,8 @@ from magicgui.widgets import (
     Select,
     TupleEdit,
     TextEdit,
-    LineEdit
+    LineEdit,
+    SpinBox,
 )
 
 from napari_ndev import helpers
@@ -43,6 +44,7 @@ class MeasureContainer(Container):
         self._init_widgets()
         self._init_regionprops_container()
         self._init_id_regex_container()
+        self._init_tx_map_container()
         self._init_layout()
         self._connect_events()
 
@@ -116,9 +118,39 @@ class MeasureContainer(Container):
             value=None,
             nullable=True,
         )
-        self._id_regex_dict = TextEdit(value="{\n\n}")
+        self._id_regex_dict = TextEdit(
+            label="ID Regex Dict",
+            value="{\n\n}",
+            )
         self._id_regex_container.extend(
             [self._example_id_string, self._id_regex_dict]
+        )
+        
+    def _init_tx_map_container(self):
+        self._tx_map_container = Container(layout="vertical")
+        self._tx_id = LineEdit(
+            label="Treatment ID",
+            value=None,
+            nullable=True,
+            tooltip="Usually, the treatment ID is the well ID or a unique identifier for each sample"
+            "The treatment dict will be looked up against whatever this value is. If it is 'file', then will match against the filename"
+        )
+        self._tx_n_well = ComboBox(
+            label="Number of Wells",
+            value=None,
+            choices=[6, 12, 24, 48, 96, 384],
+            nullable=True,
+            tooltip="By default, treatments must be verbosely defined for each condition and sample id"
+            "If you have a known plate map, then selecting wells will allow a sparse treatment map to be passed to PlateMapper",
+        )
+        self._tx_dict = TextEdit(
+            label="Treatment Dict",
+            value="{\n\n}"
+        )
+        # TODO: Add example treatment regex result widget when example id string or id regex dict is changed
+
+        self._tx_map_container.extend(
+            [self._tx_id, self._tx_n_well, self._tx_dict]
         )
         
     def _init_layout(self):
@@ -139,6 +171,7 @@ class MeasureContainer(Container):
         tabs = QTabWidget()
         tabs.addTab(self._props_container.native, "Region Props")
         tabs.addTab(self._id_regex_container.native, "ID Regex")
+        tabs.addTab(self._tx_map_container.native, "Tx Map")
         self.native.layout().addWidget(tabs)
 
     def _connect_events(self):
