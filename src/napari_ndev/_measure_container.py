@@ -11,9 +11,12 @@ from magicgui.widgets import (
     PushButton,
     Select,
     TupleEdit,
+    TextEdit,
+    LineEdit
 )
 
 from napari_ndev import helpers
+from qtpy.QtWidgets import QTabWidget
 
 if TYPE_CHECKING:
     import napari
@@ -39,6 +42,7 @@ class MeasureContainer(Container):
 
         self._init_widgets()
         self._init_regionprops_container()
+        self._init_id_regex_container()
         self._init_layout()
         self._connect_events()
 
@@ -104,7 +108,19 @@ class MeasureContainer(Container):
 
         self._prop.area.value = True
         self._prop.intensity_mean.value = True
-
+        
+    def _init_id_regex_container(self):
+        self._id_regex_container = Container(layout="vertical")
+        self._example_id_string = LineEdit(
+            label="Example ID String",
+            value=None,
+            nullable=True,
+        )
+        self._id_regex_dict = TextEdit(value="{\n\n}")
+        self._id_regex_container.extend(
+            [self._example_id_string, self._id_regex_dict]
+        )
+        
     def _init_layout(self):
         self.extend(
             [
@@ -115,11 +131,15 @@ class MeasureContainer(Container):
                 self._label_image,
                 self._intensity_images,
                 self._scale_tuple,
-                self._props_container,
                 self._measure_button,
                 self._progress_bar,
             ]
         )
+        
+        tabs = QTabWidget()
+        tabs.addTab(self._props_container.native, "Region Props")
+        tabs.addTab(self._id_regex_container.native, "ID Regex")
+        self.native.layout().addWidget(tabs)
 
     def _connect_events(self):
         self._image_directory.changed.connect(self._update_image_choices)
@@ -127,12 +147,12 @@ class MeasureContainer(Container):
         self._region_directory.changed.connect(self._update_region_choices)
         self._measure_button.clicked.connect(self.batch_measure)
 
-    def _get_0th_img_from_dir(self, directory=None):
+    def _get_0th_img_from_dir(self, directory=None) -> tuple:
         from bioio import BioImage
 
         _, files = helpers.get_directory_and_files(directory)
         print(files)
-        return BioImage(files[0])
+        return BioImage(files[0]), files[0]
 
     def _update_dim_and_scales(self, img):
         self._squeezed_dims = helpers.get_squeezed_dim_order(img)
@@ -143,7 +163,7 @@ class MeasureContainer(Container):
         )
 
     def _update_choices(self, directory, prefix, update_label=False):
-        img = self._get_0th_img_from_dir(directory)
+        img, _ = self._get_0th_img_from_dir(directory)
         img_channels = helpers.get_channel_names(img)
         img_channels = [f"{prefix}: {channel}" for channel in img_channels]
 
@@ -162,6 +182,15 @@ class MeasureContainer(Container):
         self._update_choices(
             self._label_directory.value, "Labels", update_label=True
         )
+        img, id = self._get_0th_img_from_dir(self._label_directory.value)
+        id_string = self._create_id_string(img, id)
+        self._example_id_string.value = id_string
+
+    def _create_id_string(self, img, id):
+        scene_idx = img.current_scene_index
+        scene = img.current_scene
+        id_string = f"{id}__{scene_idx}__{scene}"
+        return id_string
 
     def _update_region_choices(self):
         self._update_choices(self._region_directory.value, "Region")
