@@ -65,12 +65,12 @@ class PlateMapper:
         well_rows.sort()  # needed to sort the rows correctly
         well_columns = column_labels * num_rows
 
-        well_labels_dict = {"Row": well_rows, "Column": well_columns}
+        well_labels_dict = {"row": well_rows, "column": well_columns}
 
         plate_map_df = pd.DataFrame(well_labels_dict)
 
-        plate_map_df["Well ID"] = plate_map_df["Row"] + plate_map_df[
-            "Column"
+        plate_map_df["well_id"] = plate_map_df["row"] + plate_map_df[
+            "column"
         ].astype(str)
         self.plate_map = plate_map_df
         return plate_map_df
@@ -95,15 +95,15 @@ class PlateMapper:
                         start_row, start_col = start[0], int(start[1:])
                         end_row, end_col = end[0], int(end[1:])
                         well_condition = (
-                            (self.plate_map["Row"] >= start_row)
-                            & (self.plate_map["Row"] <= end_row)
-                            & (self.plate_map["Column"] >= start_col)
-                            & (self.plate_map["Column"] <= end_col)
+                            (self.plate_map["row"] >= start_row)
+                            & (self.plate_map["row"] <= end_row)
+                            & (self.plate_map["column"] >= start_col)
+                            & (self.plate_map["column"] <= end_col)
                         )
                     else:
                         row, col = well[0], int(well[1:])
-                        well_condition = (self.plate_map["Row"] == row) & (
-                            self.plate_map["Column"] == col
+                        well_condition = (self.plate_map["row"] == row) & (
+                            self.plate_map["column"] == col
                         )
 
                     self.plate_map.loc[well_condition, treatment] = condition
@@ -123,7 +123,7 @@ class PlateMapper:
             with treatments as columns.
         """
         plate_map_pivot = self.plate_map.pivot(
-            index="Row", columns="Column", values=treatment
+            index="row", columns="column", values=treatment
         )
         self.plate_map_pivot = plate_map_pivot
         return plate_map_pivot
