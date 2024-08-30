@@ -5,7 +5,7 @@ from typing import Union, List
 from bioio_base.types import ArrayLike
 from napari_ndev.measure import (
     _generate_measure_dict, _convert_to_list, _extract_info_from_id_string,
-    measure_regionprops
+    map_tx_dict_to_df_id_col, measure_regionprops
 )
 
 @pytest.mark.parametrize(
@@ -99,6 +99,29 @@ def test_extract_info_from_id_string():
     result = _extract_info_from_id_string(id_string, id_regex)
     assert result == expected
 
+
+def test_map_tx_dict_to_df_id_col():
+    tx = {
+        "Treatment1": {"Condition1": ["A1", "B2"], "Condition2": ["C3"]},
+        "Treatment2": {"Condition3": ["D4:E5"]},
+    }
+    tx_n_well = 96
+    target_df = pd.DataFrame({
+        'well': ['A1', 'A2', 'A3', 'A4', 'A5', 'A6'],
+        'value': [10, 20, 30, 40, 50, 60]
+    })
+    id_column = 'well'
+    result = map_tx_dict_to_df_id_col(tx, tx_n_well, target_df, id_column)
+    print(result)
+    assert isinstance(result, pd.DataFrame)
+    assert "Treatment1" in result.columns
+    assert "Treatment2" in result.columns
+    assert (
+        result.loc[result["well"] == "A1", "Treatment1"].values[0]
+        == "Condition1"
+    )
+
+
 # Define test data
 label_image_2d = np.array([[0, 0, 1], [0, 1, 1], [1, 1, 0]])
 label_image_3d = np.array([[[0, 0, 1], [0, 1, 1], [1, 1, 0]], [[0, 0, 1], [0, 1, 1], [1, 1, 0]]])
@@ -113,7 +136,7 @@ id_regex = {
 
 
 @pytest.mark.parametrize(
-    "label_images, label_names, intensity_images, intensity_names, properties, scale, id_string, id_regex, save_data_path, expected_columns",
+    "label_images, label_names, intensity_images, intensity_names, properties, scale, id_string, id_regex_dict, save_data_path, expected_columns",
     [
         (label_image_2d, None, None, None, ['area'], (1.0, 1.0), id_string, id_regex, None, ['id_string', 'well', 'HIC', 'exp', 'area']),
         ([label_image_2d], None, [intensity_image_2d], None, ['area', 'intensity_mean'], (1.0, 1.0), "test_id", None, None, ['id_string', 'area', 'intensity_mean']),
@@ -121,7 +144,7 @@ id_regex = {
         ([label_image_3d], None, [intensity_image_3d], None, ['area', 'intensity_mean'], (1.0, 1.0, 1.0), "test_id", None, None, ['id_string', 'area', 'intensity_mean']),
     ]
 )
-def test_measure_regionprops(label_images, label_names, intensity_images, intensity_names, properties, scale, id_string, id_regex, save_data_path, expected_columns):
+def test_measure_regionprops(label_images, label_names, intensity_images, intensity_names, properties, scale, id_string, id_regex_dict, save_data_path, expected_columns):
     result_df = measure_regionprops(
         label_images=label_images,
         label_names=label_names,
@@ -130,12 +153,58 @@ def test_measure_regionprops(label_images, label_names, intensity_images, intens
         properties=properties,
         scale=scale,
         id_string=id_string,
-        id_regex=id_regex,
+        id_regex_dict=id_regex_dict,
         save_data_path=save_data_path,
     )
+    
+    print(result_df)
     
     assert isinstance(result_df, pd.DataFrame)
     # Check if the DataFrame contains the expected columns
     assert all(column in result_df.columns for column in expected_columns)
     # Check if the id_string column contains the correct value
     assert (result_df['id_string'] == id_string).all()
+    
+    
+def test_measure_regionprops_tx_dict():
+    label_images = [label_image_2d]
+    intensity_images = [intensity_image_2d]
+    properties = ['area', 'intensity_mean']
+    scale = (1.0, 1.0)
+    id_string = 'P14-A6__2024-07-16 25x 18HIC ncoa4 FT dapi obl 01'
+    id_regex_dict = {
+        'well': '-(\w+)__',
+        'HIC': r'(\d{1,3})HIC',
+        'exp': r'obl (\d{2,3})'
+    }
+    tx_dict = {
+        "Treatment1": {"Condition1": ["A1", "B2"], "Condition2": ["C3"]},
+        "Treatment2": {"Condition3": ["D4:E5"]},
+    }
+    tx_n_well = 96
+    result_df = measure_regionprops(
+        label_images=label_images,
+        intensity_images=intensity_images,
+        properties=properties,
+        scale=scale,
+        id_string=id_string,
+        id_regex_dict=id_regex_dict,
+        tx_id='well',
+        tx_n_well=tx_n_well,
+        tx_dict=tx_dict
+    )
+    
+    print(result_df)
+    
+    assert isinstance(result_df, pd.DataFrame)
+    # Check if the DataFrame contains the expected columns
+    assert all(column in result_df.columns for column in ['id_string', 'area', 'intensity_mean', 'Treatment1', 'Treatment2'])
+    # Check if the id_string column contains the correct value
+    assert (result_df['id_string'] == id_string).all()
+    # Check if the treatments were assigned correctly
+    assert (result_df.loc[result_df['well'] == 'A1', 'Treatment1'] == 'Condition1').all()
+    assert (result_df.loc[result_df['well'] == 'B2', 'Treatment1'] == 'Condition1').all()
+    assert (result_df.loc[result_df['well'] == 'C3', 'Treatment1'] == 'Condition2').all()
+    assert (result_df.loc[result_df['well'] == 'D4', 'Treatment2'] == 'Condition3').all()
+    assert (result_df.loc[result_df['well'] == 'E5', 'Treatment2'] == 'Condition3').all()
+    assert (result_df.loc[result_df['well'] == 'E4', 'Treatment2'] == 'Condition3').all()

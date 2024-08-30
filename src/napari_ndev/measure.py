@@ -5,6 +5,7 @@ from enum import Enum
 import numpy as np
 import pandas as pd
 from napari_ndev import helpers
+from napari_ndev import PlateMapper
 from typing import List, Union, Optional, Tuple
 from bioio_base.types import ArrayLike, PathLike
 
@@ -63,9 +64,31 @@ def _extract_info_from_id_string(id_string: str, id_regex: dict) -> dict:
     return id_dict
 
 
-def _map_tx_to_df(tx: dict, df: pd.DataFrame, id_column: str):
+def map_tx_dict_to_df_id_col(
+    tx: dict = None, 
+    tx_n_well: int = None, 
+    df: pd.DataFrame = None, 
+    id_column: str = None,
+):
     """ Map a dictionary of treatments to a dataframes id_column. 
+    This should work on either a complete dataset, or as part of an iterative
     """
+    if isinstance(tx_n_well, int) or tx_n_well > 0:
+        plate = PlateMapper(tx_n_well)
+        plate.assign_treatments(tx)
+        tx_map = plate.plate_map.set_index('well_id').to_dict(orient='index')
+    else:
+        tx_map = tx
+    
+    for id, txs in tx_map.items():
+        for tx, condition in txs.items():
+            if tx not in df.columns:
+                df[tx] = None
+            df.loc[df[id_column] == id, tx] = condition
+            
+    return df
+    
+    
     
 
 def measure_regionprops(
@@ -76,7 +99,10 @@ def measure_regionprops(
     properties: List[str] = ['area'],
     scale: Union[Tuple[float, float], Tuple[float, float, float]] = (1, 1),
     id_string: str = None, 
-    id_regex: dict = None,
+    id_regex_dict: Optional[dict] = None,
+    tx_id: Optional[str] = None,
+    tx_dict: Optional[dict] = None,
+    tx_n_well: Optional[int] = None,
     save_data_path: PathLike = None,
 ) -> pd.DataFrame:
     """ Measure properties of labels with sci-kit image regionprops. 
@@ -129,10 +155,13 @@ def measure_regionprops(
     measure_df = pd.DataFrame(measure_props)
     measure_df.insert(0, 'id_string', id_string)
     
-    if id_regex is not None:
-        id_dict = _extract_info_from_id_string(id_string, id_regex)
+    if id_regex_dict is not None:
+        id_dict = _extract_info_from_id_string(id_string, id_regex_dict)
         for key, value in id_dict.items():
             measure_df.insert(1, key, value)
+            
+    if tx_id is not None and tx_dict is not None:
+        map_tx_dict_to_df_id_col(tx_dict, tx_n_well, measure_df, tx_id)
             
     if save_data_path is not None:
         measure_df.to_csv(save_data_path, index=False)
