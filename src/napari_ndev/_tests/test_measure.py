@@ -177,6 +177,7 @@ def test_measure_regionprops_tx_dict():
         'HIC': r'(\d{1,3})HIC',
         'exp': r'obl (\d{2,3})'
     }
+    tx_id = 'well'
     tx_dict = {
         "Treatment1": {"Condition1": ["A1", "B2"], "Condition2": ["C3"]},
         "Treatment2": {"Condition3": ["D4:E5"]},
@@ -189,7 +190,7 @@ def test_measure_regionprops_tx_dict():
         scale=scale,
         id_string=id_string,
         id_regex_dict=id_regex_dict,
-        tx_id='well',
+        tx_id=tx_id,
         tx_n_well=tx_n_well,
         tx_dict=tx_dict
     )
