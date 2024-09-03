@@ -1,4 +1,5 @@
 from typing import TYPE_CHECKING
+import ast
 
 import numpy as np
 import pandas as pd
@@ -222,6 +223,20 @@ class MeasureContainer(Container):
 
     def _update_region_choices(self):
         self._update_choices(self._region_directory.value, "Region")
+        
+    def _safe_dict_eval(self, dict_string, dict_name=None):
+        if dict_string is None:
+            return None
+        
+        stripped_string = dict_string.strip()
+        if stripped_string == '{}' or not stripped_string:
+            return None
+        try: 
+            return ast.literal_eval(stripped_string)
+        except Exception as e:
+            print(f"{e}: Invalid dict: {dict_name}")
+            return None
+        
 
     def batch_measure(self):
         from bioio import BioImage
@@ -260,22 +275,39 @@ class MeasureContainer(Container):
         Num. Files: {len(label_files)}
         Image Directory: {image_dir}
         Label Directory: {label_dir}
+        Region Directory: {region_dir}
+        Output Directory: {self._output_directory.value}
+        ID Example: {self._example_id_string.value}
+        ID Regex Dict: {self._id_regex_dict.value}
+        Tx ID: {self._tx_id.value}
+        Tx N Well: {self._tx_n_well.value}
+        Tx Dict: {self._tx_dict.value}
         """
         )
 
         self._progress_bar.label = f"Measuring {len(label_files)} Images"
         self._progress_bar.value = 0
         self._progress_bar.max = len(label_files)
-
+        # get the relevant spacing for regionprops, depending on length
+        props_scale = self._scale_tuple.value
+        props_scale = props_scale[-len(self._squeezed_dims) :]
+        # get the properties list
+        properties = [
+            prop.label for prop in self._props_container if prop.value
+        ]
+        
+        id_regex_dict = self._safe_dict_eval(self._id_regex_dict.value, "ID Regex Dict")
+        tx_dict = self._safe_dict_eval(self._tx_dict.value, "Tx Dict")
         measure_props_concat = []
 
         for idx, file in enumerate(label_files):
+            # TODO: Add scene processing 
             logger.info(f"Processing file {file.name}")
             lbl = BioImage(label_dir / file.name)
+            id_string = self._create_id_string(lbl, file.stem)
+            
             label_chan = self._label_image.value[8:]
             lbl_C = lbl.channel_names.index(label_chan)
-            label = lbl.get_image_data(self._squeezed_dims, C=lbl_C)
-            
 
             intensity_images = []
             intensity_names = []
@@ -299,73 +331,73 @@ class MeasureContainer(Container):
                     self._progress_bar.value = idx + 1
                     continue
                 reg = BioImage(region_path)
-            # Get stack of intensity images if there are any selected
-            if self._intensity_images.value:
-                for channel in self._intensity_images.value:
-                    if channel.startswith("Labels: "):
-                        chan = channel[8:]
-                        lbl_C = lbl.channel_names.index(chan)
-                        chan_img = lbl.get_image_data(
-                            self._squeezed_dims, C=lbl_C
-                        )
-                    elif channel.startswith("Intensity: "):
-                        chan = channel[11:]
-                        img_C = img.channel_names.index(chan)
-                        chan_img = img.get_image_data(
-                            self._squeezed_dims, C=img_C
-                        )
-                    elif channel.startswith("Region: "):
-                        chan = channel[8:]
-                        reg_C = reg.channel_names.index(chan)
-                        chan_img = reg.get_image_data(
-                            self._squeezed_dims, C=reg_C
-                        )
-                    intensity_names.append(chan)
-                    intensity_images.append(chan_img)
-
-                # the last dim is the multi-channel dim for regionprops
-                intensity_stack = np.stack(intensity_images, axis=-1)
-
-            else:
-                intensity_stack = None
-                intensity_names = None
-
-            # get the relevant spacing for regionprops, depending on length
-            props_scale = self._scale_tuple.value
-            props_scale = props_scale[-len(self._squeezed_dims) :]
-            # get the properties list
-            properties = [
-                prop.label for prop in self._props_container if prop.value
-            ]
-            # start the measuring here
-            # measure_props = measure.regionprops_table(
-            #     label_image=label,
-            #     intensity_image=intensity_stack,
-            #     properties=properties,
-            #     spacing=props_scale,
-            # )
-
-            # measure_props_df = pd.DataFrame(measure_props)
-            # measure_props_df.insert(0, "file", file.stem)
-            # # TODO: rename the columns to include the label or image name
-            # # if intensity_stack is not None:
+                
+            for scene_idx, scene in enumerate(lbl.scenes):
+                logger.info(f"Processing scene {scene_idx}")
+                lbl.set_scene(scene_idx)
+                label = lbl.get_image_data(self._squeezed_dims, C=lbl_C)
+                id_string = self._create_id_string(lbl, file.stem)
             
-            measure_props_df = ndev_measure.measure_regionprops(
-                label_images=label,
-                label_names=label_chan,
-                intensity_images=intensity_stack,
-                intensity_names=intensity_names,
-                properties=properties,
-                scale=props_scale,
-                id_string=file.stem,
-            )
-            
+                # Get stack of intensity images if there are any selected
+                if self._intensity_images.value and not None:
+                    for channel in self._intensity_images.value:
+                        if channel.startswith("Labels: "):
+                            chan = channel[8:]
+                            lbl_C = lbl.channel_names.index(chan)
+                            lbl.set_scene(scene_idx)
+                            chan_img = lbl.get_image_data(
+                                self._squeezed_dims, C=lbl_C
+                            )
+                        elif channel.startswith("Intensity: "):
+                            chan = channel[11:]
+                            img_C = img.channel_names.index(chan)
+                            img.set_scene(scene_idx)
+                            chan_img = img.get_image_data(
+                                self._squeezed_dims, C=img_C
+                            )
+                        elif channel.startswith("Region: "):
+                            chan = channel[8:]
+                            reg_C = reg.channel_names.index(chan)
+                            img.set_scene(scene_idx)
+                            chan_img = reg.get_image_data(
+                                self._squeezed_dims, C=reg_C
+                            )
+                        intensity_names.append(chan)
+                        intensity_images.append(chan_img)
 
-            measure_props_concat.append(measure_props_df)
+                    # the last dim is the multi-channel dim for regionprops
+                    intensity_stack = np.stack(intensity_images, axis=-1)
+
+                else:
+                    intensity_stack = None
+                    intensity_names = None
+
+                # start the measuring here
+                # TODO: Add optional scaling, in case images have different scales?
+                measure_props_df = ndev_measure.measure_regionprops(
+                    label_images=label,
+                    label_names=label_chan,
+                    intensity_images=intensity_stack,
+                    intensity_names=intensity_names,
+                    properties=properties,
+                    scale=props_scale,
+                    id_string=id_string,
+                    id_regex_dict=id_regex_dict,
+                    tx_id=self._tx_id.value,
+                    tx_dict=tx_dict,
+                    tx_n_well=self._tx_n_well.value,
+                    save_data_path=None,
+                    
+                )
+                
+
+                measure_props_concat.append(measure_props_df)
+                self._progress_bar.value = idx + 1
 
         measure_props_concat = pd.concat(measure_props_concat)
         measure_props_concat.to_csv(
-            self._output_directory.value / f"measure_props_{self._label_image.value[8:]}.csv"
+            self._output_directory.value / f"measure_props_{label_chan}.csv"
         )
+        logger.removeHandler(handler)
         
         return measure_props_concat

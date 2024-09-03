@@ -123,3 +123,4 @@ def test_batch_measure_intensity(tmp_path):
 
     assert output_folder.exists()
     assert (output_folder / "measure_props_Labels.csv").exists()
+    
