@@ -225,7 +225,8 @@ class MeasureContainer(Container):
 
     def batch_measure(self):
         from bioio import BioImage
-        from skimage import measure
+        # from skimage import measure
+        from napari_ndev import measure as ndev_measure
 
         # get all the files in the label directory
         label_dir, label_files = helpers.get_directory_and_files(
@@ -271,10 +272,13 @@ class MeasureContainer(Container):
         for idx, file in enumerate(label_files):
             logger.info(f"Processing file {file.name}")
             lbl = BioImage(label_dir / file.name)
-            lbl_C = lbl.channel_names.index(self._label_image.value[8:])
+            label_chan = self._label_image.value[8:]
+            lbl_C = lbl.channel_names.index(label_chan)
             label = lbl.get_image_data(self._squeezed_dims, C=lbl_C)
+            
 
             intensity_images = []
+            intensity_names = []
 
             # get the itnensity image only if the image directory is not empty
             if self._image_directory.value:
@@ -299,20 +303,24 @@ class MeasureContainer(Container):
             if self._intensity_images.value:
                 for channel in self._intensity_images.value:
                     if channel.startswith("Labels: "):
-                        lbl_C = lbl.channel_names.index(channel[8:])
+                        chan = channel[8:]
+                        lbl_C = lbl.channel_names.index(chan)
                         chan_img = lbl.get_image_data(
                             self._squeezed_dims, C=lbl_C
                         )
                     elif channel.startswith("Intensity: "):
-                        img_C = img.channel_names.index(channel[11:])
+                        chan = channel[11:]
+                        img_C = img.channel_names.index(chan)
                         chan_img = img.get_image_data(
                             self._squeezed_dims, C=img_C
                         )
                     elif channel.startswith("Region: "):
-                        reg_C = reg.channel_names.index(channel[8:])
+                        chan = channel[8:]
+                        reg_C = reg.channel_names.index(chan)
                         chan_img = reg.get_image_data(
                             self._squeezed_dims, C=reg_C
                         )
+                    intensity_names.append(chan)
                     intensity_images.append(chan_img)
 
                 # the last dim is the multi-channel dim for regionprops
@@ -320,6 +328,7 @@ class MeasureContainer(Container):
 
             else:
                 intensity_stack = None
+                intensity_names = None
 
             # get the relevant spacing for regionprops, depending on length
             props_scale = self._scale_tuple.value
@@ -329,18 +338,28 @@ class MeasureContainer(Container):
                 prop.label for prop in self._props_container if prop.value
             ]
             # start the measuring here
-            measure_props = measure.regionprops_table(
-                label_image=label,
-                intensity_image=intensity_stack,
-                properties=properties,
-                spacing=props_scale,
-            )
+            # measure_props = measure.regionprops_table(
+            #     label_image=label,
+            #     intensity_image=intensity_stack,
+            #     properties=properties,
+            #     spacing=props_scale,
+            # )
 
-            measure_props_df = pd.DataFrame(measure_props)
-            measure_props_df.insert(0, "file", file.stem)
-            # TODO: rename the columns to include the label or image name
-            # if intensity_stack is not None:
-                
+            # measure_props_df = pd.DataFrame(measure_props)
+            # measure_props_df.insert(0, "file", file.stem)
+            # # TODO: rename the columns to include the label or image name
+            # # if intensity_stack is not None:
+            
+            measure_props_df = ndev_measure.measure_regionprops(
+                label_images=label,
+                label_names=label_chan,
+                intensity_images=intensity_stack,
+                intensity_names=intensity_names,
+                properties=properties,
+                scale=props_scale,
+                id_string=file.stem,
+            )
+            
 
             measure_props_concat.append(measure_props_df)
 
@@ -348,3 +367,5 @@ class MeasureContainer(Container):
         measure_props_concat.to_csv(
             self._output_directory.value / f"measure_props_{self._label_image.value[8:]}.csv"
         )
+        
+        return measure_props_concat
