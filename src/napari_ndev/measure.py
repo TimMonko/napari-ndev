@@ -1,10 +1,6 @@
-import os
 import re
-from enum import Enum
-
 import numpy as np
 import pandas as pd
-from napari_ndev import helpers
 from napari_ndev import PlateMapper
 from typing import List, Union, Optional, Tuple
 from bioio_base.types import ArrayLike, PathLike
@@ -73,7 +69,7 @@ def map_tx_dict_to_df_id_col(
     """ Map a dictionary of treatments to a dataframes id_column. 
     This should work on either a complete dataset, or as part of an iterative
     """
-    if isinstance(tx_n_well, int) or tx_n_well > 0:
+    if isinstance(tx_n_well, int):
         plate = PlateMapper(tx_n_well)
         plate.assign_treatments(tx)
         tx_map = plate.plate_map.set_index('well_id').to_dict(orient='index')
