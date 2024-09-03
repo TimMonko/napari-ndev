@@ -1,10 +1,11 @@
 import logging
 import time
 from pathlib import Path
-from typing import List, Tuple, Union, TYPE_CHECKING
+from typing import List, Tuple, Union, TYPE_CHECKING, Optional
 
 if TYPE_CHECKING:
     from aicsimageio import AICSImage
+    from bioio import BioImage
 
 __all__ = [
     "check_for_missing_files",
@@ -16,7 +17,7 @@ __all__ = [
 
 
 def get_directory_and_files(
-    dir: Union[str, Path],
+    dir: Optional[Union[str, Path]] = None,
     pattern: Union[List[str], str] = [
         "tif",
         "tiff",
@@ -47,7 +48,13 @@ def get_directory_and_files(
         Tuple[Path, List[Path]]: A tuple containing the directory path and a
         list of file paths.
     """
+    if dir is None:
+        return None, []
+    
     directory = Path(dir)
+    
+    if dir is not None and not directory.exists():
+        raise FileNotFoundError(f"Directory {dir} does not exist.")
 
     pattern = [pattern] if isinstance(pattern, str) else pattern
     pattern_glob = [f"*.{pat}" for pat in pattern]
@@ -59,7 +66,7 @@ def get_directory_and_files(
     return directory, files
 
 
-def get_channel_names(img: "AICSImage") -> List[str]:
+def get_channel_names(img: Union["AICSImage", "BioImage"]) -> List[str]:
     """
     Get the channel names from an AICSImage object.
 
@@ -80,7 +87,7 @@ def get_channel_names(img: "AICSImage") -> List[str]:
 
 
 def get_squeezed_dim_order(
-    img: "AICSImage", skip_dims: Union[List[str], str] = ["C", "S"]
+    img: Union["AICSImage", "BioImage"], skip_dims: Union[List[str], str] = ["C", "S"]
 ) -> str:
     """
     Returns a string containing the squeezed dimensions of the given AICSImage
