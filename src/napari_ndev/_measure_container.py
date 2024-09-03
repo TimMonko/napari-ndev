@@ -79,8 +79,6 @@ class MeasureContainer(Container):
         self._measure_button = PushButton(label="Measure")
 
         self._progress_bar = ProgressBar(label="Progress:")
-        # potentially add a textbox to insert a dict for regex expressions
-        # potentially add a textbox to insert a dict for a treatment map
 
     def _init_regionprops_container(self):
         self._props_container = Container(layout="vertical")
@@ -108,7 +106,6 @@ class MeasureContainer(Container):
             self._props_container.extend([getattr(self._prop, feature)])
 
         self._prop.area.value = True
-        self._prop.intensity_mean.value = True
         
     def _init_id_regex_container(self):
         self._id_regex_container = Container(layout="vertical")
@@ -289,6 +286,15 @@ class MeasureContainer(Container):
                     self._progress_bar.value = idx + 1
                     continue
                 img = BioImage(image_path)
+            if self._region_directory.value:
+                region_path = region_dir / file.name
+                if not region_path.exists():
+                    logger.error(
+                        f"Region file {file.name} not found in region directory"
+                    )
+                    self._progress_bar.value = idx + 1
+                    continue
+                reg = BioImage(region_path)
             # Get stack of intensity images if there are any selected
             if self._intensity_images.value:
                 for channel in self._intensity_images.value:
@@ -302,6 +308,11 @@ class MeasureContainer(Container):
                         chan_img = img.get_image_data(
                             self._squeezed_dims, C=img_C
                         )
+                    elif channel.startswith("Region: "):
+                        reg_C = reg.channel_names.index(channel[8:])
+                        chan_img = reg.get_image_data(
+                            self._squeezed_dims, C=reg_C
+                        )
                     intensity_images.append(chan_img)
 
                 # the last dim is the multi-channel dim for regionprops
@@ -314,7 +325,6 @@ class MeasureContainer(Container):
             props_scale = self._scale_tuple.value
             props_scale = props_scale[-len(self._squeezed_dims) :]
             # get the properties list
-            # TODO: this is returning the widget class, not the name of the attribute
             properties = [
                 prop.label for prop in self._props_container if prop.value
             ]
@@ -330,10 +340,11 @@ class MeasureContainer(Container):
             measure_props_df.insert(0, "file", file.stem)
             # TODO: rename the columns to include the label or image name
             # if intensity_stack is not None:
+                
 
             measure_props_concat.append(measure_props_df)
 
         measure_props_concat = pd.concat(measure_props_concat)
         measure_props_concat.to_csv(
-            self._output_directory.value / "measure_props.csv"
+            self._output_directory.value / f"measure_props_{self._label_image.value[8:]}.csv"
         )

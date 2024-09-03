@@ -73,3 +73,53 @@ def test_update_choices():
         "Labels: Labels",
         "Region: Shapes",
     )
+    
+def test_batch_measure_label_only(tmp_path):
+    container = MeasureContainer()
+    label_directory = pathlib.Path(
+        "src/napari_ndev/_tests/resources/Workflow/Labels"
+    )
+    # make a dummy output folder
+    output_folder = tmp_path / "Output"
+    output_folder.mkdir()
+    
+    container._label_directory.value = label_directory
+    container._label_image.value = "Labels: Labels"
+    container._output_directory.value = output_folder
+    container.batch_measure()
+
+    assert output_folder.exists()
+    assert (output_folder / "measure_props_Labels.csv").exists()
+    
+    
+def test_batch_measure_intensity(tmp_path):
+    container = MeasureContainer()
+    image_directory = pathlib.Path(
+        "src/napari_ndev/_tests/resources/Workflow/Images"
+    )
+    label_directory = pathlib.Path(
+        "src/napari_ndev/_tests/resources/Workflow/Labels"
+    )
+    region_directory = pathlib.Path(
+        "src/napari_ndev/_tests/resources/Workflow/ShapesAsLabels"
+    )
+    # make a dummy output folder
+    output_folder = tmp_path / "Output"
+    output_folder.mkdir()
+    
+    container._image_directory.value = image_directory
+    container._label_directory.value = label_directory
+    container._region_directory.value = region_directory
+    container._scale_tuple.value = (3, 0.25, 0.25)
+    container._prop.intensity_mean = True
+    container._prop.bbox = True
+    container._prop.centroid = True
+    container._prop.eccentricity = True
+    
+    container._label_image.value = "Labels: Labels"
+    container._intensity_images.value = ["Region: Shapes", "Intensity: membrane", "Intensity: nuclei"]
+    container._output_directory.value = output_folder
+    container.batch_measure()
+
+    assert output_folder.exists()
+    assert (output_folder / "measure_props_Labels.csv").exists()
