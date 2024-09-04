@@ -149,7 +149,7 @@ def measure_regionprops(
     )
     
     measure_df = pd.DataFrame(measure_props)
-    measure_df.insert(0, 'id_string', id_string)
+    measure_df.insert(0, 'id', id_string)
     
     if id_regex_dict is not None:
         id_dict = _extract_info_from_id_string(id_string, id_regex_dict)
