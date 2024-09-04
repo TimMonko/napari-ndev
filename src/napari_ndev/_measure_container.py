@@ -1,4 +1,4 @@
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Tuple
 import ast
 
 import numpy as np
@@ -21,6 +21,8 @@ from qtpy.QtWidgets import QTabWidget
 
 if TYPE_CHECKING:
     import napari
+    import pathlib
+    from bioio import BioImage
 
 
 class MeasureContainer(Container):
@@ -177,7 +179,7 @@ class MeasureContainer(Container):
         self._region_directory.changed.connect(self._update_region_choices)
         self._measure_button.clicked.connect(self.batch_measure)
 
-    def _get_0th_img_from_dir(self, directory=None) -> tuple:
+    def _get_0th_img_from_dir(self, directory: str =None) -> Tuple['BioImage', 'pathlib.Path']:
         from bioio import BioImage
 
         _, files = helpers.get_directory_and_files(directory)
@@ -212,7 +214,7 @@ class MeasureContainer(Container):
             self._label_directory.value, "Labels", update_label=True
         )
         img, id = self._get_0th_img_from_dir(self._label_directory.value)
-        id_string = self._create_id_string(img, id.name)
+        id_string = self._create_id_string(img, id.stem)
         self._example_id_string.value = id_string
 
     def _create_id_string(self, img, id):
@@ -238,7 +240,7 @@ class MeasureContainer(Container):
             return None
         
 
-    def batch_measure(self):
+    def batch_measure(self) -> pd.DataFrame:
         from bioio import BioImage
         # from skimage import measure
         from napari_ndev import measure as ndev_measure
@@ -273,8 +275,8 @@ class MeasureContainer(Container):
         Label Image: {self._label_image.value}
         Intensity Channels: {self._intensity_images.value}
         Num. Files: {len(label_files)}
-        Image Directory: {image_dir}
         Label Directory: {label_dir}
+        Image Directory: {image_dir}
         Region Directory: {region_dir}
         Output Directory: {self._output_directory.value}
         ID Example: {self._example_id_string.value}
@@ -394,10 +396,10 @@ class MeasureContainer(Container):
                 measure_props_concat.append(measure_props_df)
                 self._progress_bar.value = idx + 1
 
-        measure_props_concat = pd.concat(measure_props_concat)
-        measure_props_concat.to_csv(
+        measure_props_df = pd.concat(measure_props_concat)
+        measure_props_df.to_csv(
             self._output_directory.value / f"measure_props_{label_chan}.csv"
         )
         logger.removeHandler(handler)
         
-        return measure_props_concat
+        return measure_props_df
