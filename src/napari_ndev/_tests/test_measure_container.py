@@ -86,10 +86,13 @@ def test_batch_measure_label_only(tmp_path):
     container._label_directory.value = label_directory
     container._label_image.value = "Labels: Labels"
     container._output_directory.value = output_folder
-    container.batch_measure()
+    df = container.batch_measure()
 
     assert output_folder.exists()
     assert (output_folder / "measure_props_Labels.csv").exists()
+    assert df is not None
+    assert list(df.columns) == ['id', 'area']
+
     
     
 def test_batch_measure_intensity(tmp_path):
@@ -111,16 +114,15 @@ def test_batch_measure_intensity(tmp_path):
     container._label_directory.value = label_directory
     container._region_directory.value = region_directory
     container._scale_tuple.value = (3, 0.25, 0.25)
-    container._prop.intensity_mean = True
-    container._prop.bbox = True
-    container._prop.centroid = True
-    container._prop.eccentricity = True
-    
+    container._prop.intensity_mean.value = True
+
     container._label_image.value = "Labels: Labels"
     container._intensity_images.value = ["Region: Shapes", "Intensity: membrane", "Intensity: nuclei"]
     container._output_directory.value = output_folder
-    container.batch_measure()
+    df = container.batch_measure()
 
     assert output_folder.exists()
     assert (output_folder / "measure_props_Labels.csv").exists()
+    assert df is not None
+    assert list(df.columns) == ['id', 'area', 'intensity_mean-0', 'intensity_mean-1', 'intensity_mean-2']
     
