@@ -219,7 +219,12 @@ class MeasureContainer(Container):
 
     def _create_id_string(self, img, id):
         scene_idx = img.current_scene_index
-        scene = img.current_scene
+        # scene = img.current_scene 
+        # instead use ome_metadata.name because this gets saved with OmeTiffWriter
+        try:
+            scene = img.ome_metadata.images[scene_idx].name
+        except NotImplementedError:
+            scene = img.current_scene # not useful with OmeTiffReader, atm
         id_string = f"{id}__{scene_idx}__{scene}"
         return id_string
 
