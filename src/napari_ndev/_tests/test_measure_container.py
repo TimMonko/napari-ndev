@@ -86,11 +86,12 @@ def test_batch_measure_label_only(tmp_path):
     container._label_directory.value = label_directory
     container._label_image.value = "Labels: Labels"
     container._output_directory.value = output_folder
-    df = container.batch_measure()
+    df, df_grouped = container.batch_measure()
 
     assert output_folder.exists()
     assert (output_folder / "measure_props_Labels.csv").exists()
     assert df is not None
+    assert df_grouped is None
     assert list(df.columns) == ['id', 'area']
 
     
@@ -119,10 +120,41 @@ def test_batch_measure_intensity(tmp_path):
     container._label_image.value = "Labels: Labels"
     container._intensity_images.value = ["Region: Shapes", "Intensity: membrane", "Intensity: nuclei"]
     container._output_directory.value = output_folder
-    df = container.batch_measure()
+    df, df_grouped = container.batch_measure()
 
     assert output_folder.exists()
     assert (output_folder / "measure_props_Labels.csv").exists()
     assert df is not None
+    assert df_grouped is None
     assert list(df.columns) == ['id', 'area', 'intensity_mean-0', 'intensity_mean-1', 'intensity_mean-2']
     
+    
+    # TODO: add a multi-label for the test, and multiple images for grouping by id
+def test_batch_measure_groupby(tmp_path):
+    container = MeasureContainer()
+
+    label_directory = pathlib.Path(
+        "src/napari_ndev/_tests/resources/Workflow/Labels"
+    )
+    image_directory = pathlib.Path(
+        "src/napari_ndev/_tests/resources/Workflow/Images"
+    )
+    
+    output_folder = tmp_path / "Output"
+    output_folder.mkdir()
+    
+    container._label_directory.value = label_directory
+    container._label_image.value = "Labels: Labels"
+    container._image_directory.value = image_directory
+    container._output_directory.value = output_folder
+    # container._intensity_images.value = ["Intensity: membrane", "Intensity: nuclei"]
+    container._prop.area.value = True
+    # container._prop.intensity_mean.value = True
+    container._create_grouped.value = True
+    
+    df, df_grouped = container.batch_measure()
+    
+    assert df is not None
+    assert df_grouped is not None
+    assert list(df.columns) == ['id', 'area']
+    assert list(df_grouped.columns) == ['id', 'area_mean', 'area_std']
