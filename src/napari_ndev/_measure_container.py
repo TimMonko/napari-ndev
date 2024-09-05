@@ -47,6 +47,7 @@ class MeasureContainer(Container):
         self._init_regionprops_container()
         self._init_id_regex_container()
         self._init_tx_map_container()
+        self._init_grouping_container()
         self._init_layout()
         self._connect_events()
 
@@ -151,6 +152,23 @@ class MeasureContainer(Container):
         self._tx_map_container.extend(
             [self._tx_id, self._tx_n_well, self._tx_dict]
         )
+    
+    def _init_grouping_container(self):
+        self._grouping_container = Container(layout="vertical")
+        self._create_grouped = CheckBox(
+            label="Create Grouped Data",
+            value=False,
+            tooltip="If checked, will create a grouped data frame with the same properties as the original data frame"
+        )
+        self._group_by_sample_id = CheckBox(
+            label="Group by Sample ID",
+            value=True,
+            tooltip="If checked, will group the data by the id_string, which is usually the filename and scene"
+        )
+        
+        self._grouping_container.extend(
+            [self._create_grouped, self._group_by_sample_id]
+        )
         
     def _init_layout(self):
         self.extend(
@@ -171,6 +189,7 @@ class MeasureContainer(Container):
         tabs.addTab(self._props_container.native, "Region Props")
         tabs.addTab(self._id_regex_container.native, "ID Regex")
         tabs.addTab(self._tx_map_container.native, "Tx Map")
+        tabs.addTab(self._grouping_container.native, "Grouping")
         self.native.layout().addWidget(tabs)
 
     def _connect_events(self):
@@ -405,6 +424,23 @@ class MeasureContainer(Container):
         measure_props_df.to_csv(
             self._output_directory.value / f"measure_props_{label_chan}.csv"
         )
+        
+        if self._create_grouped.value:
+            if self._group_by_sample_id.value:
+                measure_props_grouped = measure_props_df.groupby("id").agg(
+                    {col: ['mean', 'std'] for col in measure_props_df.columns[1:]}
+                ).reset_index() # genereates a multi-index
+                # collapse multi index and combine columns names with '_'
+                measure_props_grouped.columns = [
+                    f"{col[0]}_{col[1]}" if col[1] else col[0] for col in measure_props_grouped.columns
+                ]
+            measure_props_grouped.to_csv(
+                self._output_directory.value / 
+                f"measure_props_grouped_{label_chan}.csv"
+            )
+        else:
+            measure_props_grouped = None
+        
         logger.removeHandler(handler)
         
-        return measure_props_df
+        return measure_props_df, measure_props_grouped
