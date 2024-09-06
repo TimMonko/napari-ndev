@@ -99,6 +99,7 @@ def test_batch_measure_label_only(tmp_path):
     assert list(df.columns) == ["id", "area"]
 
 
+# TODO: figure out why _intensity_images.value is not in index order, but alphabetical
 def test_batch_measure_intensity(tmp_path):
     container = MeasureContainer()
     image_directory = pathlib.Path(
@@ -136,14 +137,13 @@ def test_batch_measure_intensity(tmp_path):
     assert list(df.columns) == [
         "id",
         "area",
-        "intensity_mean-0",
-        "intensity_mean-1",
-        "intensity_mean-2",
+        "intensity_mean-membrane",
+        "intensity_mean-nuclei",
+        "intensity_mean-Shapes",
     ]
 
-    # TODO: add a multi-label for the test, and multiple images for grouping by id
 
-
+# TODO: add a multi-label for the test, and multiple images for grouping by id
 def test_batch_measure_groupby(tmp_path):
     container = MeasureContainer()
 
@@ -167,6 +167,7 @@ def test_batch_measure_groupby(tmp_path):
     container._create_grouped.value = True
 
     df, df_grouped = container.batch_measure()
+    print(df_grouped.columns)
 
     assert df is not None
     assert df_grouped is not None
@@ -175,5 +176,5 @@ def test_batch_measure_groupby(tmp_path):
         "id",
         "area_mean",
         "area_std",
-        "id_count",
+        "label_count",
     ]
