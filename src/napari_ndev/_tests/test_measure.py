@@ -9,6 +9,7 @@ from napari_ndev.measure import (
     _convert_to_list,
     _extract_info_from_id_string,
     _generate_measure_dict,
+    _rename_intensity_columns,
     map_tx_dict_to_df_id_col,
     measure_regionprops,
 )
@@ -149,6 +150,23 @@ def test_extract_info_from_id_string():
     assert result == expected
 
 
+def test_rename_intensity_columns():
+    data = {
+        "area": [100, 200],
+        "intensity_mean-0": [0.5, 0.7],
+        "intensity_mean-1": [0.8, 0.6],
+    }
+    df = pd.DataFrame(data)
+    intensity_names = ["membrane", "nuclei"]
+    result = _rename_intensity_columns(df, intensity_names)
+
+    assert list(result.columns) == [
+        "area",
+        "intensity_mean-membrane",
+        "intensity_mean-nuclei",
+    ]
+
+
 def test_map_tx_dict_to_df_id_col():
     tx = {
         "Treatment1": {"Condition1": ["A1", "B2"], "Condition2": ["C3"]},
@@ -198,18 +216,20 @@ id_regex = {
     "properties, scale, id_string, id_regex_dict, "
     "save_data_path, expected_columns",
     [
+        # 2D label image, no intensity image
         (
             label_image_2d,
             None,
             None,
             None,
-            ["area"],
+            ["area", "eccentricity"],
             (1.0, 1.0),
             id_string,
             id_regex,
             None,
-            ["id", "well", "HIC", "exp", "area"],
+            ["id", "well", "HIC", "exp", "area", "eccentricity"],
         ),
+        # 2D label image, with intensity image
         (
             [label_image_2d],
             None,
@@ -222,6 +242,34 @@ id_regex = {
             None,
             ["id", "area", "intensity_mean"],
         ),
+        # 2D label image, with 1 intensity images and names
+        # TODO: Figure out why intensity_mean is not intensity_mean-0
+        (
+            [label_image_2d],
+            None,
+            [intensity_image_2d],
+            ["test1"],
+            ["area", "intensity_mean"],
+            (1.0, 1.0),
+            "test_id",
+            None,
+            None,
+            ["id", "area", "intensity_mean"],
+        ),
+        # 2D label image, with 2 intensity images and names
+        (
+            [label_image_2d],
+            None,
+            [intensity_image_2d, intensity_image_2d],
+            ["test1", "test2"],
+            ["area", "intensity_mean"],
+            (1.0, 1.0),
+            "test_id",
+            None,
+            None,
+            ["id", "area", "intensity_mean-test1", "intensity_mean-test2"],
+        ),
+        # 3D label image, no intensity image
         (
             [label_image_3d],
             None,
@@ -234,6 +282,7 @@ id_regex = {
             None,
             ["id", "area"],
         ),
+        # 3D label image, with intensity image
         (
             [label_image_3d],
             None,
@@ -271,8 +320,8 @@ def test_measure_regionprops(
         id_regex_dict=id_regex_dict,
         save_data_path=save_data_path,
     )
-
-    print(result_df)
+    # from skimage import measure
+    # print(measure.regionprops_table(label_images[0], intensity_images[0], properties=properties))
 
     assert isinstance(result_df, pd.DataFrame)
     # Check if the DataFrame contains the expected columns

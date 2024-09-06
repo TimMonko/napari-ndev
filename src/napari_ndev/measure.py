@@ -66,6 +66,35 @@ def _extract_info_from_id_string(id_string: str, id_regex: dict) -> dict:
     return id_dict
 
 
+def _rename_intensity_columns(df: pd.DataFrame, intensity_names: List[str]):
+    """
+    Rename columns in the DataFrame to include the intensity names.
+    The intensity names are appended to the end of the column name based
+    on the index of the intensity_names list.
+
+    Parameters:
+    measure_df (pd.DataFrame): The DataFrame with measurement properties.
+    intensity_names (list of str): The list of intensity names.
+
+    Returns:
+    pd.DataFrame: The DataFrame with renamed columns.
+    """
+    print(f"initial: {df.columns}")
+
+    new_columns = []
+    for col in df.columns:
+        if any(col.endswith(f"-{idx}") for idx in range(len(intensity_names))):
+            base_name, idx = col.rsplit("-", 1)
+            new_columns.append(f"{base_name}-{intensity_names[int(idx)]}")
+        else:
+            new_columns.append(col)
+
+    df.columns = new_columns
+
+    print(f"renamed {df.columns}")
+    return df
+
+
 def map_tx_dict_to_df_id_col(
     tx: dict = None,
     tx_n_well: int = None,
@@ -153,6 +182,16 @@ def measure_regionprops(
     )
 
     measure_df = pd.DataFrame(measure_props)
+
+    print(f"initial: {measure_df.columns}")
+
+    if intensity_names is not None:
+        measure_df = _rename_intensity_columns(
+            measure_df, measure_dict["intensity_names"]
+        )
+
+    print(f"renamed {measure_df.columns}")
+
     measure_df.insert(0, "id", id_string)
 
     if id_regex_dict is not None:
