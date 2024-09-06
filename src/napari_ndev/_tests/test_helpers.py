@@ -5,6 +5,7 @@ from pathlib import Path
 import numpy as np
 import pytest
 from bioio import BioImage
+from aicsimageio import AICSImage
 from bioio.writers import OmeTiffWriter
 
 from napari_ndev.helpers import (
@@ -115,7 +116,7 @@ def test_get_channel_names_CYX():
 
 def test_get_channel_names_RGB():
     file = Path(r".\src\napari_ndev\_tests\resources\RGB.tiff")
-    img = BioImage(file)
+    img = AICSImage(file)
     assert get_channel_names(img) == ["red", "green", "blue"]
 
 
@@ -157,7 +158,7 @@ def test_get_squeezed_dim_order_ZYX():
 
 def test_get_squeezed_dim_order_RGB():
     file = Path(r".\src\napari_ndev\_tests\resources\RGB.tiff")
-    img = BioImage(file)
+    img = AICSImage(file)
     assert get_squeezed_dim_order(img) == "YX"
 
 
