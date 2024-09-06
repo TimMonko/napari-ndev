@@ -4,8 +4,8 @@ from pathlib import Path
 
 import numpy as np
 import pytest
-from bioio import BioImage
 from aicsimageio import AICSImage
+from bioio import BioImage
 from bioio.writers import OmeTiffWriter
 
 from napari_ndev.helpers import (
