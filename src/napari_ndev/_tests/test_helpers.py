@@ -116,7 +116,7 @@ def test_get_channel_names_CYX():
 
 def test_get_channel_names_RGB():
     file = Path(r"./src/napari_ndev/_tests/resources/RGB.tiff")
-    img = BioImage(file)
+    img = AICSImage(file)
     assert get_channel_names(img) == ["red", "green", "blue"]
 
 
