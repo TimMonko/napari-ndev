@@ -1,7 +1,9 @@
 import pathlib
+
 from bioio import BioImage
 
 from napari_ndev._measure_container import MeasureContainer
+
 
 def test_widg_init_no_viewer():
     wdg = MeasureContainer()
@@ -11,7 +13,8 @@ def test_widg_init_no_viewer():
     assert hasattr(wdg._prop, "area")
     assert hasattr(wdg._prop, "intensity_min")
     assert wdg.viewer is None
-        
+
+
 def test_widg_init_with_viewer(make_napari_viewer):
     viewer = make_napari_viewer()
     wdg = MeasureContainer(viewer)
@@ -73,7 +76,8 @@ def test_update_choices():
         "Labels: Labels",
         "Region: Shapes",
     )
-    
+
+
 def test_batch_measure_label_only(tmp_path):
     container = MeasureContainer()
     label_directory = pathlib.Path(
@@ -82,7 +86,7 @@ def test_batch_measure_label_only(tmp_path):
     # make a dummy output folder
     output_folder = tmp_path / "Output"
     output_folder.mkdir()
-    
+
     container._label_directory.value = label_directory
     container._label_image.value = "Labels: Labels"
     container._output_directory.value = output_folder
@@ -92,10 +96,9 @@ def test_batch_measure_label_only(tmp_path):
     assert (output_folder / "measure_props_Labels.csv").exists()
     assert df is not None
     assert df_grouped is None
-    assert list(df.columns) == ['id', 'area']
+    assert list(df.columns) == ["id", "area"]
 
-    
-    
+
 def test_batch_measure_intensity(tmp_path):
     container = MeasureContainer()
     image_directory = pathlib.Path(
@@ -110,7 +113,7 @@ def test_batch_measure_intensity(tmp_path):
     # make a dummy output folder
     output_folder = tmp_path / "Output"
     output_folder.mkdir()
-    
+
     container._image_directory.value = image_directory
     container._label_directory.value = label_directory
     container._region_directory.value = region_directory
@@ -118,7 +121,11 @@ def test_batch_measure_intensity(tmp_path):
     container._prop.intensity_mean.value = True
 
     container._label_image.value = "Labels: Labels"
-    container._intensity_images.value = ["Region: Shapes", "Intensity: membrane", "Intensity: nuclei"]
+    container._intensity_images.value = [
+        "Region: Shapes",
+        "Intensity: membrane",
+        "Intensity: nuclei",
+    ]
     container._output_directory.value = output_folder
     df, df_grouped = container.batch_measure()
 
@@ -126,10 +133,17 @@ def test_batch_measure_intensity(tmp_path):
     assert (output_folder / "measure_props_Labels.csv").exists()
     assert df is not None
     assert df_grouped is None
-    assert list(df.columns) == ['id', 'area', 'intensity_mean-0', 'intensity_mean-1', 'intensity_mean-2']
-    
-    
+    assert list(df.columns) == [
+        "id",
+        "area",
+        "intensity_mean-0",
+        "intensity_mean-1",
+        "intensity_mean-2",
+    ]
+
     # TODO: add a multi-label for the test, and multiple images for grouping by id
+
+
 def test_batch_measure_groupby(tmp_path):
     container = MeasureContainer()
 
@@ -139,10 +153,10 @@ def test_batch_measure_groupby(tmp_path):
     image_directory = pathlib.Path(
         "src/napari_ndev/_tests/resources/Workflow/Images"
     )
-    
+
     output_folder = tmp_path / "Output"
     output_folder.mkdir()
-    
+
     container._label_directory.value = label_directory
     container._label_image.value = "Labels: Labels"
     container._image_directory.value = image_directory
@@ -151,10 +165,15 @@ def test_batch_measure_groupby(tmp_path):
     container._prop.area.value = True
     # container._prop.intensity_mean.value = True
     container._create_grouped.value = True
-    
+
     df, df_grouped = container.batch_measure()
-    
+
     assert df is not None
     assert df_grouped is not None
-    assert list(df.columns) == ['id', 'area']
-    assert list(df_grouped.columns) == ['id', 'area_mean', 'area_std']
+    assert list(df.columns) == ["id", "area"]
+    assert list(df_grouped.columns) == [
+        "id",
+        "area_mean",
+        "area_std",
+        "id_count",
+    ]

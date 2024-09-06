@@ -416,8 +416,15 @@ class MeasureContainer(Container):
 
         if self._create_grouped.value:
             if self._group_by_sample_id.value:
-                measure_props_grouped = (
+
+                # get count data
+                measure_props_count = (
                     measure_props_df.groupby("id")
+                    .agg({measure_props_df.columns[0]: "count"})
+                    .reset_index()
+                )
+                measure_props_grouped = (
+                    measure_props_df.groupby("id")  # sw
                     .agg(
                         {
                             col: ["mean", "std"]
@@ -426,6 +433,11 @@ class MeasureContainer(Container):
                     )
                     .reset_index()
                 )  # genereates a multi-index
+
+                measure_props_grouped = pd.concat(
+                    [measure_props_grouped, measure_props_count], axis=1
+                ).reset_index()
+
                 # collapse multi index and combine columns names with '_'
                 measure_props_grouped.columns = [
                     f"{col[0]}_{col[1]}" if col[1] else col[0]
