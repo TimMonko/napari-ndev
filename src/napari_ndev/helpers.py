@@ -1,7 +1,7 @@
 import logging
 import time
 from pathlib import Path
-from typing import List, Tuple, Union, TYPE_CHECKING, Optional
+from typing import TYPE_CHECKING, List, Optional, Tuple, Union
 
 if TYPE_CHECKING:
     from aicsimageio import AICSImage
@@ -9,6 +9,7 @@ if TYPE_CHECKING:
 
 __all__ = [
     "check_for_missing_files",
+    "create_id_string",
     "get_channel_names",
     "get_directory_and_files",
     "get_squeezed_dim_order",
@@ -50,14 +51,21 @@ def get_directory_and_files(
     """
     if dir is None:
         return None, []
-    
+
     directory = Path(dir)
-    
+
     if dir is not None and not directory.exists():
         raise FileNotFoundError(f"Directory {dir} does not exist.")
 
     pattern = [pattern] if isinstance(pattern, str) else pattern
-    pattern_glob = [f"*.{pat}" for pat in pattern]
+    # add *. to each pattern if it doesn't already have either
+    pattern_glob = []
+    for pat in pattern:
+        if "." not in pat:
+            pat = f"*.{pat}"
+        if "*" not in pat:
+            pat = f"*{pat}"
+        pattern_glob.append(pat)
 
     files = []
     for p_glob in pattern_glob:
@@ -87,7 +95,8 @@ def get_channel_names(img: Union["AICSImage", "BioImage"]) -> List[str]:
 
 
 def get_squeezed_dim_order(
-    img: Union["AICSImage", "BioImage"], skip_dims: Union[List[str], str] = ["C", "S"]
+    img: Union["AICSImage", "BioImage"],
+    skip_dims: Union[List[str], str] = ["C", "S"],
 ) -> str:
     """
     Returns a string containing the squeezed dimensions of the given AICSImage
@@ -106,8 +115,23 @@ def get_squeezed_dim_order(
     )
 
 
+def create_id_string(img: Union["BioImage", "AICSImage"], id: str) -> str:
+    scene_idx = img.current_scene_index
+    # scene = img.current_scene
+    # instead use ome_metadata.name because this gets saved with OmeTiffWriter
+    try:
+        if img.ome_metadata.images[scene_idx].name is None:
+            scene = img.current_scene
+        else:
+            scene = img.ome_metadata.images[scene_idx].name
+    except NotImplementedError:
+        scene = img.current_scene  # not useful with OmeTiffReader, atm
+    id_string = f"{id}__{scene_idx}__{scene}"
+    return id_string
+
+
 def check_for_missing_files(
-    files: List[Path], *directories: Path
+    files: Union[List[Path], List[str]], *directories: Union[Path, str]
 ) -> List[tuple]:
     """
     Check if the given files are missing in the specified directories.
@@ -124,6 +148,11 @@ def check_for_missing_files(
     missing_files = []
     for file in files:
         for directory in directories:
+            if isinstance(directory, str):
+                directory = Path(directory)
+            if isinstance(file, str):
+                file = Path(file)
+
             file_loc = directory / file.name
             if not file_loc.exists():
                 print(f"{file.name} missing in {directory.name}")
