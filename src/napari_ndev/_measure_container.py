@@ -8,6 +8,7 @@ from magicgui.widgets import (
     ComboBox,
     Container,
     FileEdit,
+
     LineEdit,
     ProgressBar,
     PushButton,
@@ -30,6 +31,7 @@ class MeasureContainer(Container):
     """Container class for measuring labels from folders. Can compare against
     intensity images, which can be microscopy data or other labels.
     """
+
 
     def __init__(
         self,
