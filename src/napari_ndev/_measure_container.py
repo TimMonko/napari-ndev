@@ -421,7 +421,10 @@ class MeasureContainer(Container):
                 measure_props_count = (
                     measure_props_df.groupby("id")
                     .agg({measure_props_df.columns[0]: "count"})
-                    .reset_index()
+                    .rename(
+                        columns={measure_props_df.columns[0]: "label_count"}
+                    )
+                    .reset_index(drop=True)
                 )
                 measure_props_grouped = (
                     measure_props_df.groupby("id")  # sw
@@ -433,16 +436,16 @@ class MeasureContainer(Container):
                     )
                     .reset_index()
                 )  # genereates a multi-index
-
-                measure_props_grouped = pd.concat(
-                    [measure_props_grouped, measure_props_count], axis=1
-                ).reset_index()
-
-                # collapse multi index and combine columns names with '_'
+                # collapse multi index and combine columns names with '_' sep
                 measure_props_grouped.columns = [
                     f"{col[0]}_{col[1]}" if col[1] else col[0]
                     for col in measure_props_grouped.columns
                 ]
+
+                measure_props_grouped = pd.concat(
+                    [measure_props_grouped, measure_props_count], axis=1
+                )
+
             measure_props_grouped.to_csv(
                 self._output_directory.value
                 / f"measure_props_grouped_{label_chan}.csv"
