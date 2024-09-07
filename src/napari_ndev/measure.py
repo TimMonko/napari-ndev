@@ -6,7 +6,7 @@ import numpy as np
 import pandas as pd
 from bioio_base.types import ArrayLike, PathLike
 
-from napari_ndev import PlateMapper
+from napari_ndev._plate_mapper import PlateMapper
 
 
 def _convert_to_list(arg: list | ArrayLike | str | None):
