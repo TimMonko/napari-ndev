@@ -1,38 +1,28 @@
+from __future__ import annotations
+
 import logging
 import time
 from pathlib import Path
-from typing import TYPE_CHECKING, List, Optional, Tuple, Union
+from typing import TYPE_CHECKING, Union
 
 if TYPE_CHECKING:
     from aicsimageio import AICSImage
     from bioio import BioImage
 
 __all__ = [
-    "check_for_missing_files",
-    "create_id_string",
-    "get_channel_names",
-    "get_directory_and_files",
-    "get_squeezed_dim_order",
-    "setup_logger",
+    'check_for_missing_files',
+    'create_id_string',
+    'get_channel_names',
+    'get_directory_and_files',
+    'get_squeezed_dim_order',
+    'setup_logger',
 ]
 
 
 def get_directory_and_files(
-    dir: Optional[Union[str, Path]] = None,
-    pattern: Union[List[str], str] = [
-        "tif",
-        "tiff",
-        "nd2",
-        "czi",
-        "lif",
-        "oib",
-        "png",
-        "jpg",
-        "jpeg",
-        "bmp",
-        "gif",
-    ],
-) -> Tuple[Path, List[Path]]:
+    dir_path: str | Path | None = None,
+    pattern: list[str] | str | None = None,
+) -> tuple[Path, list[Path]]:
     """
     Get the directory and files in the specified directory.
 
@@ -49,22 +39,24 @@ def get_directory_and_files(
         Tuple[Path, List[Path]]: A tuple containing the directory path and a
         list of file paths.
     """
-    if dir is None:
+    if pattern is None:
+        pattern = ['tif', 'tiff', 'nd2', 'czi', 'lif', 'oib', 'png', 'jpg', 'jpeg', 'bmp', 'gif']
+    if dir_path is None:
         return None, []
 
-    directory = Path(dir)
+    directory = Path(dir_path)
 
-    if dir is not None and not directory.exists():
-        raise FileNotFoundError(f"Directory {dir} does not exist.")
+    if dir_path is not None and not directory.exists():
+        raise FileNotFoundError(f'Directory {dir_path} does not exist.')
 
     pattern = [pattern] if isinstance(pattern, str) else pattern
     # add *. to each pattern if it doesn't already have either
     pattern_glob = []
     for pat in pattern:
-        if "." not in pat:
-            pat = f"*.{pat}"
-        if "*" not in pat:
-            pat = f"*{pat}"
+        if '.' not in pat:
+            pat = f'*.{pat}'
+        if '*' not in pat:
+            pat = f'*{pat}'
         pattern_glob.append(pat)
 
     files = []
@@ -74,7 +66,7 @@ def get_directory_and_files(
     return directory, files
 
 
-def get_channel_names(img: Union["AICSImage", "BioImage"]) -> List[str]:
+def get_channel_names(img: AICSImage | BioImage) -> list[str]:
     """
     Get the channel names from an AICSImage object.
 
@@ -88,15 +80,14 @@ def get_channel_names(img: Union["AICSImage", "BioImage"]) -> List[str]:
     Returns:
         List[str]: The channel names.
     """
-    if "S" in img.dims.order:
-        return ["red", "green", "blue"]
-    else:
-        return img.channel_names
+    if 'S' in img.dims.order:
+        return ['red', 'green', 'blue']
+    return img.channel_names
 
 
 def get_squeezed_dim_order(
-    img: Union["AICSImage", "BioImage"],
-    skip_dims: Union[List[str], str] = ["C", "S"],
+    img: AICSImage | BioImage,
+    skip_dims: list[str] | str | None = None,
 ) -> str:
     """
     Returns a string containing the squeezed dimensions of the given AICSImage
@@ -110,12 +101,14 @@ def get_squeezed_dim_order(
     Returns:
         str: A string containing the squeezed dimensions.
     """
-    return "".join(
+    if skip_dims is None:
+        skip_dims = ['C', 'S']
+    return ''.join(
         {k: v for k, v in img.dims.items() if v > 1 and k not in skip_dims}
     )
 
 
-def create_id_string(img: Union["BioImage", "AICSImage"], id: str) -> str:
+def create_id_string(img: BioImage | AICSImage, identifier: str) -> str:
     scene_idx = img.current_scene_index
     # scene = img.current_scene
     # instead use ome_metadata.name because this gets saved with OmeTiffWriter
@@ -126,13 +119,13 @@ def create_id_string(img: Union["BioImage", "AICSImage"], id: str) -> str:
             scene = img.ome_metadata.images[scene_idx].name
     except NotImplementedError:
         scene = img.current_scene  # not useful with OmeTiffReader, atm
-    id_string = f"{id}__{scene_idx}__{scene}"
+    id_string = f'{identifier}__{scene_idx}__{scene}'
     return id_string
 
 
 def check_for_missing_files(
-    files: Union[List[Path], List[str]], *directories: Union[Path, str]
-) -> List[tuple]:
+    files: list[Path] | list[str], *directories: Path | str
+) -> list[tuple]:
     """
     Check if the given files are missing in the specified directories.
 
@@ -155,7 +148,6 @@ def check_for_missing_files(
 
             file_loc = directory / file.name
             if not file_loc.exists():
-                print(f"{file.name} missing in {directory.name}")
                 missing_files.append((file.name, directory.name))
 
     return missing_files
@@ -176,7 +168,7 @@ def setup_logger(log_loc=Union[str, Path]):
     logger.setLevel(logging.INFO)
     handler = logging.FileHandler(log_loc)
     handler.setLevel(logging.INFO)
-    formatter = logging.Formatter("%(asctime)s - %(message)s")
+    formatter = logging.Formatter('%(asctime)s - %(message)s')
     handler.setFormatter(formatter)
     logger.addHandler(handler)
     return logger, handler
