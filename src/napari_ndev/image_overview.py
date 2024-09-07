@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 import matplotlib.pyplot as plt
 import stackview
 
@@ -6,7 +8,7 @@ def image_overview(
     image_sets: list[dict],
     xscale: float = 3,
     yscale: float = 3,
-    plot_title: str = "",
+    plot_title: str = '',
 ):
     """
     Create an overview of images.
@@ -26,7 +28,7 @@ def image_overview(
     """
     # create the subplot grid
     num_rows = len(image_sets)
-    num_columns = max([len(image_set["image"]) for image_set in image_sets])
+    num_columns = max([len(image_set['image']) for image_set in image_sets])
     fig, axs = plt.subplots(
         num_rows,
         num_columns,
@@ -40,19 +42,19 @@ def image_overview(
 
     # iterate through the image sets
     for row, image_set in enumerate(image_sets):
-        for col, image in enumerate(image_set["image"]):
+        for col, _image in enumerate(image_set['image']):
             # create a dictionary from the col-th values of each key
             image_dict = {key: value[col] for key, value in image_set.items()}
 
             # turn off the subplot and continue if there is no image
-            if image_dict.get("image") is None:
-                axs[row][col].axis("off")
+            if image_dict.get('image') is None:
+                axs[row][col].axis('off')
                 continue
 
             # create a labels key if it doesn't exist, but does in colormap
-            cmap = image_dict.get("colormap")
-            if cmap is not None and cmap.lower() == "labels":
-                image_dict["labels"] = True
+            cmap = image_dict.get('colormap')
+            if cmap is not None and cmap.lower() == 'labels':
+                image_dict['labels'] = True
 
             stackview.imshow(**image_dict, plot=axs[row][col])
 
@@ -80,7 +82,7 @@ class ImageOverview:
         image_sets: list[dict],
         xscale: float = 3,
         yscale: float = 3,
-        image_title: str = "",
+        image_title: str = '',
         show: bool = False,
     ):
         plt.ioff()
@@ -91,8 +93,8 @@ class ImageOverview:
 
     def save(
         self,
-        directory: str = None,
-        filename: str = None,
+        directory: str | None = None,
+        filename: str | None = None,
     ):
         """
         Save the generated image overview.
@@ -105,7 +107,7 @@ class ImageOverview:
         """
         import pathlib
 
-        dir = pathlib.Path(directory)
-        dir.mkdir(parents=True, exist_ok=True)
-        filepath = dir / filename
+        path_dir = pathlib.Path(directory)
+        path_dir.mkdir(parents=True, exist_ok=True)
+        filepath = path_dir / filename
         self.fig.savefig(filepath)

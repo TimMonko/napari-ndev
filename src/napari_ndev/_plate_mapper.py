@@ -65,12 +65,12 @@ class PlateMapper:
         well_rows.sort()  # needed to sort the rows correctly
         well_columns = column_labels * num_rows
 
-        well_labels_dict = {"row": well_rows, "column": well_columns}
+        well_labels_dict = {'row': well_rows, 'column': well_columns}
 
         plate_map_df = pd.DataFrame(well_labels_dict)
 
-        plate_map_df["well_id"] = plate_map_df["row"] + plate_map_df[
-            "column"
+        plate_map_df['well_id'] = plate_map_df['row'] + plate_map_df[
+            'column'
         ].astype(str)
         self.plate_map = plate_map_df
         return plate_map_df
@@ -90,20 +90,20 @@ class PlateMapper:
         for treatment, conditions in treatments.items():
             for condition, wells in conditions.items():
                 for well in wells:
-                    if ":" in well:
-                        start, end = well.split(":")
+                    if ':' in well:
+                        start, end = well.split(':')
                         start_row, start_col = start[0], int(start[1:])
                         end_row, end_col = end[0], int(end[1:])
                         well_condition = (
-                            (self.plate_map["row"] >= start_row)
-                            & (self.plate_map["row"] <= end_row)
-                            & (self.plate_map["column"] >= start_col)
-                            & (self.plate_map["column"] <= end_col)
+                            (self.plate_map['row'] >= start_row)
+                            & (self.plate_map['row'] <= end_row)
+                            & (self.plate_map['column'] >= start_col)
+                            & (self.plate_map['column'] <= end_col)
                         )
                     else:
                         row, col = well[0], int(well[1:])
-                        well_condition = (self.plate_map["row"] == row) & (
-                            self.plate_map["column"] == col
+                        well_condition = (self.plate_map['row'] == row) & (
+                            self.plate_map['column'] == col
                         )
 
                     self.plate_map.loc[well_condition, treatment] = condition
@@ -123,12 +123,12 @@ class PlateMapper:
             with treatments as columns.
         """
         plate_map_pivot = self.plate_map.pivot(
-            index="row", columns="column", values=treatment
+            index='row', columns='column', values=treatment
         )
         self.plate_map_pivot = plate_map_pivot
         return plate_map_pivot
 
-    def get_styled_plate_map(self, treatment, palette="colorblind"):
+    def get_styled_plate_map(self, treatment, palette='colorblind'):
         """
         Style a plate map DataFrame with different background colors for each
         unique value.
@@ -159,14 +159,13 @@ class PlateMapper:
 
         def get_background_color(value):
             if pd.isna(value):
-                return ""
-            else:
-                return f"background-color: {color_dict[value]}"
+                return ''
+            return f'background-color: {color_dict[value]}'
 
         plate_map_styled = (
             self.plate_map_pivot.style.applymap(get_background_color)
-            .set_caption(f"{treatment} Plate Map")
-            .format(lambda x: "" if pd.isna(x) else x)
+            .set_caption(f'{treatment} Plate Map')
+            .format(lambda x: '' if pd.isna(x) else x)
         )
 
         return plate_map_styled
