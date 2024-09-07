@@ -64,38 +64,37 @@ class WorkflowContainer(Container):
         Signal emitted when the batch button is clicked.
     """
 
-    def __init__(self, viewer: "napari.viewer.Viewer"):
+    def __init__(self, viewer: 'napari.viewer.Viewer'):
         super().__init__()
         ##############################
         # Attributes
         ##############################
-        self
         self.viewer = viewer
         self.roots = []
         self._channel_names = []
-        self._img_dims = ""
+        self._img_dims = ''
 
         ##############################
         # Widgets
         ##############################
-        self.image_directory = FileEdit(label="Image Directory", mode="d")
-        self.result_directory = FileEdit(label="Result Directory", mode="d")
+        self.image_directory = FileEdit(label='Image Directory', mode='d')
+        self.result_directory = FileEdit(label='Result Directory', mode='d')
 
         self.workflow_file = FileEdit(
-            label="Workflow File",
-            filter="*.yaml",
-            tooltip="Select a workflow file to load",
+            label='Workflow File',
+            filter='*.yaml',
+            tooltip='Select a workflow file to load',
         )
         self._keep_original_images = CheckBox(
-            label="Keep Original Images",
+            label='Keep Original Images',
             value=False,
-            tooltip="If checked, the original images will be "
-            "concatenated with the results",
+            tooltip='If checked, the original images will be '
+            'concatenated with the results',
         )
-        self.batch_button = PushButton(label="Batch Workflow")
+        self.batch_button = PushButton(label='Batch Workflow')
 
-        self._progress_bar = ProgressBar(label="Progress:")
-        self._workflow_roots = Label(label="Workflow Roots:")
+        self._progress_bar = ProgressBar(label='Progress:')
+        self._workflow_roots = Label(label='Workflow Roots:')
 
         self.extend(
             [
@@ -143,7 +142,7 @@ class WorkflowContainer(Container):
 
         for idx, root in enumerate(self.workflow.roots()):
             root = ComboBox(
-                label=f"Root {idx}: {root}",
+                label=f'Root {idx}: {root}',
                 choices=self._channel_names,
                 nullable=True,
                 value=None,
@@ -175,33 +174,36 @@ class WorkflowContainer(Container):
         root_index_list = [self._channel_names.index(r) for r in root_list]
 
         # Setting up Logging File
-        log_loc = result_dir / "workflow.log.txt"
+        log_loc = result_dir / 'workflow.log.txt'
         logger, handler = helpers.setup_logger(log_loc)
         logger.info(
-            f"""
-        Image Directory: {self.image_directory.value}
-        Result Directory: {result_dir}
-        Workflow File: {self.workflow_file.value}
-        Roots: {root_list}
-        """
+            """
+            Image Directory: %s
+            Result Directory: %s
+            Workflow File: %s
+            Roots: %s
+            """,
+            self.image_directory.value,
+            result_dir,
+            self.workflow_file.value,
+            root_list,
         )
 
-        self._progress_bar.label = f"Workflow on {len(image_files)} images"
+        self._progress_bar.label = f'Workflow on {len(image_files)} images'
         self._progress_bar.value = 0
         self._progress_bar.max = len(image_files)
 
         for idx_file, image_file in enumerate(image_files):
-            logger.info(f"Processing {idx_file+1}: {image_file.name}")
+            logger.info('Processing %d: %s', idx_file+1, image_file.name)
             img = AICSImage(image_file)
 
             root_stack = []
             # get image corresponding to each root, and set it to the workflow
             for idx, root_index in enumerate(root_index_list):
-
-                if "S" in img.dims.order:
-                    root_img = img.get_image_data("TSZYX", S=root_index)
+                if 'S' in img.dims.order:
+                    root_img = img.get_image_data('TSZYX', S=root_index)
                 else:
-                    root_img = img.get_image_data("TCZYX", C=root_index)
+                    root_img = img.get_image_data('TCZYX', C=root_index)
                 # stack the TCZYX images for later stacking with results
                 root_stack.append(root_img)
                 # squeeze the root image for workflow
@@ -220,8 +222,8 @@ class WorkflowContainer(Container):
             # transform result_stack to TCZYX
             result_stack = transforms.reshape_data(
                 data=result_stack,
-                given_dims="C" + self._squeezed_img_dims,
-                return_dims="TCZYX",
+                given_dims='C' + self._squeezed_img_dims,
+                return_dims='TCZYX',
             )
 
             # <- should I add a check for the result_stack to be a dask array?
@@ -237,8 +239,8 @@ class WorkflowContainer(Container):
 
             OmeTiffWriter.save(
                 data=result_stack,
-                uri=result_dir / (image_file.stem + ".tiff"),
-                dim_order="TCZYX",
+                uri=result_dir / (image_file.stem + '.tiff'),
+                dim_order='TCZYX',
                 channel_names=result_names,
                 physical_pixel_sizes=img.physical_pixel_sizes,
             )

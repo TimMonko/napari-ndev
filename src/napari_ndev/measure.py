@@ -1,14 +1,15 @@
+from __future__ import annotations
+
 import re
-from typing import List, Optional, Tuple, Union
 
 import numpy as np
 import pandas as pd
 from bioio_base.types import ArrayLike, PathLike
 
-from napari_ndev import PlateMapper
+from napari_ndev._plate_mapper import PlateMapper
 
 
-def _convert_to_list(arg: Union[List, ArrayLike, str, None]):
+def _convert_to_list(arg: list | ArrayLike | str | None):
     """convert any non-list arguments to lists"""
     if arg is None:
         return None
@@ -18,10 +19,10 @@ def _convert_to_list(arg: Union[List, ArrayLike, str, None]):
 
 
 def _generate_measure_dict(
-    label_images: Union[List[ArrayLike], ArrayLike],
-    label_names: Optional[Union[List[str], str]] = None,
-    intensity_images: Optional[Union[List[ArrayLike], ArrayLike]] = None,
-    intensity_names: Optional[Union[List[str], str]] = None,
+    label_images: list[ArrayLike] | ArrayLike,
+    label_names: list[str] | str | None = None,
+    intensity_images: list[ArrayLike] | ArrayLike | None = None,
+    intensity_names: list[str] | str | None = None,
 ) -> dict:
     """Generate a dictionary of label and intensity images with their names."""
     label_images = _convert_to_list(label_images)
@@ -31,17 +32,17 @@ def _generate_measure_dict(
 
     # automatically generate label and intensity names if not given
     if label_names is None:
-        label_names = [f"label_{i}" for i in range(len(label_images))]
+        label_names = [f'label_{i}' for i in range(len(label_images))]
     if intensity_names is None and intensity_images is not None:
         intensity_names = [
-            f"intensity_{i}" for i in range(len(intensity_images))
+            f'intensity_{i}' for i in range(len(intensity_images))
         ]
 
     return {
-        "label_images": label_images,
-        "label_names": label_names,
-        "intensity_images": intensity_images,
-        "intensity_names": intensity_names,
+        'label_images': label_images,
+        'label_names': label_names,
+        'intensity_images': intensity_images,
+        'intensity_names': intensity_names,
     }
 
 
@@ -66,7 +67,7 @@ def _extract_info_from_id_string(id_string: str, id_regex: dict) -> dict:
     return id_dict
 
 
-def _rename_intensity_columns(df: pd.DataFrame, intensity_names: List[str]):
+def _rename_intensity_columns(df: pd.DataFrame, intensity_names: list[str]):
     """
     Rename columns in the DataFrame to include the intensity names.
     The intensity names are appended to the end of the column name based
@@ -79,27 +80,25 @@ def _rename_intensity_columns(df: pd.DataFrame, intensity_names: List[str]):
     Returns:
     pd.DataFrame: The DataFrame with renamed columns.
     """
-    print(f"initial: {df.columns}")
 
     new_columns = []
     for col in df.columns:
-        if any(col.endswith(f"-{idx}") for idx in range(len(intensity_names))):
-            base_name, idx = col.rsplit("-", 1)
-            new_columns.append(f"{base_name}-{intensity_names[int(idx)]}")
+        if any(col.endswith(f'-{idx}') for idx in range(len(intensity_names))):
+            base_name, idx = col.rsplit('-', 1)
+            new_columns.append(f'{base_name}-{intensity_names[int(idx)]}')
         else:
             new_columns.append(col)
 
     df.columns = new_columns
 
-    print(f"renamed {df.columns}")
     return df
 
 
 def map_tx_dict_to_df_id_col(
-    tx: dict = None,
-    tx_n_well: int = None,
+    tx: dict | None = None,
+    tx_n_well: int | None = None,
     df: pd.DataFrame = None,
-    id_column: str = None,
+    id_column: str | None = None,
 ):
     """Map a dictionary of treatments to a dataframes id_column.
     This should work on either a complete dataset, or as part of an iterative
@@ -107,31 +106,31 @@ def map_tx_dict_to_df_id_col(
     if isinstance(tx_n_well, int):
         plate = PlateMapper(tx_n_well)
         plate.assign_treatments(tx)
-        tx_map = plate.plate_map.set_index("well_id").to_dict(orient="index")
+        tx_map = plate.plate_map.set_index('well_id').to_dict(orient='index')
     else:
         tx_map = tx
 
-    for id, txs in tx_map.items():
+    for identifier, txs in tx_map.items():
         for tx, condition in txs.items():
             if tx not in df.columns:
                 df[tx] = None
-            df.loc[df[id_column] == id, tx] = condition
+            df.loc[df[id_column] == identifier, tx] = condition
 
     return df
 
 
 def measure_regionprops(
-    label_images: Union[List[ArrayLike], ArrayLike],
-    label_names: Optional[Union[List[str], str]] = None,
-    intensity_images: Optional[Union[List[ArrayLike], ArrayLike]] = None,
-    intensity_names: Optional[Union[List[str], str]] = None,
-    properties: List[str] = ["area"],
-    scale: Union[Tuple[float, float], Tuple[float, float, float]] = (1, 1),
-    id_string: str = None,
-    id_regex_dict: Optional[dict] = None,
-    tx_id: Optional[str] = None,
-    tx_dict: Optional[dict] = None,
-    tx_n_well: Optional[int] = None,
+    label_images: list[ArrayLike] | ArrayLike,
+    label_names: list[str] | str | None = None,
+    intensity_images: list[ArrayLike] | ArrayLike | None = None,
+    intensity_names: list[str] | str | None = None,
+    properties: list[str] | None = None,
+    scale: tuple[float, float] | tuple[float, float, float] = (1, 1),
+    id_string: str | None = None,
+    id_regex_dict: dict | None = None,
+    tx_id: str | None = None,
+    tx_dict: dict | None = None,
+    tx_n_well: int | None = None,
     save_data_path: PathLike = None,
 ) -> pd.DataFrame:
     """Measure properties of labels with sci-kit image regionprops.
@@ -160,22 +159,24 @@ def measure_regionprops(
     """
     from skimage import measure
 
+    if properties is None:
+        properties = ['area']
     measure_dict = _generate_measure_dict(
         label_images, label_names, intensity_images, intensity_names
     )
 
     if intensity_images is not None:
-        if len(measure_dict["intensity_images"]) == 1:
-            intensity_stack = measure_dict["intensity_images"][0]
+        if len(measure_dict['intensity_images']) == 1:
+            intensity_stack = measure_dict['intensity_images'][0]
         else:
             intensity_stack = np.stack(
-                measure_dict["intensity_images"], axis=-1
+                measure_dict['intensity_images'], axis=-1
             )
     else:
         intensity_stack = None
 
     measure_props = measure.regionprops_table(
-        label_image=measure_dict["label_images"][0],
+        label_image=measure_dict['label_images'][0],
         intensity_image=intensity_stack,
         properties=properties,
         spacing=scale,
@@ -183,16 +184,14 @@ def measure_regionprops(
 
     measure_df = pd.DataFrame(measure_props)
 
-    print(f"initial: {measure_df.columns}")
 
     if intensity_names is not None:
         measure_df = _rename_intensity_columns(
-            measure_df, measure_dict["intensity_names"]
+            measure_df, measure_dict['intensity_names']
         )
 
-    print(f"renamed {measure_df.columns}")
 
-    measure_df.insert(0, "id", id_string)
+    measure_df.insert(0, 'id', id_string)
 
     if id_regex_dict is not None:
         id_dict = _extract_info_from_id_string(id_string, id_regex_dict)

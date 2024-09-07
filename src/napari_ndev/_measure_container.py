@@ -1,5 +1,7 @@
+from __future__ import annotations
+
 import ast
-from typing import TYPE_CHECKING, Tuple
+from typing import TYPE_CHECKING
 
 import numpy as np
 import pandas as pd
@@ -8,7 +10,6 @@ from magicgui.widgets import (
     ComboBox,
     Container,
     FileEdit,
-
     LineEdit,
     ProgressBar,
     PushButton,
@@ -23,8 +24,9 @@ from napari_ndev import helpers
 if TYPE_CHECKING:
     import pathlib
 
-    import napari
     from bioio import BioImage
+
+    import napari
 
 
 class MeasureContainer(Container):
@@ -32,10 +34,9 @@ class MeasureContainer(Container):
     intensity images, which can be microscopy data or other labels.
     """
 
-
     def __init__(
         self,
-        viewer: "napari.viewer.Viewer" = None,
+        viewer: napari.viewer.Viewer = None,
     ):
         super().__init__()
 
@@ -44,7 +45,7 @@ class MeasureContainer(Container):
         self._intensity_choices = []
         self._p_sizes = None
         self._squeezed_dims = None
-        self._prop = type("", (), {})()
+        self._prop = type('', (), {})()
 
         self._init_widgets()
         self._init_regionprops_container()
@@ -55,57 +56,57 @@ class MeasureContainer(Container):
         self._connect_events()
 
     def _init_widgets(self):
-        self._label_directory = FileEdit(label="Label directory", mode="d")
+        self._label_directory = FileEdit(label='Label directory', mode='d')
         self._image_directory = FileEdit(
-            label="Image directory", mode="d", nullable=True
+            label='Image directory', mode='d', nullable=True
         )
         self._region_directory = FileEdit(
-            label="Region directory", mode="d", nullable=True
+            label='Region directory', mode='d', nullable=True
         )
-        self._output_directory = FileEdit(label="Output directory", mode="d")
+        self._output_directory = FileEdit(label='Output directory', mode='d')
 
         self._label_image = ComboBox(
-            label="Label image",
+            label='Label image',
             choices=self._label_choices,
             nullable=False,
-            tooltip="Select label image to measure",
+            tooltip='Select label image to measure',
         )
         self._intensity_images = Select(
-            label="Intensity images",
+            label='Intensity images',
             choices=self._intensity_choices,
             allow_multiple=True,
             nullable=True,
-            tooltip="Select intensity images to compare against labels",
+            tooltip='Select intensity images to compare against labels',
         )
         self._scale_tuple = TupleEdit(
             value=(0.0000, 1.0000, 1.0000),
-            label="Physical Pixel Sizes, ZYX",
-            tooltip="Pixel size, usually in μm/px",
-            options={"step": 0.0001},
+            label='Physical Pixel Sizes, ZYX',
+            tooltip='Pixel size, usually in μm/px',
+            options={'step': 0.0001},
         )
-        self._measure_button = PushButton(label="Measure")
+        self._measure_button = PushButton(label='Measure')
 
-        self._progress_bar = ProgressBar(label="Progress:")
+        self._progress_bar = ProgressBar(label='Progress:')
 
     def _init_regionprops_container(self):
-        self._props_container = Container(layout="vertical")
+        self._props_container = Container(layout='vertical')
 
         self._sk_props = [
-            "area",
-            "area_convex",
-            "bbox",
-            "centroid",
-            "eccentricity",
-            "extent",
-            "feret_diameter_max",
-            "intensity_max",
-            "intensity_mean",
-            "intensity_min",
-            "intensity_std",
-            "num_pixels",
-            "orientation",
-            "perimeter",
-            "solidity",
+            'area',
+            'area_convex',
+            'bbox',
+            'centroid',
+            'eccentricity',
+            'extent',
+            'feret_diameter_max',
+            'intensity_max',
+            'intensity_mean',
+            'intensity_min',
+            'intensity_std',
+            'num_pixels',
+            'orientation',
+            'perimeter',
+            'solidity',
         ]
 
         for feature in self._sk_props:
@@ -115,38 +116,38 @@ class MeasureContainer(Container):
         self._prop.area.value = True
 
     def _init_id_regex_container(self):
-        self._id_regex_container = Container(layout="vertical")
+        self._id_regex_container = Container(layout='vertical')
         self._example_id_string = LineEdit(
-            label="Example ID String",
+            label='Example ID String',
             value=None,
             nullable=True,
         )
         self._id_regex_dict = TextEdit(
-            label="ID Regex Dict",
-            value="{\n\n}",
+            label='ID Regex Dict',
+            value='{\n\n}',
         )
         self._id_regex_container.extend(
             [self._example_id_string, self._id_regex_dict]
         )
 
     def _init_tx_map_container(self):
-        self._tx_map_container = Container(layout="vertical")
+        self._tx_map_container = Container(layout='vertical')
         self._tx_id = LineEdit(
-            label="Treatment ID",
+            label='Treatment ID',
             value=None,
             nullable=True,
-            tooltip="Usually, the treatment ID is the well ID or a unique identifier for each sample"
+            tooltip='Usually, the treatment ID is the well ID or a unique identifier for each sample'
             "The treatment dict will be looked up against whatever this value is. If it is 'file', then will match against the filename",
         )
         self._tx_n_well = ComboBox(
-            label="Number of Wells",
+            label='Number of Wells',
             value=None,
             choices=[6, 12, 24, 48, 96, 384],
             nullable=True,
-            tooltip="By default, treatments must be verbosely defined for each condition and sample id"
-            "If you have a known plate map, then selecting wells will allow a sparse treatment map to be passed to PlateMapper",
+            tooltip='By default, treatments must be verbosely defined for each condition and sample id'
+            'If you have a known plate map, then selecting wells will allow a sparse treatment map to be passed to PlateMapper',
         )
-        self._tx_dict = TextEdit(label="Treatment Dict", value="{\n\n}")
+        self._tx_dict = TextEdit(label='Treatment Dict', value='{\n\n}')
         # TODO: Add example treatment regex result widget when example id string or id regex dict is changed
 
         self._tx_map_container.extend(
@@ -154,16 +155,16 @@ class MeasureContainer(Container):
         )
 
     def _init_grouping_container(self):
-        self._grouping_container = Container(layout="vertical")
+        self._grouping_container = Container(layout='vertical')
         self._create_grouped = CheckBox(
-            label="Create Grouped Data",
+            label='Create Grouped Data',
             value=False,
-            tooltip="If checked, will create a grouped data frame with the same properties as the original data frame",
+            tooltip='If checked, will create a grouped data frame with the same properties as the original data frame',
         )
         self._group_by_sample_id = CheckBox(
-            label="Group by Sample ID",
+            label='Group by Sample ID',
             value=True,
-            tooltip="If checked, will group the data by the id_string, which is usually the filename and scene",
+            tooltip='If checked, will group the data by the id_string, which is usually the filename and scene',
         )
 
         self._grouping_container.extend(
@@ -186,10 +187,10 @@ class MeasureContainer(Container):
         )
 
         tabs = QTabWidget()
-        tabs.addTab(self._props_container.native, "Region Props")
-        tabs.addTab(self._id_regex_container.native, "ID Regex")
-        tabs.addTab(self._tx_map_container.native, "Tx Map")
-        tabs.addTab(self._grouping_container.native, "Grouping")
+        tabs.addTab(self._props_container.native, 'Region Props')
+        tabs.addTab(self._id_regex_container.native, 'ID Regex')
+        tabs.addTab(self._tx_map_container.native, 'Tx Map')
+        tabs.addTab(self._grouping_container.native, 'Grouping')
         self.native.layout().addWidget(tabs)
 
     def _connect_events(self):
@@ -199,8 +200,8 @@ class MeasureContainer(Container):
         self._measure_button.clicked.connect(self.batch_measure)
 
     def _get_0th_img_from_dir(
-        self, directory: str = None
-    ) -> Tuple["BioImage", "pathlib.Path"]:
+        self, directory: str | None = None
+    ) -> tuple[BioImage, pathlib.Path]:
         from bioio import BioImage
 
         _, files = helpers.get_directory_and_files(directory)
@@ -217,7 +218,7 @@ class MeasureContainer(Container):
     def _update_choices(self, directory, prefix, update_label=False):
         img, _ = self._get_0th_img_from_dir(directory)
         img_channels = helpers.get_channel_names(img)
-        img_channels = [f"{prefix}: {channel}" for channel in img_channels]
+        img_channels = [f'{prefix}: {channel}' for channel in img_channels]
 
         if update_label:
             self._update_dim_and_scales(img)
@@ -228,30 +229,29 @@ class MeasureContainer(Container):
         self._intensity_images.choices = self._intensity_choices
 
     def _update_image_choices(self):
-        self._update_choices(self._image_directory.value, "Intensity")
+        self._update_choices(self._image_directory.value, 'Intensity')
 
     def _update_label_choices(self):
         self._update_choices(
-            self._label_directory.value, "Labels", update_label=True
+            self._label_directory.value, 'Labels', update_label=True
         )
-        img, id = self._get_0th_img_from_dir(self._label_directory.value)
-        id_string = helpers.create_id_string(img, id.stem)
+        img, file_id = self._get_0th_img_from_dir(self._label_directory.value)
+        id_string = helpers.create_id_string(img, file_id.stem)
         self._example_id_string.value = id_string
 
     def _update_region_choices(self):
-        self._update_choices(self._region_directory.value, "Region")
+        self._update_choices(self._region_directory.value, 'Region')
 
     def _safe_dict_eval(self, dict_string, dict_name=None):
         if dict_string is None:
             return None
 
         stripped_string = dict_string.strip()
-        if stripped_string == "{}" or not stripped_string:
+        if stripped_string == '{}' or not stripped_string:
             return None
         try:
             return ast.literal_eval(stripped_string)
-        except Exception as e:
-            print(f"{e}: Invalid dict: {dict_name}")
+        except (ValueError, SyntaxError):
             return None
 
     def batch_measure(self) -> pd.DataFrame:
@@ -270,39 +270,52 @@ class MeasureContainer(Container):
         region_dir, region_files = helpers.get_directory_and_files(
             self._region_directory.value
         )
-        # check if the label files are the same as the image files
-        if self._image_directory.value is not None:
-            if len(label_files) != len(image_files):
-                raise ValueError(
-                    "Number of label files and image files do not match"
-                )
-        if self._region_directory.value is not None:
-            if len(label_files) != len(region_files):
-                raise ValueError(
-                    "Number of label files and region files do not match"
-                )
 
-        log_loc = self._output_directory.value / ".log.txt"
+        # check if the label files are the same as the image files
+        # if self._image_directory.value is not None:
+        #     if len(label_files) != len(image_files):
+        #         raise ValueError(
+        #             'Number of label files and image files do not match'
+        #         )
+        # if self._region_directory.value is not None:
+        #     if len(label_files) != len(region_files):
+        #         raise ValueError(
+        #             'Number of label files and region files do not match'
+        #         )
+
+        log_loc = self._output_directory.value / '.log.txt'
         logger, handler = helpers.setup_logger(log_loc)
 
         logger.info(
-            f"""
-        Label Image: {self._label_image.value}
-        Intensity Channels: {self._intensity_images.value}
-        Num. Files: {len(label_files)}
-        Label Directory: {label_dir}
-        Image Directory: {image_dir}
-        Region Directory: {region_dir}
-        Output Directory: {self._output_directory.value}
-        ID Example: {self._example_id_string.value}
-        ID Regex Dict: {self._id_regex_dict.value}
-        Tx ID: {self._tx_id.value}
-        Tx N Well: {self._tx_n_well.value}
-        Tx Dict: {self._tx_dict.value}
-        """
+            """
+            Label Image: %s
+            Intensity Channels: %s
+            Num. Files: %d
+            Label Directory: %s
+            Image Directory: %s
+            Region Directory: %s
+            Output Directory: %s
+            ID Example: %s
+            ID Regex Dict: %s
+            Tx ID: %s
+            Tx N Well: %s
+            Tx Dict: %s
+            """,
+            self._label_image.value,
+            self._intensity_images.value,
+            len(label_files),
+            label_dir,
+            image_dir,
+            region_dir,
+            self._output_directory.value,
+            self._example_id_string.value,
+            self._id_regex_dict.value,
+            self._tx_id.value,
+            self._tx_n_well.value,
+            self._tx_dict.value
         )
 
-        self._progress_bar.label = f"Measuring {len(label_files)} Images"
+        self._progress_bar.label = f'Measuring {len(label_files)} Images'
         self._progress_bar.value = 0
         self._progress_bar.max = len(label_files)
         # get the relevant spacing for regionprops, depending on length
@@ -314,14 +327,14 @@ class MeasureContainer(Container):
         ]
 
         id_regex_dict = self._safe_dict_eval(
-            self._id_regex_dict.value, "ID Regex Dict"
+            self._id_regex_dict.value, 'ID Regex Dict'
         )
-        tx_dict = self._safe_dict_eval(self._tx_dict.value, "Tx Dict")
+        tx_dict = self._safe_dict_eval(self._tx_dict.value, 'Tx Dict')
         measure_props_concat = []
 
         for idx, file in enumerate(label_files):
             # TODO: Add scene processing
-            logger.info(f"Processing file {file.name}")
+            logger.info('Processing file %s', file.name)
             lbl = BioImage(label_dir / file.name)
             id_string = helpers.create_id_string(lbl, file.stem)
 
@@ -336,7 +349,7 @@ class MeasureContainer(Container):
                 image_path = image_dir / file.name
                 if not image_path.exists():
                     logger.error(
-                        f"Image file {file.name} not found in intensity directory"
+                        'Image file %s not found in intensity directory', file.name
                     )
                     self._progress_bar.value = idx + 1
                     continue
@@ -345,14 +358,14 @@ class MeasureContainer(Container):
                 region_path = region_dir / file.name
                 if not region_path.exists():
                     logger.error(
-                        f"Region file {file.name} not found in region directory"
+                        'Region file %s not found in region directory', file.name
                     )
                     self._progress_bar.value = idx + 1
                     continue
                 reg = BioImage(region_path)
 
-            for scene_idx, scene in enumerate(lbl.scenes):
-                logger.info(f"Processing scene {scene_idx}")
+            for scene_idx, _scene in enumerate(lbl.scenes):
+                logger.info('Processing scene %s', scene_idx)
                 lbl.set_scene(scene_idx)
                 label = lbl.get_image_data(self._squeezed_dims, C=lbl_C)
                 id_string = helpers.create_id_string(lbl, file.stem)
@@ -360,21 +373,21 @@ class MeasureContainer(Container):
                 # Get stack of intensity images if there are any selected
                 if self._intensity_images.value and not None:
                     for channel in self._intensity_images.value:
-                        if channel.startswith("Labels: "):
+                        if channel.startswith('Labels: '):
                             chan = channel[8:]
                             lbl_C = lbl.channel_names.index(chan)
                             lbl.set_scene(scene_idx)
                             chan_img = lbl.get_image_data(
                                 self._squeezed_dims, C=lbl_C
                             )
-                        elif channel.startswith("Intensity: "):
+                        elif channel.startswith('Intensity: '):
                             chan = channel[11:]
                             img_C = img.channel_names.index(chan)
                             img.set_scene(scene_idx)
                             chan_img = img.get_image_data(
                                 self._squeezed_dims, C=img_C
                             )
-                        elif channel.startswith("Region: "):
+                        elif channel.startswith('Region: '):
                             chan = channel[8:]
                             reg_C = reg.channel_names.index(chan)
                             img.set_scene(scene_idx)
@@ -413,26 +426,25 @@ class MeasureContainer(Container):
 
         measure_props_df = pd.concat(measure_props_concat)
         measure_props_df.to_csv(
-            self._output_directory.value / f"measure_props_{label_chan}.csv"
+            self._output_directory.value / f'measure_props_{label_chan}.csv'
         )
 
         if self._create_grouped.value:
             if self._group_by_sample_id.value:
-
                 # get count data
                 measure_props_count = (
-                    measure_props_df.groupby("id")
-                    .agg({measure_props_df.columns[0]: "count"})
+                    measure_props_df.groupby('id')
+                    .agg({measure_props_df.columns[0]: 'count'})
                     .rename(
-                        columns={measure_props_df.columns[0]: "label_count"}
+                        columns={measure_props_df.columns[0]: 'label_count'}
                     )
                     .reset_index(drop=True)
                 )
                 measure_props_grouped = (
-                    measure_props_df.groupby("id")  # sw
+                    measure_props_df.groupby('id')  # sw
                     .agg(
                         {
-                            col: ["mean", "std"]
+                            col: ['mean', 'std']
                             for col in measure_props_df.columns[1:]
                         }
                     )
@@ -440,7 +452,7 @@ class MeasureContainer(Container):
                 )  # genereates a multi-index
                 # collapse multi index and combine columns names with '_' sep
                 measure_props_grouped.columns = [
-                    f"{col[0]}_{col[1]}" if col[1] else col[0]
+                    f'{col[0]}_{col[1]}' if col[1] else col[0]
                     for col in measure_props_grouped.columns
                 ]
 
@@ -450,7 +462,7 @@ class MeasureContainer(Container):
 
             measure_props_grouped.to_csv(
                 self._output_directory.value
-                / f"measure_props_grouped_{label_chan}.csv"
+                / f'measure_props_grouped_{label_chan}.csv'
             )
         else:
             measure_props_grouped = None
