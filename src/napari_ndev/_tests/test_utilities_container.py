@@ -40,15 +40,15 @@ labels_4d = np.array(
 
 @pytest.fixture(
     params=[
-        (image_2d, shapes_2d, labels_2d, "YX"),
-        (image_4d, shapes_4d, labels_4d, "TZYX"),
+        (image_2d, shapes_2d, labels_2d, 'YX'),
+        (image_4d, shapes_4d, labels_4d, 'TZYX'),
     ]
 )
 def test_data(request: pytest.FixtureRequest):
     return request.param
 
 
-@pytest.mark.parametrize("image_layer", [True, False])
+@pytest.mark.parametrize('image_layer', [True, False])
 def test_save_shapes_as_labels(
     make_napari_viewer, tmp_path: Path, test_data, image_layer: bool
 ):
@@ -59,18 +59,18 @@ def test_save_shapes_as_labels(
     viewer.add_shapes(test_shape)
     container = UtilitiesContainer(viewer)
 
-    container._viewer.layers.selection.active = viewer.layers["test_shape"]
+    container._viewer.layers.selection.active = viewer.layers['test_shape']
     container._squeezed_dims = test_dims
     container._save_directory.value = tmp_path
-    container._save_name.value = "test.tiff"
+    container._save_name.value = 'test.tiff'
 
     shapes_as_labels = container.save_shapes_as_labels()
 
-    expected_save_loc = tmp_path / "ShapesAsLabels" / "test.tiff"
+    expected_save_loc = tmp_path / 'ShapesAsLabels' / 'test.tiff'
     assert expected_save_loc.exists()
     assert shapes_as_labels.shape == test_image.shape
     assert np.array_equal(shapes_as_labels, test_labels)
-    assert AICSImage(expected_save_loc).channel_names == ["Shapes"]
+    assert AICSImage(expected_save_loc).channel_names == ['Shapes']
 
 
 def test_save_labels(make_napari_viewer, tmp_path: Path, test_data):
@@ -80,19 +80,19 @@ def test_save_labels(make_napari_viewer, tmp_path: Path, test_data):
     viewer.add_labels(
         test_labels
     )  # <- should add a way to specify this is the selected layer in the viewer
-    viewer.layers.selection.active = viewer.layers["test_labels"]
+    viewer.layers.selection.active = viewer.layers['test_labels']
     container = UtilitiesContainer(viewer)
 
     container._squeezed_dims = test_dims
     container._save_directory.value = tmp_path
-    container._save_name.value = "test.tiff"
+    container._save_name.value = 'test.tiff'
 
     labels = container.save_labels()
 
-    expected_save_loc = tmp_path / "Labels" / "test.tiff"
+    expected_save_loc = tmp_path / 'Labels' / 'test.tiff'
     assert expected_save_loc.exists()
     assert np.array_equal(labels, test_labels)
-    assert AICSImage(expected_save_loc).channel_names == ["Labels"]
+    assert AICSImage(expected_save_loc).channel_names == ['Labels']
 
 
 def test_save_ome_tiff(make_napari_viewer, test_data, tmp_path: Path):
@@ -103,14 +103,14 @@ def test_save_ome_tiff(make_napari_viewer, test_data, tmp_path: Path):
 
     container._concatenate_image_files.value = False
     container._concatenate_image_layers.value = True
-    container._viewer.layers.selection.active = viewer.layers["test_image"]
-    container._channel_names.value = ["0"]
+    container._viewer.layers.selection.active = viewer.layers['test_image']
+    container._channel_names.value = ['0']
     container._save_directory.value = tmp_path
-    container._save_name.value = "test.tiff"
+    container._save_name.value = 'test.tiff'
 
     container.save_ome_tiff()
 
-    expected_save_loc = tmp_path / "Images" / "test.tiff"
+    expected_save_loc = tmp_path / 'Images' / 'test.tiff'
     assert expected_save_loc.exists()
     assert len(container._img_data.shape) == 5
 
@@ -118,7 +118,7 @@ def test_save_ome_tiff(make_napari_viewer, test_data, tmp_path: Path):
 @pytest.fixture
 def test_rgb_image():
     path = os.path.join(
-        "src", "napari_ndev", "_tests", "resources", "RGB.tiff"
+        'src', 'napari_ndev', '_tests', 'resources', 'RGB.tiff'
     )
     img = AICSImage(path)
     return path, img
@@ -132,9 +132,9 @@ def test_update_metadata_from_file(make_napari_viewer, test_rgb_image):
     container._files.value = path
     container.update_metadata_from_file()
 
-    assert container._save_name.value == "RGB.tiff"
-    assert container._img.dims.order == "TCZYXS"
-    assert container._squeezed_dims == "YX"
+    assert container._save_name.value == 'RGB.tiff'
+    assert container._img.dims.order == 'TCZYXS'
+    assert container._squeezed_dims == 'YX'
     assert container._channel_names.value == "['red', 'green', 'blue']"
 
 
@@ -144,12 +144,12 @@ def test_update_metadata_from_layer(make_napari_viewer, test_data):
     viewer.add_image(test_image, scale=(2, 3))
     container = UtilitiesContainer(viewer)
 
-    container._viewer.layers.selection.active = viewer.layers["test_image"]
+    container._viewer.layers.selection.active = viewer.layers['test_image']
     container.update_metadata_from_layer()
 
     assert container._results.value == (
-        "Tried to update metadata, but could only update scale"
-        " because layer not opened with aicsimageio"
+        'Tried to update metadata, but could only update scale'
+        ' because layer not opened with aicsimageio'
     )
     assert container._scale_tuple.value == (1, 2, 3)
 

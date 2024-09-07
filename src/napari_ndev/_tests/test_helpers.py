@@ -22,13 +22,13 @@ from napari_ndev.helpers import (
 
 def test_check_for_missing_files_path(tmp_path):
     # Create a directory and some files
-    directory = Path(tmp_path / "test_dir")
+    directory = Path(tmp_path / 'test_dir')
     directory.mkdir()
-    file1 = directory / "file1.txt"
-    file1.write_text("This is a test file.")
-    file2 = directory / "file2.txt"
-    file2.write_text("This is another test file.")
-    file3 = directory / "file3.txt"
+    file1 = directory / 'file1.txt'
+    file1.write_text('This is a test file.')
+    file2 = directory / 'file2.txt'
+    file2.write_text('This is another test file.')
+    file3 = directory / 'file3.txt'
 
     # Check for missing files
     missing_files = check_for_missing_files([file1, file2], directory)
@@ -36,102 +36,102 @@ def test_check_for_missing_files_path(tmp_path):
 
     # Check for missing files
     missing_files = check_for_missing_files([file1, file3], directory)
-    assert missing_files == [("file3.txt", "test_dir")]
+    assert missing_files == [('file3.txt', 'test_dir')]
 
 
 def test_check_for_missing_file_str(tmp_path):
     # Create a directory and some files
-    directory = tmp_path / "test_dir"
+    directory = tmp_path / 'test_dir'
     directory.mkdir()
-    file1 = directory / "file1.txt"
-    file1.write_text("This is a test file.")
-    file2 = directory / "file2.txt"
-    file2.write_text("This is another test file.")
+    file1 = directory / 'file1.txt'
+    file1.write_text('This is a test file.')
+    file2 = directory / 'file2.txt'
+    file2.write_text('This is another test file.')
 
     # Check for missing files
     missing_files = check_for_missing_files(
-        ["file1.txt", "file2.txt"], directory
+        ['file1.txt', 'file2.txt'], directory
     )
     assert missing_files == []
 
     # Check for missing files
     missing_files = check_for_missing_files(
-        ["file1.txt", "file3.txt"], directory
+        ['file1.txt', 'file3.txt'], directory
     )
-    assert missing_files == [("file3.txt", "test_dir")]
+    assert missing_files == [('file3.txt', 'test_dir')]
 
 
 def test_create_id_string():
     img = BioImage(np.random.random((2, 2)))
-    id = "test_id"
-    id_string = create_id_string(img, id)
-    assert id_string == "test_id__0__Image:0"
+    identifier = 'test_id'
+    id_string = create_id_string(img, identifier)
+    assert id_string == 'test_id__0__Image:0'
 
 
 def test_create_id_string_no_id():
     img = BioImage(np.random.random((2, 2)))
-    id = None
-    id_string = create_id_string(img, id)
-    assert id_string == "None__0__Image:0"
+    identifier = None
+    id_string = create_id_string(img, identifier)
+    assert id_string == 'None__0__Image:0'
 
 
 def test_create_id_string_ome_metadata_no_name():
     file = Path(
-        "./src/napari_ndev/_tests/resources/Workflow/Images/cells3d2ch.tiff"
+        './src/napari_ndev/_tests/resources/Workflow/Images/cells3d2ch.tiff'
     )
     img = BioImage(file)
 
-    id = file.stem
-    id_string = create_id_string(img, id)
+    identifier = file.stem
+    id_string = create_id_string(img, identifier)
     assert (
-        img._plugin.entrypoint.name == "bioio-ome-tiff"
+        img._plugin.entrypoint.name == 'bioio-ome-tiff'
     )  # this has no ome_metadata.images.name
     assert img.ome_metadata.images[0].name is None
-    assert img.channel_names == ["membrane", "nuclei"]
-    assert id_string == "cells3d2ch__0__Image:0"
+    assert img.channel_names == ['membrane', 'nuclei']
+    assert id_string == 'cells3d2ch__0__Image:0'
 
 
 def test_create_id_string_ometiffwriter_name(tmp_path):
     OmeTiffWriter.save(
         data=np.random.random((2, 2)),
-        uri=tmp_path / "test.tiff",
-        image_name="test_image",
+        uri=tmp_path / 'test.tiff',
+        image_name='test_image',
     )
 
-    img = BioImage(tmp_path / "test.tiff")
-    id = "test_id"
+    img = BioImage(tmp_path / 'test.tiff')
+    identifier = 'test_id'
 
-    id_string = create_id_string(img, id)
-    assert img.current_scene == "Image:0"
-    assert id_string == "test_id__0__test_image"
+    id_string = create_id_string(img, identifier)
+    assert img.current_scene == 'Image:0'
+    assert id_string == 'test_id__0__test_image'
 
 
 def test_get_channel_names_CYX():
     file = Path(
-        r"./src/napari_ndev/_tests/resources/Workflow/Images/cells3d2ch.tiff"
+        r'./src/napari_ndev/_tests/resources/Workflow/Images/cells3d2ch.tiff'
     )
     img = BioImage(file)
     assert get_channel_names(img) == img.channel_names
 
 
 def test_get_channel_names_RGB():
-    file = Path(r"./src/napari_ndev/_tests/resources/RGB.tiff")
+    file = Path(r'./src/napari_ndev/_tests/resources/RGB.tiff')
     img = AICSImage(file)
-    assert get_channel_names(img) == ["red", "green", "blue"]
+    assert get_channel_names(img) == ['red', 'green', 'blue']
 
 
 def test_get_directory_and_files_default_pattern():
-    directory = Path(r"./src/napari_ndev/_tests/resources/test_czis")
+    directory = Path(r'./src/napari_ndev/_tests/resources/test_czis')
     directory, files = get_directory_and_files(directory)
-    assert directory == Path(r"./src/napari_ndev/_tests/resources/test_czis")
-    assert files == [f for f in directory.glob("*")]
+    assert directory == Path(r'./src/napari_ndev/_tests/resources/test_czis')
+    assert files == list(directory.glob('*'))
 
 
 def test_get_directory_and_files_custom_pattern():
-    directory = Path(r"./src/napari_ndev/_tests/resources/test_czis")
-    directory, files = get_directory_and_files(directory, pattern=".czi")
-    assert directory == Path(r"./src/napari_ndev/_tests/resources/test_czis")
-    assert files == [f for f in directory.glob("*.czi")]
+    directory = Path(r'./src/napari_ndev/_tests/resources/test_czis')
+    directory, files = get_directory_and_files(directory, pattern='.czi')
+    assert directory == Path(r'./src/napari_ndev/_tests/resources/test_czis')
+    assert files == list(directory.glob('*.czi'))
 
 
 def test_get_directory_and_files_none_dir():
@@ -142,7 +142,7 @@ def test_get_directory_and_files_none_dir():
 
 def test_get_directory_and_files_dir_not_exists():
     directory = Path(
-        r"./src/napari_ndev/_tests/resources/test_czis_not_exists"
+        r'./src/napari_ndev/_tests/resources/test_czis_not_exists'
     )
     with pytest.raises(FileNotFoundError):
         get_directory_and_files(directory)
@@ -150,16 +150,16 @@ def test_get_directory_and_files_dir_not_exists():
 
 def test_get_squeezed_dim_order_ZYX():
     file = Path(
-        r"./src/napari_ndev/_tests/resources/Workflow/Images/cells3d2ch.tiff"
+        r'./src/napari_ndev/_tests/resources/Workflow/Images/cells3d2ch.tiff'
     )
     img = BioImage(file)
-    assert get_squeezed_dim_order(img) == "ZYX"
+    assert get_squeezed_dim_order(img) == 'ZYX'
 
 
 def test_get_squeezed_dim_order_RGB():
-    file = Path(r"./src/napari_ndev/_tests/resources/RGB.tiff")
+    file = Path(r'./src/napari_ndev/_tests/resources/RGB.tiff')
     img = AICSImage(file)
-    assert get_squeezed_dim_order(img) == "YX"
+    assert get_squeezed_dim_order(img) == 'YX'
 
 
 def test_setup_logger():
@@ -185,7 +185,7 @@ def test_setup_logger():
         # Check that the formatter is set up correctly
         formatter = handler.formatter
         assert isinstance(formatter, logging.Formatter)
-        assert formatter._fmt == "%(asctime)s - %(message)s"
+        assert formatter._fmt == '%(asctime)s - %(message)s'
 
     finally:
         # remove the handler and close it
