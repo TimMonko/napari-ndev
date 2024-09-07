@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 import os
 import re
 from enum import Enum
@@ -19,10 +21,10 @@ from magicgui.widgets import (
     SpinBox,
     Table,
 )
-from napari import layers
 from pyclesperanto_prototype import set_wait_for_kernel_finish
 from qtpy.QtWidgets import QTabWidget
 
+from napari import layers
 from napari_ndev import helpers
 
 if TYPE_CHECKING:
@@ -154,11 +156,10 @@ class ApocContainer(Container):
 
     def __init__(
         self,
-        viewer: "napari.viewer.Viewer" = None,
+        viewer: napari.viewer.Viewer = None,
         # viewer = napari_viewer
     ):
         super().__init__()
-        self
         self._viewer = viewer if viewer is not None else None
         self._lazy_imports()
         self._initialize_widgets()
@@ -181,88 +182,88 @@ class ApocContainer(Container):
 
     def _initialize_widgets(self):
         self._classifier_file = FileEdit(
-            label="Classifier File (.cl)",
-            mode="r",
-            tooltip="Create a .txt file and rename it to .cl ending.",
+            label='Classifier File (.cl)',
+            mode='r',
+            tooltip='Create a .txt file and rename it to .cl ending.',
         )
 
         self._continue_training = CheckBox(
-            label="Continue Training?",
+            label='Continue Training?',
             value=True,
             tooltip=(
-                "Continue training only matters if classifier already exists."
+                'Continue training only matters if classifier already exists.'
             ),
         )
 
         self._classifier_type_mapping = {
-            "PixelClassifier": self.apoc.PixelClassifier,
-            "ObjectSegmenter": self.apoc.ObjectSegmenter,
+            'PixelClassifier': self.apoc.PixelClassifier,
+            'ObjectSegmenter': self.apoc.ObjectSegmenter,
         }
 
         self._classifier_type = RadioButtons(
-            label="Classifier Type",
-            value="ObjectSegmenter",
-            choices=["ObjectSegmenter", "PixelClassifier"],
-            tooltip="Object Segmenter is used for detecting objects of one "
-            "class, including connected components. "
-            "Pixel Classifier is used to classify pixel-types.",
+            label='Classifier Type',
+            value='ObjectSegmenter',
+            choices=['ObjectSegmenter', 'PixelClassifier'],
+            tooltip='Object Segmenter is used for detecting objects of one '
+            'class, including connected components. '
+            'Pixel Classifier is used to classify pixel-types.',
         )
         self._max_depth = SpinBox(
-            label="Num. of Forests",
+            label='Num. of Forests',
             value=2,
             max=20,
             step=1,
-            tooltip="Increases training time for each forest",
+            tooltip='Increases training time for each forest',
         )
         self._num_trees = SpinBox(
-            label="Num. of Trees",
+            label='Num. of Trees',
             value=100,
             step=50,
-            tooltip="Increases computational requirements.",
+            tooltip='Increases computational requirements.',
         )
         self._positive_class_id = SpinBox(
-            label="Object Label ID",
+            label='Object Label ID',
             value=2,
             step=1,
-            tooltip="Only used with ObjectSegmenter, otherwise ignored.",
+            tooltip='Only used with ObjectSegmenter, otherwise ignored.',
         )
 
         self._PDFS = Enum(
-            "PDFS", self.apoc.PredefinedFeatureSet._member_names_
+            'PDFS', self.apoc.PredefinedFeatureSet._member_names_
         )
         self._predefined_features = ComboBox(
-            label="Features",
+            label='Features',
             choices=self._PDFS,
             nullable=True,
             value=None,
             tooltip="All featuresets except 'custom' are premade",
         )
         self._feature_string = LineEdit(
-            label="Feature String",
+            label='Feature String',
             tooltip=(
-                "A string in the form of " "'filter1=radius1 filter2=radius2'."
+                'A string in the form of ' "'filter1=radius1 filter2=radius2'."
             ),
         )
 
     def _initialize_batch_container(self):
-        self._image_directory = FileEdit(label="Image Directory", mode="d")
-        self._label_directory = FileEdit(label="Label Directory", mode="d")
-        self._output_directory = FileEdit(label="Output Directory", mode="d")
+        self._image_directory = FileEdit(label='Image Directory', mode='d')
+        self._label_directory = FileEdit(label='Label Directory', mode='d')
+        self._output_directory = FileEdit(label='Output Directory', mode='d')
 
         self._image_channels = Select(
-            label="Image Channels",
+            label='Image Channels',
             choices=[],
             tooltip=(
-                "Channel order should be same for training and prediction."
+                'Channel order should be same for training and prediction.'
             ),
         )
-        self._channel_order_label = Label(value="Select an Image Channel!")
+        self._channel_order_label = Label(value='Select an Image Channel!')
 
-        self._batch_train_button = PushButton(label="Train")
-        self._batch_predict_button = PushButton(label="Predict")
+        self._batch_train_button = PushButton(label='Train')
+        self._batch_predict_button = PushButton(label='Predict')
 
         self._batch_train_container = Container(
-            layout="horizontal",
+            layout='horizontal',
             # label="Train Classifier on Image-Label Pairs",
         )
         self._batch_train_container.extend(
@@ -270,16 +271,16 @@ class ApocContainer(Container):
         )
 
         self._batch_predict_container = Container(
-            layout="horizontal",
+            layout='horizontal',
             # label="Predict Labels with Classifier on Images"
         )
         self._batch_predict_container.extend(
             [self._output_directory, self._batch_predict_button]
         )
 
-        self._progress_bar = ProgressBar(label="Progress:")
+        self._progress_bar = ProgressBar(label='Progress:')
 
-        self._batch_container = Container(layout="vertical")
+        self._batch_container = Container(layout='vertical')
         self._batch_container.extend(
             [
                 self._image_directory,
@@ -294,21 +295,21 @@ class ApocContainer(Container):
     def _initialize_viewer_container(self):
         self._image_layers = Select(
             choices=self._filter_layers(layers.Image),
-            label="Image Layers",
+            label='Image Layers',
         )
         self._label_layer = ComboBox(
             choices=self._filter_layers(layers.Labels),
-            label="Label Layer",
+            label='Label Layer',
         )
         self._train_image_button = PushButton(
-            label="Train classifier on selected layers using label"
+            label='Train classifier on selected layers using label'
         )
         self._predict_image_layer = PushButton(
-            label="Predict using classifier on selected layers"
+            label='Predict using classifier on selected layers'
         )
         self._single_result_label = Label()
 
-        self._viewer_container = Container(layout="vertical")
+        self._viewer_container = Container(layout='vertical')
         self._viewer_container.extend(
             [
                 self._image_layers,
@@ -340,9 +341,9 @@ class ApocContainer(Container):
         )
 
         tabs = QTabWidget()
-        tabs.addTab(self._batch_container.native, "Batch")
-        tabs.addTab(self._viewer_container.native, "Viewer")
-        tabs.addTab(self._custom_apoc_container.native, "Custom Feature Set")
+        tabs.addTab(self._batch_container.native, 'Batch')
+        tabs.addTab(self._viewer_container.native, 'Viewer')
+        tabs.addTab(self._custom_apoc_container.native, 'Custom Feature Set')
         self.native.layout().addWidget(tabs)
 
     def _connect_events(self):
@@ -381,7 +382,7 @@ class ApocContainer(Container):
         self._image_channels.choices = helpers.get_channel_names(img)
 
     def _update_channel_order(self):
-        self._channel_order_label.value = "Selected Channel Order: " + str(
+        self._channel_order_label.value = 'Selected Channel Order: ' + str(
             self._image_channels.value
         )
 
@@ -394,17 +395,17 @@ class ApocContainer(Container):
 
     def _process_classifier_metadata(self, content):
         self._classifier_type.value = self._set_value_from_pattern(
-            r"classifier_class_name\s*=\s*([^\n]+)", content
+            r'classifier_class_name\s*=\s*([^\n]+)', content
         )
         self._max_depth.value = self._set_value_from_pattern(
-            r"max_depth\s*=\s*(\d+)", content
+            r'max_depth\s*=\s*(\d+)', content
         )
         self._num_trees.value = self._set_value_from_pattern(
-            r"num_trees\s*=\s*(\d+)", content
+            r'num_trees\s*=\s*(\d+)', content
         )
         self._positive_class_id.value = (
             self._set_value_from_pattern(
-                r"positive_class_identifier\s*=\s*(\d+)", content
+                r'positive_class_identifier\s*=\s*(\d+)', content
             )
             or 2
         )
@@ -434,14 +435,14 @@ class ApocContainer(Container):
     def _classifier_statistics_table(self, custom_classifier):
         table, _ = custom_classifier.statistics()
 
-        trans_table = {"filter_name": [], "radius": []}
+        trans_table = {'filter_name': [], 'radius': []}
 
-        for value in table.keys():
+        for value in table:
             filter_name, radius = (
-                value.split("=") if "=" in value else (value, 0)
+                value.split('=') if '=' in value else (value, 0)
             )
-            trans_table["filter_name"].append(filter_name)
-            trans_table["radius"].append(int(radius))
+            trans_table['filter_name'].append(filter_name)
+            trans_table['radius'].append(int(radius))
 
         for i in range(len(next(iter(table.values())))):
             trans_table[str(i)] = [round(table[key][i], 2) for key in table]
@@ -455,7 +456,7 @@ class ApocContainer(Container):
 
     def _get_feature_set(self):
         if self._predefined_features.value.value == 1:
-            feature_set = ""
+            feature_set = ''
         else:
             feature_set = self.apoc.PredefinedFeatureSet[
                 self._predefined_features.value.name
@@ -467,29 +468,30 @@ class ApocContainer(Container):
         return feature_set
 
     def _get_training_classifier_instance(self):
-        if self._classifier_type.value == "PixelClassifier":
+        if self._classifier_type.value == 'PixelClassifier':
             return self.apoc.PixelClassifier(
                 opencl_filename=self._classifier_file.value,
                 max_depth=self._max_depth.value,
                 num_ensembles=self._num_trees.value,
             )
 
-        if self._classifier_type.value == "ObjectSegmenter":
+        if self._classifier_type.value == 'ObjectSegmenter':
             return self.apoc.ObjectSegmenter(
                 opencl_filename=self._classifier_file.value,
                 positive_class_identifier=self._positive_class_id.value,
                 max_depth=self._max_depth.value,
                 num_ensembles=self._num_trees.value,
             )
+        return None
 
     ##############################
     # Training and Prediction
     ##############################
     def _get_channel_image(self, img, channel_index_list):
-        if "S" in img.dims.order:
-            channel_img = img.get_image_data("TSZYX", S=channel_index_list)
+        if 'S' in img.dims.order:
+            channel_img = img.get_image_data('TSZYX', S=channel_index_list)
         else:
-            channel_img = img.get_image_data("TCZYX", C=channel_index_list)
+            channel_img = img.get_image_data('TCZYX', C=channel_index_list)
         return channel_img
 
     def batch_train(self):
@@ -503,23 +505,28 @@ class ApocContainer(Container):
         )
         # missing_files = check_for_missing_files(image_files, label_directory)
 
-        log_loc = self._classifier_file.value.with_suffix(".log.txt")
+        log_loc = self._classifier_file.value.with_suffix('.log.txt')
         logger, handler = helpers.setup_logger(log_loc)
 
         logger.info(
-            f"""
-        Classifier: {self._classifier_file.value}
-        Channels: {self._image_channels.value}
-        Num. Files: {len(image_files)}
-        Image Directory: {image_directory}
-        Label Directory: {label_directory}
         """
-        )
+        Classifier: %s
+        Channels: %s
+        Num. Files: %d
+        Image Directory: %s
+        Label Directory: %s
+        """,
+        self._classifier_file.value,
+        self._image_channels.value,
+        len(image_files),
+        image_directory,
+        label_directory
+    )
 
         # https://github.com/clEsperanto/pyclesperanto_prototype/issues/163
         set_wait_for_kernel_finish(True)
 
-        self._progress_bar.label = f"Training on {len(image_files)} Images"
+        self._progress_bar.label = f'Training on %s {len(image_files)} Images'
         self._progress_bar.value = 0
         self._progress_bar.max = len(image_files)
 
@@ -542,17 +549,17 @@ class ApocContainer(Container):
         # same workflow.
         for idx, image_file in enumerate(image_files):
             if not (label_directory / image_file.name).exists():
-                logger.error(f"Label file missing for {image_file.name}")
+                logger.error('Label file missing for %s', image_file.name)
                 self._progress_bar.value = idx + 1
                 continue
 
-            logger.info(f"Training Image {idx+1}: {image_file.name}")
+            logger.info('Training Image %d: %s', idx+1, image_file.name)
 
             img = AICSImage(image_directory / image_file.name)
             channel_img = self._get_channel_image(img, channel_index_list)
 
             lbl = AICSImage(label_directory / image_file.name)
-            label = lbl.get_image_data("TCZYX", C=0)
+            label = lbl.get_image_data('TCZYX', C=0)
 
             # <- this is where setting up dask processing would be useful
 
@@ -564,13 +571,13 @@ class ApocContainer(Container):
                     continue_training=True,
                 )
                 self._progress_bar.value = idx + 1
-            except Exception as e:
-                logger.error(f"Error training {image_file}: {e}")
+            except Exception:
+                logger.exception('Error training %s', image_file)
                 self._progress_bar.value = idx + 1
                 continue
 
         self._classifier_statistics_table(custom_classifier)
-        self._progress_bar.label = f"Trained on {len(image_files)} Images"
+        self._progress_bar.label = f'Trained on {len(image_files)} Images'
         logger.removeHandler(handler)
 
     def _get_prediction_classifier_instance(self):
@@ -581,33 +588,38 @@ class ApocContainer(Container):
             return classifier_class(
                 opencl_filename=self._classifier_file.value
             )
-        else:
-            return None
+        return None
 
     def batch_predict(self):
         from aicsimageio import AICSImage
         from aicsimageio.writers import OmeTiffWriter
 
         image_directory, image_files = helpers.get_directory_and_files(
-            dir=self._image_directory.value,
+            dir_path=self._image_directory.value,
         )
 
-        log_loc = self._output_directory.value / "log.txt"
+        log_loc = self._output_directory.value / 'log.txt'
         logger, handler = helpers.setup_logger(log_loc)
 
         logger.info(
-            f"""
-        Classifier: {self._classifier_file.value}
-        Channels: {self._image_channels.value}
-        Num. Files: {len(image_files)}
-        Image Directory: {image_directory}
-        Output Directory: {self._output_directory.value}"""
-        )
+        """
+        Classifier: %s
+        Channels: %s
+        Num. Files: %d
+        Image Directory: %s
+        Output Directory: %s
+        """,
+        self._classifier_file.value,
+        self._image_channels.value,
+        len(image_files),
+        image_directory,
+        self._output_directory.value
+    )
 
         # https://github.com/clEsperanto/pyclesperanto_prototype/issues/163
         set_wait_for_kernel_finish(True)
 
-        self._progress_bar.label = f"Predicting {len(image_files)} Images"
+        self._progress_bar.label = f'Predicting {len(image_files)} Images'
         self._progress_bar.value = 0
         self._progress_bar.max = len(image_files)
 
@@ -619,7 +631,7 @@ class ApocContainer(Container):
         ]
 
         for idx, file in enumerate(image_files):
-            logger.info(f"Predicting Image {idx+1}: {file.name}")
+            logger.info('Predicting Image %d: %s', idx+1, file.name)
 
             img = AICSImage(file)
             channel_img = self._get_channel_image(img, channel_index_list)
@@ -631,8 +643,8 @@ class ApocContainer(Container):
                 result = custom_classifier.predict(
                     image=np.squeeze(channel_img)
                 )
-            except Exception as e:
-                logger.error(f"Error predicting {file}: {e}")
+            except Exception:
+                logger.exception('Error predicting %s', file)
                 self._progress_bar.value = idx + 1
                 continue
 
@@ -644,23 +656,23 @@ class ApocContainer(Container):
 
             OmeTiffWriter.save(
                 data=save_data,
-                uri=self._output_directory.value / (file.stem + ".tiff"),
+                uri=self._output_directory.value / (file.stem + '.tiff'),
                 dim_order=squeezed_dim_order,
-                channel_names=["Labels"],
+                channel_names=['Labels'],
                 physical_pixel_sizes=img.physical_pixel_sizes,
             )
             del result
 
             self._progress_bar.value = idx + 1
 
-        self._progress_bar.label = f"Predicted {len(image_files)} Images"
+        self._progress_bar.label = f'Predicted {len(image_files)} Images'
         logger.removeHandler(handler)
 
     def image_train(self):
         image_names = [image.name for image in self._image_layers.value]
         label_name = self._label_layer.value.name
         self._single_result_label.value = (
-            f"Training on {image_names} using {label_name}"
+            f'Training on {image_names} using {label_name}'
         )
 
         image_list = [image.data for image in self._image_layers.value]
@@ -684,7 +696,7 @@ class ApocContainer(Container):
         )
 
         self._single_result_label.value = (
-            f"Trained on {image_names} using {label_name}"
+            f'Trained on {image_names} using {label_name}'
         )
 
     def image_predict(self):
@@ -693,7 +705,7 @@ class ApocContainer(Container):
         )  # https://github.com/clEsperanto/pyclesperanto_prototype/issues/163
 
         image_names = [image.name for image in self._image_layers.value]
-        self._single_result_label.value = f"Predicting {image_names}"
+        self._single_result_label.value = f'Predicting {image_names}'
         image_list = [image.data for image in self._image_layers.value]
         image_stack = np.stack(image_list, axis=0)
         scale = self._image_layers.value[0].scale
@@ -711,7 +723,7 @@ class ApocContainer(Container):
 
         self._viewer.add_labels(result, scale=scale)
 
-        self._single_result_label.value = f"Predicted {image_names}"
+        self._single_result_label.value = f'Predicted {image_names}'
 
         return result
 

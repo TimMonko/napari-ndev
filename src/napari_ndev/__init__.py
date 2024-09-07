@@ -1,27 +1,26 @@
 try:
-    from ._version import version as __version__
+    from napari_ndev._version import version as __version__
 except ImportError:
-    __version__ = "unknown"
+    __version__ = 'unknown'
 
-from . import helpers
-from ._apoc_container import ApocContainer
-from ._apoc_feature_stack import ApocFeatureStack
-from ._plate_mapper import PlateMapper
-from ._utilities_container import UtilitiesContainer
-from ._workflow_container import WorkflowContainer
-from .image_overview import ImageOverview, image_overview
-from ._measure_container import MeasureContainer
-from . import measure
+from napari_ndev import helpers, measure
+from napari_ndev._apoc_container import ApocContainer
+from napari_ndev._apoc_feature_stack import ApocFeatureStack
+from napari_ndev._measure_container import MeasureContainer
+from napari_ndev._plate_mapper import PlateMapper
+from napari_ndev._utilities_container import UtilitiesContainer
+from napari_ndev._workflow_container import WorkflowContainer
+from napari_ndev.image_overview import ImageOverview, image_overview
 
 __all__ = [
-    "WorkflowContainer",
-    "UtilitiesContainer",
-    "ApocContainer",
-    "ApocFeatureStack",
-    "MeasureContainer",
-    "PlateMapper",
-    "ImageOverview",
-    "image_overview",
-    "helpers",
-    "measure",
+    'WorkflowContainer',
+    'UtilitiesContainer',
+    'ApocContainer',
+    'ApocFeatureStack',
+    'MeasureContainer',
+    'PlateMapper',
+    'ImageOverview',
+    'image_overview',
+    'helpers',
+    'measure',
 ]
