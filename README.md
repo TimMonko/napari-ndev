@@ -19,7 +19,6 @@ A collection of widgets intended to serve any person seeking to process microsco
 
 This [napari] plugin was generated with [Cookiecutter] using [napari]'s [cookiecutter-napari-plugin] template.
 
-
 ## Installation
 
 **napari-ndev** is a pure Python package, and can be installed with [pip]:
