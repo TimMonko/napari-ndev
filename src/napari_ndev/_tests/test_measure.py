@@ -9,8 +9,8 @@ from napari_ndev.measure import (
     _convert_to_list,
     _extract_info_from_id_string,
     _generate_measure_dict,
-    _rename_intensity_columns,
     _map_tx_dict_to_df_id_col,
+    _rename_intensity_columns,
     measure_regionprops,
 )
 
