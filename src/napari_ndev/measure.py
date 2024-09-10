@@ -94,7 +94,7 @@ def _rename_intensity_columns(df: pd.DataFrame, intensity_names: list[str]):
     return df
 
 
-def map_tx_dict_to_df_id_col(
+def _map_tx_dict_to_df_id_col(
     tx: dict | None = None,
     tx_n_well: int | None = None,
     df: pd.DataFrame = None,
@@ -199,7 +199,7 @@ def measure_regionprops(
             measure_df.insert(1, key, value)
 
     if tx_id is not None and tx_dict is not None:
-        map_tx_dict_to_df_id_col(tx_dict, tx_n_well, measure_df, tx_id)
+        _map_tx_dict_to_df_id_col(tx_dict, tx_n_well, measure_df, tx_id)
 
     if save_data_path is not None:
         measure_df.to_csv(save_data_path, index=False)
