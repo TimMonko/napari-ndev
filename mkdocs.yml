@@ -3,13 +3,14 @@ site_url: https://timmonko.github.io/napari-ndev
 site_description: Napari widgets to process microscopy images
 repo_name: timmonko/napari-ndev
 repo_url: https://github.com/timmonko/napari-ndev
-copyright: Copyright &copy; 2023 Tim Monko
+copyright: Copyright &copy; 2023-2024 Tim Monko
 
-theme: 
+theme:
   name: material
   features:
     - content.code.annotate
     - navigation.sections
+    - navigation.indexes
     - toc.follow
     - search.suggest
     - search.share
@@ -26,18 +27,58 @@ extra:
 nav:
   - Overview: index.md
   - Installation: installation.md
-  - Widget Reference:
-    - batch_utilities: widget_reference/batch_utilities.md
-    - batch_workflow: widget_reference/batch_workflow.md
-    - annotation_saver: widget_reference/annotation_saver.md
-    - batch_training: widget_reference/batch_training.md
-    - batch_predict: widget_reference/batch_predict.md
+  - API:
+    - Widgets:
+      - api/widgets/image_utilities.md
+      - api/widgets/workflow_container.md
+      - api/widgets/apoc_container.md
+      - api/widgets/apoc_feature_stack.md
+      - api/widgets/measure_container.md
+    - Image Overview: api/image_overview.md
+    - PlateMapper: api/plate_mapper.md
+    - Measure:
+      - api/measure/_generate_measure_dict.md
+      - api/measure/_extract_info_from_id_string.md
+      - api/measure/_rename_intensity_columns.md
+      - api/measure/_map_tx_dict_to_df_id_col.md
+      - api/measure/measure_regionprops.md
+    - Helpers:
+      - api/helpers/get_directory_and_files.md
+      - api/helpers/get_channel_names.md
+      - api/helpers/get_squeezed_dim_order.md
+      - api/helpers/create_id_string.md
+      - api/helpers/check_for_missing_files.md
 
-watch: 
-  - src 
+watch:
+  - src
 
+markdown_extensions:
+  - admonition
+  - pymdownx.details
+  - pymdownx.highlight
+  - pymdownx.extra
+  - attr_list
+  - md_in_html
+  - pymdownx.tabbed:
+      alternate_style: true
+  - toc:
+      permalink: "#"
+  - pymdownx.superfences:
+      custom_fences:
+        - name: mermaid
+          class: mermaid
+          format: !!python/name:pymdownx.superfences.fence_code_format
+  - pymdownx.emoji:
+      emoji_index: !!python/name:material.extensions.emoji.twemoji
+      emoji_generator: !!python/name:material.extensions.emoji.to_svg
 plugins:
   - search
+  - autorefs
+  - literate-nav
+  - spellcheck:
+      backends:
+        - codespell:
+            dictionaries: [clear, rare]
   - mkdocstrings:
       handlers:
         python:
@@ -65,4 +106,3 @@ plugins:
             show_source: false
             show_bases: true
             docstring_section_style: list
-  - autorefs
