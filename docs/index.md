@@ -41,8 +41,6 @@ Utilizes the excellent accelerated-pixel-and-object-classification ([apoc]) in a
 
 Batch measurements using [scikit-image]'s [regionprops]. This can measure features of a label such as area, eccentricity, and more but also can measure various intensity metrics. Attempts to support post-processing of measurements, grouping, and more to make downstream analyses easier for users. Will be updated in the future to include [nyxus].
 
-
-
 ### A Note about bioio/AICSImageIO
 
 [AICSImageIO] is a convenient, multi-format file reader which also has the complimentary [napari-aicsimageio] reader plugin. However, the codebase is currently being switched over to [bioio] as the package matures; bioio is a replacement for AICSImageIO and will have less issues with compatabilities.
