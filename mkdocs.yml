@@ -30,24 +30,14 @@ nav:
   - API:
     - Widgets:
       - api/widgets/image_utilities.md
-      - api/widgets/workflow_container.md
-      - api/widgets/apoc_container.md
-      - api/widgets/apoc_feature_stack.md
-      - api/widgets/measure_container.md
+      - api/widgets/workflow_widget.md
+      - api/widgets/apoc_widget.md
+      - api/widgets/custom_apoc_feature_set.md
+      - api/widgets/measure_widget.md
     - Image Overview: api/image_overview.md
     - PlateMapper: api/plate_mapper.md
-    - Measure:
-      - api/measure/_generate_measure_dict.md
-      - api/measure/_extract_info_from_id_string.md
-      - api/measure/_rename_intensity_columns.md
-      - api/measure/_map_tx_dict_to_df_id_col.md
-      - api/measure/measure_regionprops.md
-    - Helpers:
-      - api/helpers/get_directory_and_files.md
-      - api/helpers/get_channel_names.md
-      - api/helpers/get_squeezed_dim_order.md
-      - api/helpers/create_id_string.md
-      - api/helpers/check_for_missing_files.md
+    - Measure: api/measure.md
+    - Helpers: api/helpers.md
 
 watch:
   - src
@@ -74,7 +64,12 @@ markdown_extensions:
 plugins:
   - search
   - autorefs
+  - section-index
   - literate-nav
+      # nav_file: docs/reference/SUMMARY.md
+  # - gen-files: # if want to auto generate files from script
+  #     scripts:
+  #       - docs/scripts/gen_ref_pages.py
   - spellcheck:
       backends:
         - codespell:
@@ -89,10 +84,18 @@ plugins:
             - https://napari.org/stable/objects.inv
           options:
             docstring_style: numpy # required
+            heading_level: 2
+            separate_signature: true
+            line_length: 80
+            parameter_headings: true
             show_source: true
-            show_signature_annotations: true # I like this
+            show_symbol_type_heading: true
+            show_symbol_type_toc: true
+            show_signature_annotations: false # unsure here, adds type annotations to the function signature, but this is redundant with the parameters section
+            annotations_path: brief
             show_root_heading: true # adds name of module to top of page
             show_root_full_path: true # adds full path to root of module
+            show_root_toc_entry: true
             show_bases: true
             docstring_section_style: list
         # special handler only used in _gen_widgets.py
