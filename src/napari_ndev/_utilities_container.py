@@ -26,89 +26,89 @@ if TYPE_CHECKING:
 
 
 class UtilitiesContainer(Container):
-    """
-    A container class that provides utility functions for working with napari
-    images and layers.
+    """A widget to work with images and labels in the napari viewer.
 
-    Parameters:
-    - viewer: napari.viewer.Viewer
+    Parameters
+    ----------
+    viewer: napari.viewer.Viewer, optional
         The napari viewer instance.
 
-    Attributes:
-    - _viewer: napari.viewer.Viewer
+    Attributes
+    ----------
+    _viewer: napari.viewer.Viewer
         The napari viewer instance.
-    - _img_data: numpy.ndarray or None
+    _img_data: numpy.ndarray or None
         The concatenated image data.
-    - _image_save_dims: str or None
+    _image_save_dims: str or None
         The dimension order for saving images.
-    - _label_save_dims: str or None
+    _label_save_dims: str or None
         The dimension order for saving labels.
-    - _p_sizes: PhysicalPixelSizes
+    _p_sizes: PhysicalPixelSizes
         The physical pixel sizes for the image.
-
-    Widgets:
-    - _files: FileEdit
+    _files: FileEdit
         Widget for selecting file(s).
-    - _open_image_button: PushButton
+    _open_image_button: PushButton
         Button for opening images.
-    - _save_directory: FileEdit
+    _save_directory: FileEdit
         Widget for selecting the save directory.
-    - _save_name: LineEdit
+    _save_name: LineEdit
         Widget for entering the file save name.
-    - _metadata_from_selected_layer: PushButton
+    _metadata_from_selected_layer: PushButton
         Button for updating metadata from the selected layer.
-    - _dim_order: LineEdit
+    _dim_order: LineEdit
         Widget for entering the dimension order.
-    - _channel_names: LineEdit
+    _channel_names: LineEdit
         Widget for entering the channel names.
-    - _physical_pixel_sizes_z: FloatSpinBox
+    _physical_pixel_sizes_z: FloatSpinBox
         Widget for entering the Z pixel size in micrometers.
-    - _physical_pixel_sizes_y: FloatSpinBox
+    _physical_pixel_sizes_y: FloatSpinBox
         Widget for entering the Y pixel size in micrometers.
-    - _physical_pixel_sizes_x: FloatSpinBox
+    _physical_pixel_sizes_x: FloatSpinBox
         Widget for entering the X pixel size in micrometers.
-    - _image_layer: Select
+    _image_layer: Select
         Widget for selecting the image layer.
-    - _concatenate_image_files: CheckBox
+    _concatenate_image_files: CheckBox
         Checkbox for concatenating image files.
-    - _concatenate_image_layers: CheckBox
+    _concatenate_image_layers: CheckBox
         Checkbox for concatenating image layers.
-    - _save_image_button: PushButton
+    _save_image_button: PushButton
         Button for saving images.
-    - _labels_layer: Widget
+    _labels_layer: Widget
         Widget for working with labels layer.
-    - _save_labels_button: PushButton
+    _save_labels_button: PushButton
         Button for saving labels.
-    - _shapes_layer: Widget
+    _shapes_layer: Widget
         Widget for working with shapes layer.
-    - _save_shapes_button: PushButton
+    _save_shapes_button: PushButton
         Button for saving shapes as labels.
-    - _results: TextEdit
+    _results: TextEdit
         Widget for displaying information.
 
-    Methods:
-    - _update_metadata(img)
+    Methods
+    -------
+    _update_metadata(img)
         Update the metadata based on the given image.
-    - update_metadata_from_file()
+    update_metadata_from_file()
         Update the metadata from the selected file.
-    - update_metadata_from_layer()
+    update_metadata_from_layer()
         Update the metadata from the selected layer.
-    - open_images()
+    open_images()
         Open the selected images in the napari viewer.
-    - concatenate_images(concatenate_files, files, concatenate_layers, layers)
+    concatenate_images(concatenate_files, files, concatenate_layers, layers)
         Concatenate the image data based on the selected options.
-    - p_sizes()
+    p_sizes()
         Get the physical pixel sizes.
-    - _get_save_loc(parent)
+    _get_save_loc(parent)
         Get the save location based on the parent directory.
-    - _common_save_logic(data, uri, dim_order, channel_names, layer)
+    _common_save_logic(data, uri, dim_order, channel_names, layer)
         Common logic for saving data as OME-TIFF.
-    - save_ome_tiff()
+    save_ome_tiff()
         Save the concatenated image data as OME-TIFF.
-    - save_labels()
+    save_labels()
         Save the labels data.
-    - save_shapes_as_labels()
+    save_shapes_as_labels()
         Save the shapes data as labels.
+
     """
 
     def __init__(
@@ -117,19 +117,12 @@ class UtilitiesContainer(Container):
     ):
         super().__init__()
 
-        ##############################
-        # Attributes
-        ##############################
         self._viewer = viewer if viewer is not None else None
         self._img_data = None
         self._image_save_dims = None
         self._label_save_dims = None
         self._p_sizes = None
         self._squeezed_dims = None
-
-        ##############################
-        # Widgets
-        ##############################
 
         self._file_metadata_update = PushButton(label='File')
         self._layer_metadata_update = PushButton(label='Selected Layer')
@@ -283,9 +276,6 @@ class UtilitiesContainer(Container):
             ]
         )
 
-        ##############################
-        # Event Handling
-        ##############################
         self._files.changed.connect(self.update_metadata_from_file)
         self._open_image_button.clicked.connect(self.open_images)
         self._open_next_image_button.clicked.connect(self.open_next_images)

@@ -5,36 +5,42 @@ import pandas as pd
 
 
 class PlateMapper:
-    """
-    A class for creating and manipulating plate maps.
+    """A class for creating and manipulating plate maps.
 
-    Attributes:
-    - plate_size (int): The size of the plate (e.g., 96, 384).
-    - wells (dict): A dictionary mapping plate sizes to the number of rows and
-        columns.
-    - plate_map (DataFrame): The plate map DataFrame with well labels.
-    - plate_map_pivot (DataFrame): The wide-formatted plate map DataFrame with
-        treatments as columns.
+    Attributes
+    ----------
+    plate_size : int
+        The size of the plate (e.g., 96, 384).
+    wells : dict
+        A dictionary mapping plate sizes to the number of rows and columns.
+    plate_map : pandas.DataFrame
+        The plate map DataFrame with well labels.
+    plate_map_pivot : pandas.DataFrame
+        The wide-formatted plate map DataFrame with treatments as columns.
 
-    Methods:
-    - __init__(self, plate_size=96): Initializes a PlateMapper object.
-    - create_empty_plate_map(self): Creates an empty plate map DataFrame for a
-        given plate size.
-    - assign_treatments(self, treatments): Assigns treatments to specific wells
-        in a plate map.
-    - get_pivoted_plate_map(self, treatment): Pivots a plate map DataFrame to
-        create a wide-formatted DataFrame with a single treatment as columns.
-    - get_styled_plate_map(self, treatment, palette='colorblind'): Styles a
-        plate map DataFrame with different background colors for each unique
-        value.
+    Methods
+    -------
+    __init__(plate_size=96)
+        Initializes a PlateMapper object.
+    create_empty_plate_map()
+        Creates an empty plate map DataFrame for a given plate size.
+    assign_treatments(treatments)
+        Assigns treatments to specific wells in a plate map.
+    get_pivoted_plate_map(treatment)
+        Pivots a plate map DataFrame to create a wide-formatted DataFrame with a single treatment as columns.
+    get_styled_plate_map(treatment, palette='colorblind')
+        Styles a plate map DataFrame with different background colors for each unique value.
+
     """
 
     def __init__(self, plate_size=96):
-        """
-        Initializes a PlateMapper object.
+        """Initialize a PlateMapper object.
 
-        Parameters:
-        - plate_size (int, optional): The size of the plate. Defaults to 96.
+        Parameters
+        ----------
+        plate_size : int, optional
+            The size of the plate. Defaults to 96.
+
         """
         self.plate_size = plate_size
         self.wells = {
@@ -49,12 +55,13 @@ class PlateMapper:
         self.plate_map_pivot = None
 
     def create_empty_plate_map(self):
-        """
-        Create an empty plate map DataFrame for a given plate size.
+        """Create an empty plate map DataFrame for a given plate size.
 
-        Returns:
-        - plate_map_df (DataFrame): The empty plate map DataFrame with well
-            labels.
+        Returns
+        -------
+        pandas.DataFrame
+            The empty plate map DataFrame with well labels.
+
         """
         num_rows, num_columns = self.wells[self.plate_size]
 
@@ -76,16 +83,18 @@ class PlateMapper:
         return plate_map_df
 
     def assign_treatments(self, treatments):
-        """
-        Assigns treatments to specific wells in a plate map.
+        """Assign treatments to specific wells in a plate map.
 
-        Parameters:
-        - treatments (dict): A dictionary mapping treatments to conditions and
-            well ranges.
+        Parameters
+        ----------
+        treatments : dict
+            A dictionary mapping treatments to conditions and well ranges.
 
-        Returns:
-        - plate_map (DataFrame): The updated plate map with treatments
-            assigned to specific wells.
+        Returns
+        -------
+        pandas.DataFrame
+            The updated plate map with treatments assigned to specific wells.
+
         """
         for treatment, conditions in treatments.items():
             for condition, wells in conditions.items():
@@ -110,17 +119,18 @@ class PlateMapper:
         return self.plate_map
 
     def get_pivoted_plate_map(self, treatment):
-        """
-        Pivot a plate map DataFrame to create a wide-formatted DataFrame with
-            a single treatment as columns.
+        """Pivot a plate map DataFrame to create a wide-formatted DataFrame with a single treatment as columns.
 
-        Parameters:
-        - treatment (str): The column name of the treatment variable in the
-            plate map DataFrame.
+        Parameters
+        ----------
+        treatment : str
+            The column name of the treatment variable in the plate map DataFrame.
 
-        Returns:
-        - plate_map_pivot (DataFrame): The wide-formatted plate map DataFrame
-            with treatments as columns.
+        Returns
+        -------
+        pandas.DataFrame
+            The wide-formatted plate map DataFrame with treatments as columns.
+
         """
         plate_map_pivot = self.plate_map.pivot(
             index='row', columns='column', values=treatment
@@ -129,20 +139,20 @@ class PlateMapper:
         return plate_map_pivot
 
     def get_styled_plate_map(self, treatment, palette='colorblind'):
-        """
-        Style a plate map DataFrame with different background colors for each
-        unique value.
+        """Style a plate map with background colors for each unique value.
 
-        Parameters:
-        - treatment (str): The column name of the treatment variable in the
-            plate map DataFrame.
-        - palette (str or list, optional): The color palette to use for
-            styling. Defaults to 'colorblind'.
+        Parameters
+        ----------
+        treatment : str
+            The column name of the treatment variable in the plate map DataFrame.
+        palette : str or list, optional
+            The color palette to use for styling. Defaults to 'colorblind'.
 
-        Returns:
-        - plate_map_styled (pandas.io.formats.style.Styler): The styled plate
-            map DataFrame with different background colors for each unique
-            value.
+        Returns
+        -------
+        pandas.io.formats.style.Styler
+            The styled plate map DataFrame with different background colors for each unique value.
+
         """
         from seaborn import color_palette
 

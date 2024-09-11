@@ -18,16 +18,15 @@ if TYPE_CHECKING:
 
 
 class WorkflowContainer(Container):
-    """
-    Container class for managing the workflow functionality in napari-ndev.
+    """Container class for managing the workflow functionality in napari-ndev.
 
-    Parameters:
-    -----------
+    Parameters
+    ----------
     viewer : napari.viewer.Viewer
         The napari viewer instance.
 
-    Attributes:
-    -----------
+    Attributes
+    ----------
     viewer : napari.viewer.Viewer
         The napari viewer instance.
     roots : list
@@ -62,6 +61,7 @@ class WorkflowContainer(Container):
         Signal emitted when the workflow file is changed.
     batch_button.clicked : Signal
         Signal emitted when the batch button is clicked.
+
     """
 
     def __init__(self, viewer: 'napari.viewer.Viewer'):
