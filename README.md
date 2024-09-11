@@ -7,6 +7,8 @@
 [![codecov](https://codecov.io/gh/TimMonko/napari-ndev/branch/main/graph/badge.svg)](https://codecov.io/gh/TimMonko/napari-ndev)
 [![napari hub](https://img.shields.io/endpoint?url=https://api.napari-hub.org/shields/napari-ndev)](https://napari-hub.org/plugins/napari-ndev)
 
+<img src="docs/images/neuralDev-logo.svg" alt="logo" width="300">
+
 A collection of widgets intended to serve any person seeking to process microscopy images from start to finish. The wide breadth of this plugin's scope is only made possible by the amazing libraries and plugins from the napari community.
 
 ## Docs
@@ -14,10 +16,6 @@ A collection of widgets intended to serve any person seeking to process microsco
 [https://timmonko.github.io/napari-ndev/](https://timmonko.github.io/napari-ndev/)
 
 ----------------------------------
-
-![Plugin-Abstract](docs/images//Plugin-Abstract-low.png)
-
-This [napari] plugin was generated with [Cookiecutter] using [napari]'s [cookiecutter-napari-plugin] template.
 
 ## Installation
 
@@ -36,6 +34,8 @@ pip install napari-aicsimageio
 In addition, you may need to install specific [`bioio` readers](https://github.com/bioio-devs/bioio) to support your specific image, such as `bioio-czi` or `bioio-lif`.
 
 ----------------------------------
+
+This [napari] plugin was generated with [Cookiecutter] using [napari]'s [cookiecutter-napari-plugin] template.
 
 ## Contributing
 
