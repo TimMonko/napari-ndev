@@ -9,8 +9,8 @@ from napari_ndev.measure import (
     _convert_to_list,
     _extract_info_from_id_string,
     _generate_measure_dict,
+    _map_tx_dict_to_df_id_col,
     _rename_intensity_columns,
-    map_tx_dict_to_df_id_col,
     measure_regionprops,
 )
 
@@ -180,7 +180,7 @@ def test_map_tx_dict_to_df_id_col():
         }
     )
     id_column = 'well'
-    result = map_tx_dict_to_df_id_col(tx, tx_n_well, target_df, id_column)
+    result = _map_tx_dict_to_df_id_col(tx, tx_n_well, target_df, id_column)
     assert isinstance(result, pd.DataFrame)
     assert 'Treatment1' in result.columns
     assert 'Treatment2' in result.columns

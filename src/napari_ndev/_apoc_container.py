@@ -30,24 +30,17 @@ from napari_ndev import helpers
 if TYPE_CHECKING:
     import napari
 
-# Lazy Imports:
-# from aicsimageio import AICSImage
-# from aicsimageio.writers import OmeTiffWriter
-# from napari import layers
-# import apoc
-
 
 class ApocContainer(Container):
-    """
-    Container class for managing the ApocContainer widget in napari.
+    """Container class for managing the ApocContainer widget in napari.
 
-    Parameters:
-    -----------
+    Parameters
+    ----------
     viewer : napari.viewer.Viewer
         The napari viewer instance.
 
-    Attributes:
-    -----------
+    Attributes
+    ----------
     _viewer : napari.viewer.Viewer
         The napari viewer instance.
 
@@ -123,8 +116,8 @@ class ApocContainer(Container):
     _single_result_label : Label
         Label widget for displaying a single result.
 
-    Methods:
-    --------
+    Methods
+    -------
     _update_metadata_from_file()
         Update the metadata from the selected image directory.
 
@@ -152,6 +145,7 @@ class ApocContainer(Container):
 
     _get_channel_image(img, channel_index_list)
         Get the channel image based on the selected channel index list.
+
     """
 
     def __init__(

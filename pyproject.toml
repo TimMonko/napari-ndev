@@ -60,7 +60,7 @@ select = [
     "TID",  # flake8-tidy-imports # replace absolutify import
     "TRY", # tryceratops
     "ICN", # flake8-import-conventions
-    "RUF", # ruff specyfic rules
+    "RUF", # ruff specific rules
     "NPY201", # checks compatibility with numpy version 2.0
     "ASYNC", # flake8-async
     "EXE", # flake8-executable
@@ -69,6 +69,7 @@ select = [
     "SLOT", # flake8-slots
     "PT", # flake8-pytest-style
     "T20", # flake8-print
+    "D", # docstrings
 ]
 ignore = [
     "E501", "TCH001", "TCH002", "TCH003",
