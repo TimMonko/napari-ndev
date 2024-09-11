@@ -82,7 +82,6 @@ markdown_extensions:
 plugins:
   - search
   - autorefs
-  - section-index
   - literate-nav
       # nav_file: docs/reference/SUMMARY.md
   # - gen-files: # if want to auto generate files from script
