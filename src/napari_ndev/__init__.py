@@ -1,4 +1,4 @@
-try:
+try:  # noqa: D104
     from napari_ndev._version import version as __version__
 except ImportError:
     __version__ = 'unknown'

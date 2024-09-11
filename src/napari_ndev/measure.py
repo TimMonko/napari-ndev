@@ -1,3 +1,11 @@
+"""Functions for measuring properties of labels.
+
+Measure properties of labels in images using sci-kit image's regionprops.
+It includes utilities for handling label and intensity images,
+extracting information from ID strings, renaming intensity columns,
+and mapping treatment dictionaries to DataFrame ID columns.
+"""
+
 from __future__ import annotations
 
 import re
@@ -10,7 +18,19 @@ from napari_ndev._plate_mapper import PlateMapper
 
 
 def _convert_to_list(arg: list | ArrayLike | str | None):
-    """convert any non-list arguments to lists"""
+    """Convert any non-list arguments to lists.
+
+    Parameters
+    ----------
+    arg : list or ArrayLike or str or None
+        The argument to convert.
+
+    Returns
+    -------
+    list or None
+        The converted list or None if the input was None.
+
+    """
     if arg is None:
         return None
     if not isinstance(arg, list):
@@ -24,7 +44,25 @@ def _generate_measure_dict(
     intensity_images: list[ArrayLike] | ArrayLike | None = None,
     intensity_names: list[str] | str | None = None,
 ) -> dict:
-    """Generate a dictionary of label and intensity images with their names."""
+    """Generate a dictionary of label and intensity images with their names.
+
+    Parameters
+    ----------
+    label_images : list of ArrayLike or ArrayLike
+        The label images.
+    label_names : list of str or str or None, optional
+        The names of the label images.
+    intensity_images : list of ArrayLike or ArrayLike or None, optional
+        The intensity images.
+    intensity_names : list of str or str or None, optional
+        The names of the intensity images.
+
+    Returns
+    -------
+    dict
+        A dictionary containing label and intensity images with their names.
+
+    """
     label_images = _convert_to_list(label_images)
     intensity_images = _convert_to_list(intensity_images)
     label_names = _convert_to_list(label_names)
@@ -48,14 +86,27 @@ def _generate_measure_dict(
 
 def _extract_info_from_id_string(id_string: str, id_regex: dict) -> dict:
     r"""Extract information from an id string using a regex dictionary.
-    For example id_string:
-    "P14-A6__2024-07-16 25x 18HIC ncoa4 FT dapi obl 01"
-    and id_regex: {
-        'well': '-(\w+)__',
-        'HIC': r'(\d{1,3})HIC',
-        'exp': r'obl (\d{2,3})'
-    }
-    returns {'well': 'A6', 'HIC': '18', 'exp': '01'}
+
+    Parameters
+    ----------
+    id_string : str
+        The ID string to extract information from.
+    id_regex : dict
+        A dictionary where keys are the information to extract and values are
+        the regex patterns to use for extraction.
+
+    Returns
+    -------
+    dict
+        A dictionary containing the extracted information.
+
+    Examples
+    --------
+    >>> id_string = "P14-A6__2024-07-16 25x 18HIC ncoa4 FT dapi obl 01"
+    >>> id_regex = {'well': '-(\w+)__', 'HIC': r'(\d{1,3})HIC', 'exp': r'obl (\d{2,3})'}
+    >>> _extract_info_from_id_string(id_string, id_regex)
+    {'well': 'A6', 'HIC': '18', 'exp': '01'}
+
     """
     id_dict = {}
     for key, regex in id_regex.items():
@@ -68,19 +119,24 @@ def _extract_info_from_id_string(id_string: str, id_regex: dict) -> dict:
 
 
 def _rename_intensity_columns(df: pd.DataFrame, intensity_names: list[str]):
-    """
-    Rename columns in the DataFrame to include the intensity names.
+    """Rename columns in the DataFrame to include the intensity names.
+
     The intensity names are appended to the end of the column name based
     on the index of the intensity_names list.
 
-    Parameters:
-    measure_df (pd.DataFrame): The DataFrame with measurement properties.
-    intensity_names (list of str): The list of intensity names.
+    Parameters
+    ----------
+    df : pd.DataFrame
+        The DataFrame with measurement properties.
+    intensity_names : list of str
+        The list of intensity names.
 
-    Returns:
-    pd.DataFrame: The DataFrame with renamed columns.
+    Returns
+    -------
+    pd.DataFrame
+        The DataFrame with renamed columns.
+
     """
-
     new_columns = []
     for col in df.columns:
         if any(col.endswith(f'-{idx}') for idx in range(len(intensity_names))):
@@ -100,8 +156,26 @@ def _map_tx_dict_to_df_id_col(
     df: pd.DataFrame = None,
     id_column: str | None = None,
 ):
-    """Map a dictionary of treatments to a dataframes id_column.
-    This should work on either a complete dataset, or as part of an iterative
+    """Map a dictionary of treatments to a DataFrame's id_column.
+
+    This should work on either a complete dataset, or as part of an iterative.
+
+    Parameters
+    ----------
+    tx : dict or None, optional
+        The dictionary of treatments.
+    tx_n_well : int or None, optional
+        The number of wells in the plate.
+    df : pd.DataFrame
+        The DataFrame to map treatments to.
+    id_column : str or None, optional
+        The column in the DataFrame that contains the IDs.
+
+    Returns
+    -------
+    pd.DataFrame
+        The DataFrame with treatments mapped to the id_column.
+
     """
     if isinstance(tx_n_well, int):
         plate = PlateMapper(tx_n_well)
@@ -134,6 +208,7 @@ def measure_regionprops(
     save_data_path: PathLike = None,
 ) -> pd.DataFrame:
     """Measure properties of labels with sci-kit image regionprops.
+
     Optionally give a list of intensity_images to measure intensity properties
     of labels (i.e. 'intensity_mean', 'intensity_min', 'intensity_max',
     'intensity_std'). If no label or intensity names are given, the names are
@@ -154,7 +229,39 @@ def measure_regionprops(
             "orientation",
             "perimeter",
             "solidity",
-        ]
+        ].
+
+    Parameters
+    ----------
+    label_images : list of ArrayLike or ArrayLike
+        The label images.
+    label_names : list of str or str or None, optional
+        The names of the label images.
+    intensity_images : list of ArrayLike or ArrayLike or None, optional
+        The intensity images.
+    intensity_names : list of str or str or None, optional
+        The names of the intensity images.
+    properties : list of str or None, optional
+        The properties to measure.
+    scale : tuple of float, optional
+        The scale for the measurements.
+    id_string : str or None, optional
+        The ID string.
+    id_regex_dict : dict or None, optional
+        The regex dictionary for extracting information from the ID string.
+    tx_id : str or None, optional
+        The treatment ID.
+    tx_dict : dict or None, optional
+        The treatment dictionary.
+    tx_n_well : int or None, optional
+        The number of wells in the plate.
+    save_data_path : PathLike or None, optional
+        The path to save the data.
+
+    Returns
+    -------
+    pd.DataFrame
+        The DataFrame with measured properties.
 
     """
     from skimage import measure
@@ -184,12 +291,10 @@ def measure_regionprops(
 
     measure_df = pd.DataFrame(measure_props)
 
-
     if intensity_names is not None:
         measure_df = _rename_intensity_columns(
             measure_df, measure_dict['intensity_names']
         )
-
 
     measure_df.insert(0, 'id', id_string)
 
