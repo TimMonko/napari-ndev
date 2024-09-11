@@ -30,8 +30,106 @@ if TYPE_CHECKING:
 
 
 class MeasureContainer(Container):
-    """Container class for measuring labels from folders. Can compare against
-    intensity images, which can be microscopy data or other labels.
+    """Widget to measure labels from folders.
+
+    This class provides functionality to measure labels and compare them against intensity images, which can be microscopic images or other labels. It initializes various widgets and containers for user input and interaction, and connects events to handle user actions.
+
+    Parameters
+    ----------
+    viewer : napari.viewer.Viewer
+        The napari viewer instance. Optional.
+
+    Attributes
+    ----------
+    viewer : napari.viewer.Viewer
+        The napari viewer instance.
+
+    _label_choices : list
+        List of label choices.
+    _intensity_choices : list
+        List of intensity image choices.
+    _p_sizes : None
+        Placeholder for pixel sizes.
+    _squeezed_dims : None
+        Placeholder for squeezed dimensions.
+    _prop : object
+        Dynamic object to hold region properties checkboxes.
+    _label_directory : FileEdit
+        Widget for selecting label directory.
+    _image_directory : FileEdit
+        Widget for selecting image directory.
+    _region_directory : FileEdit
+        Widget for selecting region directory.
+    _output_directory : FileEdit
+        Widget for selecting output directory.
+    _label_image : ComboBox
+        Widget for selecting label image.
+    _intensity_images : Select
+        Widget for selecting intensity images.
+    _scale_tuple : TupleEdit
+        Widget for setting physical pixel sizes.
+    _measure_button : PushButton
+        Button to start measurement.
+    _progress_bar : ProgressBar
+        Progress bar to show measurement progress.
+    _props_container : Container
+        Container for region properties checkboxes.
+    _sk_props : list
+        List of region properties.
+    _id_regex_container : Container
+        Container for ID regex settings.
+    _example_id_string : LineEdit
+        Widget for example ID string.
+    _id_regex_dict : TextEdit
+        Widget for ID regex dictionary.
+    _tx_map_container : Container
+        Container for treatment map settings.
+    _tx_id : LineEdit
+        Widget for treatment ID.
+    _tx_n_well : ComboBox
+        Widget for number of wells.
+    _tx_dict : TextEdit
+        Widget for treatment dictionary.
+    _grouping_container : Container
+        Container for grouping settings.
+    _create_grouped : CheckBox
+        Checkbox to create grouped data.
+    _group_by_sample_id : CheckBox
+        Checkbox to group by sample ID.
+
+    Methods
+    -------
+    _init_widgets()
+        Initializes the widgets for user input.
+    _init_regionprops_container()
+        Initializes the container for region properties checkboxes.
+    _init_id_regex_container()
+        Initializes the container for ID regex settings.
+    _init_tx_map_container()
+        Initializes the container for treatment map settings.
+    _init_grouping_container()
+        Initializes the container for grouping settings.
+    _init_layout()
+        Initializes the layout of the container.
+    _connect_events()
+        Connects events to handle user actions.
+    _get_0th_img_from_dir(directory)
+        Gets the first image from a directory.
+    _update_dim_and_scales(img)
+        Updates the dimensions and scales based on the image.
+    _update_choices(directory, prefix, update_label=False)
+        Updates the choices for labels and intensity images.
+    _update_image_choices()
+        Updates the choices for intensity images.
+    _update_label_choices()
+        Updates the choices for label images.
+    _update_region_choices()
+        Updates the choices for region images.
+    _safe_dict_eval(dict_string, dict_name=None)
+        Safely evaluates a dictionary string.
+    batch_measure()
+        Performs batch measurement of labels and intensity images, and returns the measurement results as a DataFrame.
+
     """
 
     def __init__(
