@@ -56,7 +56,7 @@ class ImageOverview:
         directory: str | None = None,
         filename: str | None = None,
     ):
-        """Save the generated image overview.
+        """Save the generated image overview with matplotlib.savefig.
 
         Parameters
         ----------

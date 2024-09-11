@@ -17,6 +17,125 @@ from bioio_base.types import ArrayLike, PathLike
 from napari_ndev._plate_mapper import PlateMapper
 
 
+def measure_regionprops(
+    label_images: list[ArrayLike] | ArrayLike,
+    label_names: list[str] | str | None = None,
+    intensity_images: list[ArrayLike] | ArrayLike | None = None,
+    intensity_names: list[str] | str | None = None,
+    properties: list[str] | None = None,
+    scale: tuple[float, float] | tuple[float, float, float] = (1, 1),
+    id_string: str | None = None,
+    id_regex_dict: dict | None = None,
+    tx_id: str | None = None,
+    tx_dict: dict | None = None,
+    tx_n_well: int | None = None,
+    save_data_path: PathLike = None,
+) -> pd.DataFrame:
+    """Measure properties of labels with sci-kit image regionprops.
+
+    Optionally give a list of intensity_images to measure intensity properties
+    of labels (i.e. 'intensity_mean', 'intensity_min', 'intensity_max',
+    'intensity_std'). If no label or intensity names are given, the names are
+    automatically generated as a string of the input variable name.
+    Choose from a list of properties to measure: [
+            "area",
+            "area_convex",
+            "bbox",
+            "centroid",
+            "eccentricity",
+            "extent",
+            "feret_diameter_max",
+            "intensity_max",
+            "intensity_mean",
+            "intensity_min",
+            "intensity_std",
+            "num_pixels",
+            "orientation",
+            "perimeter",
+            "solidity",
+        ].
+
+    Parameters
+    ----------
+    label_images : list of ArrayLike or ArrayLike
+        The label images.
+    label_names : list of str or str or None, optional
+        The names of the label images.
+    intensity_images : list of ArrayLike or ArrayLike or None, optional
+        The intensity images.
+    intensity_names : list of str or str or None, optional
+        The names of the intensity images.
+    properties : list of str or None, optional
+        The properties to measure.
+    scale : tuple of float, optional
+        The scale for the measurements.
+    id_string : str or None, optional
+        The ID string.
+    id_regex_dict : dict or None, optional
+        The regex dictionary for extracting information from the ID string.
+    tx_id : str or None, optional
+        The treatment ID.
+    tx_dict : dict or None, optional
+        The treatment dictionary.
+    tx_n_well : int or None, optional
+        The number of wells in the plate.
+    save_data_path : PathLike or None, optional
+        The path to save the data.
+
+    Returns
+    -------
+    pd.DataFrame
+        The DataFrame with measured properties.
+
+    """
+    from skimage import measure
+
+    if properties is None:
+        properties = ['area']
+    measure_dict = _generate_measure_dict(
+        label_images, label_names, intensity_images, intensity_names
+    )
+
+    if intensity_images is not None:
+        if len(measure_dict['intensity_images']) == 1:
+            intensity_stack = measure_dict['intensity_images'][0]
+        else:
+            intensity_stack = np.stack(
+                measure_dict['intensity_images'], axis=-1
+            )
+    else:
+        intensity_stack = None
+
+    measure_props = measure.regionprops_table(
+        label_image=measure_dict['label_images'][0],
+        intensity_image=intensity_stack,
+        properties=properties,
+        spacing=scale,
+    )
+
+    measure_df = pd.DataFrame(measure_props)
+
+    if intensity_names is not None:
+        measure_df = _rename_intensity_columns(
+            measure_df, measure_dict['intensity_names']
+        )
+
+    measure_df.insert(0, 'id', id_string)
+
+    if id_regex_dict is not None:
+        id_dict = _extract_info_from_id_string(id_string, id_regex_dict)
+        for key, value in id_dict.items():
+            measure_df.insert(1, key, value)
+
+    if tx_id is not None and tx_dict is not None:
+        _map_tx_dict_to_df_id_col(tx_dict, tx_n_well, measure_df, tx_id)
+
+    if save_data_path is not None:
+        measure_df.to_csv(save_data_path, index=False)
+
+    return measure_df
+
+
 def _convert_to_list(arg: list | ArrayLike | str | None):
     """Convert any non-list arguments to lists.
 
@@ -191,122 +310,3 @@ def _map_tx_dict_to_df_id_col(
             df.loc[df[id_column] == identifier, tx] = condition
 
     return df
-
-
-def measure_regionprops(
-    label_images: list[ArrayLike] | ArrayLike,
-    label_names: list[str] | str | None = None,
-    intensity_images: list[ArrayLike] | ArrayLike | None = None,
-    intensity_names: list[str] | str | None = None,
-    properties: list[str] | None = None,
-    scale: tuple[float, float] | tuple[float, float, float] = (1, 1),
-    id_string: str | None = None,
-    id_regex_dict: dict | None = None,
-    tx_id: str | None = None,
-    tx_dict: dict | None = None,
-    tx_n_well: int | None = None,
-    save_data_path: PathLike = None,
-) -> pd.DataFrame:
-    """Measure properties of labels with sci-kit image regionprops.
-
-    Optionally give a list of intensity_images to measure intensity properties
-    of labels (i.e. 'intensity_mean', 'intensity_min', 'intensity_max',
-    'intensity_std'). If no label or intensity names are given, the names are
-    automatically generated as a string of the input variable name.
-    Choose from a list of properties to measure: [
-            "area",
-            "area_convex",
-            "bbox",
-            "centroid",
-            "eccentricity",
-            "extent",
-            "feret_diameter_max",
-            "intensity_max",
-            "intensity_mean",
-            "intensity_min",
-            "intensity_std",
-            "num_pixels",
-            "orientation",
-            "perimeter",
-            "solidity",
-        ].
-
-    Parameters
-    ----------
-    label_images : list of ArrayLike or ArrayLike
-        The label images.
-    label_names : list of str or str or None, optional
-        The names of the label images.
-    intensity_images : list of ArrayLike or ArrayLike or None, optional
-        The intensity images.
-    intensity_names : list of str or str or None, optional
-        The names of the intensity images.
-    properties : list of str or None, optional
-        The properties to measure.
-    scale : tuple of float, optional
-        The scale for the measurements.
-    id_string : str or None, optional
-        The ID string.
-    id_regex_dict : dict or None, optional
-        The regex dictionary for extracting information from the ID string.
-    tx_id : str or None, optional
-        The treatment ID.
-    tx_dict : dict or None, optional
-        The treatment dictionary.
-    tx_n_well : int or None, optional
-        The number of wells in the plate.
-    save_data_path : PathLike or None, optional
-        The path to save the data.
-
-    Returns
-    -------
-    pd.DataFrame
-        The DataFrame with measured properties.
-
-    """
-    from skimage import measure
-
-    if properties is None:
-        properties = ['area']
-    measure_dict = _generate_measure_dict(
-        label_images, label_names, intensity_images, intensity_names
-    )
-
-    if intensity_images is not None:
-        if len(measure_dict['intensity_images']) == 1:
-            intensity_stack = measure_dict['intensity_images'][0]
-        else:
-            intensity_stack = np.stack(
-                measure_dict['intensity_images'], axis=-1
-            )
-    else:
-        intensity_stack = None
-
-    measure_props = measure.regionprops_table(
-        label_image=measure_dict['label_images'][0],
-        intensity_image=intensity_stack,
-        properties=properties,
-        spacing=scale,
-    )
-
-    measure_df = pd.DataFrame(measure_props)
-
-    if intensity_names is not None:
-        measure_df = _rename_intensity_columns(
-            measure_df, measure_dict['intensity_names']
-        )
-
-    measure_df.insert(0, 'id', id_string)
-
-    if id_regex_dict is not None:
-        id_dict = _extract_info_from_id_string(id_string, id_regex_dict)
-        for key, value in id_dict.items():
-            measure_df.insert(1, key, value)
-
-    if tx_id is not None and tx_dict is not None:
-        _map_tx_dict_to_df_id_col(tx_dict, tx_n_well, measure_df, tx_id)
-
-    if save_data_path is not None:
-        measure_df.to_csv(save_data_path, index=False)
-
-    return measure_df

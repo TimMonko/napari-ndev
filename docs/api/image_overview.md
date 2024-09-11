@@ -1,3 +1,1 @@
-# Image Overview
-
-::: napari_ndev.image_overview
+# ::: napari_ndev.image_overview
