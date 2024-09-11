@@ -12,14 +12,20 @@ jobs:
   docs:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout repository
+        uses: actions/checkout@v4
         with:
           fetch-depth: 0
-      - uses: actions/setup-python@v5
+
+      - name: Setup python
+        uses: actions/setup-python@v5
         with:
-          python-version: "3.x"
-      - run: |
+          python-version: "3.11"
+
+      - name: Install dependencies
+        run: |
           python -m pip install --upgrade pip
+          sudo apt-get install python3-distutils
           python -m pip install -e .[docs]
 
       - name: Deploy docs to GitHub Pages
