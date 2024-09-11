@@ -17,6 +17,59 @@ if TYPE_CHECKING:
 
 
 class ApocFeatureStack(Container):
+    """Create and apply image features in the napari viewer.
+
+    Parameters
+    ----------
+    viewer : napari.viewer.Viewer, optional
+        The napari viewer instance to which this feature stack is attached. Default is None.
+
+    Attributes
+    ----------
+    _viewer : napari.viewer.Viewer or None
+        The napari viewer instance.
+    _original : CheckBox
+        Checkbox to keep the original image.
+    _gaussian_blur : LineEdit
+        LineEdit for specifying Gaussian Blur parameters.
+    _DoG : LineEdit
+        LineEdit for specifying Difference of Gaussian parameters.
+    _LoG : LineEdit
+        LineEdit for specifying Laplacian of Gaussian parameters.
+    _SoG : LineEdit
+        LineEdit for specifying Sobel of Gaussian parameters.
+    _sHoG : LineEdit
+        LineEdit for specifying Small Hessian of Gaussian parameters.
+    _lHoG : LineEdit
+        LineEdit for specifying Large Hessian of Gaussian parameters.
+    _median : LineEdit
+        LineEdit for specifying Median filter parameters.
+    _tophat : LineEdit
+        LineEdit for specifying Top Hat filter parameters.
+    _generate_string_button : PushButton
+        Button to generate the feature string.
+    _feature_string : TextEdit
+        TextEdit to display the custom feature string.
+    _image_layer : ComboBox
+        ComboBox to select the image layer.
+    _apply_button : PushButton
+        Button to apply the feature stack to the selected image.
+    _progress_bar : ProgressBar
+        Progress bar to display the progress of feature application.
+
+    Methods
+    -------
+    _filter_layers(layer_type)
+        Filters the layers in the viewer by the specified layer type.
+    _update_layer_choices()
+        Updates the choices in the image layer ComboBox.
+    generate_feature_string()
+        Generates a feature string based on the user inputs.
+    layer_to_feature_stack()
+        Applies the generated feature stack to the selected image layer.
+
+    """
+
     def __init__(
         self,
         viewer: 'napari.viewer.Viewer' = None,
