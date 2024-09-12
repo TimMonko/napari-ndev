@@ -5,8 +5,8 @@ import pandas as pd
 
 
 class PlateMapper:
-
-    """A class for creating and manipulating plate maps.
+    """
+    A class for creating and manipulating plate maps.
 
     Attributes
     ----------
@@ -35,7 +35,8 @@ class PlateMapper:
     """
 
     def __init__(self, plate_size=96):
-        """Initialize a PlateMapper object.
+        """
+        Initialize a PlateMapper object.
 
         Parameters
         ----------
@@ -56,7 +57,8 @@ class PlateMapper:
         self.plate_map_pivot = None
 
     def create_empty_plate_map(self):
-        """Create an empty plate map DataFrame for a given plate size.
+        """
+        Create an empty plate map DataFrame for a given plate size.
 
         Returns
         -------
@@ -84,7 +86,8 @@ class PlateMapper:
         return plate_map_df
 
     def assign_treatments(self, treatments):
-        """Assign treatments to specific wells in a plate map.
+        """
+        Assign treatments to specific wells in a plate map.
 
         Parameters
         ----------
@@ -120,7 +123,8 @@ class PlateMapper:
         return self.plate_map
 
     def get_pivoted_plate_map(self, treatment):
-        """Pivot a plate map DataFrame to create a wide-formatted DataFrame with a single treatment as columns.
+        """
+        Pivot a plate map DataFrame to create a wide-formatted DataFrame with a single treatment as columns.
 
         Parameters
         ----------
@@ -140,7 +144,8 @@ class PlateMapper:
         return plate_map_pivot
 
     def get_styled_plate_map(self, treatment, palette='colorblind'):
-        """Style a plate map with background colors for each unique value.
+        """
+        Style a plate map with background colors for each unique value.
 
         Parameters
         ----------

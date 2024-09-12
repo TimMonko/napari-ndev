@@ -1,4 +1,5 @@
-"""Helper functions for file handling, image processing, and logging setup.
+"""
+Helper functions for file handling, image processing, and logging setup.
 
 Functions
 ---------
@@ -35,7 +36,8 @@ def get_directory_and_files(
     dir_path: str | Path | None = None,
     pattern: list[str] | str | None = None,
 ) -> tuple[Path, list[Path]]:
-    """Get the directory and files in the specified directory.
+    """
+    Get the directory and files in the specified directory.
 
     Parameters
     ----------
@@ -80,7 +82,8 @@ def get_directory_and_files(
 
 
 def get_channel_names(img: AICSImage | BioImage) -> list[str]:
-    """Get the channel names from an AICSImage object.
+    """
+    Get the channel names from an AICSImage object.
 
     If the image has a dimension order that includes "S" (it is RGB),
     return the default channel names ["red", "green", "blue"].
@@ -106,7 +109,8 @@ def get_squeezed_dim_order(
     img: AICSImage | BioImage,
     skip_dims: list[str] | str | None = None,
 ) -> str:
-    """Return a string containing the squeezed dimensions of the given AICSImage object.
+    """
+    Return a string containing the squeezed dimensions of the given AICSImage object.
 
     Parameters
     ----------
@@ -129,7 +133,8 @@ def get_squeezed_dim_order(
 
 
 def create_id_string(img: BioImage | AICSImage, identifier: str) -> str:
-    """Create an ID string for the given image.
+    """
+    Create an ID string for the given image.
 
     Parameters
     ----------
@@ -161,7 +166,8 @@ def create_id_string(img: BioImage | AICSImage, identifier: str) -> str:
 def check_for_missing_files(
     files: list[Path] | list[str], *directories: Path | str
 ) -> list[tuple]:
-    """Check if the given files are missing in the specified directories.
+    """
+    Check if the given files are missing in the specified directories.
 
     Parameters
     ----------
@@ -192,7 +198,8 @@ def check_for_missing_files(
 
 
 def setup_logger(log_loc=Union[str, Path]):
-    """Set up a logger with the specified log location.
+    """
+    Set up a logger with the specified log location.
 
     Parameters
     ----------

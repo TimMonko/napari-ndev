@@ -17,8 +17,8 @@ if TYPE_CHECKING:
 
 
 class ApocFeatureStack(Container):
-
-    """Create and apply image features in the napari viewer.
+    """
+    Create and apply image features in the napari viewer.
 
     Parameters
     ----------
