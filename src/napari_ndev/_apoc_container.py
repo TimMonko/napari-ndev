@@ -504,19 +504,19 @@ class ApocContainer(Container):
         logger, handler = helpers.setup_logger(log_loc)
 
         logger.info(
-        """
+            """
         Classifier: %s
         Channels: %s
         Num. Files: %d
         Image Directory: %s
         Label Directory: %s
         """,
-        self._classifier_file.value,
-        self._image_channels.value,
-        len(image_files),
-        image_directory,
-        label_directory
-    )
+            self._classifier_file.value,
+            self._image_channels.value,
+            len(image_files),
+            image_directory,
+            label_directory,
+        )
 
         # https://github.com/clEsperanto/pyclesperanto_prototype/issues/163
         set_wait_for_kernel_finish(True)
@@ -548,7 +548,7 @@ class ApocContainer(Container):
                 self._progress_bar.value = idx + 1
                 continue
 
-            logger.info('Training Image %d: %s', idx+1, image_file.name)
+            logger.info('Training Image %d: %s', idx + 1, image_file.name)
 
             img = AICSImage(image_directory / image_file.name)
             channel_img = self._get_channel_image(img, channel_index_list)
@@ -597,19 +597,19 @@ class ApocContainer(Container):
         logger, handler = helpers.setup_logger(log_loc)
 
         logger.info(
-        """
+            """
         Classifier: %s
         Channels: %s
         Num. Files: %d
         Image Directory: %s
         Output Directory: %s
         """,
-        self._classifier_file.value,
-        self._image_channels.value,
-        len(image_files),
-        image_directory,
-        self._output_directory.value
-    )
+            self._classifier_file.value,
+            self._image_channels.value,
+            len(image_files),
+            image_directory,
+            self._output_directory.value,
+        )
 
         # https://github.com/clEsperanto/pyclesperanto_prototype/issues/163
         set_wait_for_kernel_finish(True)
@@ -626,7 +626,7 @@ class ApocContainer(Container):
         ]
 
         for idx, file in enumerate(image_files):
-            logger.info('Predicting Image %d: %s', idx+1, file.name)
+            logger.info('Predicting Image %d: %s', idx + 1, file.name)
 
             img = AICSImage(file)
             channel_img = self._get_channel_image(img, channel_index_list)

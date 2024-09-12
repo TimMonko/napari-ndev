@@ -55,7 +55,19 @@ def get_directory_and_files(
 
     """
     if pattern is None:
-        pattern = ['tif', 'tiff', 'nd2', 'czi', 'lif', 'oib', 'png', 'jpg', 'jpeg', 'bmp', 'gif']
+        pattern = [
+            'tif',
+            'tiff',
+            'nd2',
+            'czi',
+            'lif',
+            'oib',
+            'png',
+            'jpg',
+            'jpeg',
+            'bmp',
+            'gif',
+        ]
     if dir_path is None:
         return None, []
 
