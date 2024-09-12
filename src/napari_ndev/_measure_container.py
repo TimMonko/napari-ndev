@@ -202,6 +202,7 @@ class MeasureContainer(Container):
         self._props_container = Container(layout='vertical')
 
         self._sk_props = [
+            'label',
             'area',
             'area_convex',
             'bbox',
@@ -223,6 +224,7 @@ class MeasureContainer(Container):
             setattr(self._prop, feature, CheckBox(label=feature))
             self._props_container.extend([getattr(self._prop, feature)])
 
+        self._prop.label.value = True
         self._prop.area.value = True
 
     def _init_id_regex_container(self):
@@ -256,7 +258,7 @@ class MeasureContainer(Container):
             value=None,
             choices=[6, 12, 24, 48, 96, 384],
             nullable=True,
-            tooltip='By default, treatments must be verbosely defined for each condition and sample id'
+            tooltip='By default, treatments must be verbosely defined for each condition and sample id '
             'If you have a known plate map, then selecting wells will allow a sparse treatment map to be passed to PlateMapper',
         )
         self._tx_dict = TextEdit(label='Treatment Dict', value='{\n\n}')
