@@ -18,8 +18,8 @@ if TYPE_CHECKING:
 
 
 class WorkflowContainer(Container):
-
-    """Container class for managing the workflow functionality in napari-ndev.
+    """
+    Container class for managing the workflow functionality in napari-ndev.
 
     Parameters
     ----------

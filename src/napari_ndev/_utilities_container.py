@@ -27,8 +27,8 @@ if TYPE_CHECKING:
 
 
 class UtilitiesContainer(Container):
-
-    """A widget to work with images and labels in the napari viewer.
+    """
+    A widget to work with images and labels in the napari viewer.
 
     Parameters
     ----------
@@ -114,7 +114,8 @@ class UtilitiesContainer(Container):
     """
 
     def __init__(self, viewer: napari.viewer.Viewer = None):
-        """Initialize the UtilitiesContainer widget.
+        """
+        Initialize the UtilitiesContainer widget.
 
         Parameters
         ----------
@@ -335,7 +336,8 @@ class UtilitiesContainer(Container):
         self._results._on_value_change()
 
     def _update_metadata(self, img: AICSImage | BioImage):
-        """Update the metadata based on the given image.
+        """
+        Update the metadata based on the given image.
 
         Parameters
         ----------
@@ -355,7 +357,8 @@ class UtilitiesContainer(Container):
         )
 
     def _bioimage_metadata(self):
-        """Update the metadata from the selected file.
+        """
+        Update the metadata from the selected file.
 
         Attemps to read from BioImage first, then AICSImage.
 
@@ -381,7 +384,8 @@ class UtilitiesContainer(Container):
             self._bioimage_metadata()
 
     def update_metadata_from_layer(self):
-        """Update metadata from the selected layer.
+        """
+        Update metadata from the selected layer.
 
         Current code expects images to be opened with napari-aicsimageio.
         """
@@ -405,7 +409,8 @@ class UtilitiesContainer(Container):
             )
 
     def open_images(self):
-        """Open the selected images in the napari viewer.
+        """
+        Open the selected images in the napari viewer.
 
         If napari-aicsimageio is not installed, then the images will likely
         be opened by the base napari reader, or a different compatabible
@@ -453,7 +458,8 @@ class UtilitiesContainer(Container):
         concatenate_layers: bool,
         layers: list[ImageLayer],
     ):
-        """Concatenate the image data based on the selected options.
+        """
+        Concatenate the image data based on the selected options.
 
         Intended also to remove "blank" channels and layers. This is present
         in some microscope formats where it will image in RGB, and then
@@ -511,7 +517,8 @@ class UtilitiesContainer(Container):
 
     @property
     def p_sizes(self):
-        """Get the physical pixel sizes.
+        """
+        Get the physical pixel sizes.
 
         Returns
         -------
@@ -528,7 +535,8 @@ class UtilitiesContainer(Container):
         )
 
     def _get_save_loc(self, parent):
-        """Get the save location based on the parent directory.
+        """
+        Get the save location based on the parent directory.
 
         Parameters
         ----------
@@ -553,7 +561,8 @@ class UtilitiesContainer(Container):
         channel_names: list[str],
         layer: str,
     ) -> None:
-        """Save data as OME-TIFF with bioio based on common logic.
+        """
+        Save data as OME-TIFF with bioio based on common logic.
 
         Parameters
         ----------
@@ -609,7 +618,8 @@ class UtilitiesContainer(Container):
         return
 
     def save_scenes_ome_tiff(self) -> None:
-        """Save selected scenes as OME-TIFF.
+        """
+        Save selected scenes as OME-TIFF.
 
         This method is intended to save scenes from a single file. The scenes
         are extracted based on the scenes_to_extract widget value, which is a
@@ -653,7 +663,8 @@ class UtilitiesContainer(Container):
         return
 
     def save_ome_tiff(self) -> np.ndarray:
-        """Save the concatenated image data as OME-TIFF.
+        """
+        Save the concatenated image data as OME-TIFF.
 
         The concatenated image data is concatenated and then saved as OME-TIFF
         based on the selected options and the given save location.
@@ -685,7 +696,8 @@ class UtilitiesContainer(Container):
         return self._img_data
 
     def save_labels(self) -> np.ndarray:
-        """Save the selected labels layer as OME-TIFF.
+        """
+        Save the selected labels layer as OME-TIFF.
 
         Returns
         -------
@@ -712,7 +724,8 @@ class UtilitiesContainer(Container):
         return label_data
 
     def save_shapes_as_labels(self) -> np.ndarray:
-        """"Save the selected shapes layer as labels.
+        """
+        "Save the selected shapes layer as labels.
 
         Returns
         -------

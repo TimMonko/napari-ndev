@@ -32,8 +32,8 @@ if TYPE_CHECKING:
 
 
 class ApocContainer(Container):
-
-    """Container class for managing the ApocContainer widget in napari.
+    """
+    Container class for managing the ApocContainer widget in napari.
 
     Parameters
     ----------
