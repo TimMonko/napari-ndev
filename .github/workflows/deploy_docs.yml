@@ -8,6 +8,9 @@ on:
     branches:
       - main
 
+permissions:
+  contents: write
+
 jobs:
   docs:
     runs-on: ubuntu-latest
@@ -25,16 +28,11 @@ jobs:
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip setuptools wheel
-          sudo apt-get install python3-distutils
           python -m pip install -e .[docs]
 
       - name: Deploy docs to GitHub Pages
         if: github.event_name == 'push'
-        uses: peaceiris/actions-gh-pages@v3
-        with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: ./site
-        # run: mkdocs gh-deploy --strict --force
+        run: mkdocs gh-deploy --strict --force
 
       - name: Test that docs build without error
         if: github.event_name == 'pull_request'
