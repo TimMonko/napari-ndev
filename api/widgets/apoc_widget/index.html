@@ -1732,8 +1732,10 @@ type.</p>
 <span class="normal">725</span>
 <span class="normal">726</span>
 <span class="normal">727</span>
-<span class="normal">728</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span> <span class="nc">ApocContainer</span><span class="p">(</span><span class="n">Container</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Container class for managing the ApocContainer widget in napari.</span>
+<span class="normal">728</span>
+<span class="normal">729</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span> <span class="nc">ApocContainer</span><span class="p">(</span><span class="n">Container</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Container class for managing the ApocContainer widget in napari.</span>
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
@@ -2204,19 +2206,19 @@ type.</p>
         <span class="n">logger</span><span class="p">,</span> <span class="n">handler</span> <span class="o">=</span> <span class="n">helpers</span><span class="o">.</span><span class="n">setup_logger</span><span class="p">(</span><span class="n">log_loc</span><span class="p">)</span>
 
         <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">            </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Classifier: %s</span>
 <span class="sd">        Channels: %s</span>
 <span class="sd">        Num. Files: %d</span>
 <span class="sd">        Image Directory: %s</span>
 <span class="sd">        Label Directory: %s</span>
 <span class="sd">        &quot;&quot;&quot;</span><span class="p">,</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_classifier_file</span><span class="o">.</span><span class="n">value</span><span class="p">,</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_image_channels</span><span class="o">.</span><span class="n">value</span><span class="p">,</span>
-        <span class="nb">len</span><span class="p">(</span><span class="n">image_files</span><span class="p">),</span>
-        <span class="n">image_directory</span><span class="p">,</span>
-        <span class="n">label_directory</span>
-    <span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_classifier_file</span><span class="o">.</span><span class="n">value</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_image_channels</span><span class="o">.</span><span class="n">value</span><span class="p">,</span>
+            <span class="nb">len</span><span class="p">(</span><span class="n">image_files</span><span class="p">),</span>
+            <span class="n">image_directory</span><span class="p">,</span>
+            <span class="n">label_directory</span><span class="p">,</span>
+        <span class="p">)</span>
 
         <span class="c1"># https://github.com/clEsperanto/pyclesperanto_prototype/issues/163</span>
         <span class="n">set_wait_for_kernel_finish</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
@@ -2248,7 +2250,7 @@ type.</p>
                 <span class="bp">self</span><span class="o">.</span><span class="n">_progress_bar</span><span class="o">.</span><span class="n">value</span> <span class="o">=</span> <span class="n">idx</span> <span class="o">+</span> <span class="mi">1</span>
                 <span class="k">continue</span>
 
-            <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s1">&#39;Training Image </span><span class="si">%d</span><span class="s1">: </span><span class="si">%s</span><span class="s1">&#39;</span><span class="p">,</span> <span class="n">idx</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span> <span class="n">image_file</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s1">&#39;Training Image </span><span class="si">%d</span><span class="s1">: </span><span class="si">%s</span><span class="s1">&#39;</span><span class="p">,</span> <span class="n">idx</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="n">image_file</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
 
             <span class="n">img</span> <span class="o">=</span> <span class="n">AICSImage</span><span class="p">(</span><span class="n">image_directory</span> <span class="o">/</span> <span class="n">image_file</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
             <span class="n">channel_img</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_channel_image</span><span class="p">(</span><span class="n">img</span><span class="p">,</span> <span class="n">channel_index_list</span><span class="p">)</span>
@@ -2297,19 +2299,19 @@ type.</p>
         <span class="n">logger</span><span class="p">,</span> <span class="n">handler</span> <span class="o">=</span> <span class="n">helpers</span><span class="o">.</span><span class="n">setup_logger</span><span class="p">(</span><span class="n">log_loc</span><span class="p">)</span>
 
         <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">            </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Classifier: %s</span>
 <span class="sd">        Channels: %s</span>
 <span class="sd">        Num. Files: %d</span>
 <span class="sd">        Image Directory: %s</span>
 <span class="sd">        Output Directory: %s</span>
 <span class="sd">        &quot;&quot;&quot;</span><span class="p">,</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_classifier_file</span><span class="o">.</span><span class="n">value</span><span class="p">,</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_image_channels</span><span class="o">.</span><span class="n">value</span><span class="p">,</span>
-        <span class="nb">len</span><span class="p">(</span><span class="n">image_files</span><span class="p">),</span>
-        <span class="n">image_directory</span><span class="p">,</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_output_directory</span><span class="o">.</span><span class="n">value</span>
-    <span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_classifier_file</span><span class="o">.</span><span class="n">value</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_image_channels</span><span class="o">.</span><span class="n">value</span><span class="p">,</span>
+            <span class="nb">len</span><span class="p">(</span><span class="n">image_files</span><span class="p">),</span>
+            <span class="n">image_directory</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_output_directory</span><span class="o">.</span><span class="n">value</span><span class="p">,</span>
+        <span class="p">)</span>
 
         <span class="c1"># https://github.com/clEsperanto/pyclesperanto_prototype/issues/163</span>
         <span class="n">set_wait_for_kernel_finish</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
@@ -2326,7 +2328,7 @@ type.</p>
         <span class="p">]</span>
 
         <span class="k">for</span> <span class="n">idx</span><span class="p">,</span> <span class="n">file</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">image_files</span><span class="p">):</span>
-            <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s1">&#39;Predicting Image </span><span class="si">%d</span><span class="s1">: </span><span class="si">%s</span><span class="s1">&#39;</span><span class="p">,</span> <span class="n">idx</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span> <span class="n">file</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s1">&#39;Predicting Image </span><span class="si">%d</span><span class="s1">: </span><span class="si">%s</span><span class="s1">&#39;</span><span class="p">,</span> <span class="n">idx</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="n">file</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
 
             <span class="n">img</span> <span class="o">=</span> <span class="n">AICSImage</span><span class="p">(</span><span class="n">file</span><span class="p">)</span>
             <span class="n">channel_img</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_channel_image</span><span class="p">(</span><span class="n">img</span><span class="p">,</span> <span class="n">channel_index_list</span><span class="p">)</span>

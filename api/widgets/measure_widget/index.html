@@ -1634,8 +1634,12 @@
 <span class="normal">567</span>
 <span class="normal">568</span>
 <span class="normal">569</span>
-<span class="normal">570</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span> <span class="nc">MeasureContainer</span><span class="p">(</span><span class="n">Container</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Widget to measure labels from folders.</span>
+<span class="normal">570</span>
+<span class="normal">571</span>
+<span class="normal">572</span>
+<span class="normal">573</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span> <span class="nc">MeasureContainer</span><span class="p">(</span><span class="n">Container</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Widget to measure labels from folders.</span>
 
 <span class="sd">    This class provides functionality to measure labels and compare them against intensity images, which can be microscopic images or other labels. It initializes various widgets and containers for user input and interaction, and connects events to handle user actions.</span>
 
@@ -2015,7 +2019,7 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">_id_regex_dict</span><span class="o">.</span><span class="n">value</span><span class="p">,</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_tx_id</span><span class="o">.</span><span class="n">value</span><span class="p">,</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_tx_n_well</span><span class="o">.</span><span class="n">value</span><span class="p">,</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_tx_dict</span><span class="o">.</span><span class="n">value</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_tx_dict</span><span class="o">.</span><span class="n">value</span><span class="p">,</span>
         <span class="p">)</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_progress_bar</span><span class="o">.</span><span class="n">label</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;Measuring </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">label_files</span><span class="p">)</span><span class="si">}</span><span class="s1"> Images&#39;</span>
@@ -2052,7 +2056,8 @@
                 <span class="n">image_path</span> <span class="o">=</span> <span class="n">image_dir</span> <span class="o">/</span> <span class="n">file</span><span class="o">.</span><span class="n">name</span>
                 <span class="k">if</span> <span class="ow">not</span> <span class="n">image_path</span><span class="o">.</span><span class="n">exists</span><span class="p">():</span>
                     <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span>
-                        <span class="s1">&#39;Image file </span><span class="si">%s</span><span class="s1"> not found in intensity directory&#39;</span><span class="p">,</span> <span class="n">file</span><span class="o">.</span><span class="n">name</span>
+                        <span class="s1">&#39;Image file </span><span class="si">%s</span><span class="s1"> not found in intensity directory&#39;</span><span class="p">,</span>
+                        <span class="n">file</span><span class="o">.</span><span class="n">name</span><span class="p">,</span>
                     <span class="p">)</span>
                     <span class="bp">self</span><span class="o">.</span><span class="n">_progress_bar</span><span class="o">.</span><span class="n">value</span> <span class="o">=</span> <span class="n">idx</span> <span class="o">+</span> <span class="mi">1</span>
                     <span class="k">continue</span>
@@ -2061,7 +2066,8 @@
                 <span class="n">region_path</span> <span class="o">=</span> <span class="n">region_dir</span> <span class="o">/</span> <span class="n">file</span><span class="o">.</span><span class="n">name</span>
                 <span class="k">if</span> <span class="ow">not</span> <span class="n">region_path</span><span class="o">.</span><span class="n">exists</span><span class="p">():</span>
                     <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span>
-                        <span class="s1">&#39;Region file </span><span class="si">%s</span><span class="s1"> not found in region directory&#39;</span><span class="p">,</span> <span class="n">file</span><span class="o">.</span><span class="n">name</span>
+                        <span class="s1">&#39;Region file </span><span class="si">%s</span><span class="s1"> not found in region directory&#39;</span><span class="p">,</span>
+                        <span class="n">file</span><span class="o">.</span><span class="n">name</span><span class="p">,</span>
                     <span class="p">)</span>
                     <span class="bp">self</span><span class="o">.</span><span class="n">_progress_bar</span><span class="o">.</span><span class="n">value</span> <span class="o">=</span> <span class="n">idx</span> <span class="o">+</span> <span class="mi">1</span>
                     <span class="k">continue</span>
