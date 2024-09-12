@@ -52,7 +52,13 @@ intensity_list = [intensity1, intensity2]
 
 
 @pytest.mark.parametrize(
-    ('label_images', 'label_names', 'intensity_images', 'intensity_names', 'expected'),
+    (
+        'label_images',
+        'label_names',
+        'intensity_images',
+        'intensity_names',
+        'expected',
+    ),
     [
         (
             label1,
@@ -211,7 +217,18 @@ id_regex = {
 
 
 @pytest.mark.parametrize(
-    ('label_images', 'label_names', 'intensity_images', 'intensity_names', 'properties', 'scale', 'id_string', 'id_regex_dict', 'save_data_path', 'expected_columns'),
+    (
+        'label_images',
+        'label_names',
+        'intensity_images',
+        'intensity_names',
+        'properties',
+        'scale',
+        'id_string',
+        'id_regex_dict',
+        'save_data_path',
+        'expected_columns',
+    ),
     [
         # 2D label image, no intensity image
         (
@@ -355,7 +372,6 @@ def test_measure_regionprops_tx_dict():
         tx_n_well=tx_n_well,
         tx_dict=tx_dict,
     )
-
 
     assert isinstance(result_df, pd.DataFrame)
     # Check if the DataFrame contains the expected columns

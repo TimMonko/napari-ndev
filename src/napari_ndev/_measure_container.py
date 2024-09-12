@@ -411,7 +411,7 @@ class MeasureContainer(Container):
             self._id_regex_dict.value,
             self._tx_id.value,
             self._tx_n_well.value,
-            self._tx_dict.value
+            self._tx_dict.value,
         )
 
         self._progress_bar.label = f'Measuring {len(label_files)} Images'
@@ -448,7 +448,8 @@ class MeasureContainer(Container):
                 image_path = image_dir / file.name
                 if not image_path.exists():
                     logger.error(
-                        'Image file %s not found in intensity directory', file.name
+                        'Image file %s not found in intensity directory',
+                        file.name,
                     )
                     self._progress_bar.value = idx + 1
                     continue
@@ -457,7 +458,8 @@ class MeasureContainer(Container):
                 region_path = region_dir / file.name
                 if not region_path.exists():
                     logger.error(
-                        'Region file %s not found in region directory', file.name
+                        'Region file %s not found in region directory',
+                        file.name,
                     )
                     self._progress_bar.value = idx + 1
                     continue
