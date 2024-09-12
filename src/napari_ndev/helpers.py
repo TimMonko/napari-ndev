@@ -148,6 +148,11 @@ def create_id_string(img: BioImage | AICSImage, identifier: str) -> str:
     str
         The ID string.
 
+    Examples
+    --------
+    >>> create_id_string(img, 'test')
+    'test__0__Scene:0'
+
     """
     scene_idx = img.current_scene_index
     # scene = img.current_scene
