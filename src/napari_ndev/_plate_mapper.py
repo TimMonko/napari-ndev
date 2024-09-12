@@ -5,6 +5,7 @@ import pandas as pd
 
 
 class PlateMapper:
+
     """A class for creating and manipulating plate maps.
 
     Attributes
