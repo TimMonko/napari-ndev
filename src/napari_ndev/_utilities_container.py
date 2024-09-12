@@ -1,10 +1,14 @@
 from __future__ import annotations
 
 import ast
+import re
 from pathlib import Path
 from typing import TYPE_CHECKING
 
 import numpy as np
+from aicsimageio import AICSImage
+from bioio import BioImage
+from bioio_base.exceptions import UnsupportedFileFormatError
 from magicgui.widgets import (
     CheckBox,
     Container,
@@ -19,9 +23,6 @@ from magicgui.widgets import (
 from napari_ndev import helpers
 
 if TYPE_CHECKING:
-    from aicsimageio import AICSImage
-    from bioio import BioImage
-
     import napari
     from napari.layers import Image as ImageLayer
 
@@ -143,7 +144,7 @@ class UtilitiesContainer(Container):
         self._connect_events()
 
     def _init_widgets(self):
-        """"Initialize non-Container widgets."""
+        """Initialize non-Container widgets."""
         self._file_metadata_update = PushButton(label='File')
         self._layer_metadata_update = PushButton(label='Selected Layer')
         self._metadata_container = Container(
@@ -171,7 +172,6 @@ class UtilitiesContainer(Container):
 
         self._results = TextEdit(label='Info')
 
-
     def _init_open_image_container(self):
         """Initialize the open image container."""
         self._open_image_container = Container(layout='horizontal')
@@ -194,7 +194,6 @@ class UtilitiesContainer(Container):
         self._open_image_container.append(self._open_image_button)
         self._open_image_container.append(self._open_next_image_button)
 
-
     def _init_info_container(self):
         """Initialize the info container containing dims and scenes."""
         self._info_container = Container(layout='horizontal')
@@ -215,7 +214,6 @@ class UtilitiesContainer(Container):
             'channel names are not the proper length, then default channel '
             'names will be used.',
         )
-
 
     def _init_scale_container(self):
         """Initialize the scale container."""
@@ -356,6 +354,27 @@ class UtilitiesContainer(Container):
             img.physical_pixel_sizes.X or 1,
         )
 
+    def _read_image_file(self, file: str | Path) -> AICSImage | BioImage:
+        """
+        Read the image file with BioImage or AICSImage.
+
+        Parameters
+        ----------
+        file : str or Path
+            The file path.
+
+        Returns
+        -------
+        AICSImage or BioImage
+            The image object.
+
+        """
+        try:
+            img = BioImage(file)
+        except UnsupportedFileFormatError:
+            img = AICSImage(file)
+        return img
+
     def _bioimage_metadata(self):
         """
         Update the metadata from the selected file.
@@ -363,14 +382,10 @@ class UtilitiesContainer(Container):
         Attemps to read from BioImage first, then AICSImage.
 
         """
-        from aicsimageio import AICSImage
-        from bioio import BioImage
-        from bioio_base.exceptions import UnsupportedFileFormatError
-
-        try:
-            img = BioImage(self._files.value[0])
-        except UnsupportedFileFormatError:
-            img = AICSImage(self._files.value[0])
+        # from aicsimageio import AICSImage
+        # from bioio import BioImage
+        # from bioio_base.exceptions import UnsupportedFileFormatError
+        img = self._read_image_file(self._files.value[0])
 
         self._img = img
         self._update_metadata(img)
@@ -423,18 +438,33 @@ class UtilitiesContainer(Container):
         """Open the next set of images in the directyory."""
         # TODO: sort files consistent with windows and mac folder explorers
         num_files = self._files.value.__len__()
+
         # get the parent directory of the first file
         first_file = self._files.value[0]
         parent_dir = first_file.parent
+
         # get the list of files in the parent directory
         files = list(parent_dir.glob(f'*{first_file.suffix}'))
-        # get the index of the first file in the list
+
+        # sort the files naturally (case-insensitive and numbers in order)
+        # like would be scene in windows file explorer default sorting
+        files.sort(
+            key=lambda f: [
+                int(text) if text.isdigit() else text.lower()
+                for text in re.split('([0-9]+)', f.name)
+            ]
+        )
+
+        # get the index of the first file in the list and then the next files
         idx = files.index(first_file)
-        # get the next file(s) in the list after the number of files
         next_files = files[idx + num_files : idx + num_files + num_files]
         # set the nwe save names, and update the file value
-        self._save_name.value = str(next_files[0].stem + '.tiff')
+        img = self._read_image_file(next_files[0])
+
+        image_id = helpers.create_id_string(img, next_files[0].stem)
+        self._save_name.value = str(image_id + '.tiff')
         self._files.value = next_files
+
         if self._open_image_update_metadata.value:
             self._bioimage_metadata()
 
@@ -482,17 +512,15 @@ class UtilitiesContainer(Container):
             The concatenated image data.
 
         """
-        from aicsimageio import AICSImage
-        from bioio import BioImage
-        from bioio_base.exceptions import UnsupportedFileFormatError
+        # from aicsimageio import AICSImage
+        # from bioio import BioImage
+        # from bioio_base.exceptions import UnsupportedFileFormatError
 
         array_list = []
         if concatenate_files:
             for file in files:
-                try:
-                    img = BioImage(file)
-                except UnsupportedFileFormatError:
-                    img = AICSImage(file)
+                img = self._read_image_file(file)
+
                 if 'S' in img.dims.order:
                     img_data = img.get_image_data('TSZYX')
                 else:
@@ -534,24 +562,30 @@ class UtilitiesContainer(Container):
             self._scale_tuple.value[2],
         )
 
-    def _get_save_loc(self, parent):
+    def _get_save_loc(
+        self, root_dir: Path, parent: str, file_name: str
+    ) -> Path:
         """
         Get the save location based on the parent directory.
 
         Parameters
         ----------
+        root_dir : Path
+            The root directory.
         parent : str
-            The parent directory.
+            The parent directory. eg. 'Images', 'Labels', 'ShapesAsLabels'
+        file_name : str
+            The file name.
 
         Returns
         -------
         Path
-            The save location.
+            The save location. root_dir / parent / file_name
 
         """
-        save_directory = self._save_directory.value / parent
+        save_directory = root_dir / parent
         save_directory.mkdir(parents=False, exist_ok=True)
-        return save_directory / self._save_name.value
+        return save_directory / file_name
 
     def _common_save_logic(
         self,
@@ -559,10 +593,15 @@ class UtilitiesContainer(Container):
         uri: Path,
         dim_order: str,
         channel_names: list[str],
+        image_name: str | list[str | None] | None,
         layer: str,
     ) -> None:
         """
         Save data as OME-TIFF with bioio based on common logic.
+
+        Converts labels to np.int32 if np.int64 is detected, due to bioio
+        not supporting np.int64 labels, even though napari and other libraries
+        generate np.int64 labels.
 
         Parameters
         ----------
@@ -573,7 +612,9 @@ class UtilitiesContainer(Container):
         dim_order : str
             The dimension order.
         channel_names : list[str]
-            The channel names.
+            The channel names saved to OME metadata
+        image_name : str | list[str | None] | None
+            The image name saved to OME metadata
         layer : str
             The layer name.
 
@@ -596,6 +637,7 @@ class UtilitiesContainer(Container):
                 uri=uri,
                 dim_order=dim_order or None,
                 channel_names=channel_names or None,
+                image_name=image_name or None,
                 physical_pixel_sizes=self.p_sizes,
             )
             self._results.value = f'Saved {layer}: ' + str(
@@ -607,6 +649,7 @@ class UtilitiesContainer(Container):
                 data=data,
                 uri=uri,
                 dim_order=dim_order,
+                image_name=image_name or None,
                 physical_pixel_sizes=self.p_sizes,
             )
             self._results.value = (
@@ -621,32 +664,33 @@ class UtilitiesContainer(Container):
         """
         Save selected scenes as OME-TIFF.
 
+        Not currently interacting with the viewer labels.
         This method is intended to save scenes from a single file. The scenes
         are extracted based on the scenes_to_extract widget value, which is a
         list of scene indices. If the widget is left blank, then all scenes
         will be extracted.
 
         """
-        from aicsimageio import AICSImage
-        from bioio import BioImage
-        from bioio_base.exceptions import UnsupportedFileFormatError
+        # from aicsimageio import AICSImage
+        # from bioio import BioImage
+        # from bioio_base.exceptions import UnsupportedFileFormatError
 
-        try:
-            img = BioImage(self._files.value[0])
-        except UnsupportedFileFormatError:
-            img = AICSImage(self._files.value[0])
-        # img = AICSImage(self._files.value[0])
+        img = self._read_image_file(self._files.value[0])
+
         scenes = self._scenes_to_extract.value
         scenes_list = ast.literal_eval(scenes) if scenes else None
         save_directory = self._save_directory.value / 'Images'
         save_directory.mkdir(parents=False, exist_ok=True)
         for scene in scenes_list:
+            # TODO: fix this to not have an issue if there are identical scenes
+            # presented as strings, though the asssumption is most times the
+            # user will input a list of integers.
             img.set_scene(scene)
 
-            img_save_name = (
-                f'{self._save_name.value.split(".")[0]}'
-                f"_scene_{img.current_scene}.ome.tiff"
-            )
+            base_save_name = self._save_name.value.split('.')[0]
+            image_id = helpers.create_id_string(img, base_save_name)
+
+            img_save_name = f'{image_id}.ome.tiff'
             img_save_loc = save_directory / img_save_name
 
             # get channel names from widget if truthy
@@ -658,6 +702,7 @@ class UtilitiesContainer(Container):
                 uri=img_save_loc,
                 dim_order='TCZYX',
                 channel_names=channel_names,
+                image_name=image_id,
                 layer=f'Scene: {img.current_scene}',
             )
         return
@@ -681,7 +726,9 @@ class UtilitiesContainer(Container):
             self._concatenate_image_layers.value,
             list(self._viewer.layers.selection),
         )
-        img_save_loc = self._get_save_loc('Images')
+        img_save_loc = self._get_save_loc(
+            self._save_directory.value, 'Images', self._save_name.value
+        )
         # get channel names from widget if truthy
         cnames = self._channel_names.value
         channel_names = ast.literal_eval(cnames) if cnames else None
@@ -691,6 +738,7 @@ class UtilitiesContainer(Container):
             uri=img_save_loc,
             dim_order='TCZYX',
             channel_names=channel_names,
+            image_name=self._save_name.value,
             layer='Image',
         )
         return self._img_data
@@ -712,13 +760,16 @@ class UtilitiesContainer(Container):
         else:
             label_data = label_data.astype(np.int16)
 
-        label_save_loc = self._get_save_loc('Labels')
+        label_save_loc = self._get_save_loc(
+            self._save_directory.value, 'Labels', self._save_name.value
+        )
 
         self._common_save_logic(
             data=label_data,
             uri=label_save_loc,
             dim_order=self._squeezed_dims,
             channel_names=['Labels'],
+            image_name=self._save_name.value,
             layer='Labels',
         )
         return label_data
@@ -748,13 +799,16 @@ class UtilitiesContainer(Container):
         shapes_as_labels = shapes.to_labels(labels_shape=label_dim)
         shapes_as_labels = shapes_as_labels.astype(np.int16)
 
-        shapes_save_loc = self._get_save_loc('ShapesAsLabels')
+        shapes_save_loc = self._get_save_loc(
+            self._save_directory.value, 'ShapesAsLabels', self._save_name.value
+        )
 
         self._common_save_logic(
             data=shapes_as_labels,
             uri=shapes_save_loc,
             dim_order=self._squeezed_dims,
             channel_names=['Shapes'],
+            image_name=self._save_name.value,
             layer='Shapes',
         )
 
