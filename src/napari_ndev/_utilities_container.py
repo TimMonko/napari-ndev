@@ -6,9 +6,6 @@ from pathlib import Path
 from typing import TYPE_CHECKING
 
 import numpy as np
-from aicsimageio import AICSImage
-from bioio import BioImage
-from bioio_base.exceptions import UnsupportedFileFormatError
 from magicgui.widgets import (
     CheckBox,
     Container,
@@ -23,6 +20,9 @@ from magicgui.widgets import (
 from napari_ndev import helpers
 
 if TYPE_CHECKING:
+    from aicsimageio import AICSImage
+    from bioio import BioImage
+
     import napari
     from napari.layers import Image as ImageLayer
 
@@ -369,6 +369,10 @@ class UtilitiesContainer(Container):
             The image object.
 
         """
+        from aicsimageio import AICSImage
+        from bioio import BioImage
+        from bioio_base.exceptions import UnsupportedFileFormatError
+
         try:
             img = BioImage(file)
         except UnsupportedFileFormatError:
