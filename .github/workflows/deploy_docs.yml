@@ -28,8 +28,12 @@ jobs:
           sudo apt-get install python3-distutils
           python -m pip install -e .[docs]
 
-      - name: Deploy docs to GitHub Pages
+      - name: Deploy docs to GitHub Pages on push
         if: github.event_name == 'push'
+        run: mkdocs gh-deploy --strict --force
+
+      - name: Deploy docs to GitHub Pages on merge
+        if: github.event.pull_request.merged == true
         run: mkdocs gh-deploy --strict --force
 
       - name: Test that docs build without error
