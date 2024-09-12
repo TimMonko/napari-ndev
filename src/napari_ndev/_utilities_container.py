@@ -20,6 +20,7 @@ from napari_ndev import helpers
 
 if TYPE_CHECKING:
     from aicsimageio import AICSImage
+    from bioio import BioImage
 
     import napari
     from napari.layers import Image as ImageLayer
@@ -112,10 +113,15 @@ class UtilitiesContainer(Container):
 
     """
 
-    def __init__(
-        self,
-        viewer: napari.viewer.Viewer = None,
-    ):
+    def __init__(self, viewer: napari.viewer.Viewer = None):
+        """Initialize the UtilitiesContainer widget.
+
+        Parameters
+        ----------
+        viewer : napari.viewer.Viewer, optional
+            The napari viewer instance.
+
+        """
         super().__init__()
 
         self._viewer = viewer if viewer is not None else None
@@ -136,6 +142,7 @@ class UtilitiesContainer(Container):
         self._connect_events()
 
     def _init_widgets(self):
+        """"Initialize non-Container widgets."""
         self._file_metadata_update = PushButton(label='File')
         self._layer_metadata_update = PushButton(label='Selected Layer')
         self._metadata_container = Container(
@@ -165,6 +172,7 @@ class UtilitiesContainer(Container):
 
 
     def _init_open_image_container(self):
+        """Initialize the open image container."""
         self._open_image_container = Container(layout='horizontal')
 
         self._open_image_update_metadata = CheckBox(
@@ -187,6 +195,7 @@ class UtilitiesContainer(Container):
 
 
     def _init_info_container(self):
+        """Initialize the info container containing dims and scenes."""
         self._info_container = Container(layout='horizontal')
         self._dim_order = Label(
             label='Dimension Order: ',
@@ -208,6 +217,7 @@ class UtilitiesContainer(Container):
 
 
     def _init_scale_container(self):
+        """Initialize the scale container."""
         self._scale_container = Container(
             layout='vertical',
             label='Scale, ZYX',
@@ -226,6 +236,7 @@ class UtilitiesContainer(Container):
         self._scale_container.append(self._scale_layers)
 
     def _init_scene_container(self):
+        """Initialize the scene container, allowing scene saving."""
         self._scene_container = Container(
             layout='horizontal',
             label='Extract Scenes',
@@ -244,6 +255,7 @@ class UtilitiesContainer(Container):
         self._scene_container.append(self._extract_scenes)
 
     def _init_concatenate_container(self):
+        """Initialize the container to concatenate image and layers."""
         self._concatenate_image_files = CheckBox(
             value=True,
             label='Concatenate Files',
@@ -262,6 +274,7 @@ class UtilitiesContainer(Container):
         self._concatenate_container.append(self._concatenate_image_layers)
 
     def _init_save_container(self):
+        """Initialize the container to save images, labels, and shapes."""
         self._save_container = Container(
             layout='horizontal',
             label='Save Selected Layers',
@@ -285,6 +298,7 @@ class UtilitiesContainer(Container):
         self._save_container.append(self._save_shapes_button)
 
     def _init_layout(self):
+        """Initialize the layout of the widget."""
         self.extend(
             [
                 self._save_directory,
@@ -303,6 +317,7 @@ class UtilitiesContainer(Container):
         )
 
     def _connect_events(self):
+        """Connect the events of the widgets to respective methods."""
         self._files.changed.connect(self.update_metadata_from_file)
         self._open_image_button.clicked.connect(self.open_images)
         self._open_next_image_button.clicked.connect(self.open_next_images)
@@ -319,7 +334,15 @@ class UtilitiesContainer(Container):
         self._save_shapes_button.clicked.connect(self.save_shapes_as_labels)
         self._results._on_value_change()
 
-    def _update_metadata(self, img: AICSImage):
+    def _update_metadata(self, img: AICSImage | BioImage):
+        """Update the metadata based on the given image.
+
+        Parameters
+        ----------
+        img : AICSImage | BioImage
+            The image from which to update the metadata.
+
+        """
         self._dim_order.value = img.dims.order
 
         self._squeezed_dims = helpers.get_squeezed_dim_order(img)
@@ -332,20 +355,36 @@ class UtilitiesContainer(Container):
         )
 
     def _bioimage_metadata(self):
-        from aicsimageio import AICSImage
+        """Update the metadata from the selected file.
 
-        img = AICSImage(self._files.value[0])
+        Attemps to read from BioImage first, then AICSImage.
+
+        """
+        from aicsimageio import AICSImage
+        from bioio import BioImage
+        from bioio_base.exceptions import UnsupportedFileFormatError
+
+        try:
+            img = BioImage(self._files.value[0])
+        except UnsupportedFileFormatError:
+            img = AICSImage(self._files.value[0])
+
         self._img = img
         self._update_metadata(img)
         self._scenes.value = len(img.scenes)
 
     def update_metadata_from_file(self):
+        """Update self._save_name.value and metadata if selected."""
         self._save_name.value = str(self._files.value[0].stem + '.tiff')
 
         if self._open_image_update_metadata.value:
             self._bioimage_metadata()
 
     def update_metadata_from_layer(self):
+        """Update metadata from the selected layer.
+
+        Current code expects images to be opened with napari-aicsimageio.
+        """
         selected_layer = self._viewer.layers.selection.active
         try:
             self._update_metadata(selected_layer.metadata['aicsimage'])
@@ -366,9 +405,18 @@ class UtilitiesContainer(Container):
             )
 
     def open_images(self):
+        """Open the selected images in the napari viewer.
+
+        If napari-aicsimageio is not installed, then the images will likely
+        be opened by the base napari reader, or a different compatabible
+        reader.
+
+        """
         self._viewer.open(self._files.value, plugin='napari-aicsimageio')
 
     def open_next_images(self):
+        """Open the next set of images in the directyory."""
+        # TODO: sort files consistent with windows and mac folder explorers
         num_files = self._files.value.__len__()
         # get the parent directory of the first file
         first_file = self._files.value[0]
@@ -388,6 +436,7 @@ class UtilitiesContainer(Container):
         self._viewer.open(next_files, plugin='napari-aicsimageio')
 
     def rescale_by(self):
+        """Rescale the selected layers based on the given scale."""
         layers = self._viewer.layers.selection
         scale_tup = self._scale_tuple.value
 
@@ -404,12 +453,40 @@ class UtilitiesContainer(Container):
         concatenate_layers: bool,
         layers: list[ImageLayer],
     ):
+        """Concatenate the image data based on the selected options.
+
+        Intended also to remove "blank" channels and layers. This is present
+        in some microscope formats where it will image in RGB, and then
+        leave empty channels not represented by the color channels.
+
+        Parameters
+        ----------
+        concatenate_files : bool
+            Concatenate files in the selected directory. Removes blank channels.
+        files : list[str | Path]
+            The list of files to concatenate.
+        concatenate_layers : bool
+            Concatenate image layers in the viewer. Removes empty.
+        layers : list[ImageLayer]
+            The list of layers to concatenate.
+
+        Returns
+        -------
+        numpy.ndarray
+            The concatenated image data.
+
+        """
         from aicsimageio import AICSImage
+        from bioio import BioImage
+        from bioio_base.exceptions import UnsupportedFileFormatError
 
         array_list = []
         if concatenate_files:
             for file in files:
-                img = AICSImage(file)
+                try:
+                    img = BioImage(file)
+                except UnsupportedFileFormatError:
+                    img = AICSImage(file)
                 if 'S' in img.dims.order:
                     img_data = img.get_image_data('TSZYX')
                 else:
@@ -434,6 +511,14 @@ class UtilitiesContainer(Container):
 
     @property
     def p_sizes(self):
+        """Get the physical pixel sizes.
+
+        Returns
+        -------
+        PhysicalPixelSizes
+            The physical pixel sizes.
+
+        """
         from bioio_base.types import PhysicalPixelSizes
 
         return PhysicalPixelSizes(
@@ -443,6 +528,19 @@ class UtilitiesContainer(Container):
         )
 
     def _get_save_loc(self, parent):
+        """Get the save location based on the parent directory.
+
+        Parameters
+        ----------
+        parent : str
+            The parent directory.
+
+        Returns
+        -------
+        Path
+            The save location.
+
+        """
         save_directory = self._save_directory.value / parent
         save_directory.mkdir(parents=False, exist_ok=True)
         return save_directory / self._save_name.value
@@ -455,7 +553,25 @@ class UtilitiesContainer(Container):
         channel_names: list[str],
         layer: str,
     ) -> None:
-        from aicsimageio.writers import OmeTiffWriter
+        """Save data as OME-TIFF with bioio based on common logic.
+
+        Parameters
+        ----------
+        data : np.ndarray
+            The data to save.
+        uri : Path
+            The URI to save the data to.
+        dim_order : str
+            The dimension order.
+        channel_names : list[str]
+            The channel names.
+        layer : str
+            The layer name.
+
+        """
+        # from aicsimageio.writers import OmeTiffWriter
+        # TODO: add image_name to save method
+        from bioio.writers import OmeTiffWriter
 
         # AICSImage does not allow saving labels as np.int64
         # napari generates labels differently depending on the OS
@@ -493,9 +609,23 @@ class UtilitiesContainer(Container):
         return
 
     def save_scenes_ome_tiff(self) -> None:
-        from aicsimageio import AICSImage
+        """Save selected scenes as OME-TIFF.
 
-        img = AICSImage(self._files.value[0])
+        This method is intended to save scenes from a single file. The scenes
+        are extracted based on the scenes_to_extract widget value, which is a
+        list of scene indices. If the widget is left blank, then all scenes
+        will be extracted.
+
+        """
+        from aicsimageio import AICSImage
+        from bioio import BioImage
+        from bioio_base.exceptions import UnsupportedFileFormatError
+
+        try:
+            img = BioImage(self._files.value[0])
+        except UnsupportedFileFormatError:
+            img = AICSImage(self._files.value[0])
+        # img = AICSImage(self._files.value[0])
         scenes = self._scenes_to_extract.value
         scenes_list = ast.literal_eval(scenes) if scenes else None
         save_directory = self._save_directory.value / 'Images'
@@ -522,7 +652,18 @@ class UtilitiesContainer(Container):
             )
         return
 
-    def save_ome_tiff(self) -> None:
+    def save_ome_tiff(self) -> np.ndarray:
+        """Save the concatenated image data as OME-TIFF.
+
+        The concatenated image data is concatenated and then saved as OME-TIFF
+        based on the selected options and the given save location.
+
+        Returns
+        -------
+        numpy.ndarray
+            The concatenated image data.
+
+        """
         self._img_data = self.concatenate_images(
             self._concatenate_image_files.value,
             self._files.value,
@@ -543,7 +684,15 @@ class UtilitiesContainer(Container):
         )
         return self._img_data
 
-    def save_labels(self) -> None:
+    def save_labels(self) -> np.ndarray:
+        """Save the selected labels layer as OME-TIFF.
+
+        Returns
+        -------
+        numpy.ndarray
+            The labels data.
+
+        """
         label_data = self._viewer.layers.selection.active.data
 
         if label_data.max() > 65535:
@@ -562,7 +711,15 @@ class UtilitiesContainer(Container):
         )
         return label_data
 
-    def save_shapes_as_labels(self) -> None:
+    def save_shapes_as_labels(self) -> np.ndarray:
+        """"Save the selected shapes layer as labels.
+
+        Returns
+        -------
+        numpy.ndarray
+            The shapes data as labels.
+
+        """
         from napari.layers import Image as ImageLayer
 
         # inherit shape from selected image layer or else a default
