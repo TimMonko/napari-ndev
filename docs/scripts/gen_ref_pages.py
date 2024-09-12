@@ -1,4 +1,5 @@
-"""Generate the code reference pages and navigation.
+"""
+Generate the code reference pages and navigation.
 
 Currently not in use.
 """  # noqa: INP001

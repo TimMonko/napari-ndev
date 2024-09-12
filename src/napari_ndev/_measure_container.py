@@ -30,8 +30,8 @@ if TYPE_CHECKING:
 
 
 class MeasureContainer(Container):
-
-    """Widget to measure labels from folders.
+    """
+    Widget to measure labels from folders.
 
     This class provides functionality to measure labels and compare them against intensity images, which can be microscopic images or other labels. It initializes various widgets and containers for user input and interaction, and connects events to handle user actions.
 
