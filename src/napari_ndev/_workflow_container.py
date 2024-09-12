@@ -18,7 +18,8 @@ if TYPE_CHECKING:
 
 
 class WorkflowContainer(Container):
-    """Container class for managing the workflow functionality in napari-ndev.
+    """
+    Container class for managing the workflow functionality in napari-ndev.
 
     Parameters
     ----------
@@ -194,7 +195,7 @@ class WorkflowContainer(Container):
         self._progress_bar.max = len(image_files)
 
         for idx_file, image_file in enumerate(image_files):
-            logger.info('Processing %d: %s', idx_file+1, image_file.name)
+            logger.info('Processing %d: %s', idx_file + 1, image_file.name)
             img = AICSImage(image_file)
 
             root_stack = []

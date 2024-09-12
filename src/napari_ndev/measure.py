@@ -1,4 +1,5 @@
-"""Functions for measuring properties of labels.
+"""
+Functions for measuring properties of labels.
 
 Measure properties of labels in images using sci-kit image's regionprops.
 It includes utilities for handling label and intensity images,
@@ -31,7 +32,8 @@ def measure_regionprops(
     tx_n_well: int | None = None,
     save_data_path: PathLike = None,
 ) -> pd.DataFrame:
-    """Measure properties of labels with sci-kit image regionprops.
+    """
+    Measure properties of labels with sci-kit image regionprops.
 
     Optionally give a list of intensity_images to measure intensity properties
     of labels (i.e. 'intensity_mean', 'intensity_min', 'intensity_max',
@@ -137,7 +139,8 @@ def measure_regionprops(
 
 
 def _convert_to_list(arg: list | ArrayLike | str | None):
-    """Convert any non-list arguments to lists.
+    """
+    Convert any non-list arguments to lists.
 
     Parameters
     ----------
@@ -163,7 +166,8 @@ def _generate_measure_dict(
     intensity_images: list[ArrayLike] | ArrayLike | None = None,
     intensity_names: list[str] | str | None = None,
 ) -> dict:
-    """Generate a dictionary of label and intensity images with their names.
+    """
+    Generate a dictionary of label and intensity images with their names.
 
     Parameters
     ----------
@@ -204,7 +208,8 @@ def _generate_measure_dict(
 
 
 def _extract_info_from_id_string(id_string: str, id_regex: dict) -> dict:
-    r"""Extract information from an id string using a regex dictionary.
+    r"""
+    Extract information from an id string using a regex dictionary.
 
     Parameters
     ----------
@@ -238,7 +243,8 @@ def _extract_info_from_id_string(id_string: str, id_regex: dict) -> dict:
 
 
 def _rename_intensity_columns(df: pd.DataFrame, intensity_names: list[str]):
-    """Rename columns in the DataFrame to include the intensity names.
+    """
+    Rename columns in the DataFrame to include the intensity names.
 
     The intensity names are appended to the end of the column name based
     on the index of the intensity_names list.
@@ -275,7 +281,8 @@ def _map_tx_dict_to_df_id_col(
     df: pd.DataFrame = None,
     id_column: str | None = None,
 ):
-    """Map a dictionary of treatments to a DataFrame's id_column.
+    """
+    Map a dictionary of treatments to a DataFrame's id_column.
 
     This should work on either a complete dataset, or as part of an iterative.
 

@@ -147,10 +147,10 @@ def test_update_metadata_from_layer(make_napari_viewer, test_data):
     container._viewer.layers.selection.active = viewer.layers['test_image']
     container.update_metadata_from_layer()
 
-    assert container._results.value == (
+    assert (
         'Tried to update metadata, but could only update scale'
         ' because layer not opened with aicsimageio'
-    )
+    ) in container._results.value
     assert container._scale_tuple.value == (1, 2, 3)
 
 

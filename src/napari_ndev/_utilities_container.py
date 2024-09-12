@@ -1,6 +1,8 @@
 from __future__ import annotations
 
 import ast
+import re
+import time
 from pathlib import Path
 from typing import TYPE_CHECKING
 
@@ -20,13 +22,15 @@ from napari_ndev import helpers
 
 if TYPE_CHECKING:
     from aicsimageio import AICSImage
+    from bioio import BioImage
 
     import napari
     from napari.layers import Image as ImageLayer
 
 
 class UtilitiesContainer(Container):
-    """A widget to work with images and labels in the napari viewer.
+    """
+    A widget to work with images and labels in the napari viewer.
 
     Parameters
     ----------
@@ -111,10 +115,16 @@ class UtilitiesContainer(Container):
 
     """
 
-    def __init__(
-        self,
-        viewer: napari.viewer.Viewer = None,
-    ):
+    def __init__(self, viewer: napari.viewer.Viewer = None):
+        """
+        Initialize the UtilitiesContainer widget.
+
+        Parameters
+        ----------
+        viewer : napari.viewer.Viewer, optional
+            The napari viewer instance.
+
+        """
         super().__init__()
 
         self._viewer = viewer if viewer is not None else None
@@ -124,6 +134,18 @@ class UtilitiesContainer(Container):
         self._p_sizes = None
         self._squeezed_dims = None
 
+        self._init_widgets()
+        self._init_open_image_container()
+        self._init_info_container()
+        self._init_concatenate_container()
+        self._init_save_container()
+        self._init_scene_container()
+        self._init_scale_container()
+        self._init_layout()
+        self._connect_events()
+
+    def _init_widgets(self):
+        """Initialize non-Container widgets."""
         self._file_metadata_update = PushButton(label='File')
         self._layer_metadata_update = PushButton(label='Selected Layer')
         self._metadata_container = Container(
@@ -137,24 +159,6 @@ class UtilitiesContainer(Container):
             mode='rm',
             tooltip='Select file(s) to load.',
         )
-        self._open_image_update_metadata = CheckBox(
-            value=True,
-            label='Update Metadata',
-            tooltip='Update metadata during initial file selection.',
-        )
-        self._open_image_button = PushButton(label='Open File(s)')
-        self._open_next_image_button = PushButton(
-            label='Open Next',
-            tooltip='Open the next file(s) in the directory. '
-            'The files are sorted alphabetically, which may not be consistent '
-            'with your file viewer. But, opening related consecutive files '
-            'should work as expected.',
-        )
-
-        self._open_image_container = Container(layout='horizontal')
-        self._open_image_container.append(self._open_image_update_metadata)
-        self._open_image_container.append(self._open_image_button)
-        self._open_image_container.append(self._open_next_image_button)
 
         self._save_directory = FileEdit(
             label='Save Directory',
@@ -167,6 +171,34 @@ class UtilitiesContainer(Container):
             '.ome/.tif/.tiff extension.',
         )
 
+        self._results = TextEdit(label='Info')
+
+    def _init_open_image_container(self):
+        """Initialize the open image container."""
+        self._open_image_container = Container(layout='horizontal')
+
+        self._open_image_update_metadata = CheckBox(
+            value=True,
+            label='Update Metadata',
+            tooltip='Update metadata during initial file selection.',
+        )
+        self._open_image_button = PushButton(label='Open File(s)')
+        self._select_next_image_button = PushButton(
+            label='Select Next',
+            tooltip='Select the next file(s) in the directory. '
+            'The files are sorted alphabetically and numerically,'
+            'which may not be consistent '
+            'with your file viewer. But, opening related consecutive files '
+            'should work as expected.',
+        )
+
+        self._open_image_container.append(self._open_image_update_metadata)
+        self._open_image_container.append(self._open_image_button)
+        self._open_image_container.append(self._select_next_image_button)
+
+    def _init_info_container(self):
+        """Initialize the info container containing dims and scenes."""
+        self._info_container = Container(layout='horizontal')
         self._dim_order = Label(
             label='Dimension Order: ',
             tooltip='Sanity check for available dimensions.',
@@ -174,7 +206,7 @@ class UtilitiesContainer(Container):
         self._scenes = Label(
             label='Number of Scenes: ',
         )
-        self._info_container = Container(layout='horizontal')
+
         self._info_container.append(self._dim_order)
         self._info_container.append(self._scenes)
 
@@ -185,22 +217,32 @@ class UtilitiesContainer(Container):
             'names will be used.',
         )
 
-        self._scale_tuple = TupleEdit(
-            value=(0.0000, 1.0000, 1.0000),
+    def _init_scale_container(self):
+        """Initialize the scale container."""
+        self._scale_container = Container(
+            layout='vertical',
             label='Scale, ZYX',
             tooltip='Pixel size, usually in μm',
+        )
+
+        self._scale_tuple = TupleEdit(
+            value=(0.0000, 1.0000, 1.0000),
             options={'step': 0.0001},
         )
         self._scale_layers = PushButton(
             label='Scale Layer(s)',
             tooltip='Scale the selected layer(s) based on the given scale.',
         )
-        self._scale_container = Container(
-            layout='horizontal',
-            label='Scale Selected',
-        )
+        self._scale_container.append(self._scale_tuple)
         self._scale_container.append(self._scale_layers)
 
+    def _init_scene_container(self):
+        """Initialize the scene container, allowing scene saving."""
+        self._scene_container = Container(
+            layout='horizontal',
+            label='Extract Scenes',
+            tooltip='Must be in list index format. Ex: [0, 1, 2] or [5:10]',
+        )
         self._scenes_to_extract = LineEdit(
             # label="Scenes to Extract",
             tooltip='Enter the scenes to extract as a list. If left blank '
@@ -210,14 +252,11 @@ class UtilitiesContainer(Container):
             label='Extract and Save Scenes',
             tooltip='Extract scenes from a single selected file.',
         )
-        self._scene_container = Container(
-            layout='horizontal',
-            label='Extract Scenes',
-            tooltip='Must be in list index format. Ex: [0, 1, 2] or [5:10]',
-        )
         self._scene_container.append(self._scenes_to_extract)
         self._scene_container.append(self._extract_scenes)
 
+    def _init_concatenate_container(self):
+        """Initialize the container to concatenate image and layers."""
         self._concatenate_image_files = CheckBox(
             value=True,
             label='Concatenate Files',
@@ -235,6 +274,13 @@ class UtilitiesContainer(Container):
         self._concatenate_container.append(self._concatenate_image_files)
         self._concatenate_container.append(self._concatenate_image_layers)
 
+    def _init_save_container(self):
+        """Initialize the container to save images, labels, and shapes."""
+        self._save_container = Container(
+            layout='horizontal',
+            label='Save Selected Layers',
+        )
+
         self._save_image_button = PushButton(
             label='Images',
             tooltip='Save the concatenated image data as OME-TIFF.',
@@ -247,17 +293,13 @@ class UtilitiesContainer(Container):
             tooltip='Save the shapes data as labels (OME-TIFF) according to '
             'selected image layer dimensions.',
         )
-        self._save_container = Container(
-            layout='horizontal',
-            label='Save Selected Layers',
-        )
+
         self._save_container.append(self._save_image_button)
         self._save_container.append(self._save_labels_button)
         self._save_container.append(self._save_shapes_button)
 
-        self._results = TextEdit(label='Info')
-
-        # Container Widget Order
+    def _init_layout(self):
+        """Initialize the layout of the widget."""
         self.extend(
             [
                 self._save_directory,
@@ -267,7 +309,6 @@ class UtilitiesContainer(Container):
                 self._metadata_container,
                 self._info_container,
                 self._channel_names,
-                self._scale_tuple,
                 self._scale_container,
                 self._scene_container,
                 self._concatenate_container,
@@ -276,9 +317,11 @@ class UtilitiesContainer(Container):
             ]
         )
 
+    def _connect_events(self):
+        """Connect the events of the widgets to respective methods."""
         self._files.changed.connect(self.update_metadata_from_file)
         self._open_image_button.clicked.connect(self.open_images)
-        self._open_next_image_button.clicked.connect(self.open_next_images)
+        self._select_next_image_button.clicked.connect(self.select_next_images)
         self._layer_metadata_update.clicked.connect(
             self.update_metadata_from_layer
         )
@@ -292,7 +335,16 @@ class UtilitiesContainer(Container):
         self._save_shapes_button.clicked.connect(self.save_shapes_as_labels)
         self._results._on_value_change()
 
-    def _update_metadata(self, img: AICSImage):
+    def _update_metadata(self, img: AICSImage | BioImage):
+        """
+        Update the metadata based on the given image.
+
+        Parameters
+        ----------
+        img : AICSImage | BioImage
+            The image from which to update the metadata.
+
+        """
         self._dim_order.value = img.dims.order
 
         self._squeezed_dims = helpers.get_squeezed_dim_order(img)
@@ -304,27 +356,67 @@ class UtilitiesContainer(Container):
             img.physical_pixel_sizes.X or 1,
         )
 
-    def _bioimage_metadata(self):
-        from aicsimageio import AICSImage
+    def _read_image_file(self, file: str | Path) -> AICSImage | BioImage:
+        """
+        Read the image file with BioImage or AICSImage.
 
-        img = AICSImage(self._files.value[0])
+        Parameters
+        ----------
+        file : str or Path
+            The file path.
+
+        Returns
+        -------
+        AICSImage or BioImage
+            The image object.
+
+        """
+        from bioio import BioImage
+        from bioio_base.exceptions import UnsupportedFileFormatError
+
+        try:
+            img = BioImage(file)
+        except UnsupportedFileFormatError:
+            from aicsimageio import AICSImage
+            img = AICSImage(file)
+        return img
+
+    def _bioimage_metadata(self):
+        """
+        Update the metadata from the selected file.
+
+        Attemps to read from BioImage first, then AICSImage.
+
+        """
+        # from aicsimageio import AICSImage
+        # from bioio import BioImage
+        # from bioio_base.exceptions import UnsupportedFileFormatError
+        img = self._read_image_file(self._files.value[0])
+
         self._img = img
         self._update_metadata(img)
         self._scenes.value = len(img.scenes)
 
     def update_metadata_from_file(self):
+        """Update self._save_name.value and metadata if selected."""
         self._save_name.value = str(self._files.value[0].stem + '.tiff')
 
         if self._open_image_update_metadata.value:
             self._bioimage_metadata()
 
     def update_metadata_from_layer(self):
+        """
+        Update metadata from the selected layer.
+
+        Current code expects images to be opened with napari-aicsimageio.
+        """
         selected_layer = self._viewer.layers.selection.active
         try:
             self._update_metadata(selected_layer.metadata['aicsimage'])
         except AttributeError:
             self._results.value = (
                 'Tried to update metadata, but no layer selected.'
+                f'\nAt {time.strftime("%H:%M:%S")}'
             )
         except KeyError:
             scale = selected_layer.scale
@@ -336,31 +428,58 @@ class UtilitiesContainer(Container):
             self._results.value = (
                 'Tried to update metadata, but could only update scale'
                 ' because layer not opened with aicsimageio'
+                f'\nAt {time.strftime("%H:%M:%S")}'
             )
 
     def open_images(self):
+        """
+        Open the selected images in the napari viewer.
+
+        If napari-aicsimageio is not installed, then the images will likely
+        be opened by the base napari reader, or a different compatabible
+        reader.
+
+        """
         self._viewer.open(self._files.value, plugin='napari-aicsimageio')
 
-    def open_next_images(self):
+    def select_next_images(self):
+        """Open the next set of images in the directyory."""
+        # TODO: sort files consistent with windows and mac folder explorers
         num_files = self._files.value.__len__()
+
         # get the parent directory of the first file
         first_file = self._files.value[0]
         parent_dir = first_file.parent
+
         # get the list of files in the parent directory
         files = list(parent_dir.glob(f'*{first_file.suffix}'))
-        # get the index of the first file in the list
+
+        # sort the files naturally (case-insensitive and numbers in order)
+        # like would be scene in windows file explorer default sorting
+        files.sort(
+            key=lambda f: [
+                int(text) if text.isdigit() else text.lower()
+                for text in re.split('([0-9]+)', f.name)
+            ]
+        )
+
+        # get the index of the first file in the list and then the next files
         idx = files.index(first_file)
-        # get the next file(s) in the list after the number of files
         next_files = files[idx + num_files : idx + num_files + num_files]
         # set the nwe save names, and update the file value
-        self._save_name.value = str(next_files[0].stem + '.tiff')
+        img = self._read_image_file(next_files[0])
+
+        image_id = helpers.create_id_string(img, next_files[0].stem)
+        self._save_name.value = str(image_id + '.tiff')
         self._files.value = next_files
+
         if self._open_image_update_metadata.value:
             self._bioimage_metadata()
 
-        self._viewer.open(next_files, plugin='napari-aicsimageio')
+        # self._viewer.open(next_files, plugin='napari-aicsimageio')
 
     def rescale_by(self):
+        """Rescale the selected layers based on the given scale."""
         layers = self._viewer.layers.selection
         scale_tup = self._scale_tuple.value
 
@@ -377,12 +496,39 @@ class UtilitiesContainer(Container):
         concatenate_layers: bool,
         layers: list[ImageLayer],
     ):
-        from aicsimageio import AICSImage
+        """
+        Concatenate the image data based on the selected options.
+
+        Intended also to remove "blank" channels and layers. This is present
+        in some microscope formats where it will image in RGB, and then
+        leave empty channels not represented by the color channels.
+
+        Parameters
+        ----------
+        concatenate_files : bool
+            Concatenate files in the selected directory. Removes blank channels.
+        files : list[str | Path]
+            The list of files to concatenate.
+        concatenate_layers : bool
+            Concatenate image layers in the viewer. Removes empty.
+        layers : list[ImageLayer]
+            The list of layers to concatenate.
+
+        Returns
+        -------
+        numpy.ndarray
+            The concatenated image data.
+
+        """
+        # from aicsimageio import AICSImage
+        # from bioio import BioImage
+        # from bioio_base.exceptions import UnsupportedFileFormatError
 
         array_list = []
         if concatenate_files:
             for file in files:
-                img = AICSImage(file)
+                img = self._read_image_file(file)
+
                 if 'S' in img.dims.order:
                     img_data = img.get_image_data('TSZYX')
                 else:
@@ -407,7 +553,16 @@ class UtilitiesContainer(Container):
 
     @property
     def p_sizes(self):
-        from aicsimageio.types import PhysicalPixelSizes
+        """
+        Get the physical pixel sizes.
+
+        Returns
+        -------
+        PhysicalPixelSizes
+            The physical pixel sizes.
+
+        """
+        from bioio_base.types import PhysicalPixelSizes
 
         return PhysicalPixelSizes(
             self._scale_tuple.value[0],
@@ -415,10 +570,30 @@ class UtilitiesContainer(Container):
             self._scale_tuple.value[2],
         )
 
-    def _get_save_loc(self, parent):
-        save_directory = self._save_directory.value / parent
+    def _get_save_loc(
+        self, root_dir: Path, parent: str, file_name: str
+    ) -> Path:
+        """
+        Get the save location based on the parent directory.
+
+        Parameters
+        ----------
+        root_dir : Path
+            The root directory.
+        parent : str
+            The parent directory. eg. 'Images', 'Labels', 'ShapesAsLabels'
+        file_name : str
+            The file name.
+
+        Returns
+        -------
+        Path
+            The save location. root_dir / parent / file_name
+
+        """
+        save_directory = root_dir / parent
         save_directory.mkdir(parents=False, exist_ok=True)
-        return save_directory / self._save_name.value
+        return save_directory / file_name
 
     def _common_save_logic(
         self,
@@ -426,9 +601,35 @@ class UtilitiesContainer(Container):
         uri: Path,
         dim_order: str,
         channel_names: list[str],
+        image_name: str | list[str | None] | None,
         layer: str,
     ) -> None:
-        from aicsimageio.writers import OmeTiffWriter
+        """
+        Save data as OME-TIFF with bioio based on common logic.
+
+        Converts labels to np.int32 if np.int64 is detected, due to bioio
+        not supporting np.int64 labels, even though napari and other libraries
+        generate np.int64 labels.
+
+        Parameters
+        ----------
+        data : np.ndarray
+            The data to save.
+        uri : Path
+            The URI to save the data to.
+        dim_order : str
+            The dimension order.
+        channel_names : list[str]
+            The channel names saved to OME metadata
+        image_name : str | list[str | None] | None
+            The image name saved to OME metadata
+        layer : str
+            The layer name.
+
+        """
+        # from aicsimageio.writers import OmeTiffWriter
+        # TODO: add image_name to save method
+        from bioio.writers import OmeTiffWriter
 
         # AICSImage does not allow saving labels as np.int64
         # napari generates labels differently depending on the OS
@@ -444,17 +645,19 @@ class UtilitiesContainer(Container):
                 uri=uri,
                 dim_order=dim_order or None,
                 channel_names=channel_names or None,
+                image_name=image_name or None,
                 physical_pixel_sizes=self.p_sizes,
             )
             self._results.value = f'Saved {layer}: ' + str(
                 self._save_name.value
-            )
+            ) + f'\nAt {time.strftime("%H:%M:%S")}'
         # if ValueError is raised, save with default channel names
         except ValueError as e:
             OmeTiffWriter.save(
                 data=data,
                 uri=uri,
                 dim_order=dim_order,
+                image_name=image_name or None,
                 physical_pixel_sizes=self.p_sizes,
             )
             self._results.value = (
@@ -462,24 +665,41 @@ class UtilitiesContainer(Container):
                 + str(e)
                 + '\nSo, saved with default channel names: \n'
                 + str(self._save_name.value)
+                + f'\nAt {time.strftime("%H:%M:%S")}'
             )
         return
 
     def save_scenes_ome_tiff(self) -> None:
-        from aicsimageio import AICSImage
+        """
+        Save selected scenes as OME-TIFF.
 
-        img = AICSImage(self._files.value[0])
+        Not currently interacting with the viewer labels.
+        This method is intended to save scenes from a single file. The scenes
+        are extracted based on the scenes_to_extract widget value, which is a
+        list of scene indices. If the widget is left blank, then all scenes
+        will be extracted.
+
+        """
+        # from aicsimageio import AICSImage
+        # from bioio import BioImage
+        # from bioio_base.exceptions import UnsupportedFileFormatError
+
+        img = self._read_image_file(self._files.value[0])
+
         scenes = self._scenes_to_extract.value
         scenes_list = ast.literal_eval(scenes) if scenes else None
         save_directory = self._save_directory.value / 'Images'
         save_directory.mkdir(parents=False, exist_ok=True)
         for scene in scenes_list:
+            # TODO: fix this to not have an issue if there are identical scenes
+            # presented as strings, though the asssumption is most times the
+            # user will input a list of integers.
             img.set_scene(scene)
 
-            img_save_name = (
-                f'{self._save_name.value.split(".")[0]}'
-                f"_scene_{img.current_scene}.ome.tiff"
-            )
+            base_save_name = self._save_name.value.split('.')[0]
+            image_id = helpers.create_id_string(img, base_save_name)
+
+            img_save_name = f'{image_id}.ome.tiff'
             img_save_loc = save_directory / img_save_name
 
             # get channel names from widget if truthy
@@ -491,18 +711,33 @@ class UtilitiesContainer(Container):
                 uri=img_save_loc,
                 dim_order='TCZYX',
                 channel_names=channel_names,
+                image_name=image_id,
                 layer=f'Scene: {img.current_scene}',
             )
         return
 
-    def save_ome_tiff(self) -> None:
+    def save_ome_tiff(self) -> np.ndarray:
+        """
+        Save the concatenated image data as OME-TIFF.
+
+        The concatenated image data is concatenated and then saved as OME-TIFF
+        based on the selected options and the given save location.
+
+        Returns
+        -------
+        numpy.ndarray
+            The concatenated image data.
+
+        """
         self._img_data = self.concatenate_images(
             self._concatenate_image_files.value,
             self._files.value,
             self._concatenate_image_layers.value,
             list(self._viewer.layers.selection),
         )
-        img_save_loc = self._get_save_loc('Images')
+        img_save_loc = self._get_save_loc(
+            self._save_directory.value, 'Images', self._save_name.value
+        )
         # get channel names from widget if truthy
         cnames = self._channel_names.value
         channel_names = ast.literal_eval(cnames) if cnames else None
@@ -512,11 +747,21 @@ class UtilitiesContainer(Container):
             uri=img_save_loc,
             dim_order='TCZYX',
             channel_names=channel_names,
+            image_name=self._save_name.value,
             layer='Image',
         )
         return self._img_data
 
-    def save_labels(self) -> None:
+    def save_labels(self) -> np.ndarray:
+        """
+        Save the selected labels layer as OME-TIFF.
+
+        Returns
+        -------
+        numpy.ndarray
+            The labels data.
+
+        """
         label_data = self._viewer.layers.selection.active.data
 
         if label_data.max() > 65535:
@@ -524,18 +769,30 @@ class UtilitiesContainer(Container):
         else:
             label_data = label_data.astype(np.int16)
 
-        label_save_loc = self._get_save_loc('Labels')
+        label_save_loc = self._get_save_loc(
+            self._save_directory.value, 'Labels', self._save_name.value
+        )
 
         self._common_save_logic(
             data=label_data,
             uri=label_save_loc,
             dim_order=self._squeezed_dims,
             channel_names=['Labels'],
+            image_name=self._save_name.value,
             layer='Labels',
         )
         return label_data
 
-    def save_shapes_as_labels(self) -> None:
+    def save_shapes_as_labels(self) -> np.ndarray:
+        """
+        "Save the selected shapes layer as labels.
+
+        Returns
+        -------
+        numpy.ndarray
+            The shapes data as labels.
+
+        """
         from napari.layers import Image as ImageLayer
 
         # inherit shape from selected image layer or else a default
@@ -551,13 +808,16 @@ class UtilitiesContainer(Container):
         shapes_as_labels = shapes.to_labels(labels_shape=label_dim)
         shapes_as_labels = shapes_as_labels.astype(np.int16)
 
-        shapes_save_loc = self._get_save_loc('ShapesAsLabels')
+        shapes_save_loc = self._get_save_loc(
+            self._save_directory.value, 'ShapesAsLabels', self._save_name.value
+        )
 
         self._common_save_logic(
             data=shapes_as_labels,
             uri=shapes_save_loc,
             dim_order=self._squeezed_dims,
             channel_names=['Shapes'],
+            image_name=self._save_name.value,
             layer='Shapes',
         )
 
