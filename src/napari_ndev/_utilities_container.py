@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import ast
 import re
+import time
 from pathlib import Path
 from typing import TYPE_CHECKING
 
@@ -414,6 +415,7 @@ class UtilitiesContainer(Container):
         except AttributeError:
             self._results.value = (
                 'Tried to update metadata, but no layer selected.'
+                f'\nAt {time.strftime("%H:%M:%S")}'
             )
         except KeyError:
             scale = selected_layer.scale
@@ -425,6 +427,7 @@ class UtilitiesContainer(Container):
             self._results.value = (
                 'Tried to update metadata, but could only update scale'
                 ' because layer not opened with aicsimageio'
+                f'\nAt {time.strftime("%H:%M:%S")}'
             )
 
     def open_images(self):
@@ -646,7 +649,7 @@ class UtilitiesContainer(Container):
             )
             self._results.value = f'Saved {layer}: ' + str(
                 self._save_name.value
-            )
+            ) + f'\nAt {time.strftime("%H:%M:%S")}'
         # if ValueError is raised, save with default channel names
         except ValueError as e:
             OmeTiffWriter.save(
@@ -661,6 +664,7 @@ class UtilitiesContainer(Container):
                 + str(e)
                 + '\nSo, saved with default channel names: \n'
                 + str(self._save_name.value)
+                + f'\nAt {time.strftime("%H:%M:%S")}'
             )
         return
 
