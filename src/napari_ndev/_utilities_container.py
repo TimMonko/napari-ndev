@@ -369,13 +369,13 @@ class UtilitiesContainer(Container):
             The image object.
 
         """
-        from aicsimageio import AICSImage
         from bioio import BioImage
         from bioio_base.exceptions import UnsupportedFileFormatError
 
         try:
             img = BioImage(file)
         except UnsupportedFileFormatError:
+            from aicsimageio import AICSImage
             img = AICSImage(file)
         return img
 
