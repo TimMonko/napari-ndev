@@ -183,17 +183,18 @@ class UtilitiesContainer(Container):
             tooltip='Update metadata during initial file selection.',
         )
         self._open_image_button = PushButton(label='Open File(s)')
-        self._open_next_image_button = PushButton(
-            label='Open Next',
-            tooltip='Open the next file(s) in the directory. '
-            'The files are sorted alphabetically, which may not be consistent '
+        self._select_next_image_button = PushButton(
+            label='Select Next',
+            tooltip='Select the next file(s) in the directory. '
+            'The files are sorted alphabetically and numerically,'
+            'which may not be consistent '
             'with your file viewer. But, opening related consecutive files '
             'should work as expected.',
         )
 
         self._open_image_container.append(self._open_image_update_metadata)
         self._open_image_container.append(self._open_image_button)
-        self._open_image_container.append(self._open_next_image_button)
+        self._open_image_container.append(self._select_next_image_button)
 
     def _init_info_container(self):
         """Initialize the info container containing dims and scenes."""
@@ -320,7 +321,7 @@ class UtilitiesContainer(Container):
         """Connect the events of the widgets to respective methods."""
         self._files.changed.connect(self.update_metadata_from_file)
         self._open_image_button.clicked.connect(self.open_images)
-        self._open_next_image_button.clicked.connect(self.open_next_images)
+        self._select_next_image_button.clicked.connect(self.select_next_images)
         self._layer_metadata_update.clicked.connect(
             self.update_metadata_from_layer
         )
@@ -441,7 +442,7 @@ class UtilitiesContainer(Container):
         """
         self._viewer.open(self._files.value, plugin='napari-aicsimageio')
 
-    def open_next_images(self):
+    def select_next_images(self):
         """Open the next set of images in the directyory."""
         # TODO: sort files consistent with windows and mac folder explorers
         num_files = self._files.value.__len__()
@@ -475,7 +476,7 @@ class UtilitiesContainer(Container):
         if self._open_image_update_metadata.value:
             self._bioimage_metadata()
 
-        self._viewer.open(next_files, plugin='napari-aicsimageio')
+        # self._viewer.open(next_files, plugin='napari-aicsimageio')
 
     def rescale_by(self):
         """Rescale the selected layers based on the given scale."""
