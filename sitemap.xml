@@ -1,47 +1,47 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
     <url>
-         <loc>https://timmonko.github.io/napari-ndev/</loc>
+         <loc>https://TimMonko.github.io/napari-ndev/</loc>
          <lastmod>2024-09-12</lastmod>
     </url>
     <url>
-         <loc>https://timmonko.github.io/napari-ndev/installation/</loc>
+         <loc>https://TimMonko.github.io/napari-ndev/installation/</loc>
          <lastmod>2024-09-12</lastmod>
     </url>
     <url>
-         <loc>https://timmonko.github.io/napari-ndev/api/helpers/</loc>
+         <loc>https://TimMonko.github.io/napari-ndev/api/helpers/</loc>
          <lastmod>2024-09-12</lastmod>
     </url>
     <url>
-         <loc>https://timmonko.github.io/napari-ndev/api/image_overview/</loc>
+         <loc>https://TimMonko.github.io/napari-ndev/api/image_overview/</loc>
          <lastmod>2024-09-12</lastmod>
     </url>
     <url>
-         <loc>https://timmonko.github.io/napari-ndev/api/measure/</loc>
+         <loc>https://TimMonko.github.io/napari-ndev/api/measure/</loc>
          <lastmod>2024-09-12</lastmod>
     </url>
     <url>
-         <loc>https://timmonko.github.io/napari-ndev/api/plate_mapper/</loc>
+         <loc>https://TimMonko.github.io/napari-ndev/api/plate_mapper/</loc>
          <lastmod>2024-09-12</lastmod>
     </url>
     <url>
-         <loc>https://timmonko.github.io/napari-ndev/api/widgets/apoc_widget/</loc>
+         <loc>https://TimMonko.github.io/napari-ndev/api/widgets/apoc_widget/</loc>
          <lastmod>2024-09-12</lastmod>
     </url>
     <url>
-         <loc>https://timmonko.github.io/napari-ndev/api/widgets/custom_apoc_feature_set/</loc>
+         <loc>https://TimMonko.github.io/napari-ndev/api/widgets/custom_apoc_feature_set/</loc>
          <lastmod>2024-09-12</lastmod>
     </url>
     <url>
-         <loc>https://timmonko.github.io/napari-ndev/api/widgets/image_utilities/</loc>
+         <loc>https://TimMonko.github.io/napari-ndev/api/widgets/image_utilities/</loc>
          <lastmod>2024-09-12</lastmod>
     </url>
     <url>
-         <loc>https://timmonko.github.io/napari-ndev/api/widgets/measure_widget/</loc>
+         <loc>https://TimMonko.github.io/napari-ndev/api/widgets/measure_widget/</loc>
          <lastmod>2024-09-12</lastmod>
     </url>
     <url>
-         <loc>https://timmonko.github.io/napari-ndev/api/widgets/workflow_widget/</loc>
+         <loc>https://TimMonko.github.io/napari-ndev/api/widgets/workflow_widget/</loc>
          <lastmod>2024-09-12</lastmod>
     </url>
 </urlset>
