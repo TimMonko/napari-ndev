@@ -163,7 +163,7 @@ def group_and_agg_measurements(
     count_col : str, optional
         The column to count. By default, just the 'label' column.
     agg_cols : list of str or None, optional
-        The columns to aggregate. By default, all columns except the grouping columns.
+        The columns to aggregate. By default, None.
     agg_funcs : str or list of str, optional
         The aggregating functions. By default, just the mean.
 
@@ -173,17 +173,19 @@ def group_and_agg_measurements(
         The DataFrame with grouped and aggregated measurements.
 
     """
-    agg_cols = df.columns[1:] if agg_cols is None else df[agg_cols]
-
     # get count data
     df_count = (
             df.copy().groupby(grouping_cols)
             .agg({count_col: 'count'}) # counts count_col
             .rename(columns={count_col: f'{count_col}_count'})
-            .reset_index(drop=True)
+            .reset_index()
         )
 
+    if agg_cols is None or agg_cols == []:
+        return df_count
+
     # get aggregated data
+    agg_cols = df[agg_cols]
     agg_dict = {col: agg_funcs for col in agg_cols}
     df_agg = (
             df.copy()

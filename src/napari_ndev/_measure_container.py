@@ -271,20 +271,49 @@ class MeasureContainer(Container):
     def _init_grouping_container(self):
         """Initialize the container for grouping settings."""
         self._grouping_container = Container(layout='vertical')
-        self._create_grouped = CheckBox(
-            label='Create Grouped Data',
-            value=False,
-            tooltip='If checked, will create a grouped data frame with the same properties as the original data frame',
+
+        self._measured_data_path = FileEdit(
+            label='Measured Data Path',
+            tooltip='Path to the measured data',
         )
-        self._group_by_sample_id = CheckBox(
-            label='Group by Sample ID',
-            value=True,
-            tooltip='If checked, will group the data by the id_string, which is usually the filename and scene',
+        self._grouping_cols = Select(
+            label='Grouping Columns',
+            choices=[],
+            allow_multiple=True,
+            tooltip='Select columns to group the data by',
+        )
+        self._count_col = ComboBox(
+            label='Count Column',
+            choices=[],
+            nullable=True,
+            tooltip='Select column that will be counted',
+        )
+        self._agg_cols = Select(
+            label='Aggregation Columns',
+            choices=[],
+            allow_multiple=True,
+            tooltip='Select columns to aggregate with functions',
+        )
+        self._agg_funcs = Select(
+            label='Aggregation Functions',
+            choices=[
+                'mean', 'median',
+                'std', 'sem',
+                'min', 'max',
+                'sum', 'nunique'
+            ],
+            allow_multiple=True,
+            tooltip='Select functions performed on aggregation columns',
         )
 
-        self._grouping_container.extend(
-            [self._create_grouped, self._group_by_sample_id]
-        )
+
+        self._grouping_container.extend([
+            self._measured_data_path,
+            self._grouping_cols,
+            self._count_col,
+            self._agg_cols,
+            self._agg_funcs,
+        ])
 
     def _init_layout(self):
         """Initialize the layout of the container."""
@@ -568,18 +597,6 @@ class MeasureContainer(Container):
             self._output_directory.value / f'measure_props_{label_chan}.csv'
         )
 
-        if self._create_grouped.value:
-            measure_props_grouped = self.group_and_agg_measurements(
-                measure_props_df, 'id',
-            )
-
-            measure_props_grouped.to_csv(
-                self._output_directory.value
-                / f'measure_props_grouped_{label_chan}.csv'
-            )
-        else:
-            measure_props_grouped = None
-
         logger.removeHandler(handler)
 
-        return measure_props_df, measure_props_grouped
+        return measure_props_df
