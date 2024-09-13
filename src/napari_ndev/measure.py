@@ -5,6 +5,11 @@ Measure properties of labels in images using sci-kit image's regionprops.
 It includes utilities for handling label and intensity images,
 extracting information from ID strings, renaming intensity columns,
 and mapping treatment dictionaries to DataFrame ID columns.
+
+Functions
+---------
+measure_regionprops : Measure properties of labels with sci-kit image regionprops.
+group_and_agg_measurements : Count and aggregate measurements by grouping IDs from measurement results.
 """
 
 from __future__ import annotations
@@ -17,6 +22,7 @@ from bioio_base.types import ArrayLike, PathLike
 
 from napari_ndev._plate_mapper import PlateMapper
 
+__all__ = ['measure_regionprops', 'group_and_agg_measurements']
 
 def measure_regionprops(
     label_images: list[ArrayLike] | ArrayLike,
@@ -40,6 +46,7 @@ def measure_regionprops(
     'intensity_std'). If no label or intensity names are given, the names are
     automatically generated as a string of the input variable name.
     Choose from a list of properties to measure: [
+            "label",
             "area",
             "area_convex",
             "bbox",
@@ -138,55 +145,63 @@ def measure_regionprops(
     return measure_df
 
 def group_and_agg_measurements(
-    measure_props_df: pd.DataFrame,
-    grouping_ids: str | list[str] = 'id',
-    agg_funs: str | list[str] = 'mean',
+    df: pd.DataFrame,
+    grouping_cols: str | list[str] = 'id',
+    count_col: str = 'label',
     agg_cols: list[str] | None = None,
+    agg_funcs: str | list[str] = 'mean',
 ) -> pd.DataFrame:
     """
     Count and aggregate measurements by grouping IDs from measurement results.
 
     Parameters
     ----------
-    measure_props_df : pd.DataFrame
+    df : pd.DataFrame
         The DataFrame with measurement properties, usually from measure_regionprops.
-    grouping_ids : str or list of str, optional
+    grouping_cols : str or list of str, optional
         The columns to group by. By default, just the image ID.
-    agg_funs : str or list of str, optional
-        The aggregating functions. By default, just the mean.
+    count_col : str, optional
+        The column to count. By default, just the 'label' column.
     agg_cols : list of str or None, optional
         The columns to aggregate. By default, all columns except the grouping columns.
+    agg_funcs : str or list of str, optional
+        The aggregating functions. By default, just the mean.
+
+    Returns
+    -------
+    pd.DataFrame
+        The DataFrame with grouped and aggregated measurements.
 
     """
+    agg_cols = df.columns[1:] if agg_cols is None else df[agg_cols]
+
     # get count data
-    measure_props_count = (
-            measure_props_df.copy().groupby(grouping_ids)
-            .agg({measure_props_df.columns[0]: 'count'})
-            .rename(
-                columns={measure_props_df.columns[0]: 'label_count'}
-            )
+    df_count = (
+            df.copy().groupby(grouping_cols)
+            .agg({count_col: 'count'}) # counts count_col
+            .rename(columns={count_col: f'{count_col}_count'})
             .reset_index(drop=True)
         )
-    measure_props_grouped = (
-            measure_props_df.copy().groupby(grouping_ids)  # sw
-            .agg(
-                {
-                    col: agg_funs
-                    for col in measure_props_df.columns[1:]
-                }
-            )
+
+    # get aggregated data
+    agg_dict = {col: agg_funcs for col in agg_cols}
+    df_agg = (
+            df.copy()
+            .groupby(grouping_cols)  # sw
+            .agg(agg_dict)
             .reset_index()
         )  # genereates a multi-index
         # collapse multi index and combine columns names with '_' sep
-    measure_props_grouped.columns = [
+    df_agg.columns = [
             f'{col[0]}_{col[1]}' if col[1] else col[0]
-            for col in measure_props_grouped.columns
+            for col in df_agg.columns
         ]
 
-    measure_props_grouped = pd.concat(
-            [measure_props_grouped, measure_props_count], axis=1
-        )
-    return measure_props_grouped
+    # insert label count column into df_agg after grouping columns
+    insert_pos = 1 if isinstance(grouping_cols, str) else len(grouping_cols)
+    df_agg.insert(insert_pos, 'label_count', df_count['label_count'])
+
+    return df_agg
 
 
 def _convert_to_list(arg: list | ArrayLike | str | None):
