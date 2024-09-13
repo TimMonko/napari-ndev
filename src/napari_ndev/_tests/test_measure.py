@@ -409,8 +409,9 @@ def test_measure_regionprops_tx_dict():
     ).all()
 
 
-def test_group_and_agg_measurements_sample_data():
-    df = pd.DataFrame(
+@pytest.fixture
+def sample_data():
+    return pd.DataFrame(
         {
             'id': ['id1', 'id1', 'id2', 'id2'],
             'label': [1, 2, 4, 5],
@@ -419,8 +420,10 @@ def test_group_and_agg_measurements_sample_data():
         }
     )
 
+def test_group_and_agg_measurements_sample_data(sample_data):
+
     result_df = group_and_agg_measurements(
-        df,
+        sample_data,
         grouping_cols=['id'],
         agg_cols=['area', 'intensity_mean'],
         agg_funcs=['mean', 'sum'],
@@ -431,6 +434,10 @@ def test_group_and_agg_measurements_sample_data():
         column in result_df.columns
         for column in ['id', 'area_mean', 'area_sum', 'intensity_mean_mean', 'intensity_mean_sum']
     )
+    assert result_df['area_mean'].tolist() == [150.0, 350.0]
+    assert result_df['area_sum'].tolist() == [300, 700]
+    assert result_df['intensity_mean_mean'].tolist() == [0.6, 0.7]
+    assert result_df['intensity_mean_sum'].tolist() == [1.2, 1.4]
 
 def test_group_and_agg_measurements_real_data():
     df = pd.read_csv('src/napari_ndev/_tests/resources/measure_props_Labels.csv')
@@ -446,4 +453,18 @@ def test_group_and_agg_measurements_real_data():
     assert all(
         column in result_df.columns
         for column in ['id', 'intensity_max-Labels', 'label_count', 'area_mean', 'area_std']
+    )
+
+
+def test_group_and_agg_measurements_no_agg(sample_data):
+    result_df = group_and_agg_measurements(
+        sample_data,
+        grouping_cols=['id'],
+        agg_cols=[],  # no aggregation
+    )
+
+    assert isinstance(result_df, pd.DataFrame)
+    assert all(
+        column in result_df.columns
+        for column in ['id', 'label_count']
     )
