@@ -88,12 +88,11 @@ def test_batch_measure_label_only(tmp_path):
     container._label_directory.value = label_directory
     container._label_image.value = 'Labels: Labels'
     container._output_directory.value = output_folder
-    df, df_grouped = container.batch_measure()
+    df = container.batch_measure()
 
     assert output_folder.exists()
     assert (output_folder / 'measure_props_Labels.csv').exists()
     assert df is not None
-    assert df_grouped is None
     assert list(df.columns) == ['id', 'label', 'area']
 
 
@@ -126,12 +125,11 @@ def test_batch_measure_intensity(tmp_path):
         'Intensity: nuclei',
     ]
     container._output_directory.value = output_folder
-    df, df_grouped = container.batch_measure()
+    df = container.batch_measure()
 
     assert output_folder.exists()
     assert (output_folder / 'measure_props_Labels.csv').exists()
     assert df is not None
-    assert df_grouped is None
     assert list(df.columns) == [
         'id',
         'label',
@@ -142,37 +140,25 @@ def test_batch_measure_intensity(tmp_path):
     ]
 
 
-# TODO: add a multi-label for the test, and multiple images for grouping by id
-# def test_batch_measure_groupby(tmp_path):
-#     container = MeasureContainer()
+def test_group_measurements_no_agg_defaults():
+    container = MeasureContainer()
+    test_data_path = pathlib.Path(r'src/napari_ndev/_tests/resources/measure_props_Labels.csv')
+    container._measured_data_path.value = test_data_path
 
-#     label_directory = pathlib.Path(
-#         'src/napari_ndev/_tests/resources/Workflow/Labels'
-#     )
-#     image_directory = pathlib.Path(
-#         'src/napari_ndev/_tests/resources/Workflow/Images'
-#     )
+    grouped_df = container.group_measurements()
 
-#     output_folder = tmp_path / 'Output'
-#     output_folder.mkdir()
+    assert grouped_df is not None
+    assert list(grouped_df.columns) == ['id', 'label_count']
 
-#     container._label_directory.value = label_directory
-#     container._label_image.value = 'Labels: Labels'
-#     container._image_directory.value = image_directory
-#     container._output_directory.value = output_folder
-#     # container._intensity_images.value = ["Intensity: membrane", "Intensity: nuclei"]
-#     container._prop.area.value = True
-#     # container._prop.intensity_mean.value = True
-#     container._create_grouped.value = True
+def test_group_measurements_with_agg():
+    container = MeasureContainer()
+    test_data_path = pathlib.Path(r'src/napari_ndev/_tests/resources/measure_props_Labels.csv')
+    container._measured_data_path.value = test_data_path
+    container._grouping_cols.value = ['id', 'intensity_max-Labels']
+    container._agg_cols.value = ['area']
+    container._agg_funcs.value = ['mean']
 
-#     df, df_grouped = container.batch_measure()
+    grouped_df = container.group_measurements()
 
-#     assert df is not None
-#     assert df_grouped is not None
-#     assert list(df.columns) == ['id', 'area']
-#     assert list(df_grouped.columns) == [
-#         'id',
-#         'area_mean',
-#         'area_std',
-#         'label_count',
-#     ]
+    assert grouped_df is not None
+    assert list(grouped_df.columns) == ['id', 'intensity_max-Labels', 'label_count', 'area_mean']

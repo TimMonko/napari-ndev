@@ -285,13 +285,14 @@ class MeasureContainer(Container):
         self._count_col = ComboBox(
             label='Count Column',
             choices=[],
-            nullable=True,
             tooltip='Select column that will be counted',
         )
         self._agg_cols = Select(
             label='Aggregation Columns',
             choices=[],
             allow_multiple=True,
+            nullable=True,
+            value=None,
             tooltip='Select columns to aggregate with functions',
         )
         self._agg_funcs = Select(
@@ -302,9 +303,11 @@ class MeasureContainer(Container):
                 'min', 'max',
                 'sum', 'nunique'
             ],
+            value=['mean'],
             allow_multiple=True,
             tooltip='Select functions performed on aggregation columns',
         )
+        self._group_measurements_button = PushButton(label='Group Measurements')
 
 
         self._grouping_container.extend([
@@ -313,6 +316,7 @@ class MeasureContainer(Container):
             self._count_col,
             self._agg_cols,
             self._agg_funcs,
+            self._group_measurements_button,
         ])
 
     def _init_layout(self):
@@ -344,6 +348,25 @@ class MeasureContainer(Container):
         self._label_directory.changed.connect(self._update_label_choices)
         self._region_directory.changed.connect(self._update_region_choices)
         self._measure_button.clicked.connect(self.batch_measure)
+        self._measured_data_path.changed.connect(self._update_grouping_cols)
+        self._group_measurements_button.clicked.connect(self.group_measurements)
+
+    def _update_grouping_cols(self):
+        """Update the columns for grouping."""
+        if self._measured_data_path.value is None:
+            return
+
+        df = pd.read_csv(self._measured_data_path.value)
+        self._grouping_cols.choices = df.columns
+        self._count_col.choices = df.columns
+        self._agg_cols.choices =df.columns
+
+        if 'id' in df.columns:
+            self._grouping_cols.value = ['id']
+        if 'label' in df.columns:
+            self._count_col.value = 'label'
+
+        return
 
     def _get_0th_img_from_dir(
         self, directory: str | None = None
@@ -593,10 +616,47 @@ class MeasureContainer(Container):
                 self._progress_bar.value = idx + 1
 
         measure_props_df = pd.concat(measure_props_concat)
-        measure_props_df.to_csv(
-            self._output_directory.value / f'measure_props_{label_chan}.csv'
-        )
+        save_loc = self._output_directory.value / f'measure_props_{label_chan}.csv'
+        measure_props_df.to_csv(save_loc, index=False)
 
         logger.removeHandler(handler)
 
         return measure_props_df
+
+    def group_measurements(self):
+        """
+        Group measurements based on user input.
+
+        Uses the values in the Grouping Container of the Widget and passes them
+        to the group_and_agg_measurements function in the measure module. The
+        grouped measurements are saved to a CSV file in the same directory as
+        the measured data with '_grouped' appended.
+
+        Returns
+        -------
+        pd.DataFrame
+            The grouped measurements as a DataFrame.
+
+        """
+        from napari_ndev import measure as ndev_measure
+
+        df = pd.read_csv(self._measured_data_path.value)
+
+        # Filter out None values from agg_cols
+        agg_cols = [col for col in self._agg_cols.value if col is not None]
+
+        grouped_df = ndev_measure.group_and_agg_measurements(
+            df=df,
+            grouping_cols=self._grouping_cols.value,
+            count_col=self._count_col.value,
+            agg_cols=agg_cols,
+            agg_funcs=self._agg_funcs.value,
+        )
+
+        save_loc = (
+            self._measured_data_path.value.parent /
+            f'{self._measured_data_path.value.stem}_grouped.csv'
+        )
+        grouped_df.to_csv(save_loc, index=False)
+
+        return grouped_df
