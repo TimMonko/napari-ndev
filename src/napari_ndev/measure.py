@@ -5,6 +5,11 @@ Measure properties of labels in images using sci-kit image's regionprops.
 It includes utilities for handling label and intensity images,
 extracting information from ID strings, renaming intensity columns,
 and mapping treatment dictionaries to DataFrame ID columns.
+
+Functions
+---------
+measure_regionprops : Measure properties of labels with sci-kit image regionprops.
+group_and_agg_measurements : Count and aggregate measurements by grouping IDs from measurement results.
 """
 
 from __future__ import annotations
@@ -17,6 +22,7 @@ from bioio_base.types import ArrayLike, PathLike
 
 from napari_ndev._plate_mapper import PlateMapper
 
+__all__ = ['measure_regionprops', 'group_and_agg_measurements']
 
 def measure_regionprops(
     label_images: list[ArrayLike] | ArrayLike,
@@ -40,6 +46,7 @@ def measure_regionprops(
     'intensity_std'). If no label or intensity names are given, the names are
     automatically generated as a string of the input variable name.
     Choose from a list of properties to measure: [
+            "label",
             "area",
             "area_convex",
             "bbox",
@@ -136,6 +143,67 @@ def measure_regionprops(
         measure_df.to_csv(save_data_path, index=False)
 
     return measure_df
+
+def group_and_agg_measurements(
+    df: pd.DataFrame,
+    grouping_cols: str | list[str] = 'id',
+    count_col: str = 'label',
+    agg_cols: list[str] | None = None,
+    agg_funcs: str | list[str] = 'mean',
+) -> pd.DataFrame:
+    """
+    Count and aggregate measurements by grouping IDs from measurement results.
+
+    Parameters
+    ----------
+    df : pd.DataFrame
+        The DataFrame with measurement properties, usually from measure_regionprops.
+    grouping_cols : str or list of str, optional
+        The columns to group by. By default, just the image ID.
+    count_col : str, optional
+        The column to count. By default, just the 'label' column.
+    agg_cols : list of str or None, optional
+        The columns to aggregate. By default, None.
+    agg_funcs : str or list of str, optional
+        The aggregating functions. By default, just the mean.
+
+    Returns
+    -------
+    pd.DataFrame
+        The DataFrame with grouped and aggregated measurements.
+
+    """
+    # get count data
+    df_count = (
+            df.copy().groupby(grouping_cols)
+            .agg({count_col: 'count'}) # counts count_col
+            .rename(columns={count_col: f'{count_col}_count'})
+            .reset_index()
+        )
+
+    if agg_cols is None or agg_cols == []:
+        return df_count
+
+    # get aggregated data
+    agg_cols = df[agg_cols]
+    agg_dict = {col: agg_funcs for col in agg_cols}
+    df_agg = (
+            df.copy()
+            .groupby(grouping_cols)  # sw
+            .agg(agg_dict)
+            .reset_index()
+        )  # genereates a multi-index
+        # collapse multi index and combine columns names with '_' sep
+    df_agg.columns = [
+            f'{col[0]}_{col[1]}' if col[1] else col[0]
+            for col in df_agg.columns
+        ]
+
+    # insert label count column into df_agg after grouping columns
+    insert_pos = 1 if isinstance(grouping_cols, str) else len(grouping_cols)
+    df_agg.insert(insert_pos, 'label_count', df_count['label_count'])
+
+    return df_agg
 
 
 def _convert_to_list(arg: list | ArrayLike | str | None):

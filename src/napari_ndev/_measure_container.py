@@ -137,6 +137,15 @@ class MeasureContainer(Container):
         self,
         viewer: napari.viewer.Viewer = None,
     ):
+        """
+        Initialize the MeasureContainer.
+
+        Parameters
+        ----------
+        viewer : napari.viewer.Viewer
+            The napari viewer instance. Optional.
+
+        """
         super().__init__()
 
         self.viewer = viewer if viewer is not None else None
@@ -155,6 +164,7 @@ class MeasureContainer(Container):
         self._connect_events()
 
     def _init_widgets(self):
+        """Initialize non-container widgets."""
         self._label_directory = FileEdit(label='Label directory', mode='d')
         self._image_directory = FileEdit(
             label='Image directory', mode='d', nullable=True
@@ -188,9 +198,11 @@ class MeasureContainer(Container):
         self._progress_bar = ProgressBar(label='Progress:')
 
     def _init_regionprops_container(self):
+        """Initialize the container for region properties checkboxes."""
         self._props_container = Container(layout='vertical')
 
         self._sk_props = [
+            'label',
             'area',
             'area_convex',
             'bbox',
@@ -212,9 +224,11 @@ class MeasureContainer(Container):
             setattr(self._prop, feature, CheckBox(label=feature))
             self._props_container.extend([getattr(self._prop, feature)])
 
+        self._prop.label.value = True
         self._prop.area.value = True
 
     def _init_id_regex_container(self):
+        """Initialize the container for ID regex settings."""
         self._id_regex_container = Container(layout='vertical')
         self._example_id_string = LineEdit(
             label='Example ID String',
@@ -230,6 +244,7 @@ class MeasureContainer(Container):
         )
 
     def _init_tx_map_container(self):
+        """Initialize the container for treatment map settings."""
         self._tx_map_container = Container(layout='vertical')
         self._tx_id = LineEdit(
             label='Treatment ID',
@@ -243,7 +258,7 @@ class MeasureContainer(Container):
             value=None,
             choices=[6, 12, 24, 48, 96, 384],
             nullable=True,
-            tooltip='By default, treatments must be verbosely defined for each condition and sample id'
+            tooltip='By default, treatments must be verbosely defined for each condition and sample id '
             'If you have a known plate map, then selecting wells will allow a sparse treatment map to be passed to PlateMapper',
         )
         self._tx_dict = TextEdit(label='Treatment Dict', value='{\n\n}')
@@ -254,23 +269,58 @@ class MeasureContainer(Container):
         )
 
     def _init_grouping_container(self):
+        """Initialize the container for grouping settings."""
         self._grouping_container = Container(layout='vertical')
-        self._create_grouped = CheckBox(
-            label='Create Grouped Data',
-            value=False,
-            tooltip='If checked, will create a grouped data frame with the same properties as the original data frame',
-        )
-        self._group_by_sample_id = CheckBox(
-            label='Group by Sample ID',
-            value=True,
-            tooltip='If checked, will group the data by the id_string, which is usually the filename and scene',
-        )
 
-        self._grouping_container.extend(
-            [self._create_grouped, self._group_by_sample_id]
+        self._measured_data_path = FileEdit(
+            label='Measured Data Path',
+            tooltip='Path to the measured data',
         )
+        self._grouping_cols = Select(
+            label='Grouping Columns',
+            choices=[],
+            allow_multiple=True,
+            tooltip='Select columns to group the data by',
+        )
+        self._count_col = ComboBox(
+            label='Count Column',
+            choices=[],
+            tooltip='Select column that will be counted',
+        )
+        self._agg_cols = Select(
+            label='Aggregation Columns',
+            choices=[],
+            allow_multiple=True,
+            nullable=True,
+            value=None,
+            tooltip='Select columns to aggregate with functions',
+        )
+        self._agg_funcs = Select(
+            label='Aggregation Functions',
+            choices=[
+                'mean', 'median',
+                'std', 'sem',
+                'min', 'max',
+                'sum', 'nunique'
+            ],
+            value=['mean'],
+            allow_multiple=True,
+            tooltip='Select functions performed on aggregation columns',
+        )
+        self._group_measurements_button = PushButton(label='Group Measurements')
+
+
+        self._grouping_container.extend([
+            self._measured_data_path,
+            self._grouping_cols,
+            self._count_col,
+            self._agg_cols,
+            self._agg_funcs,
+            self._group_measurements_button,
+        ])
 
     def _init_layout(self):
+        """Initialize the layout of the container."""
         self.extend(
             [
                 self._label_directory,
@@ -293,20 +343,42 @@ class MeasureContainer(Container):
         self.native.layout().addWidget(tabs)
 
     def _connect_events(self):
+        """Connect events to handle user actions."""
         self._image_directory.changed.connect(self._update_image_choices)
         self._label_directory.changed.connect(self._update_label_choices)
         self._region_directory.changed.connect(self._update_region_choices)
         self._measure_button.clicked.connect(self.batch_measure)
+        self._measured_data_path.changed.connect(self._update_grouping_cols)
+        self._group_measurements_button.clicked.connect(self.group_measurements)
+
+    def _update_grouping_cols(self):
+        """Update the columns for grouping."""
+        if self._measured_data_path.value is None:
+            return
+
+        df = pd.read_csv(self._measured_data_path.value)
+        self._grouping_cols.choices = df.columns
+        self._count_col.choices = df.columns
+        self._agg_cols.choices =df.columns
+
+        if 'id' in df.columns:
+            self._grouping_cols.value = ['id']
+        if 'label' in df.columns:
+            self._count_col.value = 'label'
+
+        return
 
     def _get_0th_img_from_dir(
         self, directory: str | None = None
     ) -> tuple[BioImage, pathlib.Path]:
+        """Get the first image from a directory."""
         from bioio import BioImage
 
         _, files = helpers.get_directory_and_files(directory)
         return BioImage(files[0]), files[0]
 
     def _update_dim_and_scales(self, img):
+        """Update the dimensions and scales based on the image."""
         self._squeezed_dims = helpers.get_squeezed_dim_order(img)
         self._scale_tuple.value = (
             img.physical_pixel_sizes.Z or 1,
@@ -315,6 +387,7 @@ class MeasureContainer(Container):
         )
 
     def _update_choices(self, directory, prefix, update_label=False):
+        """Update the choices for labels and intensity images."""
         img, _ = self._get_0th_img_from_dir(directory)
         img_channels = helpers.get_channel_names(img)
         img_channels = [f'{prefix}: {channel}' for channel in img_channels]
@@ -328,9 +401,11 @@ class MeasureContainer(Container):
         self._intensity_images.choices = self._intensity_choices
 
     def _update_image_choices(self):
+        """Update the choices for intensity images."""
         self._update_choices(self._image_directory.value, 'Intensity')
 
     def _update_label_choices(self):
+        """Update the choices for label images."""
         self._update_choices(
             self._label_directory.value, 'Labels', update_label=True
         )
@@ -339,9 +414,11 @@ class MeasureContainer(Container):
         self._example_id_string.value = id_string
 
     def _update_region_choices(self):
+        """Update the choices for region images."""
         self._update_choices(self._region_directory.value, 'Region')
 
     def _safe_dict_eval(self, dict_string, dict_name=None):
+        """Safely evaluate a string as a dictionary."""
         if dict_string is None:
             return None
 
@@ -354,6 +431,19 @@ class MeasureContainer(Container):
             return None
 
     def batch_measure(self) -> pd.DataFrame:
+        """
+        Perform batch measurement of labels and intensity images.
+
+        Use scikit-image's regionprops to measure properties of labels and
+        intensity images. The measurements are saved to a CSV file in the
+        output directory.
+
+        Returns
+        -------
+        pd.DataFrame
+            The measurement results as a DataFrame.
+
+        """
         from bioio import BioImage
 
         # from skimage import measure
@@ -526,48 +616,47 @@ class MeasureContainer(Container):
                 self._progress_bar.value = idx + 1
 
         measure_props_df = pd.concat(measure_props_concat)
-        measure_props_df.to_csv(
-            self._output_directory.value / f'measure_props_{label_chan}.csv'
-        )
-
-        if self._create_grouped.value:
-            if self._group_by_sample_id.value:
-                # get count data
-                measure_props_count = (
-                    measure_props_df.groupby('id')
-                    .agg({measure_props_df.columns[0]: 'count'})
-                    .rename(
-                        columns={measure_props_df.columns[0]: 'label_count'}
-                    )
-                    .reset_index(drop=True)
-                )
-                measure_props_grouped = (
-                    measure_props_df.groupby('id')  # sw
-                    .agg(
-                        {
-                            col: ['mean', 'std']
-                            for col in measure_props_df.columns[1:]
-                        }
-                    )
-                    .reset_index()
-                )  # genereates a multi-index
-                # collapse multi index and combine columns names with '_' sep
-                measure_props_grouped.columns = [
-                    f'{col[0]}_{col[1]}' if col[1] else col[0]
-                    for col in measure_props_grouped.columns
-                ]
-
-                measure_props_grouped = pd.concat(
-                    [measure_props_grouped, measure_props_count], axis=1
-                )
-
-            measure_props_grouped.to_csv(
-                self._output_directory.value
-                / f'measure_props_grouped_{label_chan}.csv'
-            )
-        else:
-            measure_props_grouped = None
+        save_loc = self._output_directory.value / f'measure_props_{label_chan}.csv'
+        measure_props_df.to_csv(save_loc, index=False)
 
         logger.removeHandler(handler)
 
-        return measure_props_df, measure_props_grouped
+        return measure_props_df
+
+    def group_measurements(self):
+        """
+        Group measurements based on user input.
+
+        Uses the values in the Grouping Container of the Widget and passes them
+        to the group_and_agg_measurements function in the measure module. The
+        grouped measurements are saved to a CSV file in the same directory as
+        the measured data with '_grouped' appended.
+
+        Returns
+        -------
+        pd.DataFrame
+            The grouped measurements as a DataFrame.
+
+        """
+        from napari_ndev import measure as ndev_measure
+
+        df = pd.read_csv(self._measured_data_path.value)
+
+        # Filter out None values from agg_cols
+        agg_cols = [col for col in self._agg_cols.value if col is not None]
+
+        grouped_df = ndev_measure.group_and_agg_measurements(
+            df=df,
+            grouping_cols=self._grouping_cols.value,
+            count_col=self._count_col.value,
+            agg_cols=agg_cols,
+            agg_funcs=self._agg_funcs.value,
+        )
+
+        save_loc = (
+            self._measured_data_path.value.parent /
+            f'{self._measured_data_path.value.stem}_grouped.csv'
+        )
+        grouped_df.to_csv(save_loc, index=False)
+
+        return grouped_df
