@@ -11,6 +11,7 @@ from napari_ndev.measure import (
     _generate_measure_dict,
     _map_tx_dict_to_df_id_col,
     _rename_intensity_columns,
+    group_and_agg_measurements,
     measure_regionprops,
 )
 
@@ -406,3 +407,43 @@ def test_measure_regionprops_tx_dict():
     assert (
         result_df.loc[result_df['well'] == 'E4', 'Treatment2'] == 'Condition3'
     ).all()
+
+
+def test_group_and_agg_measurements_sample_data():
+    df = pd.DataFrame(
+        {
+            'id': ['id1', 'id1', 'id2', 'id2'],
+            'label': [1, 2, 4, 5],
+            'area': [100, 200, 300, 400],
+            'intensity_mean': [0.5, 0.7, 0.8, 0.6],
+        }
+    )
+
+    result_df = group_and_agg_measurements(
+        df,
+        grouping_cols=['id'],
+        agg_cols=['area', 'intensity_mean'],
+        agg_funcs=['mean', 'sum'],
+    )
+
+    assert isinstance(result_df, pd.DataFrame)
+    assert all(
+        column in result_df.columns
+        for column in ['id', 'area_mean', 'area_sum', 'intensity_mean_mean', 'intensity_mean_sum']
+    )
+
+def test_group_and_agg_measurements_real_data():
+    df = pd.read_csv('src/napari_ndev/_tests/resources/measure_props_Labels.csv')
+
+    result_df = group_and_agg_measurements(
+        df,
+        grouping_cols=['id', 'intensity_max-Labels'],
+        agg_cols=['area'],
+        agg_funcs=['mean', 'std'],
+    )
+
+    assert isinstance(result_df, pd.DataFrame)
+    assert all(
+        column in result_df.columns
+        for column in ['id', 'intensity_max-Labels', 'label_count', 'area_mean', 'area_std']
+    )
