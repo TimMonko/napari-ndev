@@ -606,6 +606,15 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
+  <a href="#napari_ndev.measure.group_and_agg_measurements" class="md-nav__link">
+    <span class="md-ellipsis">
+      <code class="doc-symbol doc-symbol-toc doc-symbol-function"></code>&nbsp;group_and_agg_measurements
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#napari_ndev.measure.measure_regionprops" class="md-nav__link">
     <span class="md-ellipsis">
       <code class="doc-symbol doc-symbol-toc doc-symbol-function"></code>&nbsp;measure_regionprops
@@ -678,6 +687,15 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
+  <a href="#napari_ndev.measure.group_and_agg_measurements" class="md-nav__link">
+    <span class="md-ellipsis">
+      <code class="doc-symbol doc-symbol-toc doc-symbol-function"></code>&nbsp;group_and_agg_measurements
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#napari_ndev.measure.measure_regionprops" class="md-nav__link">
     <span class="md-ellipsis">
       <code class="doc-symbol doc-symbol-toc doc-symbol-function"></code>&nbsp;measure_regionprops
@@ -723,6 +741,25 @@ extracting information from ID strings, renaming intensity columns,
 and mapping treatment dictionaries to DataFrame ID columns.</p>
 
 
+<p><span class="doc-section-title">Functions:</span></p>
+    <ul>
+          <li class="doc-section-item field-body">
+            <b><code><span title="napari_ndev.measure.measure_regionprops : Measure properties of labels with sci-kit image regionprops.">measure_regionprops : Measure properties of labels with sci-kit image regionprops.</span></code></b>
+            –
+            <div class="doc-md-description">
+              
+            </div>
+          </li>
+          <li class="doc-section-item field-body">
+            <b><code><span title="napari_ndev.measure.group_and_agg_measurements : Count and aggregate measurements by grouping IDs from measurement results.">group_and_agg_measurements : Count and aggregate measurements by grouping IDs from measurement results.</span></code></b>
+            –
+            <div class="doc-md-description">
+              
+            </div>
+          </li>
+    </ul>
+
+
 
   <div class="doc doc-children">
 
@@ -733,6 +770,215 @@ and mapping treatment dictionaries to DataFrame ID columns.</p>
 
 
 
+
+<div class="doc doc-object doc-function">
+
+
+<h2 id="napari_ndev.measure.group_and_agg_measurements" class="doc doc-heading">
+<code class="doc-symbol doc-symbol-heading doc-symbol-function"></code>            <span class="doc doc-object-name doc-function-name">group_and_agg_measurements</span>
+
+
+<a href="#napari_ndev.measure.group_and_agg_measurements" class="headerlink" title="Permanent link">#</a></h2>
+<div class="doc-signature highlight"><pre><span></span><code><span class="nf">group_and_agg_measurements</span><span class="p">(</span>
+    <span class="n">df</span><span class="p">,</span> <span class="n">grouping_cols</span><span class="o">=</span><span class="s2">&quot;id&quot;</span><span class="p">,</span> <span class="n">count_col</span><span class="o">=</span><span class="s2">&quot;label&quot;</span><span class="p">,</span> <span class="n">agg_cols</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">agg_funcs</span><span class="o">=</span><span class="s2">&quot;mean&quot;</span>
+<span class="p">)</span>
+</code></pre></div>
+
+    <div class="doc doc-contents ">
+
+        <p>Count and aggregate measurements by grouping IDs from measurement results.</p>
+
+
+<p><span class="doc-section-title">Parameters:</span></p>
+    <ul>
+        <li class="doc-section-item field-body">
+          <b><code>df</code></b>
+              (<code><span title="pandas.DataFrame">DataFrame</span></code>)
+          –
+          <div class="doc-md-description">
+            <p>The DataFrame with measurement properties, usually from measure_regionprops.</p>
+          </div>
+        </li>
+        <li class="doc-section-item field-body">
+          <b><code>grouping_cols</code></b>
+              (<code>str or list of str</code>, default:
+                  <code>&#39;id&#39;</code>
+)
+          –
+          <div class="doc-md-description">
+            <p>The columns to group by. By default, just the image ID.</p>
+          </div>
+        </li>
+        <li class="doc-section-item field-body">
+          <b><code>count_col</code></b>
+              (<code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a></code>, default:
+                  <code>&#39;label&#39;</code>
+)
+          –
+          <div class="doc-md-description">
+            <p>The column to count. By default, just the 'label' column.</p>
+          </div>
+        </li>
+        <li class="doc-section-item field-body">
+          <b><code>agg_cols</code></b>
+              (<code>list of str or None</code>, default:
+                  <code>None</code>
+)
+          –
+          <div class="doc-md-description">
+            <p>The columns to aggregate. By default, None.</p>
+          </div>
+        </li>
+        <li class="doc-section-item field-body">
+          <b><code>agg_funcs</code></b>
+              (<code>str or list of str</code>, default:
+                  <code>&#39;mean&#39;</code>
+)
+          –
+          <div class="doc-md-description">
+            <p>The aggregating functions. By default, just the mean.</p>
+          </div>
+        </li>
+    </ul>
+
+
+<p><span class="doc-section-title">Returns:</span></p>
+    <ul>
+        <li class="doc-section-item field-body">
+              <code><span title="pandas.DataFrame">DataFrame</span></code>
+          –
+          <div class="doc-md-description">
+            <p>The DataFrame with grouped and aggregated measurements.</p>
+          </div>
+        </li>
+    </ul>
+
+            <details class="quote">
+              <summary>Source code in <code>src/napari_ndev/measure.py</code></summary>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">147</span>
+<span class="normal">148</span>
+<span class="normal">149</span>
+<span class="normal">150</span>
+<span class="normal">151</span>
+<span class="normal">152</span>
+<span class="normal">153</span>
+<span class="normal">154</span>
+<span class="normal">155</span>
+<span class="normal">156</span>
+<span class="normal">157</span>
+<span class="normal">158</span>
+<span class="normal">159</span>
+<span class="normal">160</span>
+<span class="normal">161</span>
+<span class="normal">162</span>
+<span class="normal">163</span>
+<span class="normal">164</span>
+<span class="normal">165</span>
+<span class="normal">166</span>
+<span class="normal">167</span>
+<span class="normal">168</span>
+<span class="normal">169</span>
+<span class="normal">170</span>
+<span class="normal">171</span>
+<span class="normal">172</span>
+<span class="normal">173</span>
+<span class="normal">174</span>
+<span class="normal">175</span>
+<span class="normal">176</span>
+<span class="normal">177</span>
+<span class="normal">178</span>
+<span class="normal">179</span>
+<span class="normal">180</span>
+<span class="normal">181</span>
+<span class="normal">182</span>
+<span class="normal">183</span>
+<span class="normal">184</span>
+<span class="normal">185</span>
+<span class="normal">186</span>
+<span class="normal">187</span>
+<span class="normal">188</span>
+<span class="normal">189</span>
+<span class="normal">190</span>
+<span class="normal">191</span>
+<span class="normal">192</span>
+<span class="normal">193</span>
+<span class="normal">194</span>
+<span class="normal">195</span>
+<span class="normal">196</span>
+<span class="normal">197</span>
+<span class="normal">198</span>
+<span class="normal">199</span>
+<span class="normal">200</span>
+<span class="normal">201</span>
+<span class="normal">202</span>
+<span class="normal">203</span>
+<span class="normal">204</span>
+<span class="normal">205</span>
+<span class="normal">206</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">group_and_agg_measurements</span><span class="p">(</span>
+    <span class="n">df</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span>
+    <span class="n">grouping_cols</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;id&#39;</span><span class="p">,</span>
+    <span class="n">count_col</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;label&#39;</span><span class="p">,</span>
+    <span class="n">agg_cols</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">agg_funcs</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;mean&#39;</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Count and aggregate measurements by grouping IDs from measurement results.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    df : pd.DataFrame</span>
+<span class="sd">        The DataFrame with measurement properties, usually from measure_regionprops.</span>
+<span class="sd">    grouping_cols : str or list of str, optional</span>
+<span class="sd">        The columns to group by. By default, just the image ID.</span>
+<span class="sd">    count_col : str, optional</span>
+<span class="sd">        The column to count. By default, just the &#39;label&#39; column.</span>
+<span class="sd">    agg_cols : list of str or None, optional</span>
+<span class="sd">        The columns to aggregate. By default, None.</span>
+<span class="sd">    agg_funcs : str or list of str, optional</span>
+<span class="sd">        The aggregating functions. By default, just the mean.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    pd.DataFrame</span>
+<span class="sd">        The DataFrame with grouped and aggregated measurements.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># get count data</span>
+    <span class="n">df_count</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="n">df</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="n">grouping_cols</span><span class="p">)</span>
+            <span class="o">.</span><span class="n">agg</span><span class="p">({</span><span class="n">count_col</span><span class="p">:</span> <span class="s1">&#39;count&#39;</span><span class="p">})</span> <span class="c1"># counts count_col</span>
+            <span class="o">.</span><span class="n">rename</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="p">{</span><span class="n">count_col</span><span class="p">:</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">count_col</span><span class="si">}</span><span class="s1">_count&#39;</span><span class="p">})</span>
+            <span class="o">.</span><span class="n">reset_index</span><span class="p">()</span>
+        <span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">agg_cols</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">agg_cols</span> <span class="o">==</span> <span class="p">[]:</span>
+        <span class="k">return</span> <span class="n">df_count</span>
+
+    <span class="c1"># get aggregated data</span>
+    <span class="n">agg_cols</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="n">agg_cols</span><span class="p">]</span>
+    <span class="n">agg_dict</span> <span class="o">=</span> <span class="p">{</span><span class="n">col</span><span class="p">:</span> <span class="n">agg_funcs</span> <span class="k">for</span> <span class="n">col</span> <span class="ow">in</span> <span class="n">agg_cols</span><span class="p">}</span>
+    <span class="n">df_agg</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="n">df</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+            <span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="n">grouping_cols</span><span class="p">)</span>  <span class="c1"># sw</span>
+            <span class="o">.</span><span class="n">agg</span><span class="p">(</span><span class="n">agg_dict</span><span class="p">)</span>
+            <span class="o">.</span><span class="n">reset_index</span><span class="p">()</span>
+        <span class="p">)</span>  <span class="c1"># genereates a multi-index</span>
+        <span class="c1"># collapse multi index and combine columns names with &#39;_&#39; sep</span>
+    <span class="n">df_agg</span><span class="o">.</span><span class="n">columns</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">col</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="si">}</span><span class="s1">_</span><span class="si">{</span><span class="n">col</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="si">}</span><span class="s1">&#39;</span> <span class="k">if</span> <span class="n">col</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="k">else</span> <span class="n">col</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="k">for</span> <span class="n">col</span> <span class="ow">in</span> <span class="n">df_agg</span><span class="o">.</span><span class="n">columns</span>
+        <span class="p">]</span>
+
+    <span class="c1"># insert label count column into df_agg after grouping columns</span>
+    <span class="n">insert_pos</span> <span class="o">=</span> <span class="mi">1</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">grouping_cols</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span> <span class="k">else</span> <span class="nb">len</span><span class="p">(</span><span class="n">grouping_cols</span><span class="p">)</span>
+    <span class="n">df_agg</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="n">insert_pos</span><span class="p">,</span> <span class="s1">&#39;label_count&#39;</span><span class="p">,</span> <span class="n">df_count</span><span class="p">[</span><span class="s1">&#39;label_count&#39;</span><span class="p">])</span>
+
+    <span class="k">return</span> <span class="n">df_agg</span>
+</code></pre></div></td></tr></table></div>
+            </details>
+    </div>
+
+</div>
 
 <div class="doc doc-object doc-function">
 
@@ -766,6 +1012,7 @@ of labels (i.e. 'intensity_mean', 'intensity_min', 'intensity_max',
 'intensity_std'). If no label or intensity names are given, the names are
 automatically generated as a string of the input variable name.
 Choose from a list of properties to measure: [
+        "label",
         "area",
         "area_convex",
         "bbox",
@@ -920,13 +1167,7 @@ Choose from a list of properties to measure: [
 
             <details class="quote">
               <summary>Source code in <code>src/napari_ndev/measure.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 21</span>
-<span class="normal"> 22</span>
-<span class="normal"> 23</span>
-<span class="normal"> 24</span>
-<span class="normal"> 25</span>
-<span class="normal"> 26</span>
-<span class="normal"> 27</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 27</span>
 <span class="normal"> 28</span>
 <span class="normal"> 29</span>
 <span class="normal"> 30</span>
@@ -1037,7 +1278,14 @@ Choose from a list of properties to measure: [
 <span class="normal">135</span>
 <span class="normal">136</span>
 <span class="normal">137</span>
-<span class="normal">138</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">measure_regionprops</span><span class="p">(</span>
+<span class="normal">138</span>
+<span class="normal">139</span>
+<span class="normal">140</span>
+<span class="normal">141</span>
+<span class="normal">142</span>
+<span class="normal">143</span>
+<span class="normal">144</span>
+<span class="normal">145</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">measure_regionprops</span><span class="p">(</span>
     <span class="n">label_images</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">ArrayLike</span><span class="p">]</span> <span class="o">|</span> <span class="n">ArrayLike</span><span class="p">,</span>
     <span class="n">label_names</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">|</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">intensity_images</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">ArrayLike</span><span class="p">]</span> <span class="o">|</span> <span class="n">ArrayLike</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
@@ -1059,6 +1307,7 @@ Choose from a list of properties to measure: [
 <span class="sd">    &#39;intensity_std&#39;). If no label or intensity names are given, the names are</span>
 <span class="sd">    automatically generated as a string of the input variable name.</span>
 <span class="sd">    Choose from a list of properties to measure: [</span>
+<span class="sd">            &quot;label&quot;,</span>
 <span class="sd">            &quot;area&quot;,</span>
 <span class="sd">            &quot;area_convex&quot;,</span>
 <span class="sd">            &quot;bbox&quot;,</span>
