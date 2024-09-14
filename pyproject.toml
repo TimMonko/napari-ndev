@@ -6,8 +6,6 @@ build-backend = "setuptools.build_meta"
 [tool.setuptools_scm]
 write_to = "src/napari_ndev/_version.py"
 
-[tool.setuptools.packages.find]
-exclude = ["*docs/*", "*_tests/*"]
 
 [tool.ruff]
 line-length = 79
