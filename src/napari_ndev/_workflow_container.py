@@ -162,6 +162,10 @@ class WorkflowContainer(Container):
         img = helpers.get_Image(self.image_files[0])
 
         self._channel_names = helpers.get_channel_names(img)
+
+        for widget in self._roots_container:
+            widget.choices = self._channel_names
+
         self._squeezed_img_dims = helpers.get_squeezed_dim_order(img)
         return self._squeezed_img_dims
 
@@ -198,8 +202,6 @@ class WorkflowContainer(Container):
     def batch_workflow(self):
         """Run the workflow on all images in the image directory."""
         import dask.array as da
-
-        # from aicsimageio import AICSImage, transforms
         from bioio.writers import OmeTiffWriter
         from bioio_base import transforms
 
@@ -209,7 +211,7 @@ class WorkflowContainer(Container):
 
         # get indexes of channel names, in case not all images have
         # the same channel names, the index should be in the same order
-        root_list = [root.value for root in self.roots]
+        root_list = [widget.value for widget in self._roots_container]
         root_index_list = [self._channel_names.index(r) for r in root_list]
 
         # Setting up Logging File
@@ -221,11 +223,13 @@ class WorkflowContainer(Container):
             Result Directory: %s
             Workflow File: %s
             Roots: %s
+            Tasks: %s
             """,
             self.image_directory.value,
             result_dir,
             self.workflow_file.value,
             root_list,
+            self._tasks_select.value,
         )
 
         self._progress_bar.label = f'Workflow on {len(image_files)} images'
@@ -252,8 +256,8 @@ class WorkflowContainer(Container):
                     name=workflow.roots()[idx], func_or_data=root_squeeze
                 )
 
-            leaf_names = workflow.leafs()
-            result = workflow.get(name=leaf_names)
+            task_names = self._tasks_select.value
+            result = workflow.get(name=task_names)
 
             result_stack = np.asarray(
                 result
@@ -272,15 +276,16 @@ class WorkflowContainer(Container):
                 result_stack = da.concatenate(
                     [dask_images, result_stack], axis=1
                 )
-                result_names = root_list + leaf_names
+                result_names = root_list + task_names
             else:
-                result_names = leaf_names
+                result_names = task_names
 
             OmeTiffWriter.save(
                 data=result_stack,
                 uri=result_dir / (image_file.stem + '.tiff'),
                 dim_order='TCZYX',
                 channel_names=result_names,
+                image_name=image_file.stem,
                 physical_pixel_sizes=img.physical_pixel_sizes,
             )
 
@@ -288,5 +293,3 @@ class WorkflowContainer(Container):
 
         logger.removeHandler(handler)
         return
-
-    # Add single workflow here:
