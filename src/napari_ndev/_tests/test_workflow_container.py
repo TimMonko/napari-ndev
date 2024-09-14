@@ -1,5 +1,7 @@
 import pathlib
 
+import pytest
+
 from napari_ndev import helpers
 from napari_ndev._workflow_container import WorkflowContainer
 
@@ -67,6 +69,8 @@ def test_workflow_container_get_workflow_info():
     assert list(container._tasks_select.choices) == list(container.workflow._tasks.keys())
 
 
+# TODO: Update workflow to use scikitimage
+@pytest.mark.notox # uses pyclesperanto
 def test_batch_workflow_leaf_tasks(tmp_path):
     container = WorkflowContainer()
     wf_path = pathlib.Path(
@@ -94,6 +98,7 @@ def test_batch_workflow_leaf_tasks(tmp_path):
     img = helpers.get_Image(output_folder / 'cells3d2ch.tiff')
     assert len(img.channel_names) == 2
 
+@pytest.mark.notox # uses pyclesperanto
 def test_batch_workflow_keep_original_images(tmp_path):
     container = WorkflowContainer()
     wf_path = pathlib.Path(
@@ -122,7 +127,7 @@ def test_batch_workflow_keep_original_images(tmp_path):
     img = helpers.get_Image(output_folder / 'cells3d2ch.tiff')
     assert len(img.channel_names) == 4
 
-
+@pytest.mark.notox # uses pyclesperanto
 def test_batch_workflow_all_tasks(tmp_path):
     container = WorkflowContainer()
     wf_path = pathlib.Path(
