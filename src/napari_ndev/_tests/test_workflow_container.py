@@ -1,5 +1,6 @@
 import pathlib
 
+from napari_ndev import helpers
 from napari_ndev._workflow_container import WorkflowContainer
 
 # from napari_workflows._io_yaml_v1 import load_workflow
@@ -64,3 +65,89 @@ def test_workflow_container_get_workflow_info():
     assert len(container._roots_container) == len(container.workflow.roots())
     assert container._tasks_select.value == list(container.workflow.leafs())
     assert list(container._tasks_select.choices) == list(container.workflow._tasks.keys())
+
+
+def test_batch_workflow_leaf_tasks(tmp_path):
+    container = WorkflowContainer()
+    wf_path = pathlib.Path(
+        'src/napari_ndev/_tests/resources/Workflow/workflows/'
+        'test_2roots_1leaf.yaml'
+    )
+    container.workflow_file.value = wf_path
+
+    container.image_directory.value = pathlib.Path(
+        'src/napari_ndev/_tests/resources/Workflow/Images'
+    )
+
+    output_folder = tmp_path / 'Output'
+    output_folder.mkdir()
+    container.result_directory.value = output_folder
+
+    container._roots_container[0].value = 'membrane'
+    container._roots_container[1].value = 'nuclei'
+
+    container.batch_workflow()
+
+    assert output_folder.exists()
+    assert (output_folder / 'cells3d2ch.tiff').exists()
+
+    img = helpers.get_Image(output_folder / 'cells3d2ch.tiff')
+    assert len(img.channel_names) == 2
+
+def test_batch_workflow_keep_original_images(tmp_path):
+    container = WorkflowContainer()
+    wf_path = pathlib.Path(
+        'src/napari_ndev/_tests/resources/Workflow/workflows/'
+        'test_2roots_1leaf.yaml'
+    )
+    container.workflow_file.value = wf_path
+
+    container.image_directory.value = pathlib.Path(
+        'src/napari_ndev/_tests/resources/Workflow/Images'
+    )
+
+    output_folder = tmp_path / 'Output'
+    output_folder.mkdir()
+    container.result_directory.value = output_folder
+
+    container._roots_container[0].value = 'membrane'
+    container._roots_container[1].value = 'nuclei'
+
+    container._keep_original_images.value = True
+    container.batch_button.clicked()
+
+    assert output_folder.exists()
+    assert (output_folder / 'cells3d2ch.tiff').exists()
+
+    img = helpers.get_Image(output_folder / 'cells3d2ch.tiff')
+    assert len(img.channel_names) == 4
+
+
+def test_batch_workflow_all_tasks(tmp_path):
+    container = WorkflowContainer()
+    wf_path = pathlib.Path(
+        'src/napari_ndev/_tests/resources/Workflow/workflows/'
+        'test_2roots_1leaf.yaml'
+    )
+    container.workflow_file.value = wf_path
+
+    container.image_directory.value = pathlib.Path(
+        'src/napari_ndev/_tests/resources/Workflow/Images'
+    )
+
+    output_folder = tmp_path / 'Output'
+    output_folder.mkdir()
+    container.result_directory.value = output_folder
+
+    container._roots_container[0].value = 'membrane'
+    container._roots_container[1].value = 'nuclei'
+
+    container._tasks_select.value = list(container.workflow._tasks.keys())
+
+    container.batch_workflow()
+
+    assert output_folder.exists()
+    assert (output_folder / 'cells3d2ch.tiff').exists()
+
+    img = helpers.get_Image(output_folder / 'cells3d2ch.tiff')
+    assert len(img.channel_names) == 4
