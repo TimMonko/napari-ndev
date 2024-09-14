@@ -171,6 +171,13 @@ class UtilitiesContainer(Container):
             '.ome/.tif/.tiff extension.',
         )
 
+        self._channel_names = LineEdit(
+            label='Channel Name(s)',
+            tooltip='Enter channel names as a list. If left blank or the '
+            'channel names are not the proper length, then default channel '
+            'names will be used.',
+        )
+
         self._results = TextEdit(label='Info')
 
     def _init_open_image_container(self):
@@ -209,13 +216,6 @@ class UtilitiesContainer(Container):
 
         self._info_container.append(self._dim_order)
         self._info_container.append(self._scenes)
-
-        self._channel_names = LineEdit(
-            label='Channel Name(s)',
-            tooltip='Enter channel names as a list. If left blank or the '
-            'channel names are not the proper length, then default channel '
-            'names will be used.',
-        )
 
     def _init_scale_container(self):
         """Initialize the scale container."""
