@@ -66,18 +66,27 @@ class WorkflowContainer(Container):
     """
 
     def __init__(self, viewer: 'napari.viewer.Viewer'):
+        """
+        Initialize the WorkflowContainer widget.
+
+        Parameters
+        ----------
+        viewer : napari.viewer.Viewer, optional
+            The napari viewer instance.
+
+        """
         super().__init__()
-        ##############################
-        # Attributes
-        ##############################
-        self.viewer = viewer
+        self.viewer = viewer if viewer is not None else None
         self.roots = []
         self._channel_names = []
         self._img_dims = ''
 
-        ##############################
-        # Widgets
-        ##############################
+        self._init_widgets()
+        self._init_layout()
+        self._connect_events()
+
+    def _init_widgets(self):
+        """Initialize non-Container widgets."""
         self.image_directory = FileEdit(label='Image Directory', mode='d')
         self.result_directory = FileEdit(label='Result Directory', mode='d')
 
@@ -97,6 +106,8 @@ class WorkflowContainer(Container):
         self._progress_bar = ProgressBar(label='Progress:')
         self._workflow_roots = Label(label='Workflow Roots:')
 
+    def _init_layout(self):
+        """Initialize the layout of the widgets."""
         self.extend(
             [
                 self.image_directory,
@@ -108,9 +119,9 @@ class WorkflowContainer(Container):
                 self._workflow_roots,
             ]
         )
-        ##############################
-        # Event Handling
-        ##############################
+
+    def _connect_events(self):
+        """Connect the events of the widgets to respective methods."""
         self.image_directory.changed.connect(self._get_image_info)
         # <- the below will be used for single workflow, not batch
         # self.viewer.layers.events.inserted.connect(self._update_root_choices)
@@ -118,8 +129,8 @@ class WorkflowContainer(Container):
         self.workflow_file.changed.connect(self._get_workflow_info)
         self.batch_button.clicked.connect(self.batch_workflow)
 
-    # Get Channel names and image dimensions without C
     def _get_image_info(self):
+        """Get channels and dims from first image in the directory."""
         self.image_dir, self.image_files = helpers.get_directory_and_files(
             self.image_directory.value,
         )
@@ -131,10 +142,12 @@ class WorkflowContainer(Container):
         return self._squeezed_img_dims
 
     def _update_root_choices(self):
+        """Update the choices of the roots with image channels names."""
         for root in self.roots:
             root.choices = self._channel_names + self.viewer.layers
 
     def _update_roots(self):
+        """Get the roots from the workflow and update the ComboBox widgets."""
         for root in self.roots:
             self.remove(root)
         self.roots.clear()
@@ -151,6 +164,7 @@ class WorkflowContainer(Container):
         return
 
     def _get_workflow_info(self):
+        """Load the workflow file and update the roots and leafs."""
         from napari_workflows._io_yaml_v1 import load_workflow
 
         self.workflow = load_workflow(self.workflow_file.value)
@@ -159,6 +173,7 @@ class WorkflowContainer(Container):
         return
 
     def batch_workflow(self):
+        """Run the workflow on all images in the image directory."""
         import dask.array as da
 
         # from aicsimageio import AICSImage, transforms
