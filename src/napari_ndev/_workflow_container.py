@@ -120,12 +120,10 @@ class WorkflowContainer(Container):
 
     # Get Channel names and image dimensions without C
     def _get_image_info(self):
-        from aicsimageio import AICSImage
-
         self.image_dir, self.image_files = helpers.get_directory_and_files(
             self.image_directory.value,
         )
-        img = AICSImage(self.image_files[0])
+        img = helpers.get_Image(self.image_files[0])
 
         self._channel_names = helpers.get_channel_names(img)
         self._update_root_choices()
@@ -162,8 +160,10 @@ class WorkflowContainer(Container):
 
     def batch_workflow(self):
         import dask.array as da
-        from aicsimageio import AICSImage, transforms
-        from aicsimageio.writers import OmeTiffWriter
+
+        # from aicsimageio import AICSImage, transforms
+        from bioio.writers import OmeTiffWriter
+        from bioio_base import transforms
 
         result_dir = self.result_directory.value
         image_files = self.image_files
@@ -196,7 +196,7 @@ class WorkflowContainer(Container):
 
         for idx_file, image_file in enumerate(image_files):
             logger.info('Processing %d: %s', idx_file + 1, image_file.name)
-            img = AICSImage(image_file)
+            img = helpers.get_Image(image_file)
 
             root_stack = []
             # get image corresponding to each root, and set it to the workflow
