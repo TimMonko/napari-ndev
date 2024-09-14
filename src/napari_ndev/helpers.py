@@ -31,6 +31,34 @@ __all__ = [
     'setup_logger',
 ]
 
+def get_Image(file: str | Path) -> AICSImage | BioImage:
+    """
+    Read the image file with BioImage or AICSImage.
+
+    Open the image file with BioImage, or if the file is not supported,
+    open it with AICSImage.
+
+    Parameters
+    ----------
+    file : str or Path
+        The file path.
+
+    Returns
+    -------
+    AICSImage or BioImage
+        The image object.
+
+    """
+    from bioio import BioImage
+    from bioio_base.exceptions import UnsupportedFileFormatError
+
+    try:
+        img = BioImage(file)
+    except UnsupportedFileFormatError:
+        from aicsimageio import AICSImage
+        img = AICSImage(file)
+    return img
+
 
 def get_directory_and_files(
     dir_path: str | Path | None = None,
