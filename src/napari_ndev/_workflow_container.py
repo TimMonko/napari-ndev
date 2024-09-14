@@ -9,7 +9,9 @@ from magicgui.widgets import (
     Label,
     ProgressBar,
     PushButton,
+    Select,
 )
+from qtpy.QtWidgets import QTabWidget
 
 from napari_ndev import helpers
 
@@ -82,6 +84,8 @@ class WorkflowContainer(Container):
         self._img_dims = ''
 
         self._init_widgets()
+        self._roots_container()
+        self._tasks_container()
         self._init_layout()
         self._connect_events()
 
@@ -106,6 +110,22 @@ class WorkflowContainer(Container):
         self._progress_bar = ProgressBar(label='Progress:')
         self._workflow_roots = Label(label='Workflow Roots:')
 
+    def _roots_container(self):
+        """Initialize the roots container."""
+        self._roots_container = Container(layout='vertical')
+
+    def _tasks_container(self):
+        """Initialize the tasks container."""
+        self._tasks_container = Container(layout='vertical')
+
+        self._tasks_select = Select(
+            choices=[],
+            nullable=False,
+            allow_multiple=True,
+        )
+
+        self._tasks_container.append(self._tasks_select)
+
     def _init_layout(self):
         """Initialize the layout of the widgets."""
         self.extend(
@@ -119,6 +139,11 @@ class WorkflowContainer(Container):
                 self._workflow_roots,
             ]
         )
+
+        tabs = QTabWidget()
+        tabs.addTab(self._roots_container.native, 'Roots')
+        tabs.addTab(self._tasks_container.native, 'Tasks')
+        self.native.layout().addWidget(tabs)
 
     def _connect_events(self):
         """Connect the events of the widgets to respective methods."""
@@ -137,31 +162,28 @@ class WorkflowContainer(Container):
         img = helpers.get_Image(self.image_files[0])
 
         self._channel_names = helpers.get_channel_names(img)
-        self._update_root_choices()
         self._squeezed_img_dims = helpers.get_squeezed_dim_order(img)
         return self._squeezed_img_dims
 
-    def _update_root_choices(self):
-        """Update the choices of the roots with image channels names."""
-        for root in self.roots:
-            root.choices = self._channel_names + self.viewer.layers
-
     def _update_roots(self):
         """Get the roots from the workflow and update the ComboBox widgets."""
-        for root in self.roots:
-            self.remove(root)
-        self.roots.clear()
+        self._roots_container.clear()
 
         for idx, root in enumerate(self.workflow.roots()):
-            root = ComboBox(
+            root_combo = ComboBox(
                 label=f'Root {idx}: {root}',
                 choices=self._channel_names,
                 nullable=True,
                 value=None,
             )
-            self.roots.append(root)
-            self.append(root)
+            self._roots_container.append(root_combo)
+            # self.append(root_combo)
         return
+
+    def _update_task_choices(self, workflow):
+        """Update the choices of the tasks with the workflow tasks."""
+        self._tasks_select.choices = list(workflow._tasks.keys())
+        self._tasks_select.value = workflow.leafs()
 
     def _get_workflow_info(self):
         """Load the workflow file and update the roots and leafs."""
@@ -170,6 +192,7 @@ class WorkflowContainer(Container):
         self.workflow = load_workflow(self.workflow_file.value)
         self._workflow_roots.value = self.workflow.roots()
         self._update_roots()
+        self._update_task_choices(self.workflow)
         return
 
     def batch_workflow(self):
