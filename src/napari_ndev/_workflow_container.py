@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 from typing import TYPE_CHECKING
 
 import numpy as np
@@ -67,7 +69,7 @@ class WorkflowContainer(Container):
 
     """
 
-    def __init__(self, viewer: 'napari.viewer.Viewer'):
+    def __init__(self, viewer: napari.viewer.Viewer = None):
         """
         Initialize the WorkflowContainer widget.
 
@@ -148,9 +150,6 @@ class WorkflowContainer(Container):
     def _connect_events(self):
         """Connect the events of the widgets to respective methods."""
         self.image_directory.changed.connect(self._get_image_info)
-        # <- the below will be used for single workflow, not batch
-        # self.viewer.layers.events.inserted.connect(self._update_root_choices)
-        # self.viewer.layers.events.removed.connect(self._update_root_choices)
         self.workflow_file.changed.connect(self._get_workflow_info)
         self.batch_button.clicked.connect(self.batch_workflow)
 
