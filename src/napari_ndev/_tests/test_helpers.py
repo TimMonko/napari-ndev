@@ -15,9 +15,15 @@ from napari_ndev.helpers import (
     get_directory_and_files,
     get_squeezed_dim_order,
     setup_logger,
+    get_Image,
 )
 
-# from bioio.readers import Reader
+def test_get_Image():
+    file = Path(
+        './src/napari_ndev/_tests/resources/Workflow/Images/cells3d2ch.tiff'
+    )
+    img = get_Image(file)
+    assert isinstance(img, BioImage)
 
 
 def test_check_for_missing_files_path(tmp_path):
