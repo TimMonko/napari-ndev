@@ -13,10 +13,11 @@ from napari_ndev.helpers import (
     create_id_string,
     get_channel_names,
     get_directory_and_files,
+    get_Image,
     get_squeezed_dim_order,
     setup_logger,
-    get_Image,
 )
+
 
 def test_get_Image():
     file = Path(
