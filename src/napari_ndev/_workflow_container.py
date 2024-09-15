@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 from typing import TYPE_CHECKING
 
 import numpy as np
@@ -9,7 +11,9 @@ from magicgui.widgets import (
     Label,
     ProgressBar,
     PushButton,
+    Select,
 )
+from qtpy.QtWidgets import QTabWidget
 
 from napari_ndev import helpers
 
@@ -65,19 +69,30 @@ class WorkflowContainer(Container):
 
     """
 
-    def __init__(self, viewer: 'napari.viewer.Viewer'):
+    def __init__(self, viewer: napari.viewer.Viewer = None):
+        """
+        Initialize the WorkflowContainer widget.
+
+        Parameters
+        ----------
+        viewer : napari.viewer.Viewer, optional
+            The napari viewer instance.
+
+        """
         super().__init__()
-        ##############################
-        # Attributes
-        ##############################
-        self.viewer = viewer
+        self.viewer = viewer if viewer is not None else None
         self.roots = []
         self._channel_names = []
         self._img_dims = ''
 
-        ##############################
-        # Widgets
-        ##############################
+        self._init_widgets()
+        self._roots_container()
+        self._tasks_container()
+        self._init_layout()
+        self._connect_events()
+
+    def _init_widgets(self):
+        """Initialize non-Container widgets."""
         self.image_directory = FileEdit(label='Image Directory', mode='d')
         self.result_directory = FileEdit(label='Result Directory', mode='d')
 
@@ -97,6 +112,24 @@ class WorkflowContainer(Container):
         self._progress_bar = ProgressBar(label='Progress:')
         self._workflow_roots = Label(label='Workflow Roots:')
 
+    def _roots_container(self):
+        """Initialize the roots container."""
+        self._roots_container = Container(layout='vertical')
+
+    def _tasks_container(self):
+        """Initialize the tasks container."""
+        self._tasks_container = Container(layout='vertical')
+
+        self._tasks_select = Select(
+            choices=[],
+            nullable=False,
+            allow_multiple=True,
+        )
+
+        self._tasks_container.append(self._tasks_select)
+
+    def _init_layout(self):
+        """Initialize the layout of the widgets."""
         self.extend(
             [
                 self.image_directory,
@@ -108,62 +141,68 @@ class WorkflowContainer(Container):
                 self._workflow_roots,
             ]
         )
-        ##############################
-        # Event Handling
-        ##############################
+
+        tabs = QTabWidget()
+        tabs.addTab(self._roots_container.native, 'Roots')
+        tabs.addTab(self._tasks_container.native, 'Tasks')
+        self.native.layout().addWidget(tabs)
+
+    def _connect_events(self):
+        """Connect the events of the widgets to respective methods."""
         self.image_directory.changed.connect(self._get_image_info)
-        # <- the below will be used for single workflow, not batch
-        # self.viewer.layers.events.inserted.connect(self._update_root_choices)
-        # self.viewer.layers.events.removed.connect(self._update_root_choices)
         self.workflow_file.changed.connect(self._get_workflow_info)
         self.batch_button.clicked.connect(self.batch_workflow)
 
-    # Get Channel names and image dimensions without C
     def _get_image_info(self):
-        from aicsimageio import AICSImage
-
+        """Get channels and dims from first image in the directory."""
         self.image_dir, self.image_files = helpers.get_directory_and_files(
             self.image_directory.value,
         )
-        img = AICSImage(self.image_files[0])
+        img = helpers.get_Image(self.image_files[0])
 
         self._channel_names = helpers.get_channel_names(img)
-        self._update_root_choices()
+
+        for widget in self._roots_container:
+            widget.choices = self._channel_names
+
         self._squeezed_img_dims = helpers.get_squeezed_dim_order(img)
         return self._squeezed_img_dims
 
-    def _update_root_choices(self):
-        for root in self.roots:
-            root.choices = self._channel_names + self.viewer.layers
-
     def _update_roots(self):
-        for root in self.roots:
-            self.remove(root)
-        self.roots.clear()
+        """Get the roots from the workflow and update the ComboBox widgets."""
+        self._roots_container.clear()
 
         for idx, root in enumerate(self.workflow.roots()):
-            root = ComboBox(
+            root_combo = ComboBox(
                 label=f'Root {idx}: {root}',
                 choices=self._channel_names,
                 nullable=True,
                 value=None,
             )
-            self.roots.append(root)
-            self.append(root)
+            self._roots_container.append(root_combo)
+            # self.append(root_combo)
         return
 
+    def _update_task_choices(self, workflow):
+        """Update the choices of the tasks with the workflow tasks."""
+        self._tasks_select.choices = list(workflow._tasks.keys())
+        self._tasks_select.value = workflow.leafs()
+
     def _get_workflow_info(self):
+        """Load the workflow file and update the roots and leafs."""
         from napari_workflows._io_yaml_v1 import load_workflow
 
         self.workflow = load_workflow(self.workflow_file.value)
         self._workflow_roots.value = self.workflow.roots()
         self._update_roots()
+        self._update_task_choices(self.workflow)
         return
 
     def batch_workflow(self):
+        """Run the workflow on all images in the image directory."""
         import dask.array as da
-        from aicsimageio import AICSImage, transforms
-        from aicsimageio.writers import OmeTiffWriter
+        from bioio.writers import OmeTiffWriter
+        from bioio_base import transforms
 
         result_dir = self.result_directory.value
         image_files = self.image_files
@@ -171,7 +210,7 @@ class WorkflowContainer(Container):
 
         # get indexes of channel names, in case not all images have
         # the same channel names, the index should be in the same order
-        root_list = [root.value for root in self.roots]
+        root_list = [widget.value for widget in self._roots_container]
         root_index_list = [self._channel_names.index(r) for r in root_list]
 
         # Setting up Logging File
@@ -183,11 +222,13 @@ class WorkflowContainer(Container):
             Result Directory: %s
             Workflow File: %s
             Roots: %s
+            Tasks: %s
             """,
             self.image_directory.value,
             result_dir,
             self.workflow_file.value,
             root_list,
+            self._tasks_select.value,
         )
 
         self._progress_bar.label = f'Workflow on {len(image_files)} images'
@@ -196,7 +237,7 @@ class WorkflowContainer(Container):
 
         for idx_file, image_file in enumerate(image_files):
             logger.info('Processing %d: %s', idx_file + 1, image_file.name)
-            img = AICSImage(image_file)
+            img = helpers.get_Image(image_file)
 
             root_stack = []
             # get image corresponding to each root, and set it to the workflow
@@ -214,8 +255,8 @@ class WorkflowContainer(Container):
                     name=workflow.roots()[idx], func_or_data=root_squeeze
                 )
 
-            leaf_names = workflow.leafs()
-            result = workflow.get(name=leaf_names)
+            task_names = self._tasks_select.value
+            result = workflow.get(name=task_names)
 
             result_stack = np.asarray(
                 result
@@ -227,6 +268,9 @@ class WorkflowContainer(Container):
                 return_dims='TCZYX',
             )
 
+            if result_stack.dtype == np.int64:
+                result_stack = result_stack.astype(np.int32)
+
             # <- should I add a check for the result_stack to be a dask array?
             # <- should this be done using dask or numpy?
             if self._keep_original_images.value:
@@ -234,15 +278,16 @@ class WorkflowContainer(Container):
                 result_stack = da.concatenate(
                     [dask_images, result_stack], axis=1
                 )
-                result_names = root_list + leaf_names
+                result_names = root_list + task_names
             else:
-                result_names = leaf_names
+                result_names = task_names
 
             OmeTiffWriter.save(
                 data=result_stack,
                 uri=result_dir / (image_file.stem + '.tiff'),
                 dim_order='TCZYX',
                 channel_names=result_names,
+                image_name=image_file.stem,
                 physical_pixel_sizes=img.physical_pixel_sizes,
             )
 
@@ -250,5 +295,3 @@ class WorkflowContainer(Container):
 
         logger.removeHandler(handler)
         return
-
-    # Add single workflow here:
