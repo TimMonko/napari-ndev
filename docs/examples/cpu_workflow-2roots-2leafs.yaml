@@ -1,14 +1,9 @@
 !!python/object:napari_workflows._workflow.Workflow
 _tasks:
   membrane-gb: !!python/tuple
-  - &id001 !!python/name:skimage._shared.filters.gaussian ''
+  - &id001 !!python/name:napari_segment_blobs_and_things_with_membranes.gaussian_blur ''
   - membrane
   - 1
-  - null
-  - nearest
-  - 0
-  - false
-  - 4.0
   membrane-label: !!python/tuple
   - &id002 !!python/name:skimage.measure._label.label ''
   - membrane-threshold
@@ -21,11 +16,6 @@ _tasks:
   - *id001
   - nucleus
   - 1
-  - null
-  - nearest
-  - 0
-  - false
-  - 4.0
   nucleus-label: !!python/tuple
   - *id002
   - nucleus-threshold
