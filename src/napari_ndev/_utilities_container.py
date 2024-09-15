@@ -171,6 +171,13 @@ class UtilitiesContainer(Container):
             '.ome/.tif/.tiff extension.',
         )
 
+        self._channel_names = LineEdit(
+            label='Channel Name(s)',
+            tooltip='Enter channel names as a list. If left blank or the '
+            'channel names are not the proper length, then default channel '
+            'names will be used.',
+        )
+
         self._results = TextEdit(label='Info')
 
     def _init_open_image_container(self):
@@ -209,13 +216,6 @@ class UtilitiesContainer(Container):
 
         self._info_container.append(self._dim_order)
         self._info_container.append(self._scenes)
-
-        self._channel_names = LineEdit(
-            label='Channel Name(s)',
-            tooltip='Enter channel names as a list. If left blank or the '
-            'channel names are not the proper length, then default channel '
-            'names will be used.',
-        )
 
     def _init_scale_container(self):
         """Initialize the scale container."""
@@ -388,10 +388,11 @@ class UtilitiesContainer(Container):
         Attemps to read from BioImage first, then AICSImage.
 
         """
+        from napari_ndev.helpers import get_Image
         # from aicsimageio import AICSImage
         # from bioio import BioImage
         # from bioio_base.exceptions import UnsupportedFileFormatError
-        img = self._read_image_file(self._files.value[0])
+        img = get_Image(self._files.value[0])
 
         self._img = img
         self._update_metadata(img)
@@ -444,6 +445,8 @@ class UtilitiesContainer(Container):
 
     def select_next_images(self):
         """Open the next set of images in the directyory."""
+        from napari_ndev.helpers import get_Image
+
         # TODO: sort files consistent with windows and mac folder explorers
         num_files = self._files.value.__len__()
 
@@ -467,7 +470,7 @@ class UtilitiesContainer(Container):
         idx = files.index(first_file)
         next_files = files[idx + num_files : idx + num_files + num_files]
         # set the nwe save names, and update the file value
-        img = self._read_image_file(next_files[0])
+        img = get_Image(next_files[0])
 
         image_id = helpers.create_id_string(img, next_files[0].stem)
         self._save_name.value = str(image_id + '.tiff')
@@ -520,14 +523,12 @@ class UtilitiesContainer(Container):
             The concatenated image data.
 
         """
-        # from aicsimageio import AICSImage
-        # from bioio import BioImage
-        # from bioio_base.exceptions import UnsupportedFileFormatError
+        from napari_ndev.helpers import get_Image
 
         array_list = []
         if concatenate_files:
             for file in files:
-                img = self._read_image_file(file)
+                img = get_Image(file)
 
                 if 'S' in img.dims.order:
                     img_data = img.get_image_data('TSZYX')
@@ -680,11 +681,9 @@ class UtilitiesContainer(Container):
         will be extracted.
 
         """
-        # from aicsimageio import AICSImage
-        # from bioio import BioImage
-        # from bioio_base.exceptions import UnsupportedFileFormatError
+        from napari_ndev.helpers import get_Image
 
-        img = self._read_image_file(self._files.value[0])
+        img = get_Image(self._files.value[0])
 
         scenes = self._scenes_to_extract.value
         scenes_list = ast.literal_eval(scenes) if scenes else None
