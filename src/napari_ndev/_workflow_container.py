@@ -268,6 +268,9 @@ class WorkflowContainer(Container):
                 return_dims='TCZYX',
             )
 
+            if result_stack.dtype == np.int64:
+                result_stack = result_stack.astype(np.int32)
+
             # <- should I add a check for the result_stack to be a dask array?
             # <- should this be done using dask or numpy?
             if self._keep_original_images.value:
