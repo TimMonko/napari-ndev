@@ -57,6 +57,12 @@ jobs:
       - name: Install dependencies
         run: |
           python --version
+          retry() {
+            for i in {1..5}; do
+              "$@" && break || sleep 15;
+            done
+          }
+          retry conda install -y pyopencl
           conda install pyopencl
           python -m pip install --upgrade pip
           python -m pip install setuptools tox tox-gh-actions
