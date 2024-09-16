@@ -42,6 +42,28 @@ jobs:
           git clone --depth 1 https://github.com/pyvista/gl-ci-helpers.git
           powershell gl-ci-helpers/appveyor/install_opengl.ps1
 
+        # Install OpenCL for Linux
+      - name: Install OpenCL on Linux
+        if: runner.os == 'Linux'
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y pocl-opencl-icd libpocl2 mesa-opencl-icd
+
+      # Install OpenCL for Windows
+      - name: Install OpenCL on Windows
+        if: runner.os == 'Windows'
+        run: |
+          conda install -y -c conda-forge pyopencl
+          curl -L -O https://tiker.net/ci-support-v0
+          . ci-support-v0
+          .ci/hack-intel-cl-into-conda-env.sh
+
+      # Set up OpenCL environment variables
+      - name: Set up OpenCL environment variables
+        run: |
+          echo "PYOPENCL_CTX='0'" >> $GITHUB_ENV
+          echo "PYOPENCL_COMPILER_OUTPUT=1" >> $GITHUB_ENV
+
       # note: if you need dependencies from conda, considering using
       # setup-miniconda: https://github.com/conda-incubator/setup-miniconda
       # and
