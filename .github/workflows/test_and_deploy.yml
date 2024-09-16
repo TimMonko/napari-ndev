@@ -50,10 +50,7 @@ jobs:
       # Install OpenCL for Windows
       - name: Install OpenCL on Windows
         if: runner.os == 'Windows'
-        run: |
-          curl -LO https://registrationcenter-download.intel.com/akdlm/irc_nas/19170/intel_sdk_for_opencl_applications_2020.3.494.zip
-          unzip intel_sdk_for_opencl_applications_2020.3.494.zip
-          ./intel_sdk_for_opencl_applications_2020.3.494/windows_sdk/Setup.exe /S
+        run: conda install -y -c conda-forge opencl-clhpp
 
       # Set up OpenCL environment variables
       - name: Set up OpenCL environment variables
