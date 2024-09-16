@@ -21,7 +21,7 @@ jobs:
     strategy:
       matrix:
         # platform: [ubuntu-latest, windows-latest, macos-latest]
-        platform: [ubuntu-latest, windows-latest]
+        platform: [ubuntu-latest] # windows cant get opencl set up
         python-version: ['3.9', '3.10', '3.11']
 
     steps:
@@ -54,14 +54,13 @@ jobs:
           python-version: ${{ matrix.python-version }}
           channels: conda-forge
 
+      - name: Install pocl on Linux
+        if: runner.os == 'Linux'
+        run: conda install -y pocl
+
       - name: Install dependencies
         run: |
           python --version
-          retry() {
-            for i in {1..5}; do
-              "$@" && break || sleep 15;
-            done
-          }
           retry conda install -y pyopencl
           conda install pyopencl
           python -m pip install --upgrade pip
