@@ -1,6 +1,6 @@
 import numpy as np
-import pytest
 import pyclesperanto_prototype as cle
+import pytest
 
 from napari_ndev import morphology
 
