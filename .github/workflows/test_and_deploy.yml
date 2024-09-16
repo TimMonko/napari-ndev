@@ -45,12 +45,18 @@ jobs:
       # Install OpenCL for Linux
       - name: Install OpenCL on Linux
         if: runner.os == 'Linux'
-        run: sudo apt-get install -y pocl-opencl-icd
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y pocl-opencl-icd libpocl2 mesa-opencl-icd
 
       # Install OpenCL for Windows
       - name: Install OpenCL on Windows
         if: runner.os == 'Windows'
-        run: conda install -y -c conda-forge opencl-clhpp
+        run: |
+          conda install -y -c conda-forge pyopencl
+          curl -L -O https://tiker.net/ci-support-v0
+          . ci-support-v0
+          .ci/hack-intel-cl-into-conda-env.sh
 
       # Set up OpenCL environment variables
       - name: Set up OpenCL environment variables
