@@ -46,8 +46,10 @@ nav:
   - Overview: index.md
   - Installation: installation.md
   - Examples:
-    - Workflow Widget: examples/workflow_widget.ipynb
-    - Custom Workflow: examples/custom_workflow.ipynb
+    - Workflow:
+      - napari workflow: examples/workflow/workflow_napari-assistant.ipynb
+      - workflow widget: examples/workflow/workflow_widget.ipynb
+      - script workflow: examples/workflow/workflow_scripting.ipynb
   - API:
     - Widgets:
       - api/widgets/image_utilities.md
