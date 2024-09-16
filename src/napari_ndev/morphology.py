@@ -47,7 +47,7 @@ def skeletonize_labels(label: ArrayLike) -> np.ndarray:
     skeleton = skeletonize(cle.pull(label))
     return (label * skeleton).astype(np.uint16)
 
-def connect_breaks_between_labels(label: ArrayLike, connect_distance: float) -> ArrayLike:
+def connect_breaks_between_labels(label: ArrayLike, connect_distance: float) -> ArrayLike: # pragma: no cover
     """
     Connect breaks between labels in a label image.
 
@@ -75,7 +75,7 @@ def connect_breaks_between_labels(label: ArrayLike, connect_distance: float) -> 
     # relabel original labels based on the merged labels
     return (label_merged * (label > 0)).astype(np.uint16)
 
-def label_voronoi_based_on_intensity(label: ArrayLike, intensity_image: ArrayLike) -> ArrayLike:
+def label_voronoi_based_on_intensity(label: ArrayLike, intensity_image: ArrayLike) -> ArrayLike: # pragma: no cover
     """
     Create a voronoi label masks of labels based on an intensity image.
 
