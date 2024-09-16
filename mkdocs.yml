@@ -45,6 +45,9 @@ extra:
 nav:
   - Overview: index.md
   - Installation: installation.md
+  - Examples:
+    - Workflow Widget: examples/workflow_widget.ipynb
+    - Custom Workflow: examples/custom_workflow.ipynb
   - API:
     - Widgets:
       - api/widgets/image_utilities.md
@@ -83,10 +86,6 @@ plugins:
   - search
   - autorefs
   - literate-nav
-      # nav_file: docs/reference/SUMMARY.md
-  # - gen-files: # if want to auto generate files from script
-  #     scripts:
-  #       - docs/scripts/gen_ref_pages.py
   - spellcheck:
       backends:
         - codespell:
@@ -115,13 +114,6 @@ plugins:
             show_root_toc_entry: true
             show_bases: true
             docstring_section_style: list
-        # special handler only used in _gen_widgets.py
-        widget_handler:
-          options:
-            docstring_style: numpy
-            show_root_heading: true
-            show_root_full_path: false
-            show_signature_annotations: true
-            show_source: false
-            show_bases: true
-            docstring_section_style: list
+  - mkdocs-jupyter:
+      include_source: true
+      include: ["*.ipynb"]
