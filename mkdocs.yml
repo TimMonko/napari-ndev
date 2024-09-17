@@ -120,5 +120,5 @@ plugins:
   - mkdocs-jupyter:
       include_source: true
       include: ["*.ipynb"]
-      cell_metadata_filter:
-        remove_cell_tags: ["hide"]
+      remove_tag_config:
+        remove_input_tags: ["hide"]
