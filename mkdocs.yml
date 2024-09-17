@@ -61,6 +61,7 @@ nav:
     - Image Overview: api/image_overview.md
     - PlateMapper: api/plate_mapper.md
     - Measure: api/measure.md
+    - Morphology: api/morphology.md
     - Helpers: api/helpers.md
 
 watch:
