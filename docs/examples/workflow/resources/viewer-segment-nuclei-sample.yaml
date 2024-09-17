@@ -1,0 +1,22 @@
+!!python/object:napari_workflows._workflow.Workflow
+_tasks:
+  Result of median_sphere (clesperanto): !!python/tuple
+  - !!python/name:pyclesperanto_prototype.median_sphere ''
+  - human_mitosis
+  - null
+  - 1.0
+  - 1.0
+  - 0.0
+  Result of top_hat_box (clesperanto): !!python/tuple
+  - !!python/name:pyclesperanto_prototype.top_hat_box ''
+  - Result of median_sphere (clesperanto)
+  - null
+  - 10.0
+  - 10.0
+  - 0.0
+  Result of voronoi_otsu_labeling (clesperanto): !!python/tuple
+  - !!python/name:pyclesperanto_prototype.voronoi_otsu_labeling ''
+  - Result of top_hat_box (clesperanto)
+  - null
+  - 2.0
+  - 2.0
