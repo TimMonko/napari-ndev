@@ -3,7 +3,7 @@ try:  # noqa: D104
 except ImportError:
     __version__ = 'unknown'
 
-from napari_ndev import helpers, measure
+from napari_ndev import helpers, measure, morphology
 from napari_ndev._apoc_container import ApocContainer
 from napari_ndev._apoc_feature_stack import ApocFeatureStack
 from napari_ndev._measure_container import MeasureContainer
@@ -23,4 +23,5 @@ __all__ = [
     'image_overview',
     'helpers',
     'measure',
+    'morphology',
 ]
