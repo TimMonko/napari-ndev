@@ -140,6 +140,44 @@ def test_batch_measure_intensity(tmp_path):
     ]
 
 
+def test_batch_measure_with_regex(tmp_path):
+    container = MeasureContainer()
+    label_directory = pathlib.Path(
+        'src/napari_ndev/_tests/resources/Measure/Labels'
+    )
+    output_folder = tmp_path / 'Output'
+    output_folder.mkdir()
+
+    container._label_directory.value = label_directory
+    container._id_regex_dict.value = r"""
+        {
+            'scene': r'(P\d{1,3}-\w+).ome',
+            'well': r'-(\w+).ome',
+            'HIC': r'(\d{1,3})HIC',
+            'date': r'(\d{4}-\d{2}-\d{2})',
+        }
+    """
+    container._update_tx_id_choices_button.clicked()
+    assert container._tx_id.choices == (None, 'id','scene', 'well', 'HIC', 'date')
+
+    container._tx_id.value = 'well'
+    container._tx_n_well.value = 96
+    container._tx_dict.value = r"""
+        {
+            'chelation':{
+                'Control': ['B1:C12'],
+                '50uM DFP': ['D1:E12'],
+                '100uM DFP': ['F1:G12'],
+                '100uM DFO': ['A1:A12', 'H1:H12'],
+            },
+        }
+    """
+
+    df = container.batch_measure()
+    assert 'scene' in df.columns
+    assert 'well' in df.columns
+    assert 'chelation' in df.columns
+
 def test_group_measurements_no_agg_defaults():
     container = MeasureContainer()
     test_data_path = pathlib.Path(r'src/napari_ndev/_tests/resources/measure_props_Labels.csv')
