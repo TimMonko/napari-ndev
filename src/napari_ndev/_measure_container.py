@@ -246,8 +246,10 @@ class MeasureContainer(Container):
     def _init_tx_map_container(self):
         """Initialize the container for treatment map settings."""
         self._tx_map_container = Container(layout='vertical')
-        self._tx_id = LineEdit(
+        self._update_tx_id_choices_button = PushButton(label='Update Treatment ID Choices')
+        self._tx_id = ComboBox(
             label='Treatment ID',
+            choices=['id'],
             value=None,
             nullable=True,
             tooltip='Usually, the treatment ID is the well ID or a unique identifier for each sample'
@@ -265,7 +267,12 @@ class MeasureContainer(Container):
         # TODO: Add example treatment regex result widget when example id string or id regex dict is changed
 
         self._tx_map_container.extend(
-            [self._tx_id, self._tx_n_well, self._tx_dict]
+            [
+                self._update_tx_id_choices_button,
+                self._tx_id,
+                self._tx_n_well,
+                self._tx_dict,
+            ]
         )
 
     def _init_grouping_container(self):
@@ -347,9 +354,19 @@ class MeasureContainer(Container):
         self._image_directory.changed.connect(self._update_image_choices)
         self._label_directory.changed.connect(self._update_label_choices)
         self._region_directory.changed.connect(self._update_region_choices)
+        self._update_tx_id_choices_button.clicked.connect(self._update_tx_id_choices)
         self._measure_button.clicked.connect(self.batch_measure)
         self._measured_data_path.changed.connect(self._update_grouping_cols)
         self._group_measurements_button.clicked.connect(self.group_measurements)
+
+    def _update_tx_id_choices(self):
+        """Update the choices for treatment ID."""
+        id_regex_dict = self._safe_dict_eval(self._id_regex_dict.value)
+        if id_regex_dict is None:
+            return
+        # add the keys to a list which already contains 'id'
+        regex_choices = list(id_regex_dict.keys())
+        self._tx_id.choices = ['id'] + regex_choices
 
     def _update_grouping_cols(self):
         """Update the columns for grouping."""
