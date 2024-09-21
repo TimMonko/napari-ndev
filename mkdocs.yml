@@ -51,6 +51,7 @@ nav:
       - napari workflow: examples/workflow/workflow_napari-assistant.ipynb
       - workflow widget: examples/workflow/workflow_widget.ipynb
       - script workflow: examples/workflow/workflow_scripting.ipynb
+    - Measure Widget: examples/measure/measure_widget.ipynb
   - API:
     - Widgets:
       - api/widgets/image_utilities.md
