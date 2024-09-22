@@ -1110,3 +1110,81 @@
 2024-09-21 11:35:25,291 - Processing scene 0
 2024-09-21 11:35:25,482 - Processing file 2024-08-07 25x 72HIC NCOA4 647 FT 568 PHALL 488 DAPI OBL_98_97_P9-G9.ome.tiff
 2024-09-21 11:35:25,543 - Processing scene 0
+2024-09-21 19:49:24,828 -
+            Label Image: Labels: Morphology
+            Intensity Channels: ['Labels: DAPI Class']
+            Num. Files: 25
+            Label Directory: C:\Users\timmo\napari-ndev\docs\examples\measure\labels
+            Image Directory: None
+            Region Directory: None
+            Output Directory: C:\Users\timmo\napari-ndev\docs\examples\measure\data
+            ID Example: 2024-08-07 25x 24HIC NCOA4 647 FT 568 PHALL 488 DAPI OBL_107_106_P1-H9.ome__0__Image:0
+            ID Regex Dict: {
+    'scene': r'(P\d{1,3}-\w+).ome',
+    'well': r'-(\w+).ome',
+    'HIC': r'(\d{1,3})HIC',
+    'date': r'(\d{4}-\d{2}-\d{2})',
+}
+
+
+            Tx ID: well
+            Tx N Well: 96
+            Tx Dict: {
+    'chelation':{
+        'Control': ['B1:C12'],
+        '50uM DFP': ['D1:E12'],
+        '100uM DFP': ['F1:G12'],
+        '100uM DFO': ['A1:A12', 'H1:H12'],
+    },
+}
+
+2024-09-21 19:49:24,840 - Processing file 2024-08-07 25x 24HIC NCOA4 647 FT 568 PHALL 488 DAPI OBL_107_106_P1-H9.ome.tiff
+2024-09-21 19:49:25,011 - Processing scene 0
+2024-09-21 19:49:25,186 - Processing file 2024-08-07 25x 24HIC NCOA4 647 FT 568 PHALL 488 DAPI OBL_10_9_P8-B9.ome.tiff
+2024-09-21 19:49:25,246 - Processing scene 0
+2024-09-21 19:49:25,408 - Processing file 2024-08-07 25x 24HIC NCOA4 647 FT 568 PHALL 488 DAPI OBL_25_24_P8-C9.ome.tiff
+2024-09-21 19:49:25,470 - Processing scene 0
+2024-09-21 19:49:25,632 - Processing file 2024-08-07 25x 24HIC NCOA4 647 FT 568 PHALL 488 DAPI OBL_2_1_P4-A9.ome.tiff
+2024-09-21 19:49:25,690 - Processing scene 0
+2024-09-21 19:49:25,849 - Processing file 2024-08-07 25x 24HIC NCOA4 647 FT 568 PHALL 488 DAPI OBL_56_55_P8-D9.ome.tiff
+2024-09-21 19:49:25,907 - Processing scene 0
+2024-09-21 19:49:26,068 - Processing file 2024-08-07 25x 24HIC NCOA4 647 FT 568 PHALL 488 DAPI OBL_57_56_P4-E9.ome.tiff
+2024-09-21 19:49:26,128 - Processing scene 0
+2024-09-21 19:49:26,288 - Processing file 2024-08-07 25x 24HIC NCOA4 647 FT 568 PHALL 488 DAPI OBL_58_57_P3-E9.ome.tiff
+2024-09-21 19:49:26,347 - Processing scene 0
+2024-09-21 19:49:26,507 - Processing file 2024-08-07 25x 24HIC NCOA4 647 FT 568 PHALL 488 DAPI OBL_99_98_P8-G9.ome.tiff
+2024-09-21 19:49:26,565 - Processing scene 0
+2024-09-21 19:49:26,725 - Processing file 2024-08-07 25x 48HIC NCOA4 647 FT 568 PHALL 488 DAPI OBL_132_131_P20-H9.ome.tiff
+2024-09-21 19:49:26,790 - Processing scene 0
+2024-09-21 19:49:26,953 - Processing file 2024-08-07 25x 48HIC NCOA4 647 FT 568 PHALL 488 DAPI OBL_36_35_P6-C9.ome.tiff
+2024-09-21 19:49:27,012 - Processing scene 0
+2024-09-21 19:49:27,176 - Processing file 2024-08-07 25x 48HIC NCOA4 647 FT 568 PHALL 488 DAPI OBL_42_41_P7-C9.ome.tiff
+2024-09-21 19:49:27,233 - Processing scene 0
+2024-09-21 19:49:27,393 - Processing file 2024-08-07 25x 48HIC NCOA4 647 FT 568 PHALL 488 DAPI OBL_46_45_P6-D9.ome.tiff
+2024-09-21 19:49:27,453 - Processing scene 0
+2024-09-21 19:49:27,618 - Processing file 2024-08-07 25x 48HIC NCOA4 647 FT 568 PHALL 488 DAPI OBL_52_51_P10-D9.ome.tiff
+2024-09-21 19:49:27,676 - Processing scene 0
+2024-09-21 19:49:27,839 - Processing file 2024-08-07 25x 48HIC NCOA4 647 FT 568 PHALL 488 DAPI OBL_70_69_P7-E9.ome.tiff
+2024-09-21 19:49:27,898 - Processing scene 0
+2024-09-21 19:49:28,060 - Processing file 2024-08-07 25x 48HIC NCOA4 647 FT 568 PHALL 488 DAPI OBL_95_94_P11-F9.ome.tiff
+2024-09-21 19:49:28,118 - Processing scene 0
+2024-09-21 19:49:28,295 - Processing file 2024-08-07 25x 72HIC NCOA4 647 FT 568 PHALL 488 DAPI OBL_110_109_P4-H9.ome.tiff
+2024-09-21 19:49:28,353 - Processing scene 0
+2024-09-21 19:49:28,515 - Processing file 2024-08-07 25x 72HIC NCOA4 647 FT 568 PHALL 488 DAPI OBL_17_12_P6-B9.ome.tiff
+2024-09-21 19:49:28,573 - Processing scene 0
+2024-09-21 19:49:28,737 - Processing file 2024-08-07 25x 72HIC NCOA4 647 FT 568 PHALL 488 DAPI OBL_1_0_P8-B9.ome.tiff
+2024-09-21 19:49:28,795 - Processing scene 0
+2024-09-21 19:49:28,956 - Processing file 2024-08-07 25x 72HIC NCOA4 647 FT 568 PHALL 488 DAPI OBL_22_21_P7-B9.ome.tiff
+2024-09-21 19:49:29,014 - Processing scene 0
+2024-09-21 19:49:29,188 - Processing file 2024-08-07 25x 72HIC NCOA4 647 FT 568 PHALL 488 DAPI OBL_35_34_TR2-C9.ome.tiff
+2024-09-21 19:49:29,246 - Processing scene 0
+2024-09-21 19:49:29,518 - Processing file 2024-08-07 25x 72HIC NCOA4 647 FT 568 PHALL 488 DAPI OBL_4_3_P3-A9.ome.tiff
+2024-09-21 19:49:29,576 - Processing scene 0
+2024-09-21 19:49:29,741 - Processing file 2024-08-07 25x 72HIC NCOA4 647 FT 568 PHALL 488 DAPI OBL_56_55_P7-D9.ome.tiff
+2024-09-21 19:49:29,799 - Processing scene 0
+2024-09-21 19:49:29,961 - Processing file 2024-08-07 25x 72HIC NCOA4 647 FT 568 PHALL 488 DAPI OBL_62_61_P2-E9.ome.tiff
+2024-09-21 19:49:30,017 - Processing scene 0
+2024-09-21 19:49:30,178 - Processing file 2024-08-07 25x 72HIC NCOA4 647 FT 568 PHALL 488 DAPI OBL_84_83_P13-F9.ome.tiff
+2024-09-21 19:49:30,239 - Processing scene 0
+2024-09-21 19:49:30,402 - Processing file 2024-08-07 25x 72HIC NCOA4 647 FT 568 PHALL 488 DAPI OBL_98_97_P9-G9.ome.tiff
+2024-09-21 19:49:30,459 - Processing scene 0
