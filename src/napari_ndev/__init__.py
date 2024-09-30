@@ -4,13 +4,15 @@ except ImportError:
     __version__ = 'unknown'
 
 from napari_ndev import helpers, measure, morphology
-from napari_ndev._apoc_container import ApocContainer
-from napari_ndev._apoc_feature_stack import ApocFeatureStack
-from napari_ndev._measure_container import MeasureContainer
 from napari_ndev._plate_mapper import PlateMapper
-from napari_ndev._utilities_container import UtilitiesContainer
-from napari_ndev._workflow_container import WorkflowContainer
 from napari_ndev.image_overview import ImageOverview, image_overview
+from napari_ndev.widgets import (
+    ApocContainer,
+    ApocFeatureStack,
+    MeasureContainer,
+    UtilitiesContainer,
+    WorkflowContainer,
+)
 
 __all__ = [
     'WorkflowContainer',
