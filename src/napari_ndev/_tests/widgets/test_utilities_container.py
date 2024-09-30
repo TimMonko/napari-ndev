@@ -5,7 +5,7 @@ import numpy as np
 import pytest
 from aicsimageio import AICSImage
 
-from napari_ndev._utilities_container import UtilitiesContainer
+from napari_ndev.widgets._utilities_container import UtilitiesContainer
 
 image_2d = np.asarray([[0, 0, 1, 1], [0, 0, 1, 1], [2, 2, 1, 1], [2, 2, 1, 1]])
 shapes_2d = np.array([[0.25, 0.25], [0.25, 2.75], [2.75, 2.75], [2.75, 0.25]])
