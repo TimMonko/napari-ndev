@@ -8,7 +8,7 @@ import numpy as np
 import pyclesperanto_prototype as cle
 import pytest
 
-from napari_ndev._apoc_container import ApocContainer
+from napari_ndev.widgets._apoc_container import ApocContainer
 
 
 def test_update_channel_order(make_napari_viewer):
