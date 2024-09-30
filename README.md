@@ -25,13 +25,27 @@ A collection of widgets intended to serve any person seeking to process microsco
 pip install napari-ndev
 ```
 
-You may also like to install `napari-aicsimageio` to properly handle metadata with the `Image Utilities` widget.
+----------------------------------
+
+### Optional Libraries
+
+**napari-ndev** is most useful when interacting with some other napari plugins and can read additional filetypes. You may install these BSD-3 compatible plugins with [pip]:
 
 ```bash
-pip install napari-aicsimageio
+pip install napari-ndev[extras]
 ```
 
-In addition, you may need to install specific [`bioio` readers](https://github.com/bioio-devs/bioio) to support your specific image, such as `bioio-czi` or `bioio-lif`.
+**napari-ndev** can optionally use GPL-3 licensed libraries to enhance its functionality, but are not required. If you choose to install and use these optional dependencies, you must comply with the GPL-3 license terms. The main functional improvement is from `napari-aicsimageio` to properly handle metadata with the `Image Utilities` widget. These libraries can be installed with [pip]:
+
+```bash
+pip install napari-ndev[gpl-extras]
+```
+
+In addition, you may need to install specific [`bioio` readers](https://github.com/bioio-devs/bioio) to support your specific image, such as `bioio-czi` and `bioio-lif` (included in `[gpl-extras]`) or `bioio-bioformats`.
+
+### Development Libraries
+
+For development use the `[dev]` optional libraries. You may also like to install `[docs]` and `[testing]` to verify your changes. However, `tox` will test any pull requests.
 
 ----------------------------------
 
@@ -45,7 +59,9 @@ the coverage at least stays the same before you submit a pull request.
 ## License
 
 Distributed under the terms of the [BSD-3] license,
-"napari-ndev" is free and open source software
+"napari-ndev" is free and open source software.
+
+Some optional libraries can be installed to add functionality to `napari-ndev`, including some that may be more restrictive than this package's BSD-3-Clause.
 
 ## Issues
 
