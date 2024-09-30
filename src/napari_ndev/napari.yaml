@@ -4,19 +4,19 @@ visibility: public
 contributions:
   commands:
     - id: napari-ndev.make_utilities_container
-      python_name: napari_ndev._utilities_container:UtilitiesContainer
+      python_name: napari_ndev.widgets._utilities_container:UtilitiesContainer
       title: Make Image Utilities
     - id: napari-ndev.make_workflow_container
-      python_name: napari_ndev._workflow_container:WorkflowContainer
+      python_name: napari_ndev.widgets._workflow_container:WorkflowContainer
       title: Make Batch Workflow
     - id: napari-ndev.make_apoc_container
-      python_name: napari_ndev._apoc_container:ApocContainer
+      python_name: napari_ndev.widgets._apoc_container:ApocContainer
       title: Make Batch APOC
     - id: napari-ndev.make_custom_apoc
-      python_name: napari_ndev._apoc_feature_stack:ApocFeatureStack
+      python_name: napari_ndev.widgets._apoc_feature_stack:ApocFeatureStack
       title: Make Custom APOC Feature Set
     - id: napari-ndev.make_measure_container
-      python_name: napari_ndev._measure_container:MeasureContainer
+      python_name: napari_ndev.widgets._measure_container:MeasureContainer
       title: Make Measure Container
 
   widgets:
