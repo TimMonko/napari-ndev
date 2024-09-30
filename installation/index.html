@@ -291,6 +291,17 @@
         
       
       
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  <span class="md-ellipsis">
+    Installation
+  </span>
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
       <a href="./" class="md-nav__link md-nav__link--active">
         
   
@@ -300,6 +311,43 @@
   
 
       </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#optional-libraries" class="md-nav__link">
+    <span class="md-ellipsis">
+      Optional Libraries
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#development-libraries" class="md-nav__link">
+    <span class="md-ellipsis">
+      Development Libraries
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
       
     </li>
   
@@ -866,6 +914,32 @@
     
   
   
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#optional-libraries" class="md-nav__link">
+    <span class="md-ellipsis">
+      Optional Libraries
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#development-libraries" class="md-nav__link">
+    <span class="md-ellipsis">
+      Development Libraries
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
 </nav>
                   </div>
                 </div>
@@ -883,13 +957,24 @@
 
 
 <h1 id="installation">Installation<a class="headerlink" href="#installation" title="Permanent link">#</a></h1>
-<p><strong>napari-ndev</strong> is a pure Python package, and can be installed with <code>pip</code>:</p>
+<p><strong>napari-ndev</strong> is a pure Python package, and can be installed with [pip]:</p>
 <div class="highlight"><pre><span></span><code>pip<span class="w"> </span>install<span class="w"> </span>napari-ndev
 </code></pre></div>
-<p>You may also like to install <code>napari-aicsimageio</code> to properly handle metadata with the <code>Image Utilities</code> widget.</p>
-<div class="highlight"><pre><span></span><code>pip<span class="w"> </span>install<span class="w"> </span>napari-aicsimageio
+<hr />
+<h3 id="optional-libraries">Optional Libraries<a class="headerlink" href="#optional-libraries" title="Permanent link">#</a></h3>
+<p><strong>napari-ndev</strong> is most useful when interacting with some other napari plugins (e.g. napari-assistant) and can read additional filetypes (e.g. bioio-nd2). You may install these BSD-3 compatible plugins with [pip]:</p>
+<div class="highlight"><pre><span></span><code>pip<span class="w"> </span>install<span class="w"> </span>napari-ndev<span class="o">[</span>extras<span class="o">]</span>
 </code></pre></div>
-<p>In addition, you may need to install specific <a href="https://github.com/bioio-devs/bioio"><code>bioio</code> readers</a> to support your specific image, such as <code>bioio-czi</code> or <code>bioio-lif</code>.</p>
+<p><strong>napari-ndev</strong> can optionally use GPL-3 licensed libraries to enhance its functionality, but are not required. If you choose to install and use these optional dependencies, you must comply with the GPL-3 license terms. The main functional improvement is from <code>napari-aicsimageio</code> to properly handle metadata with the <code>Image Utilities</code> widget. These libraries can be installed with [pip]:</p>
+<div class="highlight"><pre><span></span><code>pip<span class="w"> </span>install<span class="w"> </span>napari-ndev<span class="o">[</span>gpl-extras<span class="o">]</span>
+
+or
+
+pip<span class="w"> </span>install<span class="w"> </span>napari-ndev<span class="o">[</span>all<span class="o">]</span>
+</code></pre></div>
+<p>In addition, you may need to install specific <a href="https://github.com/bioio-devs/bioio"><code>bioio</code> readers</a> to support your specific image, such as <code>bioio-czi</code> and <code>bioio-lif</code> (included in <code>[gpl-extras]</code>) or <code>bioio-bioformats</code>.</p>
+<h3 id="development-libraries">Development Libraries<a class="headerlink" href="#development-libraries" title="Permanent link">#</a></h3>
+<p>For development use the <code>[dev]</code> optional libraries. You may also like to install <code>[docs]</code> and <code>[testing]</code> to verify your changes. However, <code>tox</code> will test any pull requests. You can also install <code>[dev-all]</code> to get all three of these dev dependencies.</p>
 
 
 
