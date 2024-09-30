@@ -2,7 +2,7 @@ import pathlib
 
 from bioio import BioImage
 
-from napari_ndev._measure_container import MeasureContainer
+from napari_ndev.widgets._measure_container import MeasureContainer
 
 
 def test_widg_init_no_viewer():

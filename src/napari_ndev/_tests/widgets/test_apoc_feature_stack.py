@@ -1,6 +1,6 @@
 import pytest
 
-from napari_ndev._apoc_feature_stack import ApocFeatureStack
+from napari_ndev.widgets._apoc_feature_stack import ApocFeatureStack
 
 
 # Test CustomAPOC
