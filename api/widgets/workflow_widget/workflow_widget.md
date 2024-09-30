@@ -1,1 +1,1 @@
-# ::: napari_ndev._workflow_container
+# ::: napari_ndev.widgets._workflow_container

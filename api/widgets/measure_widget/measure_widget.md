@@ -1,1 +1,1 @@
-# ::: napari_ndev._measure_container
+# ::: napari_ndev.widgets._measure_container

@@ -1,1 +1,1 @@
-# ::: napari_ndev._apoc_feature_stack
+# ::: napari_ndev.widgets._apoc_feature_stack
