@@ -61,7 +61,7 @@ def test_save_shapes_as_labels(
 
     container._viewer.layers.selection.active = viewer.layers['test_shape']
     container._squeezed_dims = test_dims
-    container._save_directory.value = tmp_path
+    container._output_directory.value = tmp_path
     container._save_name.value = 'test.tiff'
 
     shapes_as_labels = container.save_shapes_as_labels()
@@ -84,7 +84,7 @@ def test_save_labels(make_napari_viewer, tmp_path: Path, test_data):
     container = UtilitiesContainer(viewer)
 
     container._squeezed_dims = test_dims
-    container._save_directory.value = tmp_path
+    container._output_directory.value = tmp_path
     container._save_name.value = 'test.tiff'
 
     labels = container.save_labels()
@@ -105,7 +105,7 @@ def test_save_ome_tiff(make_napari_viewer, test_data, tmp_path: Path):
     container._concatenate_image_layers.value = True
     container._viewer.layers.selection.active = viewer.layers['test_image']
     container._channel_names.value = ['0']
-    container._save_directory.value = tmp_path
+    container._output_directory.value = tmp_path
     container._save_name.value = 'test.tiff'
 
     container.save_ome_tiff()
