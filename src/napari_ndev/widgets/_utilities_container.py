@@ -155,7 +155,6 @@ class UtilitiesContainer(ScrollableContainer):
         self._init_concatenate_files_container()
         self._init_save_layers_container()
         self._init_scene_container()
-        self._init_scale_container()
         self._init_layout()
         self._connect_events()
 
@@ -360,14 +359,14 @@ class UtilitiesContainer(ScrollableContainer):
 
     def _connect_events(self):
         """Connect the events of the widgets to respective methods."""
-        self._files.changed.connect(self.update_metadata_from_file)
+        self._files.changed.connect(self.update_metadata_on_file_select)
         self._open_image_button.clicked.connect(self.open_images)
         self._select_next_image_button.clicked.connect(self.select_next_images)
         self._layer_metadata_update.clicked.connect(
             self.update_metadata_from_layer
         )
         self._file_metadata_update.clicked.connect(
-            self.update_metadata_from_file
+            self.update_metadata_on_file_select
         )
         self._scale_layers_button.clicked.connect(self.rescale_by)
         self._extract_scenes.clicked.connect(self.save_scenes_ome_tiff)
@@ -376,7 +375,31 @@ class UtilitiesContainer(ScrollableContainer):
         # self._save_shapes_button.clicked.connect(self.save_shapes_as_labels)
         self._results._on_value_change()
 
-    def _update_metadata(self, img: AICSImage | BioImage):
+    @property
+    def p_sizes(self):
+        """
+        Get the physical pixel sizes.
+
+        Returns
+        -------
+        PhysicalPixelSizes
+            The physical pixel sizes.
+
+        """
+        from bioio_base.types import PhysicalPixelSizes
+
+        return PhysicalPixelSizes(
+            self._scale_tuple.value[0],
+            self._scale_tuple.value[1],
+            self._scale_tuple.value[2],
+        )
+
+    def _update_metadata_from_Image(
+        self,
+        img: AICSImage | BioImage,
+        update_channel_names: bool = True,
+        update_scale: bool = True,
+    ):
         """
         Update the metadata based on the given image.
 
@@ -384,67 +407,36 @@ class UtilitiesContainer(ScrollableContainer):
         ----------
         img : AICSImage | BioImage
             The image from which to update the metadata.
+        update_channel_names : bool, optional
+            Update the channel names, by default True.
+        update_scale : bool, optional
+            Update the scale, by default True.
 
         """
         self._dim_order.value = img.dims.order
 
         self._squeezed_dims = helpers.get_squeezed_dim_order(img)
-        self._channel_names.value = helpers.get_channel_names(img)
 
-        self._scale_tuple.value = (
-            img.physical_pixel_sizes.Z or 1,
-            img.physical_pixel_sizes.Y or 1,
-            img.physical_pixel_sizes.X or 1,
-        )
+        if update_channel_names:
+            self._channel_names.value = helpers.get_channel_names(img)
+        if update_scale:
+            self._scale_tuple.value = (
+                img.physical_pixel_sizes.Z or 1,
+                img.physical_pixel_sizes.Y or 1,
+                img.physical_pixel_sizes.X or 1,
+            )
 
-    def _read_image_file(self, file: str | Path) -> AICSImage | BioImage:
-        """
-        Read the image file with BioImage or AICSImage.
-
-        Parameters
-        ----------
-        file : str or Path
-            The file path.
-
-        Returns
-        -------
-        AICSImage or BioImage
-            The image object.
-
-        """
-        from bioio import BioImage
-        from bioio_base.exceptions import UnsupportedFileFormatError
-
-        try:
-            img = BioImage(file)
-        except UnsupportedFileFormatError:
-            from aicsimageio import AICSImage
-            img = AICSImage(file)
-        return img
-
-    def _bioimage_metadata(self):
-        """
-        Update the metadata from the selected file.
-
-        Attemps to read from BioImage first, then AICSImage.
-
-        """
+    def update_metadata_on_file_select(self):
+        """Update self._save_name.value and metadata if selected."""
         from napari_ndev.helpers import get_Image
-        # from aicsimageio import AICSImage
-        # from bioio import BioImage
-        # from bioio_base.exceptions import UnsupportedFileFormatError
+        self._save_name.value = str(self._files.value[0].stem)
         img = get_Image(self._files.value[0])
 
-        self._img = img
-        self._update_metadata(img)
-        self._scenes.value = len(img.scenes)
-
-    def update_metadata_from_file(self):
-        """Update self._save_name.value and metadata if selected."""
-        self._save_name.value = str(self._files.value[0].stem + '.tiff')
-
-        if self._open_image_update_metadata.value:
-            self._bioimage_metadata()
+        self._update_metadata_from_Image(
+            img,
+            update_channel_names=self._update_channel_names.value,
+            update_scale=self._update_scale.value,
+        )
 
     def update_metadata_from_layer(self):
         """
@@ -454,7 +446,9 @@ class UtilitiesContainer(ScrollableContainer):
         """
         selected_layer = self._viewer.layers.selection.active
         try:
-            self._update_metadata(selected_layer.metadata['aicsimage'])
+            img = selected_layer.metadata['aicsimage']
+            self._update_metadata_from_Image(img)
+
         except AttributeError:
             self._results.value = (
                 'Tried to update metadata, but no layer selected.'
@@ -488,7 +482,6 @@ class UtilitiesContainer(ScrollableContainer):
         """Open the next set of images in the directyory."""
         from napari_ndev.helpers import get_Image
 
-        # TODO: sort files consistent with windows and mac folder explorers
         num_files = self._files.value.__len__()
 
         # get the parent directory of the first file
@@ -513,14 +506,10 @@ class UtilitiesContainer(ScrollableContainer):
         # set the nwe save names, and update the file value
         img = get_Image(next_files[0])
 
-        image_id = helpers.create_id_string(img, next_files[0].stem)
-        self._save_name.value = str(image_id + '.tiff')
+        self._save_name.value = helpers.create_id_string(img, next_files[0].stem)
         self._files.value = next_files
 
-        if self._open_image_update_metadata.value:
-            self._bioimage_metadata()
-
-        # self._viewer.open(next_files, plugin='napari-aicsimageio')
+        self._update_metadata_on_file_select()
 
     def rescale_by(self):
         """Rescale the selected layers based on the given scale."""
@@ -532,6 +521,77 @@ class UtilitiesContainer(ScrollableContainer):
             # get the scale_tup from the back of the tuple first, in case dims
             # are missing in the new layer
             layer.scale = scale_tup[-scale_len:]
+
+    def concatenate_files(
+        self,
+        files: str | Path | list[str | Path],
+    ) -> np.ndarray:
+        """
+        Concatenate the image data from the selected files.
+
+        Removes "empty" channels, which are channels with no values above 0.
+        This is present in some microscope formats where it will image in RGB,
+        and then leave empty channels not represented by the color channels.
+
+        Parameters
+        ----------
+        files : str or Path or list of str or Path
+            The file(s) to concatenate.
+
+        Returns
+        -------
+        numpy.ndarray
+            The concatenated image data.
+
+        """
+        from napari_ndev.helpers import get_Image
+
+        array_list = []
+
+        for file in files:
+            img = get_Image(file)
+
+            if 'S' in img.dims.order:
+                img_data = img.get_image_data('TSZYX')
+            else:
+                img_data = img.data
+
+            # iterate over all channels and only keep if not blank
+            for idx in range(img_data.shape[1]):
+                array = img_data[:, [idx], :, :, :]
+                if array.max() > 0:
+                    array_list.append(array)
+        return np.concatenate(array_list, axis=1)
+
+    def concatenate_layers(
+        self,
+        layers: ImageLayer | list[ImageLayer],
+    ):
+        """
+        Concatenate the image data from the selected layers.
+
+        Adapts all layers to 5D arrays for compatibility with image dims.
+
+        Parameters
+        ----------
+        layers : napari.layers.Image or list of napari.layers.Image
+            The selected image layers.
+
+        Returns
+        -------
+        numpy.ndarray
+            The concatenated image data.
+
+        """
+        array_list = []
+        for layer in layers:
+            layer_data = layer.data
+            # convert to 5D array for compatability with image dims
+            while len(layer_data.shape) < 5:
+                layer_data = np.expand_dims(layer_data, axis=0)
+            array_list.append(layer_data)
+
+        return np.concatenate(array_list, axis=1)
 
     def concatenate_images(
         self,
@@ -582,35 +642,6 @@ class UtilitiesContainer(ScrollableContainer):
                     if array.max() > 0:
                         array_list.append(array)
 
-        # <- fix if RGB image is the layer data
-        if concatenate_layers:
-            for layer in layers:
-                layer_data = layer.data
-                # convert to 5D array for compatability with image dims
-                while len(layer_data.shape) < 5:
-                    layer_data = np.expand_dims(layer_data, axis=0)
-                array_list.append(layer_data)
-
-        return np.concatenate(array_list, axis=1)
-
-    @property
-    def p_sizes(self):
-        """
-        Get the physical pixel sizes.
-
-        Returns
-        -------
-        PhysicalPixelSizes
-            The physical pixel sizes.
-
-        """
-        from bioio_base.types import PhysicalPixelSizes
-
-        return PhysicalPixelSizes(
-            self._scale_tuple.value[0],
-            self._scale_tuple.value[1],
-            self._scale_tuple.value[2],
-        )
 
     def _get_save_loc(
         self, root_dir: Path, parent: str, file_name: str
