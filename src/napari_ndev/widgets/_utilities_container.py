@@ -26,9 +26,14 @@ from magicgui.widgets import (
     Label,
     LineEdit,
     PushButton,
+    SpinBox,
     TextEdit,
     TupleEdit,
 )
+
+from napari.layers import Image as ImageLayer
+from napari.layers import Labels as LabelsLayer
+from napari.layers import Shapes as ShapesLayer
 
 from napari_ndev import helpers
 
@@ -37,7 +42,7 @@ if TYPE_CHECKING:
     from bioio import BioImage
 
     import napari
-    from napari.layers import Image as ImageLayer
+    from napari.layers import Layer
 
 
 # class UtilitiesContainer(ScrollableContainer):
@@ -155,6 +160,7 @@ class UtilitiesContainer(ScrollableContainer):
         self._init_concatenate_files_container()
         self._init_save_layers_container()
         self._init_scene_container()
+        self._init_figure_options_container()
         self._init_layout()
         self._connect_events()
 
@@ -170,6 +176,7 @@ class UtilitiesContainer(ScrollableContainer):
                 self._open_image_container,
                 self._concatenate_files_container,
                 self._scene_container,
+                self._figure_options_container,
                 self._save_layers_container,
                 self._results,
             ]
@@ -357,6 +364,49 @@ class UtilitiesContainer(ScrollableContainer):
             self._export_figure_button,
         ])
 
+    def _init_figure_options_container(self):
+        """Initialize the container for figure options."""
+        self._figure_options_container = CollapsibleContainer(
+            layout='vertical',
+            text='Figure Options',
+            collapsed=True,
+        )
+        self._figure_scale_factor = SpinBox(
+            label='Scale Factor',
+            min=0,
+            step=1,
+            value=1,
+        )
+        self._use_current_canvas_size = CheckBox(
+            label='Use current canvas dimensions',
+            value=True
+        )
+        self._current_canvas_dims = Label(label='Canvas Dimensions: ')
+        self._canvas_size = TupleEdit(
+            label='Canvas Size',
+            value=(0, 0),
+        )
+        # use this to automatically change the camera parameters
+        self._camera_zoom = SpinBox(
+            label='Camera Zoom',
+            min=0,
+            step=0.1,
+            value=self._viewer.camera.zoom,
+        )
+        self._camera_angle = TupleEdit(
+            label='Camera Angle',
+            value=(0, 0, 90),
+            options={'step': 1},
+        )
+        self._figure_options_container.extend([
+            self._figure_scale_factor,
+            self._use_current_canvas_size,
+            self._current_canvas_dims,
+            self._canvas_size,
+            self._camera_zoom,
+            self._camera_angle,
+        ])
+
     def _connect_events(self):
         """Connect the events of the widgets to respective methods."""
         self._files.changed.connect(self.update_metadata_on_file_select)
@@ -533,6 +583,8 @@ class UtilitiesContainer(ScrollableContainer):
         This is present in some microscope formats where it will image in RGB,
         and then leave empty channels not represented by the color channels.
 
+        Does not currently handle scenes.
+
         Parameters
         ----------
         files : str or Path or list of str or Path
@@ -565,12 +617,14 @@ class UtilitiesContainer(ScrollableContainer):
 
     def concatenate_layers(
         self,
-        layers: ImageLayer | list[ImageLayer],
-    ):
+        layers: Layer | list[Layer],
+    ) -> np.ndarray:
         """
         Concatenate the image data from the selected layers.
 
         Adapts all layers to 5D arrays for compatibility with image dims.
+        If the layer is a shapes layer, it will look for a corresponding image
+        layer to get the dimensions for the shapes layer.
 
         Parameters
         ----------
@@ -583,9 +637,21 @@ class UtilitiesContainer(ScrollableContainer):
             The concatenated image data.
 
         """
+        # if any layers are shapes, get the corresponding image layer dims
+        # if any layers in the list of layers are napari.layers.Shapes
+        # then get the corresponding image layer dims
+        if any(isinstance(layer, ShapesLayer) for layer in layers):
+            label_dim = self._get_dims_for_shape_layer(layers)
+
         array_list = []
+
         for layer in layers:
-            layer_data = layer.data
+            if isinstance(layer, ShapesLayer):
+                layer_data = layer.to_labels(labels_shape=label_dim)
+                layer_data = layer_data.astype(np.int16)
+            else:
+                layer_data = layer.data
+
             # convert to 5D array for compatability with image dims
             while len(layer_data.shape) < 5:
                 layer_data = np.expand_dims(layer_data, axis=0)
@@ -593,55 +659,24 @@ class UtilitiesContainer(ScrollableContainer):
 
         return np.concatenate(array_list, axis=1)
 
-    def concatenate_images(
-        self,
-        concatenate_files: bool,
-        files: list[str | Path],
-        concatenate_layers: bool,
-        layers: list[ImageLayer],
-    ):
-        """
-        Concatenate the image data based on the selected options.
-
-        Intended also to remove "blank" channels and layers. This is present
-        in some microscope formats where it will image in RGB, and then
-        leave empty channels not represented by the color channels.
-
-        Parameters
-        ----------
-        concatenate_files : bool
-            Concatenate files in the selected directory. Removes blank channels.
-        files : list[str | Path]
-            The list of files to concatenate.
-        concatenate_layers : bool
-            Concatenate image layers in the viewer. Removes empty.
-        layers : list[ImageLayer]
-            The list of layers to concatenate.
-
-        Returns
-        -------
-        numpy.ndarray
-            The concatenated image data.
-
-        """
-        from napari_ndev.helpers import get_Image
-
-        array_list = []
-        if concatenate_files:
-            for file in files:
-                img = get_Image(file)
-
-                if 'S' in img.dims.order:
-                    img_data = img.get_image_data('TSZYX')
-                else:
-                    img_data = img.data
-
-                # iterate over all channels and only keep if not blank
-                for idx in range(img_data.shape[1]):
-                    array = img_data[:, [idx], :, :, :]
-                    if array.max() > 0:
-                        array_list.append(array)
-
+    def _get_dims_for_shape_layer(self, layers) -> tuple[int]:
+        # get first instance of a napari.layers.Image or napari.layers.Labels
+        dim_layer = next(
+                (layer for layer in layers if isinstance(layer, (ImageLayer, LabelsLayer))),
+                None,
+            )
+            # if none of these layers is selected, get it from the first instance in the viewer
+        if dim_layer is not None:
+            dim_layer = next(
+                    (layer for layer in self._viewer.layers if isinstance(layer, (ImageLayer, LabelsLayer))),
+                    None,
+                )
+        if dim_layer is None:
+            raise ValueError('No image or labels present to convert shapes layer.')
+        label_dim = dim_layer.data.shape
+            # drop last axis if represents RGB image
+        label_dim = label_dim[:-1] if label_dim[-1] == 3 else label_dim
+        return label_dim
 
     def _get_save_loc(
         self, root_dir: Path, parent: str, file_name: str
@@ -675,7 +710,7 @@ class UtilitiesContainer(ScrollableContainer):
         dim_order: str,
         channel_names: list[str],
         image_name: str | list[str | None] | None,
-        layer: str,
+        result_str: str,
     ) -> None:
         """
         Save data as OME-TIFF with bioio based on common logic.
@@ -696,8 +731,8 @@ class UtilitiesContainer(ScrollableContainer):
             The channel names saved to OME metadata
         image_name : str | list[str | None] | None
             The image name saved to OME metadata
-        layer : str
-            The layer name.
+        result_str : str
+            The string used for the result widget.
 
         """
         # from aicsimageio.writers import OmeTiffWriter
@@ -721,7 +756,7 @@ class UtilitiesContainer(ScrollableContainer):
                 image_name=image_name or None,
                 physical_pixel_sizes=self.p_sizes,
             )
-            self._results.value = f'Saved {layer}: ' + str(
+            self._results.value = f'Saved {result_str}: ' + str(
                 self._save_name.value
             ) + f'\nAt {time.strftime("%H:%M:%S")}'
         # if ValueError is raised, save with default channel names
@@ -741,6 +776,65 @@ class UtilitiesContainer(ScrollableContainer):
                 + f'\nAt {time.strftime("%H:%M:%S")}'
             )
         return
+
+    def save_files_as_ome_tiff(self) -> None:
+        img_data = self.concatenate_files(self._files.value)
+        img_save_loc = self._get_save_loc(
+            self._save_directory.value,
+            'ConcatenatedImages',
+            self._save_name.value
+        )
+        cnames = self._channel_names.value
+        channel_names = ast.literal_eval(cnames) if cnames else None
+
+        self._common_save_logic(
+            data=img_data,
+            uri=img_save_loc,
+            dim_order='TCZYX',
+            channel_names=channel_names,
+            image_name=self._save_name.value,
+            result_str='Image',
+        )
+
+    def save_layers_as_ome_tiff(self) -> None:
+        layer_data = self.concatenate_layers(
+            list(self._viewer.layers.selection)
+        )
+        # get the types of layers, to know where to save the image
+        layer_types = [type(layer).__name__ for layer in self._viewer.layers.selection]
+
+        # if there are multiple layer types, save to Layers directory
+        layer_save_type = 'Layers' if len(set(layer_types)) > 1 else layer_types[0]
+
+        layer_save_loc = self._get_save_loc(
+            self._save_directory.value, layer_save_type, self._save_name.value
+        )
+
+        # only get channel names if layer_save_type is not shapes or labels layer
+        if layer_save_type not in ['Shapes', 'Labels']:
+            cnames = self._channel_names.value
+            channel_names = ast.literal_eval(cnames) if cnames else None
+        else:
+            channel_names = layer_save_type
+
+        if layer_save_type == 'Shapes':
+            layer_data = layer_data.astype(np.int16)
+
+        if layer_save_type == 'Labels':
+            if layer_data.max() > 65535:
+                layer_data = layer_data.astype(np.int32)
+            else:
+                layer_data = layer_data.astype(np.int16)
+
+        self._common_save_logic(
+            data=layer_data,
+            uri=layer_save_loc,
+            dim_order='TCZYX',
+            channel_names=channel_names,
+            image_name=self._save_name.value,
+            result_str=layer_save_type,
+        )
+
 
     def save_scenes_ome_tiff(self) -> None:
         """
@@ -783,113 +877,6 @@ class UtilitiesContainer(ScrollableContainer):
                 dim_order='TCZYX',
                 channel_names=channel_names,
                 image_name=image_id,
-                layer=f'Scene: {img.current_scene}',
+                result_str=f'Scene: {img.current_scene}',
             )
         return
-
-    def save_ome_tiff(self) -> np.ndarray:
-        """
-        Save the concatenated image data as OME-TIFF.
-
-        The concatenated image data is concatenated and then saved as OME-TIFF
-        based on the selected options and the given save location.
-
-        Returns
-        -------
-        numpy.ndarray
-            The concatenated image data.
-
-        """
-        self._img_data = self.concatenate_images(
-            self._concatenate_image_files.value,
-            self._files.value,
-            self._concatenate_image_layers.value,
-            list(self._viewer.layers.selection),
-        )
-        img_save_loc = self._get_save_loc(
-            self._save_directory.value, 'Images', self._save_name.value
-        )
-        # get channel names from widget if truthy
-        cnames = self._channel_names.value
-        channel_names = ast.literal_eval(cnames) if cnames else None
-
-        self._common_save_logic(
-            data=self._img_data,
-            uri=img_save_loc,
-            dim_order='TCZYX',
-            channel_names=channel_names,
-            image_name=self._save_name.value,
-            layer='Image',
-        )
-        return self._img_data
-
-    def save_labels(self) -> np.ndarray:
-        """
-        Save the selected labels layer as OME-TIFF.
-
-        Returns
-        -------
-        numpy.ndarray
-            The labels data.
-
-        """
-        label_data = self._viewer.layers.selection.active.data
-
-        if label_data.max() > 65535:
-            label_data = label_data.astype(np.int32)
-        else:
-            label_data = label_data.astype(np.int16)
-
-        label_save_loc = self._get_save_loc(
-            self._save_directory.value, 'Labels', self._save_name.value
-        )
-
-        self._common_save_logic(
-            data=label_data,
-            uri=label_save_loc,
-            dim_order=self._squeezed_dims,
-            channel_names=['Labels'],
-            image_name=self._save_name.value,
-            layer='Labels',
-        )
-        return label_data
-
-    def save_shapes_as_labels(self) -> np.ndarray:
-        """
-        "Save the selected shapes layer as labels.
-
-        Returns
-        -------
-        numpy.ndarray
-            The shapes data as labels.
-
-        """
-        from napari.layers import Image as ImageLayer
-
-        # inherit shape from selected image layer or else a default
-        image_layers = [
-            x for x in self._viewer.layers if isinstance(x, ImageLayer)
-        ]
-        label_dim = image_layers[0].data.shape
-
-        # drop last axis if represents RGB image
-        label_dim = label_dim[:-1] if label_dim[-1] == 3 else label_dim
-
-        shapes = self._viewer.layers.selection.active
-        shapes_as_labels = shapes.to_labels(labels_shape=label_dim)
-        shapes_as_labels = shapes_as_labels.astype(np.int16)
-
-        shapes_save_loc = self._get_save_loc(
-            self._save_directory.value, 'ShapesAsLabels', self._save_name.value
-        )
-
-        self._common_save_logic(
-            data=shapes_as_labels,
-            uri=shapes_save_loc,
-            dim_order=self._squeezed_dims,
-            channel_names=['Shapes'],
-            image_name=self._save_name.value,
-            layer='Shapes',
-        )
-
-        return shapes_as_labels
