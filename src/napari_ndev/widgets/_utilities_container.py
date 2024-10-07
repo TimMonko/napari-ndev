@@ -7,6 +7,18 @@ from pathlib import Path
 from typing import TYPE_CHECKING
 
 import numpy as np
+from magicclass.widgets import (
+    CollapsibleContainer,
+    DraggableContainer,
+    FrameContainer,  # no title
+    GroupBoxContainer,  # with title
+    HCollapsibleContainer,
+    MainWindow,
+    ScrollableContainer,  # with scroll area
+    SplitterContainer,
+    TabbedContainer,
+    ToolBoxContainer,
+)
 from magicgui.widgets import (
     CheckBox,
     Container,
@@ -28,7 +40,8 @@ if TYPE_CHECKING:
     from napari.layers import Image as ImageLayer
 
 
-class UtilitiesContainer(Container):
+# class UtilitiesContainer(ScrollableContainer):
+class UtilitiesContainer(ScrollableContainer):
     """
     A widget to work with images and labels in the napari viewer.
 
@@ -125,7 +138,7 @@ class UtilitiesContainer(Container):
             The napari viewer instance.
 
         """
-        super().__init__()
+        super().__init__(labels=False)
 
         self._viewer = viewer if viewer is not None else None
         self._img_data = None
@@ -135,40 +148,143 @@ class UtilitiesContainer(Container):
         self._squeezed_dims = None
 
         self._init_widgets()
+        self._init_save_name_container()
+        self._init_file_options_container()
         self._init_open_image_container()
-        self._init_info_container()
-        self._init_concatenate_container()
-        self._init_save_container()
+        self._init_metadata_container()
+        self._init_concatenate_files_container()
+        self._init_save_layers_container()
         self._init_scene_container()
         self._init_scale_container()
         self._init_layout()
         self._connect_events()
 
-    def _init_widgets(self):
-        """Initialize non-Container widgets."""
-        self._file_metadata_update = PushButton(label='File')
-        self._layer_metadata_update = PushButton(label='Selected Layer')
-        self._metadata_container = Container(
-            layout='horizontal', label='Update Metadata from'
+    def _init_layout(self):
+        """Initialize the layout of the widget."""
+        self.extend(
+            [
+                self._save_directory,
+                self._files,
+                self._save_name_container,
+                self._file_options_container,
+                self._metadata_container,
+                self._open_image_container,
+                self._concatenate_files_container,
+                self._scene_container,
+                self._save_layers_container,
+                self._results,
+            ]
         )
-        self._metadata_container.append(self._layer_metadata_update)
-        self._metadata_container.append(self._file_metadata_update)
 
+    def _init_widgets(self):
+        """Initialize widgets."""
+        self._save_directory = FileEdit(
+            mode='d',
+            tooltip='Directory where images will be saved.',
+        )
         self._files = FileEdit(
-            label='File(s)',
             mode='rm',
             tooltip='Select file(s) to load.',
         )
 
-        self._save_directory = FileEdit(
-            label='Save Directory',
-            mode='d',
-            tooltip='Directory where images will be saved.',
-        )
+        self._results = TextEdit(label='Info')
+
+    def _init_save_name_container(self):
+        """Initialize the save name container."""
+        self._save_name_container = Container(layout='horizontal')
         self._save_name = LineEdit(
-            label='File Save Name',
-            tooltip='Name of saved file. Helpful to include a'
+            label='Save Name',
+            tooltip='Name of the saved file. Helpful to include a'
             '.ome/.tif/.tiff extension.',
+        )
+        self._append_scene_button = PushButton(
+            label='Append Scene to Name',
+        )
+        self._save_name_container.extend([
+            self._save_name,
+            self._append_scene_button
+        ])
+
+    def _init_file_options_container(self):
+        """Initialize the file options collapsible container."""
+        self._file_options_container = CollapsibleContainer(
+            layout='vertical',
+            text='File Options',
+            collapsed=True,
+        )
+        self._update_scale = CheckBox(
+            value=True,
+            label='Update Scale on File Select',
+            tooltip='Update the scale when files are selected.',
+        )
+        self._update_channel_names = CheckBox(
+            value=True,
+            label='Update Channel Names on File Select',
+            tooltip='Update the channel names when files are selected.',
+        )
+        self._save_directory_prefix = LineEdit(
+            label='Save Directory Prefix',
+            tooltip='Prefix for the save directories.',
+            value=None,
+        )
+
+        self._file_options_container.extend([
+            self._update_scale,
+            self._update_channel_names,
+            self._save_directory_prefix,
+        ])
+
+    def _init_open_image_container(self):
+        """Initialize the open image container."""
+        self._open_image_container = Container(layout='horizontal')
+        self._open_image_button = PushButton(label='Open File(s)')
+        self._select_next_image_button = PushButton(
+            label='Select Next',
+            tooltip='Select the next file(s) in the directory. \n'
+            'Note that the files are sorted alphabetically and numerically.'
+        )
+        self._open_image_container.append(self._open_image_button)
+        self._open_image_container.append(self._select_next_image_button)
+
+    def _init_concatenate_files_container(self):
+        self._concatenate_files_container = Container(
+            layout='horizontal',
+        )
+        self._concatenate_image_button = PushButton(label='Concat. Files')
+        self._concatenate_batch_button = PushButton(
+            label='Batch Concat.',
+            tooltip='Concatenate files in the selected directory by iterating'
+            ' over the remaing files in the directory based on the number of'
+            ' files selected. The files are sorted '
+            'alphabetically and numerically, which may not be consistent '
+            'with your file viewer. But, opening related consecutive files '
+            'should work as expected.',
+        )
+        self._concatenate_files_container.extend([
+            self._concatenate_image_button,
+            self._concatenate_batch_button,
+        ])
+
+
+    def _init_metadata_container(self):
+        self._metadata_container = CollapsibleContainer(
+            layout='vertical',  # label='Update Metadata from',
+            text='Metadata', 
+            collapsed=True,
+        )
+        self._file_metadata_update = PushButton(
+            label='Update Metadata from File'
+        )
+        self._layer_metadata_update = PushButton(
+            label='Update Metadata from Selected Layer'
+        )
+
+        self._dim_order = Label(
+            label='Dimension Order: ',
+            tooltip='Sanity check for available dimensions.',
+        )
+        self._scenes = Label(
+            label='Number of Scenes: ',
         )
 
         self._channel_names = LineEdit(
@@ -178,69 +294,32 @@ class UtilitiesContainer(Container):
             'names will be used.',
         )
 
-        self._results = TextEdit(label='Info')
-
-    def _init_open_image_container(self):
-        """Initialize the open image container."""
-        self._open_image_container = Container(layout='horizontal')
-
-        self._open_image_update_metadata = CheckBox(
-            value=True,
-            label='Update Metadata',
-            tooltip='Update metadata during initial file selection.',
-        )
-        self._open_image_button = PushButton(label='Open File(s)')
-        self._select_next_image_button = PushButton(
-            label='Select Next',
-            tooltip='Select the next file(s) in the directory. '
-            'The files are sorted alphabetically and numerically,'
-            'which may not be consistent '
-            'with your file viewer. But, opening related consecutive files '
-            'should work as expected.',
-        )
-
-        self._open_image_container.append(self._open_image_update_metadata)
-        self._open_image_container.append(self._open_image_button)
-        self._open_image_container.append(self._select_next_image_button)
-
-    def _init_info_container(self):
-        """Initialize the info container containing dims and scenes."""
-        self._info_container = Container(layout='horizontal')
-        self._dim_order = Label(
-            label='Dimension Order: ',
-            tooltip='Sanity check for available dimensions.',
-        )
-        self._scenes = Label(
-            label='Number of Scenes: ',
-        )
-
-        self._info_container.append(self._dim_order)
-        self._info_container.append(self._scenes)
-
-    def _init_scale_container(self):
-        """Initialize the scale container."""
-        self._scale_container = Container(
-            layout='vertical',
+        self._scale_tuple = TupleEdit(
             label='Scale, ZYX',
             tooltip='Pixel size, usually in μm',
-        )
-
-        self._scale_tuple = TupleEdit(
             value=(0.0000, 1.0000, 1.0000),
             options={'step': 0.0001},
         )
-        self._scale_layers = PushButton(
+        self._scale_layers_button = PushButton(
             label='Scale Layer(s)',
             tooltip='Scale the selected layer(s) based on the given scale.',
         )
-        self._scale_container.append(self._scale_tuple)
-        self._scale_container.append(self._scale_layers)
+
+
+        self._metadata_container.extend([
+            self._file_metadata_update,
+            self._layer_metadata_update,
+            self._dim_order,
+            self._scenes,
+            self._channel_names,
+            self._scale_tuple,
+            self._scale_layers_button,
+        ])
 
     def _init_scene_container(self):
         """Initialize the scene container, allowing scene saving."""
         self._scene_container = Container(
             layout='horizontal',
-            label='Extract Scenes',
             tooltip='Must be in list index format. Ex: [0, 1, 2] or [5:10]',
         )
         self._scenes_to_extract = LineEdit(
@@ -255,67 +334,29 @@ class UtilitiesContainer(Container):
         self._scene_container.append(self._scenes_to_extract)
         self._scene_container.append(self._extract_scenes)
 
-    def _init_concatenate_container(self):
-        """Initialize the container to concatenate image and layers."""
-        self._concatenate_image_files = CheckBox(
-            value=True,
-            label='Concatenate Files',
-            tooltip='Concatenate files in the selected directory. Removes '
-            'blank channels.',
-        )
-        self._concatenate_image_layers = CheckBox(
-            label='Concatenate Image Layers',
-            tooltip='Concatenate image layers in the viewer. Removes empty.',
-        )
-        self._concatenate_container = Container(
-            layout='horizontal',
-            label='Image Save Options',
-        )
-        self._concatenate_container.append(self._concatenate_image_files)
-        self._concatenate_container.append(self._concatenate_image_layers)
-
-    def _init_save_container(self):
+    def _init_save_layers_container(self):
         """Initialize the container to save images, labels, and shapes."""
-        self._save_container = Container(
+        self._save_layers_container = Container(
             layout='horizontal',
             label='Save Selected Layers',
         )
-
-        self._save_image_button = PushButton(
-            label='Images',
-            tooltip='Save the concatenated image data as OME-TIFF.',
+        self._save_layers_button = PushButton(
+            label='Save Selected Layers',
+            tooltip='Concatenate and save all selected layers as OME-TIFF.'
+            'Layers will save to corresponding directories based on the layer'
+            'type, e.g. Images, Labels, ShapesAsLabels. Shapes are saved as'
+            'labels based on the selected image layer dimensions. If multiple'
+            'layer types are selected, then the image will save to Layers.',
         )
-        self._save_labels_button = PushButton(
-            label='Labels', tooltip='Save the labels data as OME-TIFF.'
+        self._export_figure_button = PushButton(
+            label='Export Figure',
+            tooltip='Export the current canvas figure to the save directory. '
+            'Saves image as a PNG to Figures directory.',
         )
-        self._save_shapes_button = PushButton(
-            label='Shapes as Labels',
-            tooltip='Save the shapes data as labels (OME-TIFF) according to '
-            'selected image layer dimensions.',
-        )
-
-        self._save_container.append(self._save_image_button)
-        self._save_container.append(self._save_labels_button)
-        self._save_container.append(self._save_shapes_button)
-
-    def _init_layout(self):
-        """Initialize the layout of the widget."""
-        self.extend(
-            [
-                self._save_directory,
-                self._files,
-                self._open_image_container,
-                self._save_name,
-                self._metadata_container,
-                self._info_container,
-                self._channel_names,
-                self._scale_container,
-                self._scene_container,
-                self._concatenate_container,
-                self._save_container,
-                self._results,
-            ]
-        )
+        self._save_layers_container.extend([
+            self._save_layers_button,
+            self._export_figure_button,
+        ])
 
     def _connect_events(self):
         """Connect the events of the widgets to respective methods."""
@@ -328,11 +369,11 @@ class UtilitiesContainer(Container):
         self._file_metadata_update.clicked.connect(
             self.update_metadata_from_file
         )
-        self._scale_layers.clicked.connect(self.rescale_by)
+        self._scale_layers_button.clicked.connect(self.rescale_by)
         self._extract_scenes.clicked.connect(self.save_scenes_ome_tiff)
-        self._save_image_button.clicked.connect(self.save_ome_tiff)
-        self._save_labels_button.clicked.connect(self.save_labels)
-        self._save_shapes_button.clicked.connect(self.save_shapes_as_labels)
+        # self._save_image_button.clicked.connect(self.save_ome_tiff)
+        # self._save_labels_button.clicked.connect(self.save_labels)
+        # self._save_shapes_button.clicked.connect(self.save_shapes_as_labels)
         self._results._on_value_change()
 
     def _update_metadata(self, img: AICSImage | BioImage):
