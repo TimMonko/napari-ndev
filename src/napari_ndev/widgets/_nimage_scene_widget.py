@@ -11,11 +11,11 @@ LABEL_DELIMITER = " || "
 
 
 class NImageSceneWidget(ScrollableContainer):
-    def __init__(self, image: BioImage, image_name: str, **kwargs):
+    def __init__(self, img: BioImage, img_name: str, **kwargs):
         super().__init__(**kwargs)
-        self._image = image
-        self._image_name = image_name
-        self._scenes = image.scenes
+        self._image = img
+        self._image_name = img_name
+        self._scenes = img.scenes
 
         self._init_widgets()
         self._init_layout()
@@ -56,5 +56,25 @@ class NImageSceneWidget(ScrollableContainer):
             return
         self._image.set_scene(scene)
         # self._image.data
+
+        # Function to get Metadata to provide with data
+        # def _get_meta(path: "PathLike", data: xr.DataArray, img: AICSImage) -> Dict[str, Any]:
+        # meta: Dict[str, Any] = {}
+        # if DimensionNames.Channel in data.dims:
+        #     # Construct basic metadata
+        #     # Use filename if single scene and no scene name is available
+        #     if len(img.scenes) == 1 and img.current_scene == "Image:0":
+        #         channels_with_scene_index = [
+        #             f"{Path(path).stem}{SCENE_LABEL_DELIMITER}{channel_name}"
+        #             for channel_name in data.coords[DimensionNames.Channel].data.tolist()
+        #         ]
+        #     else:
+        #         channels_with_scene_index = [
+        #             f"{img.current_scene_index}{SCENE_LABEL_DELIMITER}"
+        #             f"{img.current_scene}{SCENE_LABEL_DELIMITER}{channel_name}"
+        #             for channel_name in data.coords[DimensionNames.Channel].data.tolist()
+        #         ]
+        #     meta["name"] = channels_with_scene_index
+        #     meta["channel_axis"] = data.dims.index(DimensionNames.Channel)
 
     # def _open_scene(self):
