@@ -9,15 +9,7 @@ from typing import TYPE_CHECKING
 import numpy as np
 from magicclass.widgets import (
     CollapsibleContainer,
-    DraggableContainer,
-    FrameContainer,  # no title
-    GroupBoxContainer,  # with title
-    HCollapsibleContainer,
-    MainWindow,
-    ScrollableContainer,  # with scroll area
-    SplitterContainer,
-    TabbedContainer,
-    ToolBoxContainer,
+    ScrollableContainer,
 )
 from magicgui.widgets import (
     CheckBox,
@@ -31,10 +23,11 @@ from magicgui.widgets import (
     TupleEdit,
 )
 
-from napari.layers import Image as ImageLayer
-from napari.layers import Labels as LabelsLayer
-from napari.layers import Shapes as ShapesLayer
-
+from napari.layers import (
+    Image as ImageLayer,
+    Labels as LabelsLayer,
+    Shapes as ShapesLayer,
+)
 from napari_ndev import helpers
 
 if TYPE_CHECKING:
@@ -275,11 +268,8 @@ class UtilitiesContainer(ScrollableContainer):
     def _init_metadata_container(self):
         self._metadata_container = CollapsibleContainer(
             layout='vertical',  # label='Update Metadata from',
-            text='Metadata', 
+            text='Metadata',
             collapsed=True,
-        )
-        self._file_metadata_update = PushButton(
-            label='Update Metadata from File'
         )
         self._layer_metadata_update = PushButton(
             label='Update Metadata from Selected Layer'
@@ -415,14 +405,8 @@ class UtilitiesContainer(ScrollableContainer):
         self._layer_metadata_update.clicked.connect(
             self.update_metadata_from_layer
         )
-        self._file_metadata_update.clicked.connect(
-            self.update_metadata_on_file_select
-        )
         self._scale_layers_button.clicked.connect(self.rescale_by)
         self._extract_scenes.clicked.connect(self.save_scenes_ome_tiff)
-        # self._save_image_button.clicked.connect(self.save_ome_tiff)
-        # self._save_labels_button.clicked.connect(self.save_labels)
-        # self._save_shapes_button.clicked.connect(self.save_shapes_as_labels)
         self._results._on_value_change()
 
     @property
@@ -637,9 +621,6 @@ class UtilitiesContainer(ScrollableContainer):
             The concatenated image data.
 
         """
-        # if any layers are shapes, get the corresponding image layer dims
-        # if any layers in the list of layers are napari.layers.Shapes
-        # then get the corresponding image layer dims
         if any(isinstance(layer, ShapesLayer) for layer in layers):
             label_dim = self._get_dims_for_shape_layer(layers)
 
