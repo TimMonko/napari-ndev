@@ -21,7 +21,6 @@ from magicgui.widgets import (
 from napari_ndev import helpers
 
 if TYPE_CHECKING:
-    from aicsimageio import AICSImage
     from bioio import BioImage
 
     import napari
@@ -335,13 +334,13 @@ class UtilitiesContainer(Container):
         self._save_shapes_button.clicked.connect(self.save_shapes_as_labels)
         self._results._on_value_change()
 
-    def _update_metadata(self, img: AICSImage | BioImage):
+    def _update_metadata(self, img: BioImage):
         """
         Update the metadata based on the given image.
 
         Parameters
         ----------
-        img : AICSImage | BioImage
+        img : BioImage
             The image from which to update the metadata.
 
         """
@@ -356,9 +355,9 @@ class UtilitiesContainer(Container):
             img.physical_pixel_sizes.X or 1,
         )
 
-    def _read_image_file(self, file: str | Path) -> AICSImage | BioImage:
+    def _read_image_file(self, file: str | Path) -> BioImage:
         """
-        Read the image file with BioImage or AICSImage.
+        Read the image file with BioImage.
 
         Parameters
         ----------
@@ -367,7 +366,7 @@ class UtilitiesContainer(Container):
 
         Returns
         -------
-        AICSImage or BioImage
+        BioImage
             The image object.
 
         """
@@ -377,21 +376,13 @@ class UtilitiesContainer(Container):
         try:
             img = BioImage(file)
         except UnsupportedFileFormatError:
-            from aicsimageio import AICSImage
-            img = AICSImage(file)
+            return None
         return img
 
     def _bioimage_metadata(self):
-        """
-        Update the metadata from the selected file.
-
-        Attemps to read from BioImage first, then AICSImage.
-
-        """
+        """Update the metadata from the selected file."""
         from napari_ndev.helpers import get_Image
-        # from aicsimageio import AICSImage
-        # from bioio import BioImage
-        # from bioio_base.exceptions import UnsupportedFileFormatError
+
         img = get_Image(self._files.value[0])
 
         self._img = img
@@ -409,11 +400,11 @@ class UtilitiesContainer(Container):
         """
         Update metadata from the selected layer.
 
-        Current code expects images to be opened with napari-aicsimageio.
+        Current code expects images to be opened with napari-bioio.
         """
         selected_layer = self._viewer.layers.selection.active
         try:
-            self._update_metadata(selected_layer.metadata['aicsimage'])
+            self._update_metadata(selected_layer.metadata['bioimage'])
         except AttributeError:
             self._results.value = (
                 'Tried to update metadata, but no layer selected.'
@@ -428,7 +419,7 @@ class UtilitiesContainer(Container):
             )
             self._results.value = (
                 'Tried to update metadata, but could only update scale'
-                ' because layer not opened with aicsimageio'
+                ' because layer not opened with napari-bioio'
                 f'\nAt {time.strftime("%H:%M:%S")}'
             )
 
@@ -436,18 +427,18 @@ class UtilitiesContainer(Container):
         """
         Open the selected images in the napari viewer.
 
-        If napari-aicsimageio is not installed, then the images will likely
+        If napari-bioio is not installed, then the images will likely
         be opened by the base napari reader, or a different compatabible
         reader.
 
         """
-        self._viewer.open(self._files.value, plugin='napari-aicsimageio')
+        self._viewer.open(self._files.value, plugin='napari-bioio')
 
     def select_next_images(self):
         """Open the next set of images in the directyory."""
         from napari_ndev.helpers import get_Image
 
-        # TODO: sort files consistent with windows and mac folder explorers
+        # sort the files naturally (case-insensitive and numbers in order)
         num_files = self._files.value.__len__()
 
         # get the parent directory of the first file
@@ -478,8 +469,6 @@ class UtilitiesContainer(Container):
 
         if self._open_image_update_metadata.value:
             self._bioimage_metadata()
-
-        # self._viewer.open(next_files, plugin='napari-aicsimageio')
 
     def rescale_by(self):
         """Rescale the selected layers based on the given scale."""
@@ -628,11 +617,10 @@ class UtilitiesContainer(Container):
             The layer name.
 
         """
-        # from aicsimageio.writers import OmeTiffWriter
         # TODO: add image_name to save method
         from bioio.writers import OmeTiffWriter
 
-        # AICSImage does not allow saving labels as np.int64
+        # BioImage does not allow saving labels as np.int64
         # napari generates labels differently depending on the OS
         # so we need to convert to np.int32 in case np.int64 generated
         # see: https://github.com/napari/napari/issues/5545

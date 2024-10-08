@@ -4,8 +4,8 @@ Helper functions for file handling, image processing, and logging setup.
 Functions
 ---------
 get_directory_and_files : Get the directory and files in the specified directory.
-get_channel_names : Get the channel names from an AICSImage or BioImage object.
-get_squeezed_dim_order : Return a string containing the squeezed dimensions of the given AICSImage or BioImage object.
+get_channel_names : Get the channel names from an BioImage object.
+get_squeezed_dim_order : Return a string containing the squeezed dimensions of the given BioImage object.
 create_id_string : Create an ID string for the given image.
 check_for_missing_files : Check if the given files are missing in the specified directories.
 setup_logger : Set up a logger with the specified log location.
@@ -19,7 +19,6 @@ from pathlib import Path
 from typing import TYPE_CHECKING, Union
 
 if TYPE_CHECKING:
-    from aicsimageio import AICSImage
     from bioio import BioImage
 
 __all__ = [
@@ -32,12 +31,11 @@ __all__ = [
     'setup_logger',
 ]
 
-def get_Image(file: str | Path) -> AICSImage | BioImage:
+def get_Image(file: str | Path) -> BioImage:
     """
-    Read the image file with BioImage or AICSImage.
+    Read the image file with BioImage.
 
-    Open the image file with BioImage, or if the file is not supported,
-    open it with AICSImage.
+    Open the image file with BioImage.
 
     Parameters
     ----------
@@ -46,7 +44,7 @@ def get_Image(file: str | Path) -> AICSImage | BioImage:
 
     Returns
     -------
-    AICSImage or BioImage
+    BioImage
         The image object.
 
     """
@@ -56,8 +54,7 @@ def get_Image(file: str | Path) -> AICSImage | BioImage:
     try:
         img = BioImage(file)
     except UnsupportedFileFormatError:
-        from aicsimageio import AICSImage
-        img = AICSImage(file)
+        raise UnsupportedFileFormatError(f'Unsupported file format: {file}') from None
     return img
 
 
@@ -122,9 +119,9 @@ def get_directory_and_files(
     return directory, files
 
 
-def get_channel_names(img: AICSImage | BioImage) -> list[str]:
+def get_channel_names(img: BioImage) -> list[str]:
     """
-    Get the channel names from an AICSImage object.
+    Get the channel names from a BioImage object.
 
     If the image has a dimension order that includes "S" (it is RGB),
     return the default channel names ["red", "green", "blue"].
@@ -132,8 +129,8 @@ def get_channel_names(img: AICSImage | BioImage) -> list[str]:
 
     Parameters
     ----------
-    img : AICSImage or BioImage
-        The AICSImage object.
+    img : BioImage
+        The BioImage object.
 
     Returns
     -------
@@ -147,16 +144,16 @@ def get_channel_names(img: AICSImage | BioImage) -> list[str]:
 
 
 def get_squeezed_dim_order(
-    img: AICSImage | BioImage,
+    img: BioImage,
     skip_dims: list[str] | str | None = None,
 ) -> str:
     """
-    Return a string containing the squeezed dimensions of the given AICSImage object.
+    Return a string containing the squeezed dimensions of the given BioImage.
 
     Parameters
     ----------
-    img : AICSImage or BioImage
-        The AICSImage object.
+    img : BioImage
+        The BioImage object.
     skip_dims : list of str or str or None, optional
         Dimensions to skip. Defaults to ["C", "S"].
 
@@ -173,13 +170,13 @@ def get_squeezed_dim_order(
     )
 
 
-def create_id_string(img: BioImage | AICSImage, identifier: str) -> str:
+def create_id_string(img: BioImage, identifier: str) -> str:
     """
     Create an ID string for the given image.
 
     Parameters
     ----------
-    img : BioImage or AICSImage
+    img : BioImage
         The image object.
     identifier : str
         The identifier string.
