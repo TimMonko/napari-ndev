@@ -49,13 +49,8 @@ def get_Image(file: str | Path) -> BioImage:
 
     """
     from bioio import BioImage
-    from bioio_base.exceptions import UnsupportedFileFormatError
 
-    try:
-        img = BioImage(file)
-    except UnsupportedFileFormatError:
-        raise UnsupportedFileFormatError(f'Unsupported file format: {file}') from None
-    return img
+    return BioImage(file)
 
 
 def get_directory_and_files(
