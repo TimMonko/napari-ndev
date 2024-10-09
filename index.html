@@ -351,15 +351,6 @@
   
 </li>
         
-          <li class="md-nav__item">
-  <a href="#a-note-about-bioioaicsimageio" class="md-nav__link">
-    <span class="md-ellipsis">
-      A Note about bioio/AICSImageIO
-    </span>
-  </a>
-  
-</li>
-        
       </ul>
     </nav>
   
@@ -1006,15 +997,6 @@
   
 </li>
         
-          <li class="md-nav__item">
-  <a href="#a-note-about-bioioaicsimageio" class="md-nav__link">
-    <span class="md-ellipsis">
-      A Note about bioio/AICSImageIO
-    </span>
-  </a>
-  
-</li>
-        
       </ul>
     </nav>
   
@@ -1049,7 +1031,7 @@
 <p><img src="images/neuralDev-logo.svg" alt="logo" width="300"></p>
 <p>A collection of widgets intended to serve any person seeking to process microscopy images from start to finish. The wide breadth of this plugin's scope is only made possible by the amazing libraries and plugins from the napari community, especially Robert Haase. Currently, the plugin supports the following goals:</p>
 <ol>
-<li><strong>Image Utilities:</strong> Intended for high-throuput image-labeling and management, while passing down important metadata. Allows opening image files (preferably with <code>napari-aicsimageio</code> see <a href="installation/">Installation</a>) and displaying in napari. Also reads metadata and allows customization prior to saving images and labels layers. Allows concatenation of image files and image layers for saving new images. Speeds up annotation by saving corresponding images and labels in designated folders. Also allows saving of shapes layers as labels in case shapes are being used as a region of interest.</li>
+<li><strong>Image Utilities:</strong> Intended for high-throuput image-labeling and management, while passing down important metadata. Allows opening image files (preferably with <code>napari-bioimageio</code> see <a href="installation/">Installation</a>) and displaying in napari. Also reads metadata and allows customization prior to saving images and labels layers. Allows concatenation of image files and image layers for saving new images. Speeds up annotation by saving corresponding images and labels in designated folders. Also allows saving of shapes layers as labels in case shapes are being used as a region of interest.</li>
 <li><strong>Workflow Widget:</strong> Batch pre-processing/processing images using <a href="https://github.com/haesleinhuepf/napari-workflows">napari-workflows</a>.</li>
 <li><strong>APOC Widget:</strong> Utilizes the excellent accelerated-pixel-and-object-classification (<a href="https://github.com/haesleinhuepf/apoc">apoc</a>) in a similar fashion to <a href="https://github.com/haesleinhuepf/napari-accelerated-pixel-and-object-classification">napari-apoc</a>, but intended for batch training and prediction with a napari widget instead of scripting.<ul>
 <li><strong>Custom Feature Set Widget:</strong> Generate a featureset to be used with the APOC widget. Also allows quick application in the napari viewer to an image layer to see all the features.</li>
@@ -1060,17 +1042,14 @@
 <hr />
 <h2 id="further-info">Further Info<a class="headerlink" href="#further-info" title="Permanent link">#</a></h2>
 <h3 id="1-image-utilities">1. Image Utilities<a class="headerlink" href="#1-image-utilities" title="Permanent link">#</a></h3>
-<p>A quick and easy way to save annotations (a napari labels layer) and corresponding images to corresponding folders. Best if the images are opened with <a href="https://github.com/AllenCellModeling/napari-aicsimageio">napari-aicsimageio</a>--which can be as simple as drag and drop opening by setting the appropriate default reader for each file type in Preferences -&gt; Plugins--in order to utilize the metadata present for saving the image-label pairs. (See <a href="#a-note-about-bioioaicsimageio">Note about bioio/AICSImageIO</a>)</p>
-<p>Quick uniform adjustments to a folder of images, saving the output. Currently supports selecting channels, slicing Z, cropping/downsampling in XY, and doing a max projection of the sliced/cropped image data. To be added: alternative projection types, slicing in T, and compatibility with non TCZYX images (but this is not a priority since <a href="https://github.com/bioio-devs/bioio">bioio</a> and <a href="https://allencellmodeling.github.io/aicsimageio/">aicsimageio</a> currently always extracts images as TCZYX even if a dim is only length 1.</p>
+<p>A quick and easy way to save annotations (a napari labels layer) and corresponding images to corresponding folders. Best if the images are opened with <a href="https://github.com/TimMonko/napari-bioio">napari-bioio</a>--which can be as simple as drag and drop opening by setting the appropriate default reader for each file type in Preferences -&gt; Plugins--in order to utilize the metadata present for saving the image-label pairs.</p>
+<p>Quick uniform adjustments to a folder of images, saving the output. Currently supports selecting channels, slicing Z, cropping/downsampling in XY, and doing a max projection of the sliced/cropped image data. To be added: alternative projection types, slicing in T, and compatibility with non TCZYX images (but this is not a priority since <a href="https://github.com/bioio-devs/bioio">bioio</a> currently always extracts images as TCZYX even if a dim is only length 1.</p>
 <h3 id="2-workflow-widget">2. Workflow Widget<a class="headerlink" href="#2-workflow-widget" title="Permanent link">#</a></h3>
-<p>Batch pre-processing/processing images using <a href="https://github.com/haesleinhuepf/napari-workflows">napari-workflows</a>.  Images are processed outside the napari-viewer using <a href="https://allencellmodeling.github.io/aicsimageio/">aicsimageio</a> as both reader and writer. Prior to passing the images to napari-workflows, the user selects the correct images as the roots (inputs) and thus napari-workflows matches the processing to create the outputs. The advantage of using napari-workflows for batch processing is that it provides an incredibly flexible processing interface without writing a novel widget for small changes to processing steps like specific filters, segmentation, or measurements. Currently only intended for use with images as inputs and images as outputs from napari-workflows, though there is future potential to have other outputs possible, such as .csv measurement arrays.</p>
+<p>Batch pre-processing/processing images using <a href="https://github.com/haesleinhuepf/napari-workflows">napari-workflows</a>.  Images are processed outside the napari-viewer using <a href="https://github.com/bioio-devs/bioio">bioio</a> as both reader and writer. Prior to passing the images to napari-workflows, the user selects the correct images as the roots (inputs) and thus napari-workflows matches the processing to create the outputs. The advantage of using napari-workflows for batch processing is that it provides an incredibly flexible processing interface without writing a novel widget for small changes to processing steps like specific filters, segmentation, or measurements. Currently only intended for use with images as inputs and images as outputs from napari-workflows, though there is future potential to have other outputs possible, such as .csv measurement arrays.</p>
 <h3 id="3-apoc-widget">3. APOC Widget<a class="headerlink" href="#3-apoc-widget" title="Permanent link">#</a></h3>
 <p>Utilizes the excellent accelerated-pixel-and-object-classification (<a href="https://github.com/haesleinhuepf/apoc">apoc</a>) in a similar fashion to <a href="https://github.com/haesleinhuepf/napari-accelerated-pixel-and-object-classification">napari-apoc</a>, but intended for batch training and prediction with a napari widget instead of scripting. Recognizes pre established feature set, and custom feature sets (a string of filters and radii) can be generated with a corresponding widget. Also contains a Custom Feature Set widget which allows application of all the features to a layer in the viewer, for improved visualization.</p>
 <h3 id="4-measure-widget">4. Measure Widget<a class="headerlink" href="#4-measure-widget" title="Permanent link">#</a></h3>
 <p>Batch measurements using <a href="https://scikit-image.org/">scikit-image</a>'s <a href="https://scikit-image.org/docs/stable/api/skimage.measure.html#skimage.measure.regionprops">regionprops</a>. This can measure features of a label such as area, eccentricity, and more but also can measure various intensity metrics. Attempts to support post-processing of measurements, grouping, and more to make downstream analyses easier for users. Will be updated in the future to include <a href="https://github.com/PolusAI/nyxus">nyxus</a>.</p>
-<h3 id="a-note-about-bioioaicsimageio">A Note about bioio/AICSImageIO<a class="headerlink" href="#a-note-about-bioioaicsimageio" title="Permanent link">#</a></h3>
-<p><a href="https://allencellmodeling.github.io/aicsimageio/">AICSImageIO</a> is a convenient, multi-format file reader which also has the complimentary <a href="https://github.com/AllenCellModeling/napari-aicsimageio">napari-aicsimageio</a> reader plugin. However, the codebase is currently being switched over to <a href="https://github.com/bioio-devs/bioio">bioio</a> as the package matures; bioio is a replacement for AICSImageIO and will have less issues with compatibilities.</p>
-<p>By default, napari-aicsimageio installs all reader dependencies. Because napari-aicsimageio is not technically required for this plugin to work (you could build your own metadata for the annotation-saver) and just napari is required, the former is not an install requirement. This is to avoid using the GPL licence and to stick with BSD-3. However, you should install napari-aicsimageio if you want the smoothest operation of the widgets.</p>
 
 
 

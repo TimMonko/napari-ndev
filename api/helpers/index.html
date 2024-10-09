@@ -1071,14 +1071,14 @@
             </div>
           </li>
           <li class="doc-section-item field-body">
-            <b><code><span title="napari_ndev.helpers.get_channel_names : Get the channel names from an AICSImage or BioImage object.">get_channel_names : Get the channel names from an AICSImage or BioImage object.</span></code></b>
+            <b><code><span title="napari_ndev.helpers.get_channel_names : Get the channel names from an BioImage object.">get_channel_names : Get the channel names from an BioImage object.</span></code></b>
             –
             <div class="doc-md-description">
               
             </div>
           </li>
           <li class="doc-section-item field-body">
-            <b><code><span title="napari_ndev.helpers.get_squeezed_dim_order : Return a string containing the squeezed dimensions of the given AICSImage or BioImage object.">get_squeezed_dim_order : Return a string containing the squeezed dimensions of the given AICSImage or BioImage object.</span></code></b>
+            <b><code><span title="napari_ndev.helpers.get_squeezed_dim_order : Return a string containing the squeezed dimensions of the given BioImage object.">get_squeezed_dim_order : Return a string containing the squeezed dimensions of the given BioImage object.</span></code></b>
             –
             <div class="doc-md-description">
               
@@ -1171,7 +1171,15 @@
 
             <details class="quote">
               <summary>Source code in <code>src/napari_ndev/helpers.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">212</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">204</span>
+<span class="normal">205</span>
+<span class="normal">206</span>
+<span class="normal">207</span>
+<span class="normal">208</span>
+<span class="normal">209</span>
+<span class="normal">210</span>
+<span class="normal">211</span>
+<span class="normal">212</span>
 <span class="normal">213</span>
 <span class="normal">214</span>
 <span class="normal">215</span>
@@ -1194,15 +1202,7 @@
 <span class="normal">232</span>
 <span class="normal">233</span>
 <span class="normal">234</span>
-<span class="normal">235</span>
-<span class="normal">236</span>
-<span class="normal">237</span>
-<span class="normal">238</span>
-<span class="normal">239</span>
-<span class="normal">240</span>
-<span class="normal">241</span>
-<span class="normal">242</span>
-<span class="normal">243</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">check_for_missing_files</span><span class="p">(</span>
+<span class="normal">235</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">check_for_missing_files</span><span class="p">(</span>
     <span class="n">files</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">Path</span><span class="p">]</span> <span class="o">|</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span> <span class="o">*</span><span class="n">directories</span><span class="p">:</span> <span class="n">Path</span> <span class="o">|</span> <span class="nb">str</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">tuple</span><span class="p">]:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
@@ -1260,7 +1260,7 @@
     <ul>
         <li class="doc-section-item field-body">
           <b><code>img</code></b>
-              (<code><span title="bioio.BioImage">BioImage</span> or <span title="aicsimageio.AICSImage">AICSImage</span></code>)
+              (<code><span title="bioio.BioImage">BioImage</span></code>)
           –
           <div class="doc-md-description">
             <p>The image object.</p>
@@ -1296,7 +1296,15 @@
 
             <details class="quote">
               <summary>Source code in <code>src/napari_ndev/helpers.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">176</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">168</span>
+<span class="normal">169</span>
+<span class="normal">170</span>
+<span class="normal">171</span>
+<span class="normal">172</span>
+<span class="normal">173</span>
+<span class="normal">174</span>
+<span class="normal">175</span>
+<span class="normal">176</span>
 <span class="normal">177</span>
 <span class="normal">178</span>
 <span class="normal">179</span>
@@ -1321,21 +1329,13 @@
 <span class="normal">198</span>
 <span class="normal">199</span>
 <span class="normal">200</span>
-<span class="normal">201</span>
-<span class="normal">202</span>
-<span class="normal">203</span>
-<span class="normal">204</span>
-<span class="normal">205</span>
-<span class="normal">206</span>
-<span class="normal">207</span>
-<span class="normal">208</span>
-<span class="normal">209</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">create_id_string</span><span class="p">(</span><span class="n">img</span><span class="p">:</span> <span class="n">BioImage</span> <span class="o">|</span> <span class="n">AICSImage</span><span class="p">,</span> <span class="n">identifier</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="normal">201</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">create_id_string</span><span class="p">(</span><span class="n">img</span><span class="p">:</span> <span class="n">BioImage</span><span class="p">,</span> <span class="n">identifier</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Create an ID string for the given image.</span>
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
-<span class="sd">    img : BioImage or AICSImage</span>
+<span class="sd">    img : BioImage</span>
 <span class="sd">        The image object.</span>
 <span class="sd">    identifier : str</span>
 <span class="sd">        The identifier string.</span>
@@ -1382,9 +1382,8 @@
 
     <div class="doc doc-contents ">
 
-        <p>Read the image file with BioImage or AICSImage.</p>
-<p>Open the image file with BioImage, or if the file is not supported,
-open it with AICSImage.</p>
+        <p>Read the image file with BioImage.</p>
+<p>Open the image file with BioImage.</p>
 
 
 <p><span class="doc-section-title">Parameters:</span></p>
@@ -1403,7 +1402,7 @@ open it with AICSImage.</p>
 <p><span class="doc-section-title">Returns:</span></p>
     <ul>
         <li class="doc-section-item field-body">
-              <code><span title="aicsimageio.AICSImage">AICSImage</span> or <span title="bioio.BioImage">BioImage</span></code>
+              <code><span title="bioio.BioImage">BioImage</span></code>
           –
           <div class="doc-md-description">
             <p>The image object.</p>
@@ -1413,7 +1412,8 @@ open it with AICSImage.</p>
 
             <details class="quote">
               <summary>Source code in <code>src/napari_ndev/helpers.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">35</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">34</span>
+<span class="normal">35</span>
 <span class="normal">36</span>
 <span class="normal">37</span>
 <span class="normal">38</span>
@@ -1431,20 +1431,11 @@ open it with AICSImage.</p>
 <span class="normal">50</span>
 <span class="normal">51</span>
 <span class="normal">52</span>
-<span class="normal">53</span>
-<span class="normal">54</span>
-<span class="normal">55</span>
-<span class="normal">56</span>
-<span class="normal">57</span>
-<span class="normal">58</span>
-<span class="normal">59</span>
-<span class="normal">60</span>
-<span class="normal">61</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">get_Image</span><span class="p">(</span><span class="n">file</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="n">Path</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">AICSImage</span> <span class="o">|</span> <span class="n">BioImage</span><span class="p">:</span>
+<span class="normal">53</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">get_Image</span><span class="p">(</span><span class="n">file</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="n">Path</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">BioImage</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Read the image file with BioImage or AICSImage.</span>
+<span class="sd">    Read the image file with BioImage.</span>
 
-<span class="sd">    Open the image file with BioImage, or if the file is not supported,</span>
-<span class="sd">    open it with AICSImage.</span>
+<span class="sd">    Open the image file with BioImage.</span>
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
@@ -1453,19 +1444,13 @@ open it with AICSImage.</p>
 
 <span class="sd">    Returns</span>
 <span class="sd">    -------</span>
-<span class="sd">    AICSImage or BioImage</span>
+<span class="sd">    BioImage</span>
 <span class="sd">        The image object.</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="kn">from</span> <span class="nn">bioio</span> <span class="kn">import</span> <span class="n">BioImage</span>
-    <span class="kn">from</span> <span class="nn">bioio_base.exceptions</span> <span class="kn">import</span> <span class="n">UnsupportedFileFormatError</span>
 
-    <span class="k">try</span><span class="p">:</span>
-        <span class="n">img</span> <span class="o">=</span> <span class="n">BioImage</span><span class="p">(</span><span class="n">file</span><span class="p">)</span>
-    <span class="k">except</span> <span class="n">UnsupportedFileFormatError</span><span class="p">:</span>
-        <span class="kn">from</span> <span class="nn">aicsimageio</span> <span class="kn">import</span> <span class="n">AICSImage</span>
-        <span class="n">img</span> <span class="o">=</span> <span class="n">AICSImage</span><span class="p">(</span><span class="n">file</span><span class="p">)</span>
-    <span class="k">return</span> <span class="n">img</span>
+    <span class="k">return</span> <span class="n">BioImage</span><span class="p">(</span><span class="n">file</span><span class="p">)</span>
 </code></pre></div></td></tr></table></div>
             </details>
     </div>
@@ -1485,7 +1470,7 @@ open it with AICSImage.</p>
 
     <div class="doc doc-contents ">
 
-        <p>Get the channel names from an AICSImage object.</p>
+        <p>Get the channel names from a BioImage object.</p>
 <p>If the image has a dimension order that includes "S" (it is RGB),
 return the default channel names ["red", "green", "blue"].
 Otherwise, return the channel names from the image.</p>
@@ -1495,10 +1480,10 @@ Otherwise, return the channel names from the image.</p>
     <ul>
         <li class="doc-section-item field-body">
           <b><code>img</code></b>
-              (<code><span title="aicsimageio.AICSImage">AICSImage</span> or <span title="bioio.BioImage">BioImage</span></code>)
+              (<code><span title="bioio.BioImage">BioImage</span></code>)
           –
           <div class="doc-md-description">
-            <p>The AICSImage object.</p>
+            <p>The BioImage object.</p>
           </div>
         </li>
     </ul>
@@ -1517,7 +1502,15 @@ Otherwise, return the channel names from the image.</p>
 
             <details class="quote">
               <summary>Source code in <code>src/napari_ndev/helpers.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">125</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">117</span>
+<span class="normal">118</span>
+<span class="normal">119</span>
+<span class="normal">120</span>
+<span class="normal">121</span>
+<span class="normal">122</span>
+<span class="normal">123</span>
+<span class="normal">124</span>
+<span class="normal">125</span>
 <span class="normal">126</span>
 <span class="normal">127</span>
 <span class="normal">128</span>
@@ -1530,17 +1523,9 @@ Otherwise, return the channel names from the image.</p>
 <span class="normal">135</span>
 <span class="normal">136</span>
 <span class="normal">137</span>
-<span class="normal">138</span>
-<span class="normal">139</span>
-<span class="normal">140</span>
-<span class="normal">141</span>
-<span class="normal">142</span>
-<span class="normal">143</span>
-<span class="normal">144</span>
-<span class="normal">145</span>
-<span class="normal">146</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">get_channel_names</span><span class="p">(</span><span class="n">img</span><span class="p">:</span> <span class="n">AICSImage</span> <span class="o">|</span> <span class="n">BioImage</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+<span class="normal">138</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">get_channel_names</span><span class="p">(</span><span class="n">img</span><span class="p">:</span> <span class="n">BioImage</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Get the channel names from an AICSImage object.</span>
+<span class="sd">    Get the channel names from a BioImage object.</span>
 
 <span class="sd">    If the image has a dimension order that includes &quot;S&quot; (it is RGB),</span>
 <span class="sd">    return the default channel names [&quot;red&quot;, &quot;green&quot;, &quot;blue&quot;].</span>
@@ -1548,8 +1533,8 @@ Otherwise, return the channel names from the image.</p>
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
-<span class="sd">    img : AICSImage or BioImage</span>
-<span class="sd">        The AICSImage object.</span>
+<span class="sd">    img : BioImage</span>
+<span class="sd">        The BioImage object.</span>
 
 <span class="sd">    Returns</span>
 <span class="sd">    -------</span>
@@ -1622,7 +1607,15 @@ Defaults to ['tif', 'tiff', 'nd2', 'czi', 'lif', 'oib', 'png', 'jpg', 'jpeg', 'b
 
             <details class="quote">
               <summary>Source code in <code>src/napari_ndev/helpers.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 64</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 56</span>
+<span class="normal"> 57</span>
+<span class="normal"> 58</span>
+<span class="normal"> 59</span>
+<span class="normal"> 60</span>
+<span class="normal"> 61</span>
+<span class="normal"> 62</span>
+<span class="normal"> 63</span>
+<span class="normal"> 64</span>
 <span class="normal"> 65</span>
 <span class="normal"> 66</span>
 <span class="normal"> 67</span>
@@ -1672,15 +1665,7 @@ Defaults to ['tif', 'tiff', 'nd2', 'czi', 'lif', 'oib', 'png', 'jpg', 'jpeg', 'b
 <span class="normal">111</span>
 <span class="normal">112</span>
 <span class="normal">113</span>
-<span class="normal">114</span>
-<span class="normal">115</span>
-<span class="normal">116</span>
-<span class="normal">117</span>
-<span class="normal">118</span>
-<span class="normal">119</span>
-<span class="normal">120</span>
-<span class="normal">121</span>
-<span class="normal">122</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">get_directory_and_files</span><span class="p">(</span>
+<span class="normal">114</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">get_directory_and_files</span><span class="p">(</span>
     <span class="n">dir_path</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="n">Path</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">pattern</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">|</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">Path</span><span class="p">,</span> <span class="nb">list</span><span class="p">[</span><span class="n">Path</span><span class="p">]]:</span>
@@ -1758,17 +1743,17 @@ Defaults to ['tif', 'tiff', 'nd2', 'czi', 'lif', 'oib', 'png', 'jpg', 'jpeg', 'b
 
     <div class="doc doc-contents ">
 
-        <p>Return a string containing the squeezed dimensions of the given AICSImage object.</p>
+        <p>Return a string containing the squeezed dimensions of the given BioImage.</p>
 
 
 <p><span class="doc-section-title">Parameters:</span></p>
     <ul>
         <li class="doc-section-item field-body">
           <b><code>img</code></b>
-              (<code><span title="aicsimageio.AICSImage">AICSImage</span> or <span title="bioio.BioImage">BioImage</span></code>)
+              (<code><span title="bioio.BioImage">BioImage</span></code>)
           –
           <div class="doc-md-description">
-            <p>The AICSImage object.</p>
+            <p>The BioImage object.</p>
           </div>
         </li>
         <li class="doc-section-item field-body">
@@ -1797,7 +1782,15 @@ Defaults to ['tif', 'tiff', 'nd2', 'czi', 'lif', 'oib', 'png', 'jpg', 'jpeg', 'b
 
             <details class="quote">
               <summary>Source code in <code>src/napari_ndev/helpers.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">149</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">141</span>
+<span class="normal">142</span>
+<span class="normal">143</span>
+<span class="normal">144</span>
+<span class="normal">145</span>
+<span class="normal">146</span>
+<span class="normal">147</span>
+<span class="normal">148</span>
+<span class="normal">149</span>
 <span class="normal">150</span>
 <span class="normal">151</span>
 <span class="normal">152</span>
@@ -1813,25 +1806,17 @@ Defaults to ['tif', 'tiff', 'nd2', 'czi', 'lif', 'oib', 'png', 'jpg', 'jpeg', 'b
 <span class="normal">162</span>
 <span class="normal">163</span>
 <span class="normal">164</span>
-<span class="normal">165</span>
-<span class="normal">166</span>
-<span class="normal">167</span>
-<span class="normal">168</span>
-<span class="normal">169</span>
-<span class="normal">170</span>
-<span class="normal">171</span>
-<span class="normal">172</span>
-<span class="normal">173</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">get_squeezed_dim_order</span><span class="p">(</span>
-    <span class="n">img</span><span class="p">:</span> <span class="n">AICSImage</span> <span class="o">|</span> <span class="n">BioImage</span><span class="p">,</span>
+<span class="normal">165</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">get_squeezed_dim_order</span><span class="p">(</span>
+    <span class="n">img</span><span class="p">:</span> <span class="n">BioImage</span><span class="p">,</span>
     <span class="n">skip_dims</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">|</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Return a string containing the squeezed dimensions of the given AICSImage object.</span>
+<span class="sd">    Return a string containing the squeezed dimensions of the given BioImage.</span>
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
-<span class="sd">    img : AICSImage or BioImage</span>
-<span class="sd">        The AICSImage object.</span>
+<span class="sd">    img : BioImage</span>
+<span class="sd">        The BioImage object.</span>
 <span class="sd">    skip_dims : list of str or str or None, optional</span>
 <span class="sd">        Dimensions to skip. Defaults to [&quot;C&quot;, &quot;S&quot;].</span>
 
@@ -1903,7 +1888,15 @@ Defaults to ['tif', 'tiff', 'nd2', 'czi', 'lif', 'oib', 'png', 'jpg', 'jpeg', 'b
 
             <details class="quote">
               <summary>Source code in <code>src/napari_ndev/helpers.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">246</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">238</span>
+<span class="normal">239</span>
+<span class="normal">240</span>
+<span class="normal">241</span>
+<span class="normal">242</span>
+<span class="normal">243</span>
+<span class="normal">244</span>
+<span class="normal">245</span>
+<span class="normal">246</span>
 <span class="normal">247</span>
 <span class="normal">248</span>
 <span class="normal">249</span>
@@ -1919,15 +1912,7 @@ Defaults to ['tif', 'tiff', 'nd2', 'czi', 'lif', 'oib', 'png', 'jpg', 'jpeg', 'b
 <span class="normal">259</span>
 <span class="normal">260</span>
 <span class="normal">261</span>
-<span class="normal">262</span>
-<span class="normal">263</span>
-<span class="normal">264</span>
-<span class="normal">265</span>
-<span class="normal">266</span>
-<span class="normal">267</span>
-<span class="normal">268</span>
-<span class="normal">269</span>
-<span class="normal">270</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">setup_logger</span><span class="p">(</span><span class="n">log_loc</span><span class="o">=</span><span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Path</span><span class="p">]):</span>
+<span class="normal">262</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">setup_logger</span><span class="p">(</span><span class="n">log_loc</span><span class="o">=</span><span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Path</span><span class="p">]):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Set up a logger with the specified log location.</span>
 
