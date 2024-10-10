@@ -16,7 +16,7 @@ pip install napari-ndev
 pip install napari-ndev[extras]
 ```
 
-**napari-ndev** can optionally use GPL-3 licensed libraries to enhance its functionality, but are not required. If you choose to install and use these optional dependencies, you must comply with the GPL-3 license terms. The main functional improvement is from `napari-aicsimageio` to properly handle metadata with the `Image Utilities` widget. These libraries can be installed with [pip]:
+**napari-ndev** can optionally use GPL-3 licensed libraries to enhance its functionality, but are not required. If you choose to install and use these optional dependencies, you must comply with the GPL-3 license terms. The main functional improvement is from `napari-bioio` to properly handle metadata with the `Image Utilities` widget. These libraries can be installed with [pip]:
 
 ```bash
 pip install napari-ndev[gpl-extras]
