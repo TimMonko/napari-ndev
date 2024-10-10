@@ -215,9 +215,9 @@ def test_update_metadata_from_file():
             ['/path/to/file.tif'],
         )
 
-        # Mock the AICSImage class to return sample channel names
-        with patch('aicsimageio.AICSImage') as mock_AICSImage:
-            mock_AICSImage.return_value.channel_names = ['C0', 'C1', 'C2']
+        # Mock the BioImage class to return sample channel names
+        with patch('bioio.BioImage') as BioImage:
+            BioImage.return_value.channel_names = ['C0', 'C1', 'C2']
 
             # Call the _update_metadata_from_file method
             wdg._update_metadata_from_file()
