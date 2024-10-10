@@ -25,6 +25,12 @@ A collection of widgets intended to serve any person seeking to process microsco
 pip install napari-ndev
 ```
 
+The easiest way to get started with **napari-ndev** is to install all the optional dependencies (see note below) with:
+
+```bash
+pip install napari-ndev[all]
+```
+
 ----------------------------------
 
 ### Optional Libraries
@@ -35,7 +41,7 @@ pip install napari-ndev
 pip install napari-ndev[extras]
 ```
 
-**napari-ndev** can optionally use GPL-3 licensed libraries to enhance its functionality, but are not required. If you choose to install and use these optional dependencies, you must comply with the GPL-3 license terms. The main functional improvement is from `napari-aicsimageio` to properly handle metadata with the `Image Utilities` widget, but also adds support for `czi` and `lif` files. These libraries can be installed with [pip]:
+**napari-ndev** can optionally use GPL-3 licensed libraries to enhance its functionality, but are not required. If you choose to install and use these optional dependencies, you must comply with the GPL-3 license terms. The main functional improvement is from `napari-bioio` to properly handle metadata with the `Image Utilities` widget, but also adds support for `czi` and `lif` files. These libraries can be installed with [pip]:
 
 ```bash
 pip install napari-ndev[gpl-extras]
