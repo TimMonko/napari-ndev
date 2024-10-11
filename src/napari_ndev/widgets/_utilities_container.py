@@ -432,7 +432,7 @@ class UtilitiesContainer(Container):
         reader.
 
         """
-        self._viewer.open(self._files.value, plugin='napari-bioio')
+        self._viewer.open(self._files.value, plugin='napari-ndev')
 
     def select_next_images(self):
         """Open the next set of images in the directyory."""
