@@ -32,7 +32,8 @@ DONT_MERGE_MOSAICS = "Don't Merge Mosaics"
 
 def napari_get_reader(
     path: PathLike,
-    in_memory: bool | None = None
+    in_memory: bool | None = None,
+    open_first_scene_only: bool = False,
 ) -> ReaderFunction | None:
     """
     Get the appropriate reader function for a single given path.
@@ -43,6 +44,10 @@ def napari_get_reader(
         Path to the file to be read
     in_memory : bool, optional
         Whether to read the file in memory, by default None
+    open_first_scene_only : bool, optional
+        Whether to ignore multi-scene files and just open the first scene,
+        by default False
+
 
     Returns
     -------
@@ -58,7 +63,12 @@ def napari_get_reader(
         plugin = BioImage.determine_plugin(path)
         reader = plugin.metadata.get_reader()
         # return napari_reader_function(path, reader, in_memory)
-        return partial(napari_reader_function, reader=reader, in_memory=in_memory)
+        return partial(
+            napari_reader_function,
+            reader=reader,
+            in_memory=in_memory,
+            open_first_scene_only=open_first_scene_only
+        )
     except UnsupportedFileFormatError:
         logger.warning("Bioio: Unsupported file format")
         return None
@@ -110,9 +120,12 @@ def napari_reader_function(
         _get_scenes(path=path, img=img, in_memory=in_memory)
         return [(None,)]
 
+    # TODO: why should I return the squeezed data and not the full data
+    # is it because napari squeezes it anyway?
     img_data = _get_image_data(img, in_memory=in_memory)
     img_meta = _get_napari_metadata(path, img_data, img)
-    return [(img.data, img_meta, layer_type)]
+
+    return [(img_data.data, img_meta, layer_type)]
 
 def _determine_in_memory(
     path: PathLike,
