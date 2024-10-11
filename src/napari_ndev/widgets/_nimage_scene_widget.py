@@ -7,7 +7,7 @@ from magicgui.widgets import (
     Select,
 )
 
-LABEL_DELIMITER = " || "
+LABEL_DELIMITER = " :: "
 
 
 class NImageSceneWidget(ScrollableContainer):
