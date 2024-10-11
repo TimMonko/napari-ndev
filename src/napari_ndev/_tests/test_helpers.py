@@ -81,9 +81,10 @@ def test_create_id_string_no_id():
     assert id_string == 'None__0__Image:0'
 
 
-def test_create_id_string_ome_metadata_no_name():
+def test_create_id_string_ome_metadata_no_name(resources_dir: Path):
     file = Path(
-        './src/napari_ndev/_tests/resources/Workflow/Images/cells3d2ch.tiff'
+        # './src/napari_ndev/_tests/resources/Workflow/Images/cells3d2ch.tiff'
+        resources_dir / 'Workflow/Images/cells3d2ch.tiff'
     )
     img = BioImage(file)
 
