@@ -45,7 +45,7 @@ class nImage(BioImage):
     def __init__(
         self,
         image: ImageLike,
-        reader = Reader | None
+        reader: Reader | None = None
     ) -> None:
         """Initialize an nImage with an image, and optionally a reader."""
         super().__init__(image, reader)
