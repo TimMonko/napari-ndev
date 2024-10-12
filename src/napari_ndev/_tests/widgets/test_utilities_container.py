@@ -117,11 +117,10 @@ def test_save_ome_tiff(make_napari_viewer, test_data, tmp_path: Path):
 
 @pytest.fixture
 def test_rgb_image():
-    from napari_ndev import nImage
     path = os.path.join(
         'src', 'napari_ndev', '_tests', 'resources', 'RGB.tiff'
     )
-    img = nImage(path)
+    img = BioImage(path)
     return path, img
 
 
