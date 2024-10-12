@@ -45,12 +45,13 @@ class nImage(BioImage):
     def __init__(
         self,
         image: ImageLike,
-        reader = Reader | None
+        reader: Reader | None = None
     ) -> None:
         """Initialize an nImage with an image, and optionally a reader."""
         super().__init__(image, reader)
         self.napari_data = None
         self.napari_metadata = {}
+        self.path = None
 
     def _determine_in_memory(self, path=None, max_in_mem_bytes: int = 4e9, max_in_mem_percent: int = 0.3) -> bool:
         """
@@ -211,4 +212,4 @@ class nImage(BioImage):
 
         meta['metadata'] = img_meta
         self.napari_metadata = meta
-        return meta
+        return self.napari_metadata
