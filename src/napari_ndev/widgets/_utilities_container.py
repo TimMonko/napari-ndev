@@ -152,7 +152,7 @@ class UtilitiesContainer(ScrollableContainer):
         self._init_concatenate_files_container()
         self._init_save_layers_container()
         self._init_scene_container()
-        self._init_figure_options_container()
+        # self._init_figure_options_container() # TODO: add figure saving
         self._init_layout()
         self._connect_events()
 
@@ -168,7 +168,7 @@ class UtilitiesContainer(ScrollableContainer):
                 self._metadata_container,
                 self._concatenate_files_container,
                 self._scene_container,
-                self._figure_options_container,
+                # self._figure_options_container,
                 self._save_layers_container,
                 self._results,
             ]
@@ -249,7 +249,7 @@ class UtilitiesContainer(ScrollableContainer):
         self._concatenate_files_container = Container(
             layout='horizontal',
         )
-        self._concatenate_image_button = PushButton(label='Concat. Files')
+        self._concatenate_files_button = PushButton(label='Concat. Files')
         self._concatenate_batch_button = PushButton(
             label='Batch Concat.',
             tooltip='Concatenate files in the selected directory by iterating'
@@ -260,7 +260,7 @@ class UtilitiesContainer(ScrollableContainer):
             'should work as expected.',
         )
         self._concatenate_files_container.extend([
-            self._concatenate_image_button,
+            self._concatenate_files_button,
             self._concatenate_batch_button,
         ])
 
@@ -344,14 +344,14 @@ class UtilitiesContainer(ScrollableContainer):
             'labels based on the selected image layer dimensions. If multiple'
             'layer types are selected, then the image will save to Layers.',
         )
-        self._export_figure_button = PushButton(
-            label='Export Figure',
-            tooltip='Export the current canvas figure to the save directory. '
-            'Saves image as a PNG to Figures directory.',
-        )
+        # self._export_figure_button = PushButton(
+        #     label='Export Figure',
+        #     tooltip='Export the current canvas figure to the save directory. '
+        #     'Saves image as a PNG to Figures directory.',
+        # )
         self._save_layers_container.extend([
             self._save_layers_button,
-            self._export_figure_button,
+            # self._export_figure_button,
         ])
 
     def _init_figure_options_container(self):
@@ -400,14 +400,20 @@ class UtilitiesContainer(ScrollableContainer):
     def _connect_events(self):
         """Connect the events of the widgets to respective methods."""
         self._files.changed.connect(self.update_metadata_on_file_select)
-        self._open_image_button.clicked.connect(self.open_images)
         self._append_scene_button.clicked.connect(self.append_scene_to_name)
+        self._open_image_button.clicked.connect(self.open_images)
         self._select_next_image_button.clicked.connect(self.select_next_images)
+
         self._layer_metadata_update.clicked.connect(
             self.update_metadata_from_layer
         )
         self._scale_layers_button.clicked.connect(self.rescale_by)
+
+        self._concatenate_files_button.clicked.connect(self.save_files_as_ome_tiff)
+        self._concatenate_batch_button.clicked.connect(self.batch_concatenate_files)
         self._extract_scenes.clicked.connect(self.save_scenes_ome_tiff)
+        self._save_layers_button.clicked.connect(self.save_layers_as_ome_tiff)
+        # self._export_figure_button.clicked.connect(self.export_figure)
         self._results._on_value_change()
 
     @property
@@ -782,11 +788,19 @@ class UtilitiesContainer(ScrollableContainer):
             )
         return
 
+    def _determine_save_directory(self, save_dir: str | None = None) -> str:
+        if self._save_directory_prefix.value is not None:
+            save_dir = f'{self._save_directory_prefix.value}_{save_dir}'
+        else:
+            save_dir = f'{save_dir}'
+        return save_dir
+
     def save_files_as_ome_tiff(self) -> None:
         img_data = self.concatenate_files(self._files.value)
+        save_dir = self._determine_save_directory('ConcatenatedImages')
         img_save_loc = self._get_save_loc(
             self._save_directory.value,
-            'ConcatenatedImages',
+            save_dir,
             self._save_name.value
         )
         cnames = self._channel_names.value
@@ -798,8 +812,76 @@ class UtilitiesContainer(ScrollableContainer):
             dim_order='TCZYX',
             channel_names=channel_names,
             image_name=self._save_name.value,
-            result_str='Image',
+            result_str='Concatenated Image',
         )
+
+    def batch_concatenate_files(self) -> None:
+        """
+        Concatenate files in the selected directory.
+
+        Save the concatenated files as OME-TIFF, then select the next set of
+        files in the directory to be concatenated. This is done by iterating
+        over the remaining files in the directory based on the number of files
+        selected. The files are sorted alphabetically and numerically. The
+        files will be concatenated until no more files are left in the parent
+        directory.
+        """
+        # get total number of sets of files in the directory
+        parent_dir = self._files.value[0].parent
+        total_num_files = len(list(parent_dir.glob(f'*{self._files.value[0].suffix}')))
+        num_files = self._files.value.__len__()
+        num_file_sets = total_num_files // num_files
+
+        # save first set of files
+        self.save_files_as_ome_tiff()
+        # iterate through the remaining sets of files in the directory
+        for _ in range(num_file_sets):
+            self.select_next_images()
+            self.save_files_as_ome_tiff()
+
+    def save_scenes_ome_tiff(self) -> None:
+        """
+        Save selected scenes as OME-TIFF.
+
+        This method is intended to save scenes from a single file. The scenes
+        are extracted based on the scenes_to_extract widget value, which is a
+        list of scene indices. If the widget is left blank, then all scenes
+        will be extracted.
+
+        """
+        img = nImage(self._files.value[0])
+
+        scenes = self._scenes_to_extract.value
+        scenes_list = ast.literal_eval(scenes) if scenes else img.scenes
+        save_dir = self._determine_save_directory('ExtractedScenes')
+        save_directory = self._save_directory.value / save_dir
+        save_directory.mkdir(parents=False, exist_ok=True)
+
+        for scene_idx, _scene in enumerate(scenes_list):
+            # TODO: fix this to not have an issue if there are identical scenes
+            # presented as strings, though the asssumption is most times the
+            # user will input a list of integers.
+            img.set_scene(scene_idx)
+
+            base_save_name = self._save_name.value.split('.')[0]
+            image_id = helpers.create_id_string(img, base_save_name)
+
+            img_save_name = f'{image_id}.ome.tiff'
+            img_save_loc = save_directory / img_save_name
+
+            # get channel names from widget if truthy
+            cnames = self._channel_names.value
+            channel_names = ast.literal_eval(cnames) if cnames else None
+
+            self._common_save_logic(
+                data=img.data,
+                uri=img_save_loc,
+                dim_order='TCZYX',
+                channel_names=channel_names,
+                image_name=image_id,
+                result_str=f'Scene: {img.current_scene}',
+            )
+        return
 
     def save_layers_as_ome_tiff(self) -> None:
         layer_data = self.concatenate_layers(
@@ -810,9 +892,9 @@ class UtilitiesContainer(ScrollableContainer):
 
         # if there are multiple layer types, save to Layers directory
         layer_save_type = 'Layers' if len(set(layer_types)) > 1 else layer_types[0]
-
+        layer_save_dir = self._determine_save_directory(layer_save_type)
         layer_save_loc = self._get_save_loc(
-            self._save_directory.value, layer_save_type, self._save_name.value
+            self._save_directory.value, layer_save_dir, self._save_name.value
         )
 
         # only get channel names if layer_save_type is not shapes or labels layer
@@ -839,47 +921,3 @@ class UtilitiesContainer(ScrollableContainer):
             image_name=self._save_name.value,
             result_str=layer_save_type,
         )
-
-
-    def save_scenes_ome_tiff(self) -> None:
-        """
-        Save selected scenes as OME-TIFF.
-
-        Not currently interacting with the viewer labels.
-        This method is intended to save scenes from a single file. The scenes
-        are extracted based on the scenes_to_extract widget value, which is a
-        list of scene indices. If the widget is left blank, then all scenes
-        will be extracted.
-
-        """
-        img = nImage(self._files.value[0])
-
-        scenes = self._scenes_to_extract.value
-        scenes_list = ast.literal_eval(scenes) if scenes else None
-        save_directory = self._save_directory.value / 'Images'
-        save_directory.mkdir(parents=False, exist_ok=True)
-        for scene in scenes_list:
-            # TODO: fix this to not have an issue if there are identical scenes
-            # presented as strings, though the asssumption is most times the
-            # user will input a list of integers.
-            img.set_scene(scene)
-
-            base_save_name = self._save_name.value.split('.')[0]
-            image_id = helpers.create_id_string(img, base_save_name)
-
-            img_save_name = f'{image_id}.ome.tiff'
-            img_save_loc = save_directory / img_save_name
-
-            # get channel names from widget if truthy
-            cnames = self._channel_names.value
-            channel_names = ast.literal_eval(cnames) if cnames else None
-
-            self._common_save_logic(
-                data=img.data,
-                uri=img_save_loc,
-                dim_order='TCZYX',
-                channel_names=channel_names,
-                image_name=image_id,
-                result_str=f'Scene: {img.current_scene}',
-            )
-        return
