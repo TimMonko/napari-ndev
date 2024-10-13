@@ -224,7 +224,6 @@ class UtilitiesContainer(ScrollableContainer):
         self._save_directory_prefix = LineEdit(
             label='Save Directory Prefix',
             tooltip='Prefix for the save directories.',
-            value=None,
         )
 
         self._file_options_container.extend([
@@ -789,7 +788,7 @@ class UtilitiesContainer(ScrollableContainer):
         return
 
     def _determine_save_directory(self, save_dir: str | None = None) -> str:
-        if self._save_directory_prefix.value is not None:
+        if self._save_directory_prefix.value != '':
             save_dir = f'{self._save_directory_prefix.value}_{save_dir}'
         else:
             save_dir = f'{save_dir}'
@@ -857,11 +856,11 @@ class UtilitiesContainer(ScrollableContainer):
         save_directory = self._save_directory.value / save_dir
         save_directory.mkdir(parents=False, exist_ok=True)
 
-        for scene_idx, _scene in enumerate(scenes_list):
+        for scene in scenes_list:
             # TODO: fix this to not have an issue if there are identical scenes
             # presented as strings, though the asssumption is most times the
             # user will input a list of integers.
-            img.set_scene(scene_idx)
+            img.set_scene(scene)
 
             base_save_name = self._save_name.value.split('.')[0]
             image_id = helpers.create_id_string(img, base_save_name)
