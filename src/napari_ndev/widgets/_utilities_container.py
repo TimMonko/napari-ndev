@@ -28,7 +28,7 @@ from napari.layers import (
     Labels as LabelsLayer,
     Shapes as ShapesLayer,
 )
-from napari_ndev import helpers
+from napari_ndev import helpers, nImage
 
 if TYPE_CHECKING:
     from bioio import BioImage
@@ -37,7 +37,6 @@ if TYPE_CHECKING:
     from napari.layers import Layer
 
 
-# class UtilitiesContainer(ScrollableContainer):
 class UtilitiesContainer(ScrollableContainer):
     """
     A widget to work with images and labels in the napari viewer.
@@ -163,9 +162,9 @@ class UtilitiesContainer(ScrollableContainer):
                 self._save_directory,
                 self._files,
                 self._save_name_container,
+                self._open_image_container,
                 self._file_options_container,
                 self._metadata_container,
-                self._open_image_container,
                 self._concatenate_files_container,
                 self._scene_container,
                 self._figure_options_container,
@@ -461,9 +460,8 @@ class UtilitiesContainer(ScrollableContainer):
 
     def update_metadata_on_file_select(self):
         """Update self._save_name.value and metadata if selected."""
-        from napari_ndev.helpers import get_Image
         self._save_name.value = str(self._files.value[0].stem)
-        img = get_Image(self._files.value[0])
+        img = nImage(self._files.value[0])
 
         self._update_metadata_from_Image(
             img,
@@ -511,8 +509,6 @@ class UtilitiesContainer(ScrollableContainer):
 
     def select_next_images(self):
         """Open the next set of images in the directyory."""
-        from napari_ndev.helpers import get_Image
-
         num_files = self._files.value.__len__()
 
         # get the parent directory of the first file
@@ -535,7 +531,7 @@ class UtilitiesContainer(ScrollableContainer):
         idx = files.index(first_file)
         next_files = files[idx + num_files : idx + num_files + num_files]
         # set the nwe save names, and update the file value
-        img = get_Image(next_files[0])
+        img = nImage(next_files[0])
 
         self._save_name.value = helpers.create_id_string(img, next_files[0].stem)
         self._files.value = next_files
@@ -577,12 +573,10 @@ class UtilitiesContainer(ScrollableContainer):
             The concatenated image data.
 
         """
-        from napari_ndev.helpers import get_Image
-
         array_list = []
 
         for file in files:
-            img = get_Image(file)
+            img = nImage(file)
 
             if 'S' in img.dims.order:
                 img_data = img.get_image_data('TSZYX')
@@ -824,9 +818,7 @@ class UtilitiesContainer(ScrollableContainer):
         will be extracted.
 
         """
-        from napari_ndev.helpers import get_Image
-
-        img = get_Image(self._files.value[0])
+        img = nImage(self._files.value[0])
 
         scenes = self._scenes_to_extract.value
         scenes_list = ast.literal_eval(scenes) if scenes else None
