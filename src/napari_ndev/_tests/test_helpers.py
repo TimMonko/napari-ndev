@@ -4,7 +4,6 @@ from pathlib import Path
 
 import numpy as np
 import pytest
-from aicsimageio import AICSImage
 from bioio import BioImage
 from bioio.writers import OmeTiffWriter
 
@@ -82,9 +81,10 @@ def test_create_id_string_no_id():
     assert id_string == 'None__0__Image:0'
 
 
-def test_create_id_string_ome_metadata_no_name():
+def test_create_id_string_ome_metadata_no_name(resources_dir: Path):
     file = Path(
-        './src/napari_ndev/_tests/resources/Workflow/Images/cells3d2ch.tiff'
+        # './src/napari_ndev/_tests/resources/Workflow/Images/cells3d2ch.tiff'
+        resources_dir / 'Workflow/Images/cells3d2ch.tiff'
     )
     img = BioImage(file)
 
@@ -123,7 +123,7 @@ def test_get_channel_names_CYX():
 
 def test_get_channel_names_RGB():
     file = Path(r'./src/napari_ndev/_tests/resources/RGB.tiff')
-    img = AICSImage(file)
+    img = BioImage(file)
     assert get_channel_names(img) == ['red', 'green', 'blue']
 
 
@@ -165,7 +165,7 @@ def test_get_squeezed_dim_order_ZYX():
 
 def test_get_squeezed_dim_order_RGB():
     file = Path(r'./src/napari_ndev/_tests/resources/RGB.tiff')
-    img = AICSImage(file)
+    img = BioImage(file)
     assert get_squeezed_dim_order(img) == 'YX'
 
 
