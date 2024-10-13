@@ -51,7 +51,7 @@ class nImage(BioImage):
         super().__init__(image, reader)
         self.napari_data = None
         self.napari_metadata = {}
-        self.path = None
+        self.path = image if isinstance(image, PathLike) else None
 
     def _determine_in_memory(self, path=None, max_in_mem_bytes: int = 4e9, max_in_mem_percent: int = 0.3) -> bool:
         """
