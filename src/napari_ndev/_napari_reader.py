@@ -1,13 +1,11 @@
 from __future__ import annotations
 
-import contextlib
 import logging
 from functools import partial
 from pathlib import Path
 from typing import TYPE_CHECKING, Callable
 
 from bioio import BioImage
-from bioio_base.dimensions import DimensionNames
 from bioio_base.exceptions import UnsupportedFileFormatError
 from qtpy.QtWidgets import (
     QCheckBox,
@@ -17,8 +15,9 @@ from qtpy.QtWidgets import (
     QVBoxLayout,
 )
 
+from napari_ndev import nImage
+
 if TYPE_CHECKING:
-    import xarray as xr
 
     from napari.types import LayerData, PathLike, ReaderFunction
 
@@ -114,7 +113,7 @@ def napari_reader_function(
     in_memory = _determine_in_memory(path) if in_memory is None else in_memory
     logger.info('Bioio: Reading in-memory: %s', in_memory)
 
-    img = BioImage(path, reader=reader)
+    img = nImage(path, reader=reader)
 
     if len(img.scenes) > 1 and not open_first_scene_only:
         _get_scenes(path=path, img=img, in_memory=in_memory)
@@ -122,8 +121,8 @@ def napari_reader_function(
 
     # TODO: why should I return the squeezed data and not the full data
     # is it because napari squeezes it anyway?
-    img_data = _get_image_data(img, in_memory=in_memory)
-    img_meta = _get_napari_metadata(path, img_data, img)
+    img_data = img.get_napari_image_data(in_memory=in_memory)
+    img_meta = img.get_napari_metadata(path)
 
     return [(img_data.data, img_meta, layer_type)]
 
@@ -144,123 +143,6 @@ def _determine_in_memory(
         and filesize / available_mem <= max_mem_percent
     )
 
-def _get_image_data(
-    img: BioImage,
-    in_memory: bool | None = None
-) -> xr.DataArray:
-    """
-    Get the image data from the BioImage object.
-
-    If the image has a mosaic, the data will be returned as a single
-    xarray DataArray with the mosaic dimensions removed.
-
-    Parameters
-    ----------
-    img : BioImage
-        BioImage object to get the data from
-    in_memory : bool, optional
-        Whether to read the data in memory, by default None
-
-    Returns
-    -------
-    xr.DataArray
-        The image data as an xarray DataArray
-
-    """
-    if DimensionNames.MosaicTile in img.reader.dims.order:
-        try:
-            if in_memory:
-                return img.reader.mosaic_xarray_data.squeeze()
-
-            return img.reader.mosaic_xarray_dask_data.squeeze()
-
-        except NotImplementedError:
-            logger.warning(
-                "Bioio: Mosaic tile switching not supported for this reader"
-            )
-            return None
-
-    if in_memory:
-        return img.reader.xarray_data.squeeze()
-
-    return img.reader.xarray_dask_data.squeeze()
-
-def _get_napari_metadata(
-    path: PathLike,
-    img_data: xr.DataArray,
-    img: BioImage
-) -> dict:
-    """
-    Get the metadata for the image.
-
-    Parameters
-    ----------
-    path : PathLike
-        Path to the file
-    img_data : xr.DataArray
-        Image data as an xarray DataArray
-    img : BioImage
-        BioImage object
-
-    Returns
-    -------
-    dict
-        Dictionary containing the image metadata for napari
-
-    """
-    meta = {}
-    scene = img.current_scene
-    scene_index = img.current_scene_index
-    single_no_scene = len(img.scenes) == 1 and img.current_scene == "Image:0"
-    channel_dim = DimensionNames.Channel
-
-    if channel_dim in img_data.dims:
-        # use filename if single scene and no scene name available
-        if single_no_scene:
-            channels_with_scene_index = [
-                f'{Path(path).stem}{SCENE_LABEL_DELIMITER}{C}'
-                for C in img_data.coords[channel_dim].data.tolist()
-            ]
-        else:
-            channels_with_scene_index = [
-                f'{scene_index}{SCENE_LABEL_DELIMITER}'
-                f'{scene}{SCENE_LABEL_DELIMITER}{C}'
-                for C in img_data.coords[channel_dim].data.tolist()
-            ]
-        meta['name'] = channels_with_scene_index
-        meta['channel_axis'] = img_data.dims.index(channel_dim)
-
-    # not multi-chnanel, use current scene as image name
-    else:
-        if single_no_scene:
-            meta['name'] = Path(path).stem
-        else:
-            meta['name'] = img.reader.current_scene
-
-    # Handle if RGB
-    if DimensionNames.Samples in img.reader.dims.order:
-        meta['rgb'] = True
-
-    # Handle scales
-    scale = [
-        getattr(img.physical_pixel_sizes, dim)
-        for dim in img_data.dims
-        if dim in {DimensionNames.SpatialX, DimensionNames.SpatialY, DimensionNames.SpatialZ}
-        and getattr(img.physical_pixel_sizes, dim) is not None
-    ]
-
-    if scale:
-        meta['scale'] = tuple(scale)
-
-    # get all other metadata
-    img_meta = {'bioimage': img, 'raw_image_metadata': img.metadata}
-
-    with contextlib.suppress(NotImplementedError):
-        img_meta['metadata'] = img.ome_metadata
-
-    meta['metadata'] = img_meta
-    return meta
-
 def _widget_is_checked(widget_name: str) -> bool:
     import napari
 
@@ -277,7 +159,7 @@ def _widget_is_checked(widget_name: str) -> bool:
 
 
 # Function to handle multi-scene files.
-def _get_scenes(path: PathLike, img: BioImage, in_memory: bool) -> None:
+def _get_scenes(path: PathLike, img: nImage, in_memory: bool) -> None:
     import napari
 
     # Get napari viewer from current process
@@ -334,15 +216,13 @@ def _get_scenes(path: PathLike, img: BioImage, in_memory: bool) -> None:
         # Update scene on image and get data
         img.set_scene(scene_index)
         # check whether to mosaic merge or not
-        if _widget_is_checked(DONT_MERGE_MOSAICS):
-            data = _get_image_data(
-                img=img, in_memory=in_memory, reconstruct_mosaic=False
-            )
-        else:
-            data = _get_image_data(img=img, in_memory=in_memory)
+        # if _widget_is_checked(DONT_MERGE_MOSAICS):
+        #     data = img.get_napari_image_data(in_memory=in_memory, reconstruct_mosaic=False)
+        # else:
+        data = img.get_napari_image_data(in_memory=in_memory)
 
         # Get metadata and add to image
-        meta = _get_napari_metadata("", data, img)
+        meta = img.get_napari_metadata("")
 
         # Optionally clear layers
         if _widget_is_checked(CLEAR_LAYERS_ON_SELECT):
