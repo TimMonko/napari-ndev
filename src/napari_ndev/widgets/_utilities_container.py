@@ -136,6 +136,7 @@ class UtilitiesContainer(ScrollableContainer):
         """
         super().__init__(labels=False)
 
+        self.min_width = 500 # TODO: remove this hardcoded value
         self._viewer = viewer if viewer is not None else None
         self._img_data = None
         self._image_save_dims = None
@@ -160,8 +161,8 @@ class UtilitiesContainer(ScrollableContainer):
         self.extend(
             [
                 self._save_directory,
-                self._files,
                 self._save_name_container,
+                self._files,
                 self._open_image_container,
                 self._file_options_container,
                 self._metadata_container,
@@ -191,8 +192,8 @@ class UtilitiesContainer(ScrollableContainer):
         self._save_name_container = Container(layout='horizontal')
         self._save_name = LineEdit(
             label='Save Name',
-            tooltip='Name of the saved file. Helpful to include a'
-            '.ome/.tif/.tiff extension.',
+            tooltip='Name of the saved file. '
+            'Proper extension will be added when saved.',
         )
         self._append_scene_button = PushButton(
             label='Append Scene to Name',
@@ -201,6 +202,7 @@ class UtilitiesContainer(ScrollableContainer):
             self._save_name,
             self._append_scene_button
         ])
+
 
     def _init_file_options_container(self):
         """Initialize the file options collapsible container."""
@@ -277,7 +279,7 @@ class UtilitiesContainer(ScrollableContainer):
             label='Dimension Order: ',
             tooltip='Sanity check for available dimensions.',
         )
-        self._scenes = Label(
+        self._num_scenes = Label(
             label='Number of Scenes: ',
         )
 
@@ -304,7 +306,7 @@ class UtilitiesContainer(ScrollableContainer):
             # self._file_metadata_update,
             self._layer_metadata_update,
             self._dim_order,
-            self._scenes,
+            self._num_scenes,
             self._channel_names,
             self._scale_tuple,
             self._scale_layers_button,
@@ -448,6 +450,7 @@ class UtilitiesContainer(ScrollableContainer):
 
         """
         self._dim_order.value = img.dims.order
+        self._num_scenes.value = str(len(img.scenes))
 
         self._squeezed_dims = helpers.get_squeezed_dim_order(img)
 
@@ -473,6 +476,7 @@ class UtilitiesContainer(ScrollableContainer):
             update_scale=self._update_scale.value,
         )
 
+    # Added
     def append_scene_to_name(self):
         """Append the scene to the save name."""
         if self._viewer.layers.selection.active is not None:
@@ -495,6 +499,7 @@ class UtilitiesContainer(ScrollableContainer):
             scene = re.sub(r'[^\w\s]', '-', img.current_scene)
             self._save_name.value = f'{self._save_name.value}_{scene}'
 
+    # Converted
     def update_metadata_from_layer(self):
         """
         Update metadata from the selected layer.
@@ -529,10 +534,12 @@ class UtilitiesContainer(ScrollableContainer):
                 f'\nAt {time.strftime("%H:%M:%S")}'
             )
 
+    # Converted
     def open_images(self):
         """Open the selected images in the napari viewer with napari-ndev."""
         self._viewer.open(self._files.value, plugin='napari-ndev')
 
+    # Converted
     def select_next_images(self):
         """Open the next set of images in the directyory."""
         num_files = self._files.value.__len__()
@@ -562,8 +569,9 @@ class UtilitiesContainer(ScrollableContainer):
         self._save_name.value = helpers.create_id_string(img, next_files[0].stem)
         self._files.value = next_files
 
-        self._update_metadata_on_file_select()
+        self.update_metadata_on_file_select()
 
+    # Converted
     def rescale_by(self):
         """Rescale the selected layers based on the given scale."""
         layers = self._viewer.layers.selection
