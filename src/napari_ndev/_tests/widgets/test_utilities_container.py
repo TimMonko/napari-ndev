@@ -3,7 +3,7 @@ from pathlib import Path
 
 import numpy as np
 import pytest
-from aicsimageio import AICSImage
+from bioio import BioImage
 
 from napari_ndev.widgets._utilities_container import UtilitiesContainer
 
@@ -70,7 +70,7 @@ def test_save_shapes_as_labels(
     assert expected_save_loc.exists()
     assert shapes_as_labels.shape == test_image.shape
     assert np.array_equal(shapes_as_labels, test_labels)
-    assert AICSImage(expected_save_loc).channel_names == ['Shapes']
+    assert BioImage(expected_save_loc).channel_names == ['Shapes']
 
 
 def test_save_labels(make_napari_viewer, tmp_path: Path, test_data):
@@ -92,7 +92,7 @@ def test_save_labels(make_napari_viewer, tmp_path: Path, test_data):
     expected_save_loc = tmp_path / 'Labels' / 'test.tiff'
     assert expected_save_loc.exists()
     assert np.array_equal(labels, test_labels)
-    assert AICSImage(expected_save_loc).channel_names == ['Labels']
+    assert BioImage(expected_save_loc).channel_names == ['Labels']
 
 
 def test_save_ome_tiff(make_napari_viewer, test_data, tmp_path: Path):
@@ -120,7 +120,7 @@ def test_rgb_image():
     path = os.path.join(
         'src', 'napari_ndev', '_tests', 'resources', 'RGB.tiff'
     )
-    img = AICSImage(path)
+    img = BioImage(path)
     return path, img
 
 
@@ -149,20 +149,18 @@ def test_update_metadata_from_layer(make_napari_viewer, test_data):
 
     assert (
         'Tried to update metadata, but could only update scale'
-        ' because layer not opened with aicsimageio'
+        ' because layer not opened with napari-bioio'
     ) in container._results.value
     assert container._scale_tuple.value == (1, 2, 3)
 
+def test_open_images(make_napari_viewer, test_rgb_image):
+    viewer = make_napari_viewer()
+    container = UtilitiesContainer(viewer)
 
-# failing tox because no napari-aicsimageio in requirements
-# def test_open_images(make_napari_viewer, test_rgb_image):
-#     viewer = make_napari_viewer()
-#     container = UtilitiesContainer(viewer)
+    path, _ = test_rgb_image
+    container._files.value = path
+    container.open_images()
 
-#     path, _ = test_rgb_image
-#     container._files.value = path
-#     container.open_images()
-
-#     assert container._img.dims.order == "TCZYXS"
-#     assert container._squeezed_dims == "YX"
-#     assert container._channel_names.value == "['red', 'green', 'blue']"
+    assert container._img.dims.order == "TCZYXS"
+    assert container._squeezed_dims == "YX"
+    assert container._channel_names.value == "['red', 'green', 'blue']"
