@@ -671,13 +671,14 @@ class UtilitiesContainer(ScrollableContainer):
         return np.concatenate(array_list, axis=1)
 
     def _get_dims_for_shape_layer(self, layers) -> tuple[int]:
+        # TODO: Fix this not getting the first instance of the image layer
         # get first instance of a napari.layers.Image or napari.layers.Labels
         dim_layer = next(
                 (layer for layer in layers if isinstance(layer, (ImageLayer, LabelsLayer))),
                 None,
             )
-            # if none of these layers is selected, get it from the first instance in the viewer
-        if dim_layer is not None:
+        # if none of these layers is selected, get it from the first instance in the viewer
+        if dim_layer is None:
             dim_layer = next(
                     (layer for layer in self._viewer.layers if isinstance(layer, (ImageLayer, LabelsLayer))),
                     None,
@@ -700,7 +701,7 @@ class UtilitiesContainer(ScrollableContainer):
         root_dir : Path
             The root directory.
         parent : str
-            The parent directory. eg. 'Images', 'Labels', 'ShapesAsLabels'
+            The parent directory. eg. 'Image', 'Labels', 'ShapesAsLabels'
         file_name : str
             The file name.
 
@@ -795,13 +796,16 @@ class UtilitiesContainer(ScrollableContainer):
         return save_dir
 
     def save_files_as_ome_tiff(self) -> None:
+        """Save the selected files as OME-TIFF using BioImage."""
         img_data = self.concatenate_files(self._files.value)
         save_dir = self._determine_save_directory('ConcatenatedImages')
+        img_save_name = f'{self._save_name.value}.tiff'
         img_save_loc = self._get_save_loc(
             self._save_directory.value,
             save_dir,
-            self._save_name.value
+            img_save_name,
         )
+
         cnames = self._channel_names.value
         channel_names = ast.literal_eval(cnames) if cnames else None
 
@@ -865,7 +869,7 @@ class UtilitiesContainer(ScrollableContainer):
             base_save_name = self._save_name.value.split('.')[0]
             image_id = helpers.create_id_string(img, base_save_name)
 
-            img_save_name = f'{image_id}.ome.tiff'
+            img_save_name = f'{image_id}.tiff'
             img_save_loc = save_directory / img_save_name
 
             # get channel names from widget if truthy
@@ -883,6 +887,11 @@ class UtilitiesContainer(ScrollableContainer):
         return
 
     def save_layers_as_ome_tiff(self) -> None:
+        """
+        Save the selected layers as OME-TIFF.
+
+        Determines types of layers and saves to corresponding directories.
+        """
         layer_data = self.concatenate_layers(
             list(self._viewer.layers.selection)
         )
@@ -892,8 +901,9 @@ class UtilitiesContainer(ScrollableContainer):
         # if there are multiple layer types, save to Layers directory
         layer_save_type = 'Layers' if len(set(layer_types)) > 1 else layer_types[0]
         layer_save_dir = self._determine_save_directory(layer_save_type)
+        layer_save_name = f'{self._save_name.value}.tiff'
         layer_save_loc = self._get_save_loc(
-            self._save_directory.value, layer_save_dir, self._save_name.value
+            self._save_directory.value, layer_save_dir, layer_save_name
         )
 
         # only get channel names if layer_save_type is not shapes or labels layer
