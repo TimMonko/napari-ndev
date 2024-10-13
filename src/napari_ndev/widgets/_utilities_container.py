@@ -31,7 +31,6 @@ from napari.layers import (
 from napari_ndev import helpers
 
 if TYPE_CHECKING:
-    from aicsimageio import AICSImage
     from bioio import BioImage
 
     import napari
@@ -303,7 +302,7 @@ class UtilitiesContainer(ScrollableContainer):
 
 
         self._metadata_container.extend([
-            self._file_metadata_update,
+            # self._file_metadata_update,
             self._layer_metadata_update,
             self._dim_order,
             self._scenes,
@@ -430,7 +429,7 @@ class UtilitiesContainer(ScrollableContainer):
 
     def _update_metadata_from_Image(
         self,
-        img: AICSImage | BioImage,
+        img: BioImage,
         update_channel_names: bool = True,
         update_scale: bool = True,
     ):
@@ -439,7 +438,7 @@ class UtilitiesContainer(ScrollableContainer):
 
         Parameters
         ----------
-        img : AICSImage | BioImage
+        img : BioImage
             The image from which to update the metadata.
         update_channel_names : bool, optional
             Update the channel names, by default True.
@@ -476,11 +475,16 @@ class UtilitiesContainer(ScrollableContainer):
         """
         Update metadata from the selected layer.
 
-        Current code expects images to be opened with napari-aicsimageio.
+        Expects images to be opened with napari-ndev reader.
+
+        Note:
+        ----
+        This should also support napari-bioio in the future, when released.
+
         """
         selected_layer = self._viewer.layers.selection.active
         try:
-            img = selected_layer.metadata['aicsimage']
+            img = selected_layer.metadata['bioimage']
             self._update_metadata_from_Image(img)
 
         except AttributeError:
@@ -497,20 +501,13 @@ class UtilitiesContainer(ScrollableContainer):
             )
             self._results.value = (
                 'Tried to update metadata, but could only update scale'
-                ' because layer not opened with aicsimageio'
+                ' because layer not opened with neuralDev reader.'
                 f'\nAt {time.strftime("%H:%M:%S")}'
             )
 
     def open_images(self):
-        """
-        Open the selected images in the napari viewer.
-
-        If napari-aicsimageio is not installed, then the images will likely
-        be opened by the base napari reader, or a different compatabible
-        reader.
-
-        """
-        self._viewer.open(self._files.value, plugin='napari-aicsimageio')
+        """Open the selected images in the napari viewer with napari-ndev."""
+        self._viewer.open(self._files.value, plugin='napari-ndev')
 
     def select_next_images(self):
         """Open the next set of images in the directyory."""
@@ -716,11 +713,10 @@ class UtilitiesContainer(ScrollableContainer):
             The string used for the result widget.
 
         """
-        # from aicsimageio.writers import OmeTiffWriter
         # TODO: add image_name to save method
         from bioio.writers import OmeTiffWriter
 
-        # AICSImage does not allow saving labels as np.int64
+        # BioImage does not allow saving labels as np.int64
         # napari generates labels differently depending on the OS
         # so we need to convert to np.int32 in case np.int64 generated
         # see: https://github.com/napari/napari/issues/5545
