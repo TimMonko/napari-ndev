@@ -545,7 +545,7 @@ class MeasureContainer(Container):
             lbl = BioImage(label_dir / file.name)
             id_string = helpers.create_id_string(lbl, file.stem)
 
-                # get the itnensity image only if the image directory is not empty
+            # get the itnensity image only if the image directory is not empty
             if self._image_directory.value:
                 image_path = image_dir / file.name
                 if not image_path.exists():
