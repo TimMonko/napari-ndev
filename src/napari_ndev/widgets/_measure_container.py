@@ -478,24 +478,12 @@ class MeasureContainer(Container):
             self._region_directory.value
         )
 
-        # check if the label files are the same as the image files
-        # if self._image_directory.value is not None:
-        #     if len(label_files) != len(image_files):
-        #         raise ValueError(
-        #             'Number of label files and image files do not match'
-        #         )
-        # if self._region_directory.value is not None:
-        #     if len(label_files) != len(region_files):
-        #         raise ValueError(
-        #             'Number of label files and region files do not match'
-        #         )
-
-        log_loc = self._output_directory.value / '.log.txt'
+        log_loc = self._output_directory.value.with_suffix('.log.txt')
         logger, handler = helpers.setup_logger(log_loc)
 
         logger.info(
             """
-            Label Image: %s
+            Label Images: %s
             Intensity Channels: %s
             Num. Files: %d
             Label Directory: %s
@@ -521,6 +509,18 @@ class MeasureContainer(Container):
             self._tx_n_well.value,
             self._tx_dict.value,
         )
+
+        # check if the label files are the same as the image files
+        if self._image_directory.value is not None and len(label_files) != len(image_files):
+            logger.error(
+                'Number of label files (%s) and image files (%s) do not match',
+                len(label_files), len(image_files),
+            )
+        if self._region_directory.value is not None and len(label_files) != len(region_files):
+            logger.error(
+                'Number of label files (%s) and region files (%s) do not match',
+                len(label_files), len(region_files),
+            )
 
         self._progress_bar.label = f'Measuring {len(label_files)} Images'
         self._progress_bar.value = 0
