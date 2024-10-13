@@ -664,6 +664,10 @@ class MeasureContainer(Container):
         """
         from napari_ndev import measure as ndev_measure
 
+        self._progress_bar.label = 'Grouping Measurements'
+        self._progress_bar.value = 0
+        self._progress_bar.max = 1
+
         df = pd.read_csv(self._measured_data_path.value)
 
         # Filter out None values from agg_cols
@@ -683,4 +687,5 @@ class MeasureContainer(Container):
         )
         grouped_df.to_csv(save_loc, index=False)
 
+        self._progress_bar.value = 1
         return grouped_df
