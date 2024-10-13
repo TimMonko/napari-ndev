@@ -578,7 +578,7 @@ class MeasureContainer(Container):
                     reg = BioImage(region_path)
 
                 for scene_idx, _scene in enumerate(lbl.scenes):
-                    logger.info('Processing scene %s', scene_idx)
+                    logger.info('Processing %s : scene %s', label_chan, scene_idx)
                     lbl.set_scene(scene_idx)
                     label = lbl.get_image_data(self._squeezed_dims, C=lbl_C)
                     id_string = helpers.create_id_string(lbl, file.stem)
