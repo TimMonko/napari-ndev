@@ -155,7 +155,7 @@ def _get_scenes(path: PathLike, img: nImage, in_memory: bool) -> None:
 
         # Create a checkbox widget to set "Unpack Channels" or not
         channel_unpack_checkbox = QCheckBox(UNPACK_CHANNELS_TO_LAYERS)
-        channel_unpack_checkbox.setChecked(False)
+        channel_unpack_checkbox.setChecked(True)
 
         # Create a checkbox widget to set "Mosaic Merge" or not
         dont_merge_mosaics_checkbox = QCheckBox(DONT_MERGE_MOSAICS)
