@@ -1,5 +1,6 @@
 import pathlib
 
+import numpy as np
 from bioio import BioImage
 
 from napari_ndev.widgets._measure_container import MeasureContainer
@@ -64,7 +65,7 @@ def test_update_choices():
     container._update_choices(region_directory, 'Region')
 
     # Check the choices in the label image ComboBox
-    assert container._label_image.choices == ('Labels: Labels',)
+    assert container._label_images.choices == ('Labels: Labels',)
 
     # Check the choices in the intensity images Select widget
     assert container._intensity_images.choices == (
@@ -86,14 +87,14 @@ def test_batch_measure_label_only(tmp_path):
     output_folder.mkdir()
 
     container._label_directory.value = label_directory
-    container._label_image.value = 'Labels: Labels'
+    container._label_images.value = 'Labels: Labels'
     container._output_directory.value = output_folder
     df = container.batch_measure()
 
     assert output_folder.exists()
     assert (output_folder / 'measure_props_Labels.csv').exists()
     assert df is not None
-    assert list(df.columns) == ['id', 'label', 'area']
+    assert list(df.columns) == ['label_name', 'id', 'label', 'area']
 
 
 # TODO: figure out why _intensity_images.value is not in index order, but alphabetical
@@ -118,7 +119,7 @@ def test_batch_measure_intensity(tmp_path):
     container._scale_tuple.value = (3, 0.25, 0.25)
     container._prop.intensity_mean.value = True
 
-    container._label_image.value = 'Labels: Labels'
+    container._label_images.value = 'Labels: Labels'
     container._intensity_images.value = [
         'Region: Shapes',
         'Intensity: membrane',
@@ -131,6 +132,7 @@ def test_batch_measure_intensity(tmp_path):
     assert (output_folder / 'measure_props_Labels.csv').exists()
     assert df is not None
     assert list(df.columns) == [
+        'label_name',
         'id',
         'label',
         'area',
@@ -149,6 +151,8 @@ def test_batch_measure_with_regex(tmp_path):
     output_folder.mkdir()
 
     container._label_directory.value = label_directory
+    container._label_images.value = 'Labels: DAPI'
+    container._output_directory.value = output_folder
     container._id_regex_dict.value = r"""
         {
             'scene': r'(P\d{1,3}-\w+).ome',
@@ -174,9 +178,29 @@ def test_batch_measure_with_regex(tmp_path):
     """
 
     df = container.batch_measure()
+
+    assert (output_folder / 'measure_props_DAPI.csv').exists()
     assert 'scene' in df.columns
     assert 'well' in df.columns
     assert 'chelation' in df.columns
+
+def test_batch_measure_multiple_label_images(tmp_path):
+    container = MeasureContainer()
+    label_directory = pathlib.Path(
+        'src/napari_ndev/_tests/resources/Measure/Labels'
+    )
+    output_folder = tmp_path / 'Output'
+    output_folder.mkdir()
+
+    container._label_directory.value = label_directory
+    container._label_images.value = ['Labels: DAPI', 'Labels: Ferritin']
+    container._output_directory.value = output_folder
+
+    df = container.batch_measure()
+
+    assert (output_folder / 'measure_props_DAPI_Ferritin.csv').exists()
+    assert 'label_name' in df.columns
+    assert np.array_equal(df['label_name'].unique(), ['DAPI', 'Ferritin'])
 
 def test_group_measurements_no_agg_defaults():
     container = MeasureContainer()
