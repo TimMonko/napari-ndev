@@ -399,6 +399,7 @@ class UtilitiesContainer(ScrollableContainer):
         """Connect the events of the widgets to respective methods."""
         self._files.changed.connect(self.update_metadata_on_file_select)
         self._open_image_button.clicked.connect(self.open_images)
+        self._append_scene_button.clicked.connect(self.append_scene_to_name)
         self._select_next_image_button.clicked.connect(self.select_next_images)
         self._layer_metadata_update.clicked.connect(
             self.update_metadata_from_layer
@@ -426,6 +427,7 @@ class UtilitiesContainer(ScrollableContainer):
             self._scale_tuple.value[2],
         )
 
+    # Converted
     def _update_metadata_from_Image(
         self,
         img: BioImage,
@@ -458,8 +460,10 @@ class UtilitiesContainer(ScrollableContainer):
                 img.physical_pixel_sizes.X or 1,
             )
 
+    # Converted
     def update_metadata_on_file_select(self):
         """Update self._save_name.value and metadata if selected."""
+        # TODO: get true stem of file, in case .ome.tiff
         self._save_name.value = str(self._files.value[0].stem)
         img = nImage(self._files.value[0])
 
@@ -468,6 +472,28 @@ class UtilitiesContainer(ScrollableContainer):
             update_channel_names=self._update_channel_names.value,
             update_scale=self._update_scale.value,
         )
+
+    def append_scene_to_name(self):
+        """Append the scene to the save name."""
+        if self._viewer.layers.selection.active is not None:
+            try:
+                img = self._viewer.layers.selection.active.metadata['bioimage']
+                # remove bad characters from scene name
+                scene = re.sub(r'[^\w\s]', '-', img.current_scene)
+                self._save_name.value = f'{self._save_name.value}_{scene}'
+            except AttributeError:
+                self._results.value = (
+                    'Tried to append scene to name, but layer not opened with'
+                    ' neuralDev reader.'
+                )
+        else:
+            self._results.value = (
+                'Tried to append scene to name, but no layer selected.'
+                ' So the first scene from the first file will be appended.'
+            )
+            img = nImage(self._files.value[0])
+            scene = re.sub(r'[^\w\s]', '-', img.current_scene)
+            self._save_name.value = f'{self._save_name.value}_{scene}'
 
     def update_metadata_from_layer(self):
         """
