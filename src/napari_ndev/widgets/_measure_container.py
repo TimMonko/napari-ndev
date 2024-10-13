@@ -545,41 +545,42 @@ class MeasureContainer(Container):
             lbl = BioImage(label_dir / file.name)
             id_string = helpers.create_id_string(lbl, file.stem)
 
-            # iterate through each channel in the label image
-            label_names_list = []
-            for label_chan in self._label_images.value:
-                label_chan = label_chan[8:]
-                label_names_list.append(label_chan)
-                lbl_C = lbl.channel_names.index(label_chan)
-
-                intensity_images = []
-                intensity_names = []
-
                 # get the itnensity image only if the image directory is not empty
-                if self._image_directory.value:
-                    image_path = image_dir / file.name
-                    if not image_path.exists():
-                        logger.error(
-                            'Image file %s not found in intensity directory',
-                            file.name,
-                        )
-                        self._progress_bar.value = idx + 1
-                        continue
-                    img = BioImage(image_path)
-                if self._region_directory.value:
-                    region_path = region_dir / file.name
-                    if not region_path.exists():
-                        logger.error(
-                            'Region file %s not found in region directory',
-                            file.name,
-                        )
-                        self._progress_bar.value = idx + 1
-                        continue
-                    reg = BioImage(region_path)
+            if self._image_directory.value:
+                image_path = image_dir / file.name
+                if not image_path.exists():
+                    logger.error(
+                        'Image file %s not found in intensity directory',
+                        file.name,
+                    )
+                    self._progress_bar.value = idx + 1
+                    continue
+                img = BioImage(image_path)
+            if self._region_directory.value:
+                region_path = region_dir / file.name
+                if not region_path.exists():
+                    logger.error(
+                        'Region file %s not found in region directory',
+                        file.name,
+                    )
+                    self._progress_bar.value = idx + 1
+                    continue
+                reg = BioImage(region_path)
 
-                for scene_idx, _scene in enumerate(lbl.scenes):
+            for scene_idx, _scene in enumerate(lbl.scenes):
+                lbl.set_scene(scene_idx)
+                label_names_list = []
+
+                # iterate through each channel in the label image
+                for label_chan in self._label_images.value:
+                    label_chan = label_chan[8:]
+                    label_names_list.append(label_chan)
+                    lbl_C = lbl.channel_names.index(label_chan)
+
+                    intensity_images = []
+                    intensity_names = []
+
                     logger.info('Processing %s : scene %s', label_chan, scene_idx)
-                    lbl.set_scene(scene_idx)
                     label = lbl.get_image_data(self._squeezed_dims, C=lbl_C)
                     id_string = helpers.create_id_string(lbl, file.stem)
 
