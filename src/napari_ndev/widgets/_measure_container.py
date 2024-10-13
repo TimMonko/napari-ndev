@@ -174,11 +174,12 @@ class MeasureContainer(Container):
         )
         self._output_directory = FileEdit(label='Output directory', mode='d')
 
-        self._label_image = ComboBox(
+        self._label_images = Select(
             label='Label image',
             choices=self._label_choices,
+            allow_multiple=True,
             nullable=False,
-            tooltip='Select label image to measure',
+            tooltip='Select label images to measure',
         )
         self._intensity_images = Select(
             label='Intensity images',
@@ -334,7 +335,7 @@ class MeasureContainer(Container):
                 self._image_directory,
                 self._region_directory,
                 self._output_directory,
-                self._label_image,
+                self._label_images,
                 self._intensity_images,
                 self._scale_tuple,
                 self._measure_button,
@@ -412,7 +413,7 @@ class MeasureContainer(Container):
         if update_label:
             self._update_dim_and_scales(img)
             self._label_choices.extend(img_channels)
-            self._label_image.choices = self._label_choices
+            self._label_images.choices = self._label_choices
 
         self._intensity_choices.extend(img_channels)
         self._intensity_images.choices = self._intensity_choices
@@ -477,24 +478,12 @@ class MeasureContainer(Container):
             self._region_directory.value
         )
 
-        # check if the label files are the same as the image files
-        # if self._image_directory.value is not None:
-        #     if len(label_files) != len(image_files):
-        #         raise ValueError(
-        #             'Number of label files and image files do not match'
-        #         )
-        # if self._region_directory.value is not None:
-        #     if len(label_files) != len(region_files):
-        #         raise ValueError(
-        #             'Number of label files and region files do not match'
-        #         )
-
-        log_loc = self._output_directory.value / '.log.txt'
+        log_loc = self._output_directory.value.with_suffix('.log.txt')
         logger, handler = helpers.setup_logger(log_loc)
 
         logger.info(
             """
-            Label Image: %s
+            Label Images: %s
             Intensity Channels: %s
             Num. Files: %d
             Label Directory: %s
@@ -507,7 +496,7 @@ class MeasureContainer(Container):
             Tx N Well: %s
             Tx Dict: %s
             """,
-            self._label_image.value,
+            self._label_images.value,
             self._intensity_images.value,
             len(label_files),
             label_dir,
@@ -520,6 +509,18 @@ class MeasureContainer(Container):
             self._tx_n_well.value,
             self._tx_dict.value,
         )
+
+        # check if the label files are the same as the image files
+        if self._image_directory.value is not None and len(label_files) != len(image_files):
+            logger.error(
+                'Number of label files (%s) and image files (%s) do not match',
+                len(label_files), len(image_files),
+            )
+        if self._region_directory.value is not None and len(label_files) != len(region_files):
+            logger.error(
+                'Number of label files (%s) and region files (%s) do not match',
+                len(label_files), len(region_files),
+            )
 
         self._progress_bar.label = f'Measuring {len(label_files)} Images'
         self._progress_bar.value = 0
@@ -544,12 +545,6 @@ class MeasureContainer(Container):
             lbl = BioImage(label_dir / file.name)
             id_string = helpers.create_id_string(lbl, file.stem)
 
-            label_chan = self._label_image.value[8:]
-            lbl_C = lbl.channel_names.index(label_chan)
-
-            intensity_images = []
-            intensity_names = []
-
             # get the itnensity image only if the image directory is not empty
             if self._image_directory.value:
                 image_path = image_dir / file.name
@@ -573,67 +568,80 @@ class MeasureContainer(Container):
                 reg = BioImage(region_path)
 
             for scene_idx, _scene in enumerate(lbl.scenes):
-                logger.info('Processing scene %s', scene_idx)
                 lbl.set_scene(scene_idx)
-                label = lbl.get_image_data(self._squeezed_dims, C=lbl_C)
-                id_string = helpers.create_id_string(lbl, file.stem)
+                label_names_list = []
 
-                # Get stack of intensity images if there are any selected
-                if self._intensity_images.value and not None:
-                    for channel in self._intensity_images.value:
-                        if channel.startswith('Labels: '):
-                            chan = channel[8:]
-                            lbl_C = lbl.channel_names.index(chan)
-                            lbl.set_scene(scene_idx)
-                            chan_img = lbl.get_image_data(
-                                self._squeezed_dims, C=lbl_C
-                            )
-                        elif channel.startswith('Intensity: '):
-                            chan = channel[11:]
-                            img_C = img.channel_names.index(chan)
-                            img.set_scene(scene_idx)
-                            chan_img = img.get_image_data(
-                                self._squeezed_dims, C=img_C
-                            )
-                        elif channel.startswith('Region: '):
-                            chan = channel[8:]
-                            reg_C = reg.channel_names.index(chan)
-                            img.set_scene(scene_idx)
-                            chan_img = reg.get_image_data(
-                                self._squeezed_dims, C=reg_C
-                            )
-                        intensity_names.append(chan)
-                        intensity_images.append(chan_img)
+                # iterate through each channel in the label image
+                for label_chan in self._label_images.value:
+                    label_chan = label_chan[8:]
+                    label_names_list.append(label_chan)
+                    lbl_C = lbl.channel_names.index(label_chan)
 
-                    # the last dim is the multi-channel dim for regionprops
-                    intensity_stack = np.stack(intensity_images, axis=-1)
+                    intensity_images = []
+                    intensity_names = []
 
-                else:
-                    intensity_stack = None
-                    intensity_names = None
+                    logger.info('Processing %s : scene %s', label_chan, scene_idx)
+                    label = lbl.get_image_data(self._squeezed_dims, C=lbl_C)
+                    id_string = helpers.create_id_string(lbl, file.stem)
 
-                # start the measuring here
-                # TODO: Add optional scaling, in case images have different scales?
-                measure_props_df = ndev_measure.measure_regionprops(
-                    label_images=label,
-                    label_names=label_chan,
-                    intensity_images=intensity_stack,
-                    intensity_names=intensity_names,
-                    properties=properties,
-                    scale=props_scale,
-                    id_string=id_string,
-                    id_regex_dict=id_regex_dict,
-                    tx_id=self._tx_id.value,
-                    tx_dict=tx_dict,
-                    tx_n_well=self._tx_n_well.value,
-                    save_data_path=None,
-                )
+                    # Get stack of intensity images if there are any selected
+                    if self._intensity_images.value and not None:
+                        for channel in self._intensity_images.value:
+                            if channel.startswith('Labels: '):
+                                chan = channel[8:]
+                                lbl_C = lbl.channel_names.index(chan)
+                                lbl.set_scene(scene_idx)
+                                chan_img = lbl.get_image_data(
+                                    self._squeezed_dims, C=lbl_C
+                                )
+                            elif channel.startswith('Intensity: '):
+                                chan = channel[11:]
+                                img_C = img.channel_names.index(chan)
+                                img.set_scene(scene_idx)
+                                chan_img = img.get_image_data(
+                                    self._squeezed_dims, C=img_C
+                                )
+                            elif channel.startswith('Region: '):
+                                chan = channel[8:]
+                                reg_C = reg.channel_names.index(chan)
+                                img.set_scene(scene_idx)
+                                chan_img = reg.get_image_data(
+                                    self._squeezed_dims, C=reg_C
+                                )
+                            intensity_names.append(chan)
+                            intensity_images.append(chan_img)
 
-                measure_props_concat.append(measure_props_df)
-                self._progress_bar.value = idx + 1
+                        # the last dim is the multi-channel dim for regionprops
+                        intensity_stack = np.stack(intensity_images, axis=-1)
+
+                    else:
+                        intensity_stack = None
+                        intensity_names = None
+
+                    # start the measuring here
+                    # TODO: Add optional scaling, in case images have different scales?
+                    measure_props_df = ndev_measure.measure_regionprops(
+                        label_images=label,
+                        label_names=label_chan,
+                        intensity_images=intensity_stack,
+                        intensity_names=intensity_names,
+                        properties=properties,
+                        scale=props_scale,
+                        id_string=id_string,
+                        id_regex_dict=id_regex_dict,
+                        tx_id=self._tx_id.value,
+                        tx_dict=tx_dict,
+                        tx_n_well=self._tx_n_well.value,
+                        save_data_path=None,
+                    )
+                    measure_props_df.insert(0, 'label_name', label_chan)
+
+                    measure_props_concat.append(measure_props_df)
+                    self._progress_bar.value = idx + 1
 
         measure_props_df = pd.concat(measure_props_concat)
-        save_loc = self._output_directory.value / f'measure_props_{label_chan}.csv'
+        labels_string = '_'.join(label_names_list)
+        save_loc = self._output_directory.value / f'measure_props_{labels_string}.csv'
         measure_props_df.to_csv(save_loc, index=False)
 
         logger.removeHandler(handler)
@@ -657,6 +665,10 @@ class MeasureContainer(Container):
         """
         from napari_ndev import measure as ndev_measure
 
+        self._progress_bar.label = 'Grouping Measurements'
+        self._progress_bar.value = 0
+        self._progress_bar.max = 1
+
         df = pd.read_csv(self._measured_data_path.value)
 
         # Filter out None values from agg_cols
@@ -676,4 +688,5 @@ class MeasureContainer(Container):
         )
         grouped_df.to_csv(save_loc, index=False)
 
+        self._progress_bar.value = 1
         return grouped_df
