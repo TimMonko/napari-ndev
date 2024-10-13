@@ -110,10 +110,9 @@ def napari_reader_function(
         logger.info("Bioio: Expected a single path, got a list of paths.")
         return None
 
-    in_memory = _determine_in_memory(path) if in_memory is None else in_memory
-    logger.info('Bioio: Reading in-memory: %s', in_memory)
-
     img = nImage(path, reader=reader)
+    in_memory = img._determine_in_memory(path) if in_memory is None else in_memory
+    logger.info('Bioio: Reading in-memory: %s', in_memory)
 
     if len(img.scenes) > 1 and not open_first_scene_only:
         _get_scenes(path=path, img=img, in_memory=in_memory)
@@ -125,23 +124,6 @@ def napari_reader_function(
     img_meta = img.get_napari_metadata(path)
 
     return [(img_data.data, img_meta, layer_type)]
-
-def _determine_in_memory(
-    path: PathLike,
-    max_mem_bytes: int = 4e9,
-    max_mem_percent: int = 0.3
-) -> bool:
-    """Determine whether to read the file in memory."""
-    from bioio_base.io import pathlike_to_fs
-    from psutil import virtual_memory
-
-    fs, path = pathlike_to_fs(path)
-    filesize = fs.size(path)
-    available_mem = virtual_memory().available
-    return (
-        filesize <= max_mem_bytes
-        and filesize / available_mem <= max_mem_percent
-    )
 
 def _widget_is_checked(widget_name: str) -> bool:
     import napari
