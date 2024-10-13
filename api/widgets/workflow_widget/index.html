@@ -699,11 +699,35 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
+  <a href="#napari_ndev.widgets._workflow_container.WorkflowContainer(viewer)" class="md-nav__link">
+    <span class="md-ellipsis">
+      <code class="doc-symbol doc-symbol-toc doc-symbol-parameter"></code>&nbsp;viewer
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#napari_ndev.widgets._workflow_container.WorkflowContainer.__init__" class="md-nav__link">
     <span class="md-ellipsis">
       <code class="doc-symbol doc-symbol-toc doc-symbol-method"></code>&nbsp;__init__
     </span>
   </a>
+  
+    <nav class="md-nav" aria-label=" __init__">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#napari_ndev.widgets._workflow_container.WorkflowContainer.__init__(viewer)" class="md-nav__link">
+    <span class="md-ellipsis">
+      <code class="doc-symbol doc-symbol-toc doc-symbol-parameter"></code>&nbsp;viewer
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
   
 </li>
         
@@ -950,11 +974,35 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
+  <a href="#napari_ndev.widgets._workflow_container.WorkflowContainer(viewer)" class="md-nav__link">
+    <span class="md-ellipsis">
+      <code class="doc-symbol doc-symbol-toc doc-symbol-parameter"></code>&nbsp;viewer
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#napari_ndev.widgets._workflow_container.WorkflowContainer.__init__" class="md-nav__link">
     <span class="md-ellipsis">
       <code class="doc-symbol doc-symbol-toc doc-symbol-method"></code>&nbsp;__init__
     </span>
   </a>
+  
+    <nav class="md-nav" aria-label=" __init__">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#napari_ndev.widgets._workflow_container.WorkflowContainer.__init__(viewer)" class="md-nav__link">
+    <span class="md-ellipsis">
+      <code class="doc-symbol doc-symbol-toc doc-symbol-parameter"></code>&nbsp;viewer
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
   
 </li>
         
@@ -1004,6 +1052,11 @@
 
 
 
+
+
+
+
+
   <div class="doc doc-children">
 
 
@@ -1026,7 +1079,7 @@
 
     <div class="doc doc-contents ">
             <p class="doc doc-class-bases">
-              Bases: <code><span title="magicgui.widgets.Container">Container</span></code></p>
+              Bases: <code>Container</code></p>
 
 
         <p>Container class for managing the workflow functionality in napari-ndev.</p>
@@ -1035,8 +1088,8 @@
 <p><span class="doc-section-title">Parameters:</span></p>
     <ul>
         <li class="doc-section-item field-body">
-          <b><code>viewer</code></b>
-              (<code><a class="autorefs autorefs-external" title="napari.viewer.Viewer" href="https://napari.org/stable/api/napari.Viewer.html#napari.Viewer">Viewer</a></code>, default:
+<h3 id="napari_ndev.widgets._workflow_container.WorkflowContainer(viewer)" class="doc doc-heading doc-heading-parameter">              <b><code>viewer</code></b>
+<a href="#napari_ndev.widgets._workflow_container.WorkflowContainer(viewer)" class="headerlink" title="Permanent link">#</a></h3>              (<code>Viewer</code>, default:
                   <code>None</code>
 )
           –
@@ -1051,7 +1104,7 @@
     <ul>
         <li class="doc-section-item field-body">
           <b><code><span title="napari_ndev.widgets._workflow_container.WorkflowContainer.viewer">viewer</span></code></b>
-              (<code><a class="autorefs autorefs-external" title="napari.viewer.Viewer" href="https://napari.org/stable/api/napari.Viewer.html#napari.Viewer">Viewer</a></code>)
+              (<code>Viewer</code>)
           –
           <div class="doc-md-description">
             <p>The napari viewer instance.</p>
@@ -1059,7 +1112,7 @@
         </li>
         <li class="doc-section-item field-body">
           <b><code><span title="napari_ndev.widgets._workflow_container.WorkflowContainer.roots">roots</span></code></b>
-              (<code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#list">list</a></code>)
+              (<code>list</code>)
           –
           <div class="doc-md-description">
             <p>List of ComboBox widgets representing the workflow roots.</p>
@@ -1067,7 +1120,7 @@
         </li>
         <li class="doc-section-item field-body">
           <b><code><span title="napari_ndev.widgets._workflow_container.WorkflowContainer._channel_names">_channel_names</span></code></b>
-              (<code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#list">list</a></code>)
+              (<code>list</code>)
           –
           <div class="doc-md-description">
             <p>List of channel names extracted from the image data.</p>
@@ -1075,7 +1128,7 @@
         </li>
         <li class="doc-section-item field-body">
           <b><code><span title="napari_ndev.widgets._workflow_container.WorkflowContainer._img_dims">_img_dims</span></code></b>
-              (<code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a></code>)
+              (<code>str</code>)
           –
           <div class="doc-md-description">
             <p>The dimensions of the image data.</p>
@@ -1111,6 +1164,11 @@ workflow_file.changed : Signal
 batch_button.clicked : Signal
     Signal emitted when the batch button is clicked.</p>
 </details>
+
+
+
+
+
               <details class="quote">
                 <summary>Source code in <code>src/napari_ndev/widgets/_workflow_container.py</code></summary>
                 <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 24</span>
@@ -1694,8 +1752,8 @@ batch_button.clicked : Signal
 <p><span class="doc-section-title">Parameters:</span></p>
     <ul>
         <li class="doc-section-item field-body">
-          <b><code>viewer</code></b>
-              (<code><a class="autorefs autorefs-external" title="napari.viewer.Viewer" href="https://napari.org/stable/api/napari.Viewer.html#napari.Viewer">Viewer</a></code>, default:
+<h4 id="napari_ndev.widgets._workflow_container.WorkflowContainer.__init__(viewer)" class="doc doc-heading doc-heading-parameter">              <b><code>viewer</code></b>
+<a href="#napari_ndev.widgets._workflow_container.WorkflowContainer.__init__(viewer)" class="headerlink" title="Permanent link">#</a></h4>              (<code>Viewer</code>, default:
                   <code>None</code>
 )
           –

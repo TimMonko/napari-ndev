@@ -716,6 +716,21 @@
     </span>
   </a>
   
+    <nav class="md-nav" aria-label=" ApocContainer">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#napari_ndev.widgets._apoc_container.ApocContainer(viewer)" class="md-nav__link">
+    <span class="md-ellipsis">
+      <code class="doc-symbol doc-symbol-toc doc-symbol-parameter"></code>&nbsp;viewer
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
 </li>
       
     </ul>
@@ -922,6 +937,21 @@
     </span>
   </a>
   
+    <nav class="md-nav" aria-label=" ApocContainer">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#napari_ndev.widgets._apoc_container.ApocContainer(viewer)" class="md-nav__link">
+    <span class="md-ellipsis">
+      <code class="doc-symbol doc-symbol-toc doc-symbol-parameter"></code>&nbsp;viewer
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
 </li>
       
     </ul>
@@ -956,6 +986,11 @@
 
 
 
+
+
+
+
+
   <div class="doc doc-children">
 
 
@@ -978,7 +1013,7 @@
 
     <div class="doc doc-contents ">
             <p class="doc doc-class-bases">
-              Bases: <code><span title="magicgui.widgets.Container">Container</span></code></p>
+              Bases: <code>Container</code></p>
 
 
         <p>Container class for managing the ApocContainer widget in napari.</p>
@@ -987,8 +1022,8 @@
 <p><span class="doc-section-title">Parameters:</span></p>
     <ul>
         <li class="doc-section-item field-body">
-          <b><code>viewer</code></b>
-              (<code><a class="autorefs autorefs-external" title="napari.viewer.Viewer" href="https://napari.org/stable/api/napari.Viewer.html#napari.Viewer">Viewer</a></code>, default:
+<h3 id="napari_ndev.widgets._apoc_container.ApocContainer(viewer)" class="doc doc-heading doc-heading-parameter">              <b><code>viewer</code></b>
+<a href="#napari_ndev.widgets._apoc_container.ApocContainer(viewer)" class="headerlink" title="Permanent link">#</a></h3>              (<code>Viewer</code>, default:
                   <code>None</code>
 )
           –
@@ -1003,7 +1038,7 @@
     <ul>
         <li class="doc-section-item field-body">
           <b><code><span title="napari_ndev.widgets._apoc_container.ApocContainer._viewer">_viewer</span></code></b>
-              (<code><a class="autorefs autorefs-external" title="napari.viewer.Viewer" href="https://napari.org/stable/api/napari.Viewer.html#napari.Viewer">Viewer</a></code>)
+              (<code>Viewer</code>)
           –
           <div class="doc-md-description">
             <p>The napari viewer instance.</p>
@@ -1011,7 +1046,7 @@
         </li>
         <li class="doc-section-item field-body">
           <b><code><span title="napari_ndev.widgets._apoc_container.ApocContainer._image_directory">_image_directory</span></code></b>
-              (<code><span title="magicgui.widgets.FileEdit">FileEdit</span></code>)
+              (<code>FileEdit</code>)
           –
           <div class="doc-md-description">
             <p>Widget for selecting the image directory.</p>
@@ -1019,7 +1054,7 @@
         </li>
         <li class="doc-section-item field-body">
           <b><code><span title="napari_ndev.widgets._apoc_container.ApocContainer._label_directory">_label_directory</span></code></b>
-              (<code><span title="magicgui.widgets.FileEdit">FileEdit</span></code>)
+              (<code>FileEdit</code>)
           –
           <div class="doc-md-description">
             <p>Widget for selecting the label directory.</p>
@@ -1027,7 +1062,7 @@
         </li>
         <li class="doc-section-item field-body">
           <b><code><span title="napari_ndev.widgets._apoc_container.ApocContainer._output_directory">_output_directory</span></code></b>
-              (<code><span title="magicgui.widgets.FileEdit">FileEdit</span></code>)
+              (<code>FileEdit</code>)
           –
           <div class="doc-md-description">
             <p>Widget for selecting the output directory.</p>
@@ -1035,7 +1070,7 @@
         </li>
         <li class="doc-section-item field-body">
           <b><code><span title="napari_ndev.widgets._apoc_container.ApocContainer._classifier_file">_classifier_file</span></code></b>
-              (<code><span title="magicgui.widgets.FileEdit">FileEdit</span></code>)
+              (<code>FileEdit</code>)
           –
           <div class="doc-md-description">
             <p>Widget for selecting the classifier file.</p>
@@ -1043,7 +1078,7 @@
         </li>
         <li class="doc-section-item field-body">
           <b><code><span title="napari_ndev.widgets._apoc_container.ApocContainer._classifier_type_mapping">_classifier_type_mapping</span></code></b>
-              (<code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#dict">dict</a></code>)
+              (<code>dict</code>)
           –
           <div class="doc-md-description">
             <p>Mapping of classifier types to their corresponding classes.</p>
@@ -1051,7 +1086,7 @@
         </li>
         <li class="doc-section-item field-body">
           <b><code><span title="napari_ndev.widgets._apoc_container.ApocContainer._classifier_type">_classifier_type</span></code></b>
-              (<code><span title="magicgui.widgets.RadioButtons">RadioButtons</span></code>)
+              (<code>RadioButtons</code>)
           –
           <div class="doc-md-description">
             <p>Widget for selecting the classifier type.</p>
@@ -1059,7 +1094,7 @@
         </li>
         <li class="doc-section-item field-body">
           <b><code><span title="napari_ndev.widgets._apoc_container.ApocContainer._max_depth">_max_depth</span></code></b>
-              (<code><span title="magicgui.widgets.SpinBox">SpinBox</span></code>)
+              (<code>SpinBox</code>)
           –
           <div class="doc-md-description">
             <p>Widget for selecting the number of forests.</p>
@@ -1067,7 +1102,7 @@
         </li>
         <li class="doc-section-item field-body">
           <b><code><span title="napari_ndev.widgets._apoc_container.ApocContainer._num_trees">_num_trees</span></code></b>
-              (<code><span title="magicgui.widgets.SpinBox">SpinBox</span></code>)
+              (<code>SpinBox</code>)
           –
           <div class="doc-md-description">
             <p>Widget for selecting the number of trees.</p>
@@ -1075,7 +1110,7 @@
         </li>
         <li class="doc-section-item field-body">
           <b><code><span title="napari_ndev.widgets._apoc_container.ApocContainer._positive_class_id">_positive_class_id</span></code></b>
-              (<code><span title="magicgui.widgets.SpinBox">SpinBox</span></code>)
+              (<code>SpinBox</code>)
           –
           <div class="doc-md-description">
             <p>Widget for selecting the object label ID.</p>
@@ -1083,7 +1118,7 @@
         </li>
         <li class="doc-section-item field-body">
           <b><code><span title="napari_ndev.widgets._apoc_container.ApocContainer._image_channels">_image_channels</span></code></b>
-              (<code><span title="magicgui.widgets.Select">Select</span></code>)
+              (<code>Select</code>)
           –
           <div class="doc-md-description">
             <p>Widget for selecting the image channels.</p>
@@ -1091,7 +1126,7 @@
         </li>
         <li class="doc-section-item field-body">
           <b><code><span title="napari_ndev.widgets._apoc_container.ApocContainer._channel_order_label">_channel_order_label</span></code></b>
-              (<code><span title="magicgui.widgets.Label">Label</span></code>)
+              (<code>Label</code>)
           –
           <div class="doc-md-description">
             <p>Label widget for displaying the selected channel order.</p>
@@ -1099,7 +1134,7 @@
         </li>
         <li class="doc-section-item field-body">
           <b><code><span title="napari_ndev.widgets._apoc_container.ApocContainer._PDFS">_PDFS</span></code></b>
-              (<code><a class="autorefs autorefs-external" title="enum.Enum" href="https://docs.python.org/3/library/enum.html#enum.Enum">Enum</a></code>)
+              (<code>Enum</code>)
           –
           <div class="doc-md-description">
             <p>Enum for predefined feature sets.</p>
@@ -1107,7 +1142,7 @@
         </li>
         <li class="doc-section-item field-body">
           <b><code><span title="napari_ndev.widgets._apoc_container.ApocContainer._predefined_features">_predefined_features</span></code></b>
-              (<code><span title="magicgui.widgets.ComboBox">ComboBox</span></code>)
+              (<code>ComboBox</code>)
           –
           <div class="doc-md-description">
             <p>Widget for selecting the features.</p>
@@ -1115,7 +1150,7 @@
         </li>
         <li class="doc-section-item field-body">
           <b><code><span title="napari_ndev.widgets._apoc_container.ApocContainer._custom_features">_custom_features</span></code></b>
-              (<code><span title="magicgui.widgets.LineEdit">LineEdit</span></code>)
+              (<code>LineEdit</code>)
           –
           <div class="doc-md-description">
             <p>Widget for entering custom feature string.</p>
@@ -1123,7 +1158,7 @@
         </li>
         <li class="doc-section-item field-body">
           <b><code><span title="napari_ndev.widgets._apoc_container.ApocContainer._open_custom_feature_generator">_open_custom_feature_generator</span></code></b>
-              (<code><span title="magicgui.widgets.PushButton">PushButton</span></code>)
+              (<code>PushButton</code>)
           –
           <div class="doc-md-description">
             <p>Button for opening the custom feature generator widget.</p>
@@ -1131,7 +1166,7 @@
         </li>
         <li class="doc-section-item field-body">
           <b><code><span title="napari_ndev.widgets._apoc_container.ApocContainer._continue_training">_continue_training</span></code></b>
-              (<code><span title="magicgui.widgets.CheckBox">CheckBox</span></code>)
+              (<code>CheckBox</code>)
           –
           <div class="doc-md-description">
             <p>Checkbox for indicating whether to continue training.</p>
@@ -1139,7 +1174,7 @@
         </li>
         <li class="doc-section-item field-body">
           <b><code><span title="napari_ndev.widgets._apoc_container.ApocContainer._batch_train_button">_batch_train_button</span></code></b>
-              (<code><span title="magicgui.widgets.PushButton">PushButton</span></code>)
+              (<code>PushButton</code>)
           –
           <div class="doc-md-description">
             <p>Button for training the classifier on image-label pairs.</p>
@@ -1147,7 +1182,7 @@
         </li>
         <li class="doc-section-item field-body">
           <b><code><span title="napari_ndev.widgets._apoc_container.ApocContainer._batch_predict_button">_batch_predict_button</span></code></b>
-              (<code><span title="magicgui.widgets.PushButton">PushButton</span></code>)
+              (<code>PushButton</code>)
           –
           <div class="doc-md-description">
             <p>Button for predicting labels with the classifier.</p>
@@ -1155,7 +1190,7 @@
         </li>
         <li class="doc-section-item field-body">
           <b><code><span title="napari_ndev.widgets._apoc_container.ApocContainer._progress_bar">_progress_bar</span></code></b>
-              (<code><span title="magicgui.widgets.ProgressBar">ProgressBar</span></code>)
+              (<code>ProgressBar</code>)
           –
           <div class="doc-md-description">
             <p>Progress bar widget.</p>
@@ -1163,7 +1198,7 @@
         </li>
         <li class="doc-section-item field-body">
           <b><code><span title="napari_ndev.widgets._apoc_container.ApocContainer._image_layer">_image_layer</span></code></b>
-              (<code><span title="magicgui.widgets.Select">Select</span></code>)
+              (<code>Select</code>)
           –
           <div class="doc-md-description">
             <p>Widget for selecting the image layers.</p>
@@ -1179,7 +1214,7 @@
         </li>
         <li class="doc-section-item field-body">
           <b><code><span title="napari_ndev.widgets._apoc_container.ApocContainer._train_image_button">_train_image_button</span></code></b>
-              (<code><span title="magicgui.widgets.PushButton">PushButton</span></code>)
+              (<code>PushButton</code>)
           –
           <div class="doc-md-description">
             <p>Button for training the classifier on selected layers using labels.</p>
@@ -1187,7 +1222,7 @@
         </li>
         <li class="doc-section-item field-body">
           <b><code><span title="napari_ndev.widgets._apoc_container.ApocContainer._predict_image_layer">_predict_image_layer</span></code></b>
-              (<code><span title="magicgui.widgets.PushButton">PushButton</span></code>)
+              (<code>PushButton</code>)
           –
           <div class="doc-md-description">
             <p>Button for predicting using the classifier on selected layers.</p>
@@ -1195,7 +1230,7 @@
         </li>
         <li class="doc-section-item field-body">
           <b><code><span title="napari_ndev.widgets._apoc_container.ApocContainer._single_result_label">_single_result_label</span></code></b>
-              (<code><span title="magicgui.widgets.Label">Label</span></code>)
+              (<code>Label</code>)
           –
           <div class="doc-md-description">
             <p>Label widget for displaying a single result.</p>
@@ -1271,6 +1306,11 @@ type.</p>
             </div>
           </li>
     </ul>
+
+
+
+
+
 
               <details class="quote">
                 <summary>Source code in <code>src/napari_ndev/widgets/_apoc_container.py</code></summary>
