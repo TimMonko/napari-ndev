@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from pathlib import Path
-from typing import TYPE_CHECKING, Any
+from typing import Any
 
 import dask.array as da
 
@@ -11,12 +11,10 @@ import pytest
 
 from napari_ndev._napari_reader import napari_get_reader
 
-if TYPE_CHECKING:
-    from npe2._pytest_plugin import TestPluginManager
-
 ###############################################################################
 
 RGB_TIFF = "RGB.tiff" # has two scense
+MULTISCENE_CZI = r"0T-4C-0Z-7pos.czi"
 # PNG_FILE = "example.png"
 # GIF_FILE = "example.gif"
 # OME_TIFF = "pipeline-4.ome.tiff"
@@ -49,9 +47,9 @@ def test_reader(
     filename: str,
     in_memory: bool,
     expected_shape: tuple[int, ...],
-    expected_dtype: type,
+    expected_dtype,
     expected_meta: dict[str, Any],
-    npe2pm: TestPluginManager,
+    # npe2pm: TestPluginManager,
 ) -> None:
     # Resolve filename to filepath
     if isinstance(filename, str):
@@ -78,7 +76,54 @@ def test_reader(
         meta.pop('metadata', None)
         assert meta == expected_meta
 
-        # # confirm that this also works via npe2
-        # with npe2pm.tmp_plugin(package='napari-ndev') as plugin:
-        #     [via_npe2] = npe2.read([path], stack=False, plugin_name=plugin.name)
-        #     assert via_npe2[0].shape == data.shape
+
+@pytest.mark.parametrize(
+    ("in_memory", "expected_dtype"),
+    [
+        (True, np.ndarray),
+        (False, da.core.Array),
+    ],
+)
+@pytest.mark.parametrize(
+    ("filename", "expected_shape"),
+    [
+        (RGB_TIFF, (120, 160, 3)),
+        (MULTISCENE_CZI, (32, 32)),
+    ],
+)
+def test_for_multiscene_widget(
+    make_napari_viewer,
+    resources_dir: Path,
+    filename: str,
+    in_memory: bool,
+    expected_dtype,
+    expected_shape: tuple[int, ...],
+) -> None:
+    # Make a viewer
+    viewer = make_napari_viewer()
+    assert len(viewer.layers) == 0
+    assert len(viewer.window._dock_widgets) == 0
+
+    # Resolve filename to filepath
+    if isinstance(filename, str):
+        path = str(resources_dir / filename)
+
+    # Get reader
+    reader = napari_get_reader(path, in_memory)
+
+    if reader is not None:
+        # Call reader on path
+        reader(path)
+
+        if len(viewer.window._dock_widgets) != 0:
+            # Get the second scene
+            viewer.window._dock_widgets[f"{filename} :: Scenes"].widget().setCurrentRow(
+                1
+            )
+            data = viewer.layers[0].data
+            assert isinstance(data, expected_dtype)
+            assert data.shape == expected_shape
+        else:
+            data, _, _ = reader(path)[0]
+            assert isinstance(data, expected_dtype)
+            assert data.shape == expected_shape
