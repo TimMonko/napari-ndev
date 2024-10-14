@@ -157,16 +157,16 @@ def _get_scenes(path: PathLike, img: nImage, in_memory: bool) -> None:
         channel_unpack_checkbox = QCheckBox(UNPACK_CHANNELS_TO_LAYERS)
         channel_unpack_checkbox.setChecked(True)
 
-        # Create a checkbox widget to set "Mosaic Merge" or not
-        dont_merge_mosaics_checkbox = QCheckBox(DONT_MERGE_MOSAICS)
-        dont_merge_mosaics_checkbox.setChecked(False)
+        # # Create a checkbox widget to set "Mosaic Merge" or not
+        # dont_merge_mosaics_checkbox = QCheckBox(DONT_MERGE_MOSAICS)
+        # dont_merge_mosaics_checkbox.setChecked(False)
 
         # Add all scene management state to a single box
         scene_manager_group = QGroupBox()
         scene_manager_group_layout = QVBoxLayout()
         scene_manager_group_layout.addWidget(scene_clear_checkbox)
         scene_manager_group_layout.addWidget(channel_unpack_checkbox)
-        scene_manager_group_layout.addWidget(dont_merge_mosaics_checkbox)
+        # scene_manager_group_layout.addWidget(dont_merge_mosaics_checkbox)
         scene_manager_group.setLayout(scene_manager_group_layout)
         scene_manager_group.setFixedHeight(100)
 
