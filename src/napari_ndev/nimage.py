@@ -16,7 +16,7 @@ from napari.types import PathLike
 
 logger = logging.getLogger(__name__)
 
-LABEL_DELIMITER = " ||"
+LABEL_DELIMITER = " :: "
 
 class nImage(BioImage):
     """
@@ -53,7 +53,12 @@ class nImage(BioImage):
         self.napari_metadata = {}
         self.path = image if isinstance(image, (str, Path)) else None
 
-    def _determine_in_memory(self, path=None, max_in_mem_bytes: int = 4e9, max_in_mem_percent: int = 0.3) -> bool:
+    def _determine_in_memory(
+        self,
+        path=None,
+        max_in_mem_bytes: int = 4e9,
+        max_in_mem_percent: int = 0.3
+    ) -> bool:
         """
         Determine whether the image should be loaded into memory or not.
 
