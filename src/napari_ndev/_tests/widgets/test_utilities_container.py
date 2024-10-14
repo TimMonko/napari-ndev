@@ -1,8 +1,6 @@
-import re
 from pathlib import Path
 
 import natsort
-
 import numpy as np
 import pytest
 
