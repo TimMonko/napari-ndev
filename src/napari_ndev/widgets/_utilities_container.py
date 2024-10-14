@@ -50,8 +50,6 @@ class UtilitiesContainer(ScrollableContainer):
     ----------
     _viewer: napari.viewer.Viewer
         The napari viewer instance.
-    _img_data: numpy.ndarray or None
-        The concatenated image data.
     _image_save_dims: str or None
         The dimension order for saving images.
     _label_save_dims: str or None
@@ -138,10 +136,6 @@ class UtilitiesContainer(ScrollableContainer):
 
         self.min_width = 500 # TODO: remove this hardcoded value
         self._viewer = viewer if viewer is not None else None
-        self._img_data = None
-        self._image_save_dims = None
-        self._label_save_dims = None
-        self._p_sizes = None
         self._squeezed_dims = None
 
         self._init_widgets()
@@ -544,8 +538,16 @@ class UtilitiesContainer(ScrollableContainer):
         """Open the selected images in the napari viewer with napari-ndev."""
         self._viewer.open(self._files.value, plugin='napari-ndev')
 
+    @staticmethod
+    def _natural_sort_key(s):
+        return [
+            int(text) if text.isdigit() else text.lower()
+            for text in re.split(r'(\d+)', s)
+        ]
+
     # Converted
     def select_next_images(self):
+        from natsort import os_sorted
         """Open the next set of images in the directyory."""
         num_files = self._files.value.__len__()
 
@@ -555,19 +557,22 @@ class UtilitiesContainer(ScrollableContainer):
 
         # get the list of files in the parent directory
         files = list(parent_dir.glob(f'*{first_file.suffix}'))
-
         # sort the files naturally (case-insensitive and numbers in order)
         # like would be scene in windows file explorer default sorting
-        files.sort(
-            key=lambda f: [
-                int(text) if text.isdigit() else text.lower()
-                for text in re.split('([0-9]+)', f.name)
-            ]
-        )
+        # https://pypi.org/project/natsort/#sort-paths-like-my-file-browser-e-g-windows-explorer-on-windows
+
+        files = os_sorted(files)
 
         # get the index of the first file in the list and then the next files
         idx = files.index(first_file)
         next_files = files[idx + num_files : idx + num_files + num_files]
+
+        # if there are no more files, then return
+        if not next_files:
+            self._results.value = (
+                'No more file sets to select.'
+            )
+            return
         # set the nwe save names, and update the file value
         img = nImage(next_files[0])
 
@@ -795,7 +800,7 @@ class UtilitiesContainer(ScrollableContainer):
             save_dir = f'{save_dir}'
         return save_dir
 
-    def save_files_as_ome_tiff(self) -> None:
+    def save_files_as_ome_tiff(self) -> np.ndarray:
         """Save the selected files as OME-TIFF using BioImage."""
         img_data = self.concatenate_files(self._files.value)
         save_dir = self._determine_save_directory('ConcatenatedImages')
@@ -817,6 +822,8 @@ class UtilitiesContainer(ScrollableContainer):
             image_name=self._save_name.value,
             result_str='Concatenated Image',
         )
+
+        return img_data
 
     def batch_concatenate_files(self) -> None:
         """
@@ -841,6 +848,11 @@ class UtilitiesContainer(ScrollableContainer):
         for _ in range(num_file_sets):
             self.select_next_images()
             self.save_files_as_ome_tiff()
+
+        self._results.value = (
+            'Batch concatenated files in directory.'
+            f'\nAt {time.strftime("%H:%M:%S")}'
+        )
 
     def save_scenes_ome_tiff(self) -> None:
         """
@@ -884,9 +896,14 @@ class UtilitiesContainer(ScrollableContainer):
                 image_name=image_id,
                 result_str=f'Scene: {img.current_scene}',
             )
+
+        self._results.value = (
+            f'Saved extracted scenes: {scenes_list}'
+            f'\nAt {time.strftime("%H:%M:%S")}'
+        )
         return
 
-    def save_layers_as_ome_tiff(self) -> None:
+    def save_layers_as_ome_tiff(self) -> np.ndarray:
         """
         Save the selected layers as OME-TIFF.
 
@@ -896,7 +913,9 @@ class UtilitiesContainer(ScrollableContainer):
             list(self._viewer.layers.selection)
         )
         # get the types of layers, to know where to save the image
-        layer_types = [type(layer).__name__ for layer in self._viewer.layers.selection]
+        layer_types = [
+            type(layer).__name__ for layer in self._viewer.layers.selection
+        ]
 
         # if there are multiple layer types, save to Layers directory
         layer_save_type = 'Layers' if len(set(layer_types)) > 1 else layer_types[0]
@@ -911,12 +930,12 @@ class UtilitiesContainer(ScrollableContainer):
             cnames = self._channel_names.value
             channel_names = ast.literal_eval(cnames) if cnames else None
         else:
-            channel_names = layer_save_type
+            channel_names = [layer_save_type]
 
         if layer_save_type == 'Shapes':
             layer_data = layer_data.astype(np.int16)
 
-        if layer_save_type == 'Labels':
+        elif layer_save_type == 'Labels':
             if layer_data.max() > 65535:
                 layer_data = layer_data.astype(np.int32)
             else:
@@ -930,3 +949,5 @@ class UtilitiesContainer(ScrollableContainer):
             image_name=self._save_name.value,
             result_str=layer_save_type,
         )
+
+        return layer_data
