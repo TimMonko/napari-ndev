@@ -16,7 +16,7 @@ from napari.types import PathLike
 
 logger = logging.getLogger(__name__)
 
-LABEL_DELIMITER = " || "
+LABEL_DELIMITER = " :: "
 
 class nImage(BioImage):
     """
