@@ -478,7 +478,7 @@ class MeasureContainer(Container):
             self._region_directory.value
         )
 
-        log_loc = self._output_directory.value.with_suffix('.log.txt')
+        log_loc = self._output_directory.value / 'measure.log.txt'
         logger, handler = helpers.setup_logger(log_loc)
 
         logger.info(
@@ -591,25 +591,25 @@ class MeasureContainer(Container):
                                 chan = channel[8:]
                                 lbl_C = lbl.channel_names.index(chan)
                                 lbl.set_scene(scene_idx)
-                                chan_img = lbl.get_image_data(
+                                inten_img = lbl.get_image_data(
                                     self._squeezed_dims, C=lbl_C
                                 )
                             elif channel.startswith('Intensity: '):
                                 chan = channel[11:]
                                 img_C = img.channel_names.index(chan)
                                 img.set_scene(scene_idx)
-                                chan_img = img.get_image_data(
+                                inten_img = img.get_image_data(
                                     self._squeezed_dims, C=img_C
                                 )
                             elif channel.startswith('Region: '):
                                 chan = channel[8:]
                                 reg_C = reg.channel_names.index(chan)
-                                img.set_scene(scene_idx)
-                                chan_img = reg.get_image_data(
+                                reg.set_scene(scene_idx)
+                                inten_img = reg.get_image_data(
                                     self._squeezed_dims, C=reg_C
                                 )
                             intensity_names.append(chan)
-                            intensity_images.append(chan_img)
+                            intensity_images.append(inten_img)
 
                         # the last dim is the multi-channel dim for regionprops
                         intensity_stack = np.stack(intensity_images, axis=-1)
@@ -681,6 +681,26 @@ class MeasureContainer(Container):
             agg_cols=agg_cols,
             agg_funcs=self._agg_funcs.value,
         )
+
+        # use the label_name column to make the dataframe wider
+        # for example 'label_names', 'label_count', 'region_min', with label_names: ['label1', 'label2']
+        # becomes label1_label_count, label2_label_count, label1_region_min, label2_region_min
+        count_col = f'{self._count_col.value}_count'
+        # get grouping calls without label name
+        index_cols = [col for col in self._grouping_cols.value if col != 'label_name']
+
+        pivot_df = grouped_df.pivot(
+            index=index_cols,
+            columns='label_name',
+            values=[count_col] + agg_cols,
+        )
+        # # flatten the multiindex columns
+        # pivot_df.columns = [f'{col[1]}_{col[0]}' for col in pivot_df.columns]
+
+        # reset index so that it is saved in the csv
+        pivot_df.reset_index(inplace=True)
+
+        grouped_df = pivot_df
 
         save_loc = (
             self._measured_data_path.value.parent /
