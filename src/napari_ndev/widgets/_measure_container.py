@@ -315,6 +315,7 @@ class MeasureContainer(Container):
             allow_multiple=True,
             tooltip='Select functions performed on aggregation columns',
         )
+        self._pivot_wider = CheckBox(label='Pivot Wider', value=True)
         self._group_measurements_button = PushButton(label='Group Measurements')
 
 
@@ -324,6 +325,7 @@ class MeasureContainer(Container):
             self._count_col,
             self._agg_cols,
             self._agg_funcs,
+            self._pivot_wider,
             self._group_measurements_button,
         ])
 
@@ -377,10 +379,16 @@ class MeasureContainer(Container):
         df = pd.read_csv(self._measured_data_path.value)
         self._grouping_cols.choices = df.columns
         self._count_col.choices = df.columns
-        self._agg_cols.choices =df.columns
+        self._agg_cols.choices = df.columns
 
+        # set default value to label_name and id if exists
+        grouping_cols = []
+        if 'label_name' in df.columns:
+            grouping_cols.append('label_name')
         if 'id' in df.columns:
-            self._grouping_cols.value = ['id']
+            grouping_cols.append('id')
+        self._grouping_cols.value = grouping_cols
+
         if 'label' in df.columns:
             self._count_col.value = 'label'
 
@@ -567,80 +575,83 @@ class MeasureContainer(Container):
                     continue
                 reg = BioImage(region_path)
 
-            for scene_idx, _scene in enumerate(lbl.scenes):
+            for scene_idx, scene in enumerate(lbl.scenes):
+                logger.info('Processing scene: %s :: %s', scene_idx, scene)
                 lbl.set_scene(scene_idx)
-                label_names_list = []
+
+                label_images = []
+                label_names = []
 
                 # iterate through each channel in the label image
                 for label_chan in self._label_images.value:
                     label_chan = label_chan[8:]
-                    label_names_list.append(label_chan)
+                    label_names.append(label_chan)
+
                     lbl_C = lbl.channel_names.index(label_chan)
-
-                    intensity_images = []
-                    intensity_names = []
-
-                    logger.info('Processing %s : scene %s', label_chan, scene_idx)
                     label = lbl.get_image_data(self._squeezed_dims, C=lbl_C)
-                    id_string = helpers.create_id_string(lbl, file.stem)
+                    label_images.append(label)
 
-                    # Get stack of intensity images if there are any selected
-                    if self._intensity_images.value and not None:
-                        for channel in self._intensity_images.value:
-                            if channel.startswith('Labels: '):
-                                chan = channel[8:]
-                                lbl_C = lbl.channel_names.index(chan)
-                                lbl.set_scene(scene_idx)
-                                inten_img = lbl.get_image_data(
-                                    self._squeezed_dims, C=lbl_C
-                                )
-                            elif channel.startswith('Intensity: '):
-                                chan = channel[11:]
-                                img_C = img.channel_names.index(chan)
-                                img.set_scene(scene_idx)
-                                inten_img = img.get_image_data(
-                                    self._squeezed_dims, C=img_C
-                                )
-                            elif channel.startswith('Region: '):
-                                chan = channel[8:]
-                                reg_C = reg.channel_names.index(chan)
-                                reg.set_scene(scene_idx)
-                                inten_img = reg.get_image_data(
-                                    self._squeezed_dims, C=reg_C
-                                )
-                            intensity_names.append(chan)
-                            intensity_images.append(inten_img)
+                intensity_images = []
+                intensity_names = []
 
-                        # the last dim is the multi-channel dim for regionprops
-                        intensity_stack = np.stack(intensity_images, axis=-1)
+                # id_string = helpers.create_id_string(lbl, file.stem)
 
-                    else:
-                        intensity_stack = None
-                        intensity_names = None
+                # Get stack of intensity images if there are any selected
+                if self._intensity_images.value and not None:
+                    for channel in self._intensity_images.value:
+                        if channel.startswith('Labels: '):
+                            chan = channel[8:]
+                            lbl_C = lbl.channel_names.index(chan)
+                            lbl.set_scene(scene_idx)
+                            inten_img = lbl.get_image_data(
+                                self._squeezed_dims, C=lbl_C
+                            )
+                        elif channel.startswith('Intensity: '):
+                            chan = channel[11:]
+                            img_C = img.channel_names.index(chan)
+                            img.set_scene(scene_idx)
+                            inten_img = img.get_image_data(
+                                self._squeezed_dims, C=img_C
+                            )
+                        elif channel.startswith('Region: '):
+                            chan = channel[8:]
+                            reg_C = reg.channel_names.index(chan)
+                            reg.set_scene(scene_idx)
+                            inten_img = reg.get_image_data(
+                                self._squeezed_dims, C=reg_C
+                            )
+                        intensity_names.append(chan)
+                        intensity_images.append(inten_img)
 
-                    # start the measuring here
-                    # TODO: Add optional scaling, in case images have different scales?
-                    measure_props_df = ndev_measure.measure_regionprops(
-                        label_images=label,
-                        label_names=label_chan,
-                        intensity_images=intensity_stack,
-                        intensity_names=intensity_names,
-                        properties=properties,
-                        scale=props_scale,
-                        id_string=id_string,
-                        id_regex_dict=id_regex_dict,
-                        tx_id=self._tx_id.value,
-                        tx_dict=tx_dict,
-                        tx_n_well=self._tx_n_well.value,
-                        save_data_path=None,
-                    )
-                    measure_props_df.insert(0, 'label_name', label_chan)
+                    # the last dim is the multi-channel dim for regionprops
+                    intensity_stack = np.stack(intensity_images, axis=-1)
 
-                    measure_props_concat.append(measure_props_df)
-                    self._progress_bar.value = idx + 1
+                else:
+                    intensity_stack = None
+                    intensity_names = None
+
+                # start the measuring here
+                # TODO: Add optional scaling, in case images have different scales?
+                measure_props_df = ndev_measure.measure_regionprops(
+                    label_images=label_images,
+                    label_names=label_names,
+                    intensity_images=intensity_stack,
+                    intensity_names=intensity_names,
+                    properties=properties,
+                    scale=props_scale,
+                    id_string=id_string,
+                    id_regex_dict=id_regex_dict,
+                    tx_id=self._tx_id.value,
+                    tx_dict=tx_dict,
+                    tx_n_well=self._tx_n_well.value,
+                    save_data_path=None,
+                )
+
+                measure_props_concat.append(measure_props_df)
+                self._progress_bar.value = idx + 1
 
         measure_props_df = pd.concat(measure_props_concat)
-        labels_string = '_'.join(label_names_list)
+        labels_string = '_'.join(label_names)
         save_loc = self._output_directory.value / f'measure_props_{labels_string}.csv'
         measure_props_df.to_csv(save_loc, index=False)
 
@@ -681,26 +692,26 @@ class MeasureContainer(Container):
             agg_cols=agg_cols,
             agg_funcs=self._agg_funcs.value,
         )
-
         # use the label_name column to make the dataframe wider
-        # for example 'label_names', 'label_count', 'region_min', with label_names: ['label1', 'label2']
-        # becomes label1_label_count, label2_label_count, label1_region_min, label2_region_min
-        count_col = f'{self._count_col.value}_count'
-        # get grouping calls without label name
-        index_cols = [col for col in self._grouping_cols.value if col != 'label_name']
+        if self._pivot_wider.value:
+            # get grouping calls without label name
+            index_cols = [col for col in self._grouping_cols.value if col != 'label_name']
 
-        pivot_df = grouped_df.pivot(
-            index=index_cols,
-            columns='label_name',
-            values=[count_col] + agg_cols,
-        )
-        # # flatten the multiindex columns
-        # pivot_df.columns = [f'{col[1]}_{col[0]}' for col in pivot_df.columns]
+            # alternatively, pivot every values column that is not present in index or columns
+            value_cols = [col for col in grouped_df.columns if col not in self._grouping_cols.value]
 
-        # reset index so that it is saved in the csv
-        pivot_df.reset_index(inplace=True)
+            pivot_df = grouped_df.pivot(
+                index=index_cols,
+                columns='label_name',
+                values=value_cols,
+            )
+            # # flatten the multiindex columns
+            # pivot_df.columns = [f'{col[1]}_{col[0]}' for col in pivot_df.columns]
 
-        grouped_df = pivot_df
+            # reset index so that it is saved in the csv
+            pivot_df.reset_index(inplace=True)
+
+            grouped_df = pivot_df
 
         save_loc = (
             self._measured_data_path.value.parent /
