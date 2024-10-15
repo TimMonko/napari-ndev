@@ -115,26 +115,34 @@ def measure_regionprops(
     else:
         intensity_stack = None
 
-    measure_props = measure.regionprops_table(
-        label_image=measure_dict['label_images'][0],
-        intensity_image=intensity_stack,
-        properties=properties,
-        spacing=scale,
-    )
+    measure_df_list = []
 
-    measure_df = pd.DataFrame(measure_props)
+    for label_idx, label_image in enumerate(measure_dict['label_images']):
+        measure_props = measure.regionprops_table(
+            label_image=label_image,
+            intensity_image=intensity_stack,
+            properties=properties,
+            spacing=scale,
+        )
+
+        measure_df = pd.DataFrame(measure_props)
+        measure_df.insert(0, 'label_name', measure_dict['label_names'][label_idx])
+        measure_df_list.append(measure_df)
+
+    if len(measure_df_list) > 1:
+        measure_df = pd.concat(measure_df_list, ignore_index=True)
 
     if intensity_names is not None:
         measure_df = _rename_intensity_columns(
             measure_df, measure_dict['intensity_names']
         )
 
-    measure_df.insert(0, 'id', id_string)
+    measure_df.insert(1, 'id', id_string)
 
     if id_regex_dict is not None:
         id_dict = _extract_info_from_id_string(id_string, id_regex_dict)
         for key, value in id_dict.items():
-            measure_df.insert(1, key, value)
+            measure_df.insert(2, key, value)
 
     if tx_id is not None and tx_dict is not None:
         _map_tx_dict_to_df_id_col(tx_dict, tx_n_well, measure_df, tx_id)
