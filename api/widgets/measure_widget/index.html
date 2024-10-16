@@ -20,7 +20,7 @@
       
       
       <link rel="icon" href="../../../images/neuralDev-icon.svg">
-      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.5.40">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.5.41">
     
     
       
@@ -28,7 +28,7 @@
       
     
     
-      <link rel="stylesheet" href="../../../assets/stylesheets/main.8c3ca2c6.min.css">
+      <link rel="stylesheet" href="../../../assets/stylesheets/main.0253249f.min.css">
       
         
         <link rel="stylesheet" href="../../../assets/stylesheets/palette.06af60db.min.css">
@@ -2116,7 +2116,38 @@
 <span class="normal">689</span>
 <span class="normal">690</span>
 <span class="normal">691</span>
-<span class="normal">692</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span> <span class="nc">MeasureContainer</span><span class="p">(</span><span class="n">Container</span><span class="p">):</span>
+<span class="normal">692</span>
+<span class="normal">693</span>
+<span class="normal">694</span>
+<span class="normal">695</span>
+<span class="normal">696</span>
+<span class="normal">697</span>
+<span class="normal">698</span>
+<span class="normal">699</span>
+<span class="normal">700</span>
+<span class="normal">701</span>
+<span class="normal">702</span>
+<span class="normal">703</span>
+<span class="normal">704</span>
+<span class="normal">705</span>
+<span class="normal">706</span>
+<span class="normal">707</span>
+<span class="normal">708</span>
+<span class="normal">709</span>
+<span class="normal">710</span>
+<span class="normal">711</span>
+<span class="normal">712</span>
+<span class="normal">713</span>
+<span class="normal">714</span>
+<span class="normal">715</span>
+<span class="normal">716</span>
+<span class="normal">717</span>
+<span class="normal">718</span>
+<span class="normal">719</span>
+<span class="normal">720</span>
+<span class="normal">721</span>
+<span class="normal">722</span>
+<span class="normal">723</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span> <span class="nc">MeasureContainer</span><span class="p">(</span><span class="n">Container</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Widget to measure labels from folders.</span>
 
@@ -2402,6 +2433,7 @@
             <span class="n">allow_multiple</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
             <span class="n">tooltip</span><span class="o">=</span><span class="s1">&#39;Select functions performed on aggregation columns&#39;</span><span class="p">,</span>
         <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_pivot_wider</span> <span class="o">=</span> <span class="n">CheckBox</span><span class="p">(</span><span class="n">label</span><span class="o">=</span><span class="s1">&#39;Pivot Wider&#39;</span><span class="p">,</span> <span class="n">value</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_group_measurements_button</span> <span class="o">=</span> <span class="n">PushButton</span><span class="p">(</span><span class="n">label</span><span class="o">=</span><span class="s1">&#39;Group Measurements&#39;</span><span class="p">)</span>
 
 
@@ -2411,6 +2443,7 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">_count_col</span><span class="p">,</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_agg_cols</span><span class="p">,</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_agg_funcs</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_pivot_wider</span><span class="p">,</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_group_measurements_button</span><span class="p">,</span>
         <span class="p">])</span>
 
@@ -2464,10 +2497,16 @@
         <span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_measured_data_path</span><span class="o">.</span><span class="n">value</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_grouping_cols</span><span class="o">.</span><span class="n">choices</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">columns</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_count_col</span><span class="o">.</span><span class="n">choices</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">columns</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_agg_cols</span><span class="o">.</span><span class="n">choices</span> <span class="o">=</span><span class="n">df</span><span class="o">.</span><span class="n">columns</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_agg_cols</span><span class="o">.</span><span class="n">choices</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">columns</span>
 
+        <span class="c1"># set default value to label_name and id if exists</span>
+        <span class="n">grouping_cols</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">if</span> <span class="s1">&#39;label_name&#39;</span> <span class="ow">in</span> <span class="n">df</span><span class="o">.</span><span class="n">columns</span><span class="p">:</span>
+            <span class="n">grouping_cols</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">&#39;label_name&#39;</span><span class="p">)</span>
         <span class="k">if</span> <span class="s1">&#39;id&#39;</span> <span class="ow">in</span> <span class="n">df</span><span class="o">.</span><span class="n">columns</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_grouping_cols</span><span class="o">.</span><span class="n">value</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;id&#39;</span><span class="p">]</span>
+            <span class="n">grouping_cols</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">&#39;id&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_grouping_cols</span><span class="o">.</span><span class="n">value</span> <span class="o">=</span> <span class="n">grouping_cols</span>
+
         <span class="k">if</span> <span class="s1">&#39;label&#39;</span> <span class="ow">in</span> <span class="n">df</span><span class="o">.</span><span class="n">columns</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_count_col</span><span class="o">.</span><span class="n">value</span> <span class="o">=</span> <span class="s1">&#39;label&#39;</span>
 
@@ -2565,7 +2604,7 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">_region_directory</span><span class="o">.</span><span class="n">value</span>
         <span class="p">)</span>
 
-        <span class="n">log_loc</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_output_directory</span><span class="o">.</span><span class="n">value</span><span class="o">.</span><span class="n">with_suffix</span><span class="p">(</span><span class="s1">&#39;.log.txt&#39;</span><span class="p">)</span>
+        <span class="n">log_loc</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_output_directory</span><span class="o">.</span><span class="n">value</span> <span class="o">/</span> <span class="s1">&#39;measure.log.txt&#39;</span>
         <span class="n">logger</span><span class="p">,</span> <span class="n">handler</span> <span class="o">=</span> <span class="n">helpers</span><span class="o">.</span><span class="n">setup_logger</span><span class="p">(</span><span class="n">log_loc</span><span class="p">)</span>
 
         <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
@@ -2654,80 +2693,83 @@
                     <span class="k">continue</span>
                 <span class="n">reg</span> <span class="o">=</span> <span class="n">BioImage</span><span class="p">(</span><span class="n">region_path</span><span class="p">)</span>
 
-            <span class="k">for</span> <span class="n">scene_idx</span><span class="p">,</span> <span class="n">_scene</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">lbl</span><span class="o">.</span><span class="n">scenes</span><span class="p">):</span>
+            <span class="k">for</span> <span class="n">scene_idx</span><span class="p">,</span> <span class="n">scene</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">lbl</span><span class="o">.</span><span class="n">scenes</span><span class="p">):</span>
+                <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s1">&#39;Processing scene: </span><span class="si">%s</span><span class="s1"> :: </span><span class="si">%s</span><span class="s1">&#39;</span><span class="p">,</span> <span class="n">scene_idx</span><span class="p">,</span> <span class="n">scene</span><span class="p">)</span>
                 <span class="n">lbl</span><span class="o">.</span><span class="n">set_scene</span><span class="p">(</span><span class="n">scene_idx</span><span class="p">)</span>
-                <span class="n">label_names_list</span> <span class="o">=</span> <span class="p">[]</span>
+
+                <span class="n">label_images</span> <span class="o">=</span> <span class="p">[]</span>
+                <span class="n">label_names</span> <span class="o">=</span> <span class="p">[]</span>
 
                 <span class="c1"># iterate through each channel in the label image</span>
                 <span class="k">for</span> <span class="n">label_chan</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_label_images</span><span class="o">.</span><span class="n">value</span><span class="p">:</span>
                     <span class="n">label_chan</span> <span class="o">=</span> <span class="n">label_chan</span><span class="p">[</span><span class="mi">8</span><span class="p">:]</span>
-                    <span class="n">label_names_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">label_chan</span><span class="p">)</span>
+                    <span class="n">label_names</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">label_chan</span><span class="p">)</span>
+
                     <span class="n">lbl_C</span> <span class="o">=</span> <span class="n">lbl</span><span class="o">.</span><span class="n">channel_names</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">label_chan</span><span class="p">)</span>
-
-                    <span class="n">intensity_images</span> <span class="o">=</span> <span class="p">[]</span>
-                    <span class="n">intensity_names</span> <span class="o">=</span> <span class="p">[]</span>
-
-                    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s1">&#39;Processing </span><span class="si">%s</span><span class="s1"> : scene </span><span class="si">%s</span><span class="s1">&#39;</span><span class="p">,</span> <span class="n">label_chan</span><span class="p">,</span> <span class="n">scene_idx</span><span class="p">)</span>
                     <span class="n">label</span> <span class="o">=</span> <span class="n">lbl</span><span class="o">.</span><span class="n">get_image_data</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_squeezed_dims</span><span class="p">,</span> <span class="n">C</span><span class="o">=</span><span class="n">lbl_C</span><span class="p">)</span>
-                    <span class="n">id_string</span> <span class="o">=</span> <span class="n">helpers</span><span class="o">.</span><span class="n">create_id_string</span><span class="p">(</span><span class="n">lbl</span><span class="p">,</span> <span class="n">file</span><span class="o">.</span><span class="n">stem</span><span class="p">)</span>
+                    <span class="n">label_images</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">label</span><span class="p">)</span>
 
-                    <span class="c1"># Get stack of intensity images if there are any selected</span>
-                    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_intensity_images</span><span class="o">.</span><span class="n">value</span> <span class="ow">and</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-                        <span class="k">for</span> <span class="n">channel</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_intensity_images</span><span class="o">.</span><span class="n">value</span><span class="p">:</span>
-                            <span class="k">if</span> <span class="n">channel</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s1">&#39;Labels: &#39;</span><span class="p">):</span>
-                                <span class="n">chan</span> <span class="o">=</span> <span class="n">channel</span><span class="p">[</span><span class="mi">8</span><span class="p">:]</span>
-                                <span class="n">lbl_C</span> <span class="o">=</span> <span class="n">lbl</span><span class="o">.</span><span class="n">channel_names</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">chan</span><span class="p">)</span>
-                                <span class="n">lbl</span><span class="o">.</span><span class="n">set_scene</span><span class="p">(</span><span class="n">scene_idx</span><span class="p">)</span>
-                                <span class="n">chan_img</span> <span class="o">=</span> <span class="n">lbl</span><span class="o">.</span><span class="n">get_image_data</span><span class="p">(</span>
-                                    <span class="bp">self</span><span class="o">.</span><span class="n">_squeezed_dims</span><span class="p">,</span> <span class="n">C</span><span class="o">=</span><span class="n">lbl_C</span>
-                                <span class="p">)</span>
-                            <span class="k">elif</span> <span class="n">channel</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s1">&#39;Intensity: &#39;</span><span class="p">):</span>
-                                <span class="n">chan</span> <span class="o">=</span> <span class="n">channel</span><span class="p">[</span><span class="mi">11</span><span class="p">:]</span>
-                                <span class="n">img_C</span> <span class="o">=</span> <span class="n">img</span><span class="o">.</span><span class="n">channel_names</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">chan</span><span class="p">)</span>
-                                <span class="n">img</span><span class="o">.</span><span class="n">set_scene</span><span class="p">(</span><span class="n">scene_idx</span><span class="p">)</span>
-                                <span class="n">chan_img</span> <span class="o">=</span> <span class="n">img</span><span class="o">.</span><span class="n">get_image_data</span><span class="p">(</span>
-                                    <span class="bp">self</span><span class="o">.</span><span class="n">_squeezed_dims</span><span class="p">,</span> <span class="n">C</span><span class="o">=</span><span class="n">img_C</span>
-                                <span class="p">)</span>
-                            <span class="k">elif</span> <span class="n">channel</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s1">&#39;Region: &#39;</span><span class="p">):</span>
-                                <span class="n">chan</span> <span class="o">=</span> <span class="n">channel</span><span class="p">[</span><span class="mi">8</span><span class="p">:]</span>
-                                <span class="n">reg_C</span> <span class="o">=</span> <span class="n">reg</span><span class="o">.</span><span class="n">channel_names</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">chan</span><span class="p">)</span>
-                                <span class="n">img</span><span class="o">.</span><span class="n">set_scene</span><span class="p">(</span><span class="n">scene_idx</span><span class="p">)</span>
-                                <span class="n">chan_img</span> <span class="o">=</span> <span class="n">reg</span><span class="o">.</span><span class="n">get_image_data</span><span class="p">(</span>
-                                    <span class="bp">self</span><span class="o">.</span><span class="n">_squeezed_dims</span><span class="p">,</span> <span class="n">C</span><span class="o">=</span><span class="n">reg_C</span>
-                                <span class="p">)</span>
-                            <span class="n">intensity_names</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">chan</span><span class="p">)</span>
-                            <span class="n">intensity_images</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">chan_img</span><span class="p">)</span>
+                <span class="n">intensity_images</span> <span class="o">=</span> <span class="p">[]</span>
+                <span class="n">intensity_names</span> <span class="o">=</span> <span class="p">[]</span>
 
-                        <span class="c1"># the last dim is the multi-channel dim for regionprops</span>
-                        <span class="n">intensity_stack</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">stack</span><span class="p">(</span><span class="n">intensity_images</span><span class="p">,</span> <span class="n">axis</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span>
+                <span class="c1"># id_string = helpers.create_id_string(lbl, file.stem)</span>
 
-                    <span class="k">else</span><span class="p">:</span>
-                        <span class="n">intensity_stack</span> <span class="o">=</span> <span class="kc">None</span>
-                        <span class="n">intensity_names</span> <span class="o">=</span> <span class="kc">None</span>
+                <span class="c1"># Get stack of intensity images if there are any selected</span>
+                <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_intensity_images</span><span class="o">.</span><span class="n">value</span> <span class="ow">and</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                    <span class="k">for</span> <span class="n">channel</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_intensity_images</span><span class="o">.</span><span class="n">value</span><span class="p">:</span>
+                        <span class="k">if</span> <span class="n">channel</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s1">&#39;Labels: &#39;</span><span class="p">):</span>
+                            <span class="n">chan</span> <span class="o">=</span> <span class="n">channel</span><span class="p">[</span><span class="mi">8</span><span class="p">:]</span>
+                            <span class="n">lbl_C</span> <span class="o">=</span> <span class="n">lbl</span><span class="o">.</span><span class="n">channel_names</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">chan</span><span class="p">)</span>
+                            <span class="n">lbl</span><span class="o">.</span><span class="n">set_scene</span><span class="p">(</span><span class="n">scene_idx</span><span class="p">)</span>
+                            <span class="n">inten_img</span> <span class="o">=</span> <span class="n">lbl</span><span class="o">.</span><span class="n">get_image_data</span><span class="p">(</span>
+                                <span class="bp">self</span><span class="o">.</span><span class="n">_squeezed_dims</span><span class="p">,</span> <span class="n">C</span><span class="o">=</span><span class="n">lbl_C</span>
+                            <span class="p">)</span>
+                        <span class="k">elif</span> <span class="n">channel</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s1">&#39;Intensity: &#39;</span><span class="p">):</span>
+                            <span class="n">chan</span> <span class="o">=</span> <span class="n">channel</span><span class="p">[</span><span class="mi">11</span><span class="p">:]</span>
+                            <span class="n">img_C</span> <span class="o">=</span> <span class="n">img</span><span class="o">.</span><span class="n">channel_names</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">chan</span><span class="p">)</span>
+                            <span class="n">img</span><span class="o">.</span><span class="n">set_scene</span><span class="p">(</span><span class="n">scene_idx</span><span class="p">)</span>
+                            <span class="n">inten_img</span> <span class="o">=</span> <span class="n">img</span><span class="o">.</span><span class="n">get_image_data</span><span class="p">(</span>
+                                <span class="bp">self</span><span class="o">.</span><span class="n">_squeezed_dims</span><span class="p">,</span> <span class="n">C</span><span class="o">=</span><span class="n">img_C</span>
+                            <span class="p">)</span>
+                        <span class="k">elif</span> <span class="n">channel</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s1">&#39;Region: &#39;</span><span class="p">):</span>
+                            <span class="n">chan</span> <span class="o">=</span> <span class="n">channel</span><span class="p">[</span><span class="mi">8</span><span class="p">:]</span>
+                            <span class="n">reg_C</span> <span class="o">=</span> <span class="n">reg</span><span class="o">.</span><span class="n">channel_names</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">chan</span><span class="p">)</span>
+                            <span class="n">reg</span><span class="o">.</span><span class="n">set_scene</span><span class="p">(</span><span class="n">scene_idx</span><span class="p">)</span>
+                            <span class="n">inten_img</span> <span class="o">=</span> <span class="n">reg</span><span class="o">.</span><span class="n">get_image_data</span><span class="p">(</span>
+                                <span class="bp">self</span><span class="o">.</span><span class="n">_squeezed_dims</span><span class="p">,</span> <span class="n">C</span><span class="o">=</span><span class="n">reg_C</span>
+                            <span class="p">)</span>
+                        <span class="n">intensity_names</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">chan</span><span class="p">)</span>
+                        <span class="n">intensity_images</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">inten_img</span><span class="p">)</span>
 
-                    <span class="c1"># start the measuring here</span>
-                    <span class="c1"># TODO: Add optional scaling, in case images have different scales?</span>
-                    <span class="n">measure_props_df</span> <span class="o">=</span> <span class="n">ndev_measure</span><span class="o">.</span><span class="n">measure_regionprops</span><span class="p">(</span>
-                        <span class="n">label_images</span><span class="o">=</span><span class="n">label</span><span class="p">,</span>
-                        <span class="n">label_names</span><span class="o">=</span><span class="n">label_chan</span><span class="p">,</span>
-                        <span class="n">intensity_images</span><span class="o">=</span><span class="n">intensity_stack</span><span class="p">,</span>
-                        <span class="n">intensity_names</span><span class="o">=</span><span class="n">intensity_names</span><span class="p">,</span>
-                        <span class="n">properties</span><span class="o">=</span><span class="n">properties</span><span class="p">,</span>
-                        <span class="n">scale</span><span class="o">=</span><span class="n">props_scale</span><span class="p">,</span>
-                        <span class="n">id_string</span><span class="o">=</span><span class="n">id_string</span><span class="p">,</span>
-                        <span class="n">id_regex_dict</span><span class="o">=</span><span class="n">id_regex_dict</span><span class="p">,</span>
-                        <span class="n">tx_id</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_tx_id</span><span class="o">.</span><span class="n">value</span><span class="p">,</span>
-                        <span class="n">tx_dict</span><span class="o">=</span><span class="n">tx_dict</span><span class="p">,</span>
-                        <span class="n">tx_n_well</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_tx_n_well</span><span class="o">.</span><span class="n">value</span><span class="p">,</span>
-                        <span class="n">save_data_path</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-                    <span class="p">)</span>
-                    <span class="n">measure_props_df</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="s1">&#39;label_name&#39;</span><span class="p">,</span> <span class="n">label_chan</span><span class="p">)</span>
+                    <span class="c1"># the last dim is the multi-channel dim for regionprops</span>
+                    <span class="n">intensity_stack</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">stack</span><span class="p">(</span><span class="n">intensity_images</span><span class="p">,</span> <span class="n">axis</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span>
 
-                    <span class="n">measure_props_concat</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">measure_props_df</span><span class="p">)</span>
-                    <span class="bp">self</span><span class="o">.</span><span class="n">_progress_bar</span><span class="o">.</span><span class="n">value</span> <span class="o">=</span> <span class="n">idx</span> <span class="o">+</span> <span class="mi">1</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">intensity_stack</span> <span class="o">=</span> <span class="kc">None</span>
+                    <span class="n">intensity_names</span> <span class="o">=</span> <span class="kc">None</span>
+
+                <span class="c1"># start the measuring here</span>
+                <span class="c1"># TODO: Add optional scaling, in case images have different scales?</span>
+                <span class="n">measure_props_df</span> <span class="o">=</span> <span class="n">ndev_measure</span><span class="o">.</span><span class="n">measure_regionprops</span><span class="p">(</span>
+                    <span class="n">label_images</span><span class="o">=</span><span class="n">label_images</span><span class="p">,</span>
+                    <span class="n">label_names</span><span class="o">=</span><span class="n">label_names</span><span class="p">,</span>
+                    <span class="n">intensity_images</span><span class="o">=</span><span class="n">intensity_stack</span><span class="p">,</span>
+                    <span class="n">intensity_names</span><span class="o">=</span><span class="n">intensity_names</span><span class="p">,</span>
+                    <span class="n">properties</span><span class="o">=</span><span class="n">properties</span><span class="p">,</span>
+                    <span class="n">scale</span><span class="o">=</span><span class="n">props_scale</span><span class="p">,</span>
+                    <span class="n">id_string</span><span class="o">=</span><span class="n">id_string</span><span class="p">,</span>
+                    <span class="n">id_regex_dict</span><span class="o">=</span><span class="n">id_regex_dict</span><span class="p">,</span>
+                    <span class="n">tx_id</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_tx_id</span><span class="o">.</span><span class="n">value</span><span class="p">,</span>
+                    <span class="n">tx_dict</span><span class="o">=</span><span class="n">tx_dict</span><span class="p">,</span>
+                    <span class="n">tx_n_well</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_tx_n_well</span><span class="o">.</span><span class="n">value</span><span class="p">,</span>
+                    <span class="n">save_data_path</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                <span class="p">)</span>
+
+                <span class="n">measure_props_concat</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">measure_props_df</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_progress_bar</span><span class="o">.</span><span class="n">value</span> <span class="o">=</span> <span class="n">idx</span> <span class="o">+</span> <span class="mi">1</span>
 
         <span class="n">measure_props_df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">(</span><span class="n">measure_props_concat</span><span class="p">)</span>
-        <span class="n">labels_string</span> <span class="o">=</span> <span class="s1">&#39;_&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">label_names_list</span><span class="p">)</span>
+        <span class="n">labels_string</span> <span class="o">=</span> <span class="s1">&#39;_&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">label_names</span><span class="p">)</span>
         <span class="n">save_loc</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_output_directory</span><span class="o">.</span><span class="n">value</span> <span class="o">/</span> <span class="sa">f</span><span class="s1">&#39;measure_props_</span><span class="si">{</span><span class="n">labels_string</span><span class="si">}</span><span class="s1">.csv&#39;</span>
         <span class="n">measure_props_df</span><span class="o">.</span><span class="n">to_csv</span><span class="p">(</span><span class="n">save_loc</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
 
@@ -2768,6 +2810,26 @@
             <span class="n">agg_cols</span><span class="o">=</span><span class="n">agg_cols</span><span class="p">,</span>
             <span class="n">agg_funcs</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_agg_funcs</span><span class="o">.</span><span class="n">value</span><span class="p">,</span>
         <span class="p">)</span>
+        <span class="c1"># use the label_name column to make the dataframe wider</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_pivot_wider</span><span class="o">.</span><span class="n">value</span><span class="p">:</span>
+            <span class="c1"># get grouping calls without label name</span>
+            <span class="n">index_cols</span> <span class="o">=</span> <span class="p">[</span><span class="n">col</span> <span class="k">for</span> <span class="n">col</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_grouping_cols</span><span class="o">.</span><span class="n">value</span> <span class="k">if</span> <span class="n">col</span> <span class="o">!=</span> <span class="s1">&#39;label_name&#39;</span><span class="p">]</span>
+
+            <span class="c1"># alternatively, pivot every values column that is not present in index or columns</span>
+            <span class="n">value_cols</span> <span class="o">=</span> <span class="p">[</span><span class="n">col</span> <span class="k">for</span> <span class="n">col</span> <span class="ow">in</span> <span class="n">grouped_df</span><span class="o">.</span><span class="n">columns</span> <span class="k">if</span> <span class="n">col</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_grouping_cols</span><span class="o">.</span><span class="n">value</span><span class="p">]</span>
+
+            <span class="n">pivot_df</span> <span class="o">=</span> <span class="n">grouped_df</span><span class="o">.</span><span class="n">pivot</span><span class="p">(</span>
+                <span class="n">index</span><span class="o">=</span><span class="n">index_cols</span><span class="p">,</span>
+                <span class="n">columns</span><span class="o">=</span><span class="s1">&#39;label_name&#39;</span><span class="p">,</span>
+                <span class="n">values</span><span class="o">=</span><span class="n">value_cols</span><span class="p">,</span>
+            <span class="p">)</span>
+            <span class="c1"># # flatten the multiindex columns</span>
+            <span class="c1"># pivot_df.columns = [f&#39;{col[1]}_{col[0]}&#39; for col in pivot_df.columns]</span>
+
+            <span class="c1"># reset index so that it is saved in the csv</span>
+            <span class="n">pivot_df</span><span class="o">.</span><span class="n">reset_index</span><span class="p">(</span><span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+            <span class="n">grouped_df</span> <span class="o">=</span> <span class="n">pivot_df</span>
 
         <span class="n">save_loc</span> <span class="o">=</span> <span class="p">(</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_measured_data_path</span><span class="o">.</span><span class="n">value</span><span class="o">.</span><span class="n">parent</span> <span class="o">/</span>
@@ -2919,15 +2981,7 @@ output directory.</p>
 
             <details class="quote">
               <summary>Source code in <code>src/napari_ndev/widgets/_measure_container.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">451</span>
-<span class="normal">452</span>
-<span class="normal">453</span>
-<span class="normal">454</span>
-<span class="normal">455</span>
-<span class="normal">456</span>
-<span class="normal">457</span>
-<span class="normal">458</span>
-<span class="normal">459</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">459</span>
 <span class="normal">460</span>
 <span class="normal">461</span>
 <span class="normal">462</span>
@@ -3117,7 +3171,18 @@ output directory.</p>
 <span class="normal">646</span>
 <span class="normal">647</span>
 <span class="normal">648</span>
-<span class="normal">649</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">batch_measure</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
+<span class="normal">649</span>
+<span class="normal">650</span>
+<span class="normal">651</span>
+<span class="normal">652</span>
+<span class="normal">653</span>
+<span class="normal">654</span>
+<span class="normal">655</span>
+<span class="normal">656</span>
+<span class="normal">657</span>
+<span class="normal">658</span>
+<span class="normal">659</span>
+<span class="normal">660</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">batch_measure</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Perform batch measurement of labels and intensity images.</span>
 
@@ -3147,7 +3212,7 @@ output directory.</p>
         <span class="bp">self</span><span class="o">.</span><span class="n">_region_directory</span><span class="o">.</span><span class="n">value</span>
     <span class="p">)</span>
 
-    <span class="n">log_loc</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_output_directory</span><span class="o">.</span><span class="n">value</span><span class="o">.</span><span class="n">with_suffix</span><span class="p">(</span><span class="s1">&#39;.log.txt&#39;</span><span class="p">)</span>
+    <span class="n">log_loc</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_output_directory</span><span class="o">.</span><span class="n">value</span> <span class="o">/</span> <span class="s1">&#39;measure.log.txt&#39;</span>
     <span class="n">logger</span><span class="p">,</span> <span class="n">handler</span> <span class="o">=</span> <span class="n">helpers</span><span class="o">.</span><span class="n">setup_logger</span><span class="p">(</span><span class="n">log_loc</span><span class="p">)</span>
 
     <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
@@ -3236,80 +3301,83 @@ output directory.</p>
                 <span class="k">continue</span>
             <span class="n">reg</span> <span class="o">=</span> <span class="n">BioImage</span><span class="p">(</span><span class="n">region_path</span><span class="p">)</span>
 
-        <span class="k">for</span> <span class="n">scene_idx</span><span class="p">,</span> <span class="n">_scene</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">lbl</span><span class="o">.</span><span class="n">scenes</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">scene_idx</span><span class="p">,</span> <span class="n">scene</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">lbl</span><span class="o">.</span><span class="n">scenes</span><span class="p">):</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s1">&#39;Processing scene: </span><span class="si">%s</span><span class="s1"> :: </span><span class="si">%s</span><span class="s1">&#39;</span><span class="p">,</span> <span class="n">scene_idx</span><span class="p">,</span> <span class="n">scene</span><span class="p">)</span>
             <span class="n">lbl</span><span class="o">.</span><span class="n">set_scene</span><span class="p">(</span><span class="n">scene_idx</span><span class="p">)</span>
-            <span class="n">label_names_list</span> <span class="o">=</span> <span class="p">[]</span>
+
+            <span class="n">label_images</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="n">label_names</span> <span class="o">=</span> <span class="p">[]</span>
 
             <span class="c1"># iterate through each channel in the label image</span>
             <span class="k">for</span> <span class="n">label_chan</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_label_images</span><span class="o">.</span><span class="n">value</span><span class="p">:</span>
                 <span class="n">label_chan</span> <span class="o">=</span> <span class="n">label_chan</span><span class="p">[</span><span class="mi">8</span><span class="p">:]</span>
-                <span class="n">label_names_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">label_chan</span><span class="p">)</span>
+                <span class="n">label_names</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">label_chan</span><span class="p">)</span>
+
                 <span class="n">lbl_C</span> <span class="o">=</span> <span class="n">lbl</span><span class="o">.</span><span class="n">channel_names</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">label_chan</span><span class="p">)</span>
-
-                <span class="n">intensity_images</span> <span class="o">=</span> <span class="p">[]</span>
-                <span class="n">intensity_names</span> <span class="o">=</span> <span class="p">[]</span>
-
-                <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s1">&#39;Processing </span><span class="si">%s</span><span class="s1"> : scene </span><span class="si">%s</span><span class="s1">&#39;</span><span class="p">,</span> <span class="n">label_chan</span><span class="p">,</span> <span class="n">scene_idx</span><span class="p">)</span>
                 <span class="n">label</span> <span class="o">=</span> <span class="n">lbl</span><span class="o">.</span><span class="n">get_image_data</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_squeezed_dims</span><span class="p">,</span> <span class="n">C</span><span class="o">=</span><span class="n">lbl_C</span><span class="p">)</span>
-                <span class="n">id_string</span> <span class="o">=</span> <span class="n">helpers</span><span class="o">.</span><span class="n">create_id_string</span><span class="p">(</span><span class="n">lbl</span><span class="p">,</span> <span class="n">file</span><span class="o">.</span><span class="n">stem</span><span class="p">)</span>
+                <span class="n">label_images</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">label</span><span class="p">)</span>
 
-                <span class="c1"># Get stack of intensity images if there are any selected</span>
-                <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_intensity_images</span><span class="o">.</span><span class="n">value</span> <span class="ow">and</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-                    <span class="k">for</span> <span class="n">channel</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_intensity_images</span><span class="o">.</span><span class="n">value</span><span class="p">:</span>
-                        <span class="k">if</span> <span class="n">channel</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s1">&#39;Labels: &#39;</span><span class="p">):</span>
-                            <span class="n">chan</span> <span class="o">=</span> <span class="n">channel</span><span class="p">[</span><span class="mi">8</span><span class="p">:]</span>
-                            <span class="n">lbl_C</span> <span class="o">=</span> <span class="n">lbl</span><span class="o">.</span><span class="n">channel_names</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">chan</span><span class="p">)</span>
-                            <span class="n">lbl</span><span class="o">.</span><span class="n">set_scene</span><span class="p">(</span><span class="n">scene_idx</span><span class="p">)</span>
-                            <span class="n">chan_img</span> <span class="o">=</span> <span class="n">lbl</span><span class="o">.</span><span class="n">get_image_data</span><span class="p">(</span>
-                                <span class="bp">self</span><span class="o">.</span><span class="n">_squeezed_dims</span><span class="p">,</span> <span class="n">C</span><span class="o">=</span><span class="n">lbl_C</span>
-                            <span class="p">)</span>
-                        <span class="k">elif</span> <span class="n">channel</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s1">&#39;Intensity: &#39;</span><span class="p">):</span>
-                            <span class="n">chan</span> <span class="o">=</span> <span class="n">channel</span><span class="p">[</span><span class="mi">11</span><span class="p">:]</span>
-                            <span class="n">img_C</span> <span class="o">=</span> <span class="n">img</span><span class="o">.</span><span class="n">channel_names</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">chan</span><span class="p">)</span>
-                            <span class="n">img</span><span class="o">.</span><span class="n">set_scene</span><span class="p">(</span><span class="n">scene_idx</span><span class="p">)</span>
-                            <span class="n">chan_img</span> <span class="o">=</span> <span class="n">img</span><span class="o">.</span><span class="n">get_image_data</span><span class="p">(</span>
-                                <span class="bp">self</span><span class="o">.</span><span class="n">_squeezed_dims</span><span class="p">,</span> <span class="n">C</span><span class="o">=</span><span class="n">img_C</span>
-                            <span class="p">)</span>
-                        <span class="k">elif</span> <span class="n">channel</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s1">&#39;Region: &#39;</span><span class="p">):</span>
-                            <span class="n">chan</span> <span class="o">=</span> <span class="n">channel</span><span class="p">[</span><span class="mi">8</span><span class="p">:]</span>
-                            <span class="n">reg_C</span> <span class="o">=</span> <span class="n">reg</span><span class="o">.</span><span class="n">channel_names</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">chan</span><span class="p">)</span>
-                            <span class="n">img</span><span class="o">.</span><span class="n">set_scene</span><span class="p">(</span><span class="n">scene_idx</span><span class="p">)</span>
-                            <span class="n">chan_img</span> <span class="o">=</span> <span class="n">reg</span><span class="o">.</span><span class="n">get_image_data</span><span class="p">(</span>
-                                <span class="bp">self</span><span class="o">.</span><span class="n">_squeezed_dims</span><span class="p">,</span> <span class="n">C</span><span class="o">=</span><span class="n">reg_C</span>
-                            <span class="p">)</span>
-                        <span class="n">intensity_names</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">chan</span><span class="p">)</span>
-                        <span class="n">intensity_images</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">chan_img</span><span class="p">)</span>
+            <span class="n">intensity_images</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="n">intensity_names</span> <span class="o">=</span> <span class="p">[]</span>
 
-                    <span class="c1"># the last dim is the multi-channel dim for regionprops</span>
-                    <span class="n">intensity_stack</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">stack</span><span class="p">(</span><span class="n">intensity_images</span><span class="p">,</span> <span class="n">axis</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span>
+            <span class="c1"># id_string = helpers.create_id_string(lbl, file.stem)</span>
 
-                <span class="k">else</span><span class="p">:</span>
-                    <span class="n">intensity_stack</span> <span class="o">=</span> <span class="kc">None</span>
-                    <span class="n">intensity_names</span> <span class="o">=</span> <span class="kc">None</span>
+            <span class="c1"># Get stack of intensity images if there are any selected</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_intensity_images</span><span class="o">.</span><span class="n">value</span> <span class="ow">and</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="k">for</span> <span class="n">channel</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_intensity_images</span><span class="o">.</span><span class="n">value</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="n">channel</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s1">&#39;Labels: &#39;</span><span class="p">):</span>
+                        <span class="n">chan</span> <span class="o">=</span> <span class="n">channel</span><span class="p">[</span><span class="mi">8</span><span class="p">:]</span>
+                        <span class="n">lbl_C</span> <span class="o">=</span> <span class="n">lbl</span><span class="o">.</span><span class="n">channel_names</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">chan</span><span class="p">)</span>
+                        <span class="n">lbl</span><span class="o">.</span><span class="n">set_scene</span><span class="p">(</span><span class="n">scene_idx</span><span class="p">)</span>
+                        <span class="n">inten_img</span> <span class="o">=</span> <span class="n">lbl</span><span class="o">.</span><span class="n">get_image_data</span><span class="p">(</span>
+                            <span class="bp">self</span><span class="o">.</span><span class="n">_squeezed_dims</span><span class="p">,</span> <span class="n">C</span><span class="o">=</span><span class="n">lbl_C</span>
+                        <span class="p">)</span>
+                    <span class="k">elif</span> <span class="n">channel</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s1">&#39;Intensity: &#39;</span><span class="p">):</span>
+                        <span class="n">chan</span> <span class="o">=</span> <span class="n">channel</span><span class="p">[</span><span class="mi">11</span><span class="p">:]</span>
+                        <span class="n">img_C</span> <span class="o">=</span> <span class="n">img</span><span class="o">.</span><span class="n">channel_names</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">chan</span><span class="p">)</span>
+                        <span class="n">img</span><span class="o">.</span><span class="n">set_scene</span><span class="p">(</span><span class="n">scene_idx</span><span class="p">)</span>
+                        <span class="n">inten_img</span> <span class="o">=</span> <span class="n">img</span><span class="o">.</span><span class="n">get_image_data</span><span class="p">(</span>
+                            <span class="bp">self</span><span class="o">.</span><span class="n">_squeezed_dims</span><span class="p">,</span> <span class="n">C</span><span class="o">=</span><span class="n">img_C</span>
+                        <span class="p">)</span>
+                    <span class="k">elif</span> <span class="n">channel</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s1">&#39;Region: &#39;</span><span class="p">):</span>
+                        <span class="n">chan</span> <span class="o">=</span> <span class="n">channel</span><span class="p">[</span><span class="mi">8</span><span class="p">:]</span>
+                        <span class="n">reg_C</span> <span class="o">=</span> <span class="n">reg</span><span class="o">.</span><span class="n">channel_names</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">chan</span><span class="p">)</span>
+                        <span class="n">reg</span><span class="o">.</span><span class="n">set_scene</span><span class="p">(</span><span class="n">scene_idx</span><span class="p">)</span>
+                        <span class="n">inten_img</span> <span class="o">=</span> <span class="n">reg</span><span class="o">.</span><span class="n">get_image_data</span><span class="p">(</span>
+                            <span class="bp">self</span><span class="o">.</span><span class="n">_squeezed_dims</span><span class="p">,</span> <span class="n">C</span><span class="o">=</span><span class="n">reg_C</span>
+                        <span class="p">)</span>
+                    <span class="n">intensity_names</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">chan</span><span class="p">)</span>
+                    <span class="n">intensity_images</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">inten_img</span><span class="p">)</span>
 
-                <span class="c1"># start the measuring here</span>
-                <span class="c1"># TODO: Add optional scaling, in case images have different scales?</span>
-                <span class="n">measure_props_df</span> <span class="o">=</span> <span class="n">ndev_measure</span><span class="o">.</span><span class="n">measure_regionprops</span><span class="p">(</span>
-                    <span class="n">label_images</span><span class="o">=</span><span class="n">label</span><span class="p">,</span>
-                    <span class="n">label_names</span><span class="o">=</span><span class="n">label_chan</span><span class="p">,</span>
-                    <span class="n">intensity_images</span><span class="o">=</span><span class="n">intensity_stack</span><span class="p">,</span>
-                    <span class="n">intensity_names</span><span class="o">=</span><span class="n">intensity_names</span><span class="p">,</span>
-                    <span class="n">properties</span><span class="o">=</span><span class="n">properties</span><span class="p">,</span>
-                    <span class="n">scale</span><span class="o">=</span><span class="n">props_scale</span><span class="p">,</span>
-                    <span class="n">id_string</span><span class="o">=</span><span class="n">id_string</span><span class="p">,</span>
-                    <span class="n">id_regex_dict</span><span class="o">=</span><span class="n">id_regex_dict</span><span class="p">,</span>
-                    <span class="n">tx_id</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_tx_id</span><span class="o">.</span><span class="n">value</span><span class="p">,</span>
-                    <span class="n">tx_dict</span><span class="o">=</span><span class="n">tx_dict</span><span class="p">,</span>
-                    <span class="n">tx_n_well</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_tx_n_well</span><span class="o">.</span><span class="n">value</span><span class="p">,</span>
-                    <span class="n">save_data_path</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-                <span class="p">)</span>
-                <span class="n">measure_props_df</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="s1">&#39;label_name&#39;</span><span class="p">,</span> <span class="n">label_chan</span><span class="p">)</span>
+                <span class="c1"># the last dim is the multi-channel dim for regionprops</span>
+                <span class="n">intensity_stack</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">stack</span><span class="p">(</span><span class="n">intensity_images</span><span class="p">,</span> <span class="n">axis</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span>
 
-                <span class="n">measure_props_concat</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">measure_props_df</span><span class="p">)</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">_progress_bar</span><span class="o">.</span><span class="n">value</span> <span class="o">=</span> <span class="n">idx</span> <span class="o">+</span> <span class="mi">1</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">intensity_stack</span> <span class="o">=</span> <span class="kc">None</span>
+                <span class="n">intensity_names</span> <span class="o">=</span> <span class="kc">None</span>
+
+            <span class="c1"># start the measuring here</span>
+            <span class="c1"># TODO: Add optional scaling, in case images have different scales?</span>
+            <span class="n">measure_props_df</span> <span class="o">=</span> <span class="n">ndev_measure</span><span class="o">.</span><span class="n">measure_regionprops</span><span class="p">(</span>
+                <span class="n">label_images</span><span class="o">=</span><span class="n">label_images</span><span class="p">,</span>
+                <span class="n">label_names</span><span class="o">=</span><span class="n">label_names</span><span class="p">,</span>
+                <span class="n">intensity_images</span><span class="o">=</span><span class="n">intensity_stack</span><span class="p">,</span>
+                <span class="n">intensity_names</span><span class="o">=</span><span class="n">intensity_names</span><span class="p">,</span>
+                <span class="n">properties</span><span class="o">=</span><span class="n">properties</span><span class="p">,</span>
+                <span class="n">scale</span><span class="o">=</span><span class="n">props_scale</span><span class="p">,</span>
+                <span class="n">id_string</span><span class="o">=</span><span class="n">id_string</span><span class="p">,</span>
+                <span class="n">id_regex_dict</span><span class="o">=</span><span class="n">id_regex_dict</span><span class="p">,</span>
+                <span class="n">tx_id</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_tx_id</span><span class="o">.</span><span class="n">value</span><span class="p">,</span>
+                <span class="n">tx_dict</span><span class="o">=</span><span class="n">tx_dict</span><span class="p">,</span>
+                <span class="n">tx_n_well</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_tx_n_well</span><span class="o">.</span><span class="n">value</span><span class="p">,</span>
+                <span class="n">save_data_path</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+            <span class="p">)</span>
+
+            <span class="n">measure_props_concat</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">measure_props_df</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_progress_bar</span><span class="o">.</span><span class="n">value</span> <span class="o">=</span> <span class="n">idx</span> <span class="o">+</span> <span class="mi">1</span>
 
     <span class="n">measure_props_df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">(</span><span class="n">measure_props_concat</span><span class="p">)</span>
-    <span class="n">labels_string</span> <span class="o">=</span> <span class="s1">&#39;_&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">label_names_list</span><span class="p">)</span>
+    <span class="n">labels_string</span> <span class="o">=</span> <span class="s1">&#39;_&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">label_names</span><span class="p">)</span>
     <span class="n">save_loc</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_output_directory</span><span class="o">.</span><span class="n">value</span> <span class="o">/</span> <span class="sa">f</span><span class="s1">&#39;measure_props_</span><span class="si">{</span><span class="n">labels_string</span><span class="si">}</span><span class="s1">.csv&#39;</span>
     <span class="n">measure_props_df</span><span class="o">.</span><span class="n">to_csv</span><span class="p">(</span><span class="n">save_loc</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
 
@@ -3355,18 +3423,7 @@ the measured data with '_grouped' appended.</p>
 
             <details class="quote">
               <summary>Source code in <code>src/napari_ndev/widgets/_measure_container.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">651</span>
-<span class="normal">652</span>
-<span class="normal">653</span>
-<span class="normal">654</span>
-<span class="normal">655</span>
-<span class="normal">656</span>
-<span class="normal">657</span>
-<span class="normal">658</span>
-<span class="normal">659</span>
-<span class="normal">660</span>
-<span class="normal">661</span>
-<span class="normal">662</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">662</span>
 <span class="normal">663</span>
 <span class="normal">664</span>
 <span class="normal">665</span>
@@ -3396,7 +3453,38 @@ the measured data with '_grouped' appended.</p>
 <span class="normal">689</span>
 <span class="normal">690</span>
 <span class="normal">691</span>
-<span class="normal">692</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">group_measurements</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="normal">692</span>
+<span class="normal">693</span>
+<span class="normal">694</span>
+<span class="normal">695</span>
+<span class="normal">696</span>
+<span class="normal">697</span>
+<span class="normal">698</span>
+<span class="normal">699</span>
+<span class="normal">700</span>
+<span class="normal">701</span>
+<span class="normal">702</span>
+<span class="normal">703</span>
+<span class="normal">704</span>
+<span class="normal">705</span>
+<span class="normal">706</span>
+<span class="normal">707</span>
+<span class="normal">708</span>
+<span class="normal">709</span>
+<span class="normal">710</span>
+<span class="normal">711</span>
+<span class="normal">712</span>
+<span class="normal">713</span>
+<span class="normal">714</span>
+<span class="normal">715</span>
+<span class="normal">716</span>
+<span class="normal">717</span>
+<span class="normal">718</span>
+<span class="normal">719</span>
+<span class="normal">720</span>
+<span class="normal">721</span>
+<span class="normal">722</span>
+<span class="normal">723</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">group_measurements</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Group measurements based on user input.</span>
 
@@ -3429,6 +3517,26 @@ the measured data with '_grouped' appended.</p>
         <span class="n">agg_cols</span><span class="o">=</span><span class="n">agg_cols</span><span class="p">,</span>
         <span class="n">agg_funcs</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_agg_funcs</span><span class="o">.</span><span class="n">value</span><span class="p">,</span>
     <span class="p">)</span>
+    <span class="c1"># use the label_name column to make the dataframe wider</span>
+    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_pivot_wider</span><span class="o">.</span><span class="n">value</span><span class="p">:</span>
+        <span class="c1"># get grouping calls without label name</span>
+        <span class="n">index_cols</span> <span class="o">=</span> <span class="p">[</span><span class="n">col</span> <span class="k">for</span> <span class="n">col</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_grouping_cols</span><span class="o">.</span><span class="n">value</span> <span class="k">if</span> <span class="n">col</span> <span class="o">!=</span> <span class="s1">&#39;label_name&#39;</span><span class="p">]</span>
+
+        <span class="c1"># alternatively, pivot every values column that is not present in index or columns</span>
+        <span class="n">value_cols</span> <span class="o">=</span> <span class="p">[</span><span class="n">col</span> <span class="k">for</span> <span class="n">col</span> <span class="ow">in</span> <span class="n">grouped_df</span><span class="o">.</span><span class="n">columns</span> <span class="k">if</span> <span class="n">col</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_grouping_cols</span><span class="o">.</span><span class="n">value</span><span class="p">]</span>
+
+        <span class="n">pivot_df</span> <span class="o">=</span> <span class="n">grouped_df</span><span class="o">.</span><span class="n">pivot</span><span class="p">(</span>
+            <span class="n">index</span><span class="o">=</span><span class="n">index_cols</span><span class="p">,</span>
+            <span class="n">columns</span><span class="o">=</span><span class="s1">&#39;label_name&#39;</span><span class="p">,</span>
+            <span class="n">values</span><span class="o">=</span><span class="n">value_cols</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="c1"># # flatten the multiindex columns</span>
+        <span class="c1"># pivot_df.columns = [f&#39;{col[1]}_{col[0]}&#39; for col in pivot_df.columns]</span>
+
+        <span class="c1"># reset index so that it is saved in the csv</span>
+        <span class="n">pivot_df</span><span class="o">.</span><span class="n">reset_index</span><span class="p">(</span><span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+        <span class="n">grouped_df</span> <span class="o">=</span> <span class="n">pivot_df</span>
 
     <span class="n">save_loc</span> <span class="o">=</span> <span class="p">(</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_measured_data_path</span><span class="o">.</span><span class="n">value</span><span class="o">.</span><span class="n">parent</span> <span class="o">/</span>
@@ -3533,7 +3641,7 @@ the measured data with '_grouped' appended.</p>
     <script id="__config" type="application/json">{"base": "../../..", "features": ["content.code.annotate", "navigation.sections", "navigation.indexes", "toc.follow", "search.suggest", "search.share"], "search": "../../../assets/javascripts/workers/search.6ce7567c.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}}</script>
     
     
-      <script src="../../../assets/javascripts/bundle.525ec568.min.js"></script>
+      <script src="../../../assets/javascripts/bundle.83f73b43.min.js"></script>
       
     
   </body>
