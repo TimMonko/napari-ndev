@@ -210,17 +210,18 @@ def test_group_measurements_no_agg_defaults():
     grouped_df = container.group_measurements()
 
     assert grouped_df is not None
-    assert list(grouped_df.columns) == ['id', 'label_count']
+    assert list(grouped_df.columns) == [('id', ''), ('label_count', 'label_1')]
 
 def test_group_measurements_with_agg():
     container = MeasureContainer()
     test_data_path = pathlib.Path(r'src/napari_ndev/_tests/resources/measure_props_Labels.csv')
     container._measured_data_path.value = test_data_path
-    container._grouping_cols.value = ['id', 'intensity_max-Labels']
+    container._grouping_cols.value = ['label_name', 'id', 'intensity_max-Labels']
     container._agg_cols.value = ['area']
     container._agg_funcs.value = ['mean']
+    container._pivot_wider.value = False
 
     grouped_df = container.group_measurements()
 
     assert grouped_df is not None
-    assert list(grouped_df.columns) == ['id', 'intensity_max-Labels', 'label_count', 'area_mean']
+    assert list(grouped_df.columns) == ['label_name', 'id', 'intensity_max-Labels', 'label_count', 'area_mean']
