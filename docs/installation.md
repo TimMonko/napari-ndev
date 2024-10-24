@@ -8,7 +8,7 @@ pip install napari-ndev
 
 ----------------------------------
 
-### Optional Libraries
+## Optional Libraries
 
 **napari-ndev** is most useful when interacting with some other napari plugins (e.g. napari-assistant) and can read additional filetypes (e.g. bioio-nd2). You may install these BSD-3 compatible plugins with [pip]:
 
