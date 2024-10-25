@@ -6,9 +6,11 @@
 pip install napari-ndev
 ```
 
+If you are unfamiliar with python or the command line, instead use the bundled app installer as demonstrated in [Beginner Setup](beginner_setup.md).
+
 ----------------------------------
 
-### Optional Libraries
+## Optional Libraries
 
 **napari-ndev** is most useful when interacting with some other napari plugins (e.g. napari-assistant) and can read additional filetypes (e.g. bioio-nd2). You may install these BSD-3 compatible plugins with [pip]:
 

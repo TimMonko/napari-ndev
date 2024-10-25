@@ -1,6 +1,6 @@
 # napari-ndev (neuralDev)
 
-<!-- ![Logo](images//neuralDev-logo.svg) -->
+<!-- ![Logo](images/neuralDev-logo.svg) -->
 [![License BSD-3](https://img.shields.io/pypi/l/napari-ndev.svg?color=green)](https://github.com/TimMonko/napari-ndev/raw/main/LICENSE)
 [![PyPI](https://img.shields.io/pypi/v/napari-ndev.svg?color=green)](https://pypi.org/project/napari-ndev)
 [![Python Version](https://img.shields.io/pypi/pyversions/napari-ndev.svg?color=green)](https://python.org)
@@ -8,7 +8,7 @@
 [![codecov](https://codecov.io/gh/TimMonko/napari-ndev/branch/main/graph/badge.svg)](https://codecov.io/gh/TimMonko/napari-ndev)
 [![napari hub](https://img.shields.io/endpoint?url=https://api.napari-hub.org/shields/napari-ndev)](https://napari-hub.org/plugins/napari-ndev)
 
-<img src="images/neuralDev-logo.svg" alt="logo" width="300">
+<img src="resources/images/neuralDev-logo.svg" alt="neuralDev logo" width="300">
 
 A collection of widgets intended to serve any person seeking to process microscopy images from start to finish. The wide breadth of this plugin's scope is only made possible by the amazing libraries and plugins from the napari community, especially Robert Haase. Currently, the plugin supports the following goals:
 
