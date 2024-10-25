@@ -6,6 +6,8 @@
 pip install napari-ndev
 ```
 
+If you are unfamiliar with python or the command line, instead use the bundled app installer as demonstrated in [Beginner Setup](beginner_setup.md).
+
 ----------------------------------
 
 ## Optional Libraries

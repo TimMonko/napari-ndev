@@ -22,6 +22,7 @@ could also remove small objects
 5. Mitochondria: median_sphere (1,1); top_hat_sphere (10,10); threshold_otsu ();
 Should I do a simpler threshold otsu? Then subtract out the nuclei?
 
+multiply_images extend_labeling and greater_constant
 
 ## Measure Widget
 
