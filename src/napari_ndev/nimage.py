@@ -25,7 +25,8 @@ class nImage(BioImage):
     Parameters
     ----------
     image : ImageLike
-        Image to be loaded.
+        Image to be loaded. Can be a path to an image file, a numpy array,
+        or an xarray DataArray.
     reader : Reader, optional
         Reader to be used to load the image. If not provided, a reader will be
         determined based on the image type.
@@ -151,10 +152,6 @@ class nImage(BioImage):
         ----------
         path : PathLike
             Path to the image file.
-        img_data : xr.DataArray
-            Image data as a xarray DataArray.
-        img : BioImage
-            BioImage object containing the image metadata
 
         Returns
         -------
@@ -163,7 +160,7 @@ class nImage(BioImage):
 
         """
         if self.napari_data is None:
-            self.get_napari_image_data()
+            self.get_napari_image_data() # this also sets self.path
 
         meta = {}
         scene = self.current_scene
