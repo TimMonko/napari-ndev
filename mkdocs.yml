@@ -46,6 +46,7 @@ nav:
   - Overview: index.md
   - Installation: installation.md
   - Beginner Setup: beginner_setup.md
+  - Poster: BINA_poster.md
   - I2K Workshop:
     - Tutorial Setup: tutorial/00_setup.md
     # - Example Pipeline: tutorial/01_example_pipeline.md
@@ -78,6 +79,7 @@ watch:
 
 markdown_extensions:
   - admonition
+  - attr_list
   - pymdownx.details
   - pymdownx.highlight
   - pymdownx.extra
@@ -132,3 +134,4 @@ plugins:
       include: ["*.ipynb"]
       remove_tag_config:
         remove_input_tags: ["hide"]
+  - mkdocs-pdf
