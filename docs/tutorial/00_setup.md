@@ -10,7 +10,7 @@ If you are familiar with python, then I would recommend creating a new environme
 
 TBD: incoming download link
 
-### Images
+### CellPainting Images
 
 The images come from the [Broad Bioimage Benchmark Collection](https://bbbc.broadinstitute.org/BBBC022/). Investigate the link for the description of the images.
 

@@ -1,0 +1,55 @@
+!!python/object:napari_workflows._workflow.Workflow
+_tasks:
+  cell-labels: !!python/tuple
+  - &id001 !!python/name:pyclesperanto_prototype.multiply_images ''
+  - nuclei-voronoi
+  - cyto-thresh
+  cyto-labels: !!python/tuple
+  - *id001
+  - nuclei-voronoi
+  - cyto-no-nuclei
+  cyto-med: !!python/tuple
+  - &id003 !!python/name:pyclesperanto_prototype.median_sphere ''
+  - cyto-membrane
+  - null
+  - 1
+  - 1
+  - 1
+  cyto-no-nuclei: !!python/tuple
+  - !!python/name:pyclesperanto_prototype.binary_xor ''
+  - cyto-thresh
+  - nuclei-labels
+  cyto-thresh: !!python/tuple
+  - !!python/name:pyclesperanto_prototype.greater_constant ''
+  - cyto-med
+  - null
+  - 200
+  nuclei-labels: !!python/tuple
+  - &id002 !!python/name:pyclesperanto_prototype.voronoi_otsu_labeling ''
+  - nuclei
+  - null
+  - 5
+  - 1
+  nuclei-voronoi: !!python/tuple
+  - !!python/name:pyclesperanto_prototype.extend_labeling_via_voronoi ''
+  - nuclei-labels
+  nucleoli-labels: !!python/tuple
+  - *id002
+  - nucleoli-th
+  - null
+  - 1
+  - 1
+  nucleoli-med: !!python/tuple
+  - *id003
+  - nucleoli
+  - null
+  - 1
+  - 1
+  - 1
+  nucleoli-th: !!python/tuple
+  - !!python/name:pyclesperanto_prototype.top_hat_sphere ''
+  - nucleoli-med
+  - null
+  - 5
+  - 5
+  - 1
