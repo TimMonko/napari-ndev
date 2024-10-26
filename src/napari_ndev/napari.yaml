@@ -15,9 +15,9 @@ contributions:
     - id: napari-ndev.make_apoc_container
       python_name: napari_ndev.widgets._apoc_container:ApocContainer
       title: Make Batch APOC
-    - id: napari-ndev.make_custom_apoc
-      python_name: napari_ndev.widgets._apoc_feature_stack:ApocFeatureStack
-      title: Make Custom APOC Feature Set
+    # - id: napari-ndev.make_custom_apoc
+    #   python_name: napari_ndev.widgets._apoc_feature_stack:ApocFeatureStack
+    #   title: Make Custom APOC Feature Set
     - id: napari-ndev.make_measure_container
       python_name: napari_ndev.widgets._measure_container:MeasureContainer
       title: Make Measure Container
@@ -29,8 +29,8 @@ contributions:
       display_name: Workflow Widget
     - command: napari-ndev.make_apoc_container
       display_name: APOC Widget
-    - command: napari-ndev.make_custom_apoc
-      display_name: Custom APOC Feature Set
+    # - command: napari-ndev.make_custom_apoc
+    #   display_name: Custom APOC Feature Set
     - command: napari-ndev.make_measure_container
       display_name: Measure Widget
 
