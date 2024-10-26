@@ -15,3 +15,20 @@
 2024-10-26 00:33:56,362 - Processing 8: plate1_D16_site2_Ch1.tiff
 2024-10-26 00:33:56,561 - Processing 9: plate1_E18_site1_Ch1.tiff
 2024-10-26 00:33:56,774 - Processing 10: plate1_E18_site2_Ch1.tiff
+2024-10-26 09:52:57,873 -
+            Image Directory: C:\Users\timmo\napari-ndev\docs\tutorial\cellpainting\ConcatenatedImages
+            Result Directory: C:\Users\timmo\napari-ndev\docs\tutorial\cellpainting\WorkflowOutput
+            Workflow File: C:\Users\timmo\napari-ndev\docs\tutorial\cellpainting\scripted_cellpainting_workflow.yaml
+            Roots: ['WGA_Phall', 'H33342', 'SYTO14']
+            Tasks: ['cell-labels', 'cyto-labels', 'nucleoli-labels', 'nuclei-labels']
+
+2024-10-26 09:52:57,875 - Processing 1: plate1_A14_site1_Ch1.tiff
+2024-10-26 09:52:58,512 - Processing 2: plate1_A14_site2_Ch1.tiff
+2024-10-26 09:52:58,774 - Processing 3: plate1_B13_site1_Ch1.tiff
+2024-10-26 09:52:59,038 - Processing 4: plate1_B13_site2_Ch1.tiff
+2024-10-26 09:52:59,279 - Processing 5: plate1_C12_site1_Ch1.tiff
+2024-10-26 09:52:59,483 - Processing 6: plate1_C12_site2_Ch1.tiff
+2024-10-26 09:52:59,712 - Processing 7: plate1_D16_site1_Ch1.tiff
+2024-10-26 09:52:59,919 - Processing 8: plate1_D16_site2_Ch1.tiff
+2024-10-26 09:53:00,117 - Processing 9: plate1_E18_site1_Ch1.tiff
+2024-10-26 09:53:00,316 - Processing 10: plate1_E18_site2_Ch1.tiff
