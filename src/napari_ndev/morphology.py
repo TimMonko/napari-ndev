@@ -27,6 +27,23 @@ __all__ = [
     'label_voronoi_based_on_intensity'
 ]
 
+def convert_float_to_int(img: ArrayLike) -> ArrayLike:
+    """
+    Convert an image from float to integer.
+
+    Parameters
+    ----------
+    img : ArrayLike
+        Label image.
+
+    Returns
+    -------
+    ArrayLike
+        Label image as integer.
+
+    """
+    return img.astype(np.uint32)
+
 def skeletonize_labels(label: ArrayLike) -> np.ndarray:
     """
     Create skeletons and maintains label identities from a label image.

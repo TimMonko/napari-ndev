@@ -842,6 +842,15 @@ class UtilitiesContainer(ScrollableContainer):
         num_files = self._files.value.__len__()
         num_file_sets = total_num_files // num_files
 
+        # check if channel names and scale are different than in the first file
+        # if so, turn off the update options
+        first_image = nImage(self._files.value[0])
+        if first_image.channel_names != self._channel_names.value:
+            self._update_channel_names.value = False
+        if first_image.physical_pixel_sizes != self.p_sizes:
+            self._update_scale.value = False
+
+
         # save first set of files
         self.save_files_as_ome_tiff()
         # iterate through the remaining sets of files in the directory
