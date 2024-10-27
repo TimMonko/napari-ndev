@@ -12,17 +12,21 @@ In your operating system, you can search for `napari` and open the version that 
 
 ## napari-ndev minimal installation from UI
 
-Inside napari, navigate to `Plugins` --> `Install/Uninstall Plugins...`. In the `filter...` text box, search for `napari-ndev`. Select `PyPI` as the Source and `Install` the most recent (default) version. This is a complete version of `napari-ndev` but lacks the full integration with other tools such as the `napari-assistant` and `napari-workflows`. This minimal installation is sufficient for full reproducibility of any analysis. For full installation see below:
-
 ![UI-installation](resources/gifs/ui_installation.gif)
 
-### napari-ndev full installation
+Inside napari, navigate to `Plugins` --> `Install/Uninstall Plugins...`. In the `filter...` text box, search for `napari-ndev`. Select `PyPI` as the Source and `Install` the most recent (default) version. This is a complete version of `napari-ndev` and currently support full integration with other tools such as the `napari-assistant` and `napari-workflows`. This minimal installation is sufficient for full reproducibility of any analysis. **Note**: You must close the little black `When installing/uninstalling npe2...` pop-up for the installation to look to proceed. This installation will potentially take a few minutes depending on your computer and internet speed.
 
-This method only installs python libraries that are BSD3 licensed. Some image formats (such as czi and lif) are not available unless installing the full neuralDev package. To install extra plugins go to the integrated `napari console` and enter `!pip install napari-ndev[all]`. **Note**: napari will freeze when you enter this command; please be patient as it downloads and sets up the remaining packages.
+### **[Optional]** napari-ndev full installation
 
 ![Console-installation](resources/gifs/console-full-installation.gif)
 
-Restart napari for changes to take affect.
+This method only installs python libraries that are BSD3 licensed. Some image formats (such as czi and lif) are not available unless installing the full neuralDev package. To install extra plugins go to the integrated `napari console` (lower left button in UI) and enter `!pip install napari-ndev[all]`. **Note**: napari will freeze when you enter this command; please be patient as it downloads and sets up the remaining packages. **Restart napari for changes to take affect.**
+
+### opening widgets widgets
+
+![Widget opening](resources/gifs/widget-opening.gif)
+
+Navigate to `Plugins` --> `neuralDev` --> Click any widget. **Note:** Something (I believe napari) appears to be currently bugged and requires that the first widget be opened twice; the first time it will give a warning, the second time it should open.
 
 ### bio-formats support
 
