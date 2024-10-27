@@ -22,7 +22,7 @@ Inside napari, navigate to `Plugins` --> `Install/Uninstall Plugins...`. In the 
 
 This method only installs python libraries that are BSD3 licensed. Some image formats (such as czi and lif) are not available unless installing the full neuralDev package. To install extra plugins go to the integrated `napari console` (lower left button in UI) and enter `!pip install napari-ndev[all]`. **Note**: napari will freeze when you enter this command; please be patient as it downloads and sets up the remaining packages. **Restart napari for changes to take affect.**
 
-### opening widgets widgets
+### opening widgets
 
 ![Widget opening](resources/gifs/widget-opening.gif)
 
