@@ -49,7 +49,7 @@ nav:
   - Poster: BINA_poster.md
   - I2K Workshop:
     - Tutorial Setup: tutorial/00_setup.md
-    # - Example Pipeline: tutorial/01_example_pipeline.md
+    - Example Pipeline: tutorial/01_example_pipeline.md
     # - Basic Usage: tutorial/02_basic_usage.md
     # - Advanced Usage: tutorial/03_advanced_usage.md
   - Examples:
@@ -78,6 +78,7 @@ watch:
   - src
 
 markdown_extensions:
+  - tables
   - admonition
   - attr_list
   - pymdownx.details
@@ -99,6 +100,7 @@ markdown_extensions:
       emoji_generator: !!python/name:material.extensions.emoji.to_svg
 plugins:
   - search
+  - table-reader
   - autorefs
   - literate-nav
   - spellcheck:
