@@ -12,13 +12,17 @@
 
 A collection of widgets intended to serve any person seeking to process microscopy images from start to finish, *with no coding necessary*. `napari-ndev` was designed to address the **gap between the napari viewer and batch python scripting**.
 
-* Accepts diverse image formats and maintains metadata.
-* Allows advanced workflows to be used by novices.
-* User-friendly sparse annotation and batch training of machine learning classifiers.
-* Flexible label measurements and data summarization.
+* Accepts **diverse image formats**, dimensionality, file size, and maintains key metadata.
+* Allows **advanced, arbitrary image processing** workflows to be used by novices.
+* **User-friendly** sparse annotation and batch training of **machine learning classifiers**.
+* Flexible label measurements, parsing of metadata, and summarization for **easily readable datasets**.
 * Designed for ease of use, modification, and reproducibility.
 
-The wide breadth of this plugin's scope is only made possible by the amazing libraries and plugins from the python and napari community, especially [Robert Haase](https://github.com/haesleinhuepf).
+----------------------------------
+
+### Check out the [poster presented at BINA 2024](BINA_poster.md) for an overview of the plugins in action!
+
+### Also check out the [Virtual I2K 2024 Workshop](tutorial/00_setup.md) for an interactive tutorial to learn more!
 
 ## Plugin Overview
 
@@ -27,6 +31,8 @@ The wide breadth of this plugin's scope is only made possible by the amazing lib
 3. **APOC Widget:** Utilizes the excellent accelerated-pixel-and-object-classification ([apoc]) in a similar fashion to [napari-apoc], but intended for batch training and prediction with a napari widget instead of scripting.
     * **Custom Feature Set Widget:** Generate a featureset to be used with the APOC widget. Also allows quick application in the napari viewer to an image layer to see all the features.
 4. **Measure Widget:** Batch measurement of a label with optional corresponding image, label, and regions (ROIs) that can be used as an intensity image. Currently passed to `scikit-image.measure.regionprops`.
+
+*The wide breadth of this plugin's scope is only made possible by the amazing libraries and plugins from the python and napari community, especially [Robert Haase](https://github.com/haesleinhuepf).*
 
 [napari-workflows]: https://github.com/haesleinhuepf/napari-workflows
 [apoc]: https://github.com/haesleinhuepf/apoc
