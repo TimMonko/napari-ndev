@@ -13,6 +13,10 @@
         <link rel="canonical" href="https://TimMonko.github.io/napari-ndev/tutorial/01_example_pipeline/">
       
       
+        <link rel="prev" href="../00_setup/">
+      
+      
+        <link rel="next" href="../../examples/utilities/image_utilities/">
       
       
       <link rel="icon" href="../../resources/images/neuralDev-icon.svg">
@@ -20,7 +24,7 @@
     
     
       
-        <title>Example Pipeline - napari-ndev</title>
+        <title>01 - Example Pipeline - napari-ndev</title>
       
     
     
@@ -74,7 +78,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#example-pipeline" class="md-skip">
+        <a href="#example-pipeline-tutorial" class="md-skip">
           Skip to content
         </a>
       
@@ -109,7 +113,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              Example Pipeline
+              01 - Example Pipeline
             
           </span>
         </div>
@@ -335,10 +339,14 @@
       
   
   
+    
   
   
+  
     
     
+      
+        
       
         
       
@@ -350,11 +358,11 @@
       
     
     
-    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5" >
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5" checked>
         
           
           <label class="md-nav__link" for="__nav_5" id="__nav_5_label" tabindex="">
@@ -368,7 +376,7 @@
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="false">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="true">
           <label class="md-nav__title" for="__nav_5">
             <span class="md-nav__icon md-icon"></span>
             I2K Workshop
@@ -386,11 +394,180 @@
         
   
   <span class="md-ellipsis">
-    Tutorial Setup
+    00 - Tutorial Setup
   </span>
   
 
       </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  <span class="md-ellipsis">
+    01 - Example Pipeline
+  </span>
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  <span class="md-ellipsis">
+    01 - Example Pipeline
+  </span>
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#image-utilities" class="md-nav__link">
+    <span class="md-ellipsis">
+      Image Utilities
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Image Utilities">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#investigate-the-images" class="md-nav__link">
+    <span class="md-ellipsis">
+      Investigate the images
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#example-workflow" class="md-nav__link">
+    <span class="md-ellipsis">
+      Example workflow
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#using-the-workflow-widget-for-batch-processing" class="md-nav__link">
+    <span class="md-ellipsis">
+      Using the Workflow Widget for Batch Processing
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Using the Workflow Widget for Batch Processing">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#workflow-notes" class="md-nav__link">
+    <span class="md-ellipsis">
+      Workflow notes
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#measure-widget" class="md-nav__link">
+    <span class="md-ellipsis">
+      Measure Widget
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Measure Widget">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#how-measuring-in-python-generally-works" class="md-nav__link">
+    <span class="md-ellipsis">
+      How measuring in Python generally works
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#initial-batch-measurement-with-the-widget" class="md-nav__link">
+    <span class="md-ellipsis">
+      Initial Batch Measurement with the Widget
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#grouping-the-data" class="md-nav__link">
+    <span class="md-ellipsis">
+      Grouping the data
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#make-observations" class="md-nav__link">
+    <span class="md-ellipsis">
+      Make observations
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
     </li>
   
 
@@ -1023,14 +1200,53 @@
     </span>
   </a>
   
+    <nav class="md-nav" aria-label="Image Utilities">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#investigate-the-images" class="md-nav__link">
+    <span class="md-ellipsis">
+      Investigate the images
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
 </li>
       
         <li class="md-nav__item">
-  <a href="#utilize-example-workflow" class="md-nav__link">
+  <a href="#example-workflow" class="md-nav__link">
     <span class="md-ellipsis">
-      Utilize Example workflow
+      Example workflow
     </span>
   </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#using-the-workflow-widget-for-batch-processing" class="md-nav__link">
+    <span class="md-ellipsis">
+      Using the Workflow Widget for Batch Processing
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Using the Workflow Widget for Batch Processing">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#workflow-notes" class="md-nav__link">
+    <span class="md-ellipsis">
+      Workflow notes
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
   
 </li>
       
@@ -1040,6 +1256,48 @@
       Measure Widget
     </span>
   </a>
+  
+    <nav class="md-nav" aria-label="Measure Widget">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#how-measuring-in-python-generally-works" class="md-nav__link">
+    <span class="md-ellipsis">
+      How measuring in Python generally works
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#initial-batch-measurement-with-the-widget" class="md-nav__link">
+    <span class="md-ellipsis">
+      Initial Batch Measurement with the Widget
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#grouping-the-data" class="md-nav__link">
+    <span class="md-ellipsis">
+      Grouping the data
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#make-observations" class="md-nav__link">
+    <span class="md-ellipsis">
+      Make observations
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
   
 </li>
       
@@ -1061,40 +1319,427 @@
   
 
 
-<div><h1 id="example-pipeline">Example Pipeline<a class="headerlink" href="#example-pipeline" title="Permanent link">#</a></h1>
+<div><h1 id="example-pipeline-tutorial">Example Pipeline Tutorial<a class="headerlink" href="#example-pipeline-tutorial" title="Permanent link">#</a></h1>
+<p>The goal of this example pipeline is to get the user familiar with working with <code>napari-ndev</code> for batch processing and reproducibility (view <code>Image Utilities</code> and <code>Workflow Widget</code>). In addition, this example pipeline thoroughly explains the <code>Measure Widget</code>, since this is a shared use across many pipelines.</p>
+<p>This Example Pipeline does not cover how <code>napari-ndev</code> is used for high-throughput annotations, the machine learning tools (<code>APOC Widget</code>), and designing your own workflows. This information will iinstead be covered in the interactive <a href="../02_basic_usage/">Basic Usage Tutorial</a>.</p>
 <h2 id="image-utilities">Image Utilities<a class="headerlink" href="#image-utilities" title="Permanent link">#</a></h2>
+<p>We are going to start with the <code>Image Utilities</code> widget in order to concatenate the <a href="../00_setup/#cellpainting-images">CellPainting images</a>. This will show a common use of the Image Utilities plugin, wherein various file formats can be managed and saved in to a common OME-TIFF format, including channel names and physical pixel scaling.</p>
+<p><img alt="Batch Concatenation" src="../screenshots/batch-concatenate.gif"></p>
 <ol>
-<li>Batch Concatenate Images and Update Metadata</li>
+<li><code>Choose Directory</code> selects where images will be saved.</li>
+<li><code>Select files</code> individual or multiple files can be selected. Select the first 5 images (representing the 5 channels of 1 image).</li>
+<li>
+<p><code>Metadata</code> dropdown. We will add in names to save the channels with, according to information that is useful. This could be the fluorophore (e.g. Hoescht 33342) or other identifying information (e.g. nuclei).</p>
+<ol>
+<li><code>Channel Name(s)</code>: copy and paste <code>['H33342', 'conA', 'SYTO14', 'WGA_Phall', 'MitoTDR']</code>. The format you want to use is a list <code>[]</code> of strings <code>'a','b','etc.'</code></li>
+<li><code>Scale, ZYX</code>. Set Y and X to <code>0.656</code>. Z will be ignored since images are 2D.</li>
 </ol>
+</li>
+<li>
+<p><code>Batch Concat.</code> Pressing this button will iterate through all files in the folder, selecting them in groups of 5 (i.e. the number of original files selected) and then saving them with the above parameters.</p>
+</li>
+</ol>
+<h3 id="investigate-the-images">Investigate the images<a class="headerlink" href="#investigate-the-images" title="Permanent link">#</a></h3>
 <p><img alt="Image Utilities" src="../screenshots/image-concatenation.png"></p>
-<h2 id="utilize-example-workflow">Utilize Example workflow<a class="headerlink" href="#utilize-example-workflow" title="Permanent link">#</a></h2>
+<p>If you want to investigate the raw images press <code>Open File(s)</code> this will open the original images with their known scale <code>(1,1,1)</code>. Each image will open as grayscale, and will not be layered.</p>
+<p>Now, investigate your concatenated images. Go to <code>Select Files</code> and find the folder <code>ConcatenatedImages</code> inside the <code>Choose Directory</code> previously chosen. Select the first image and <code>Open File(s)</code>. This time, the images will be open to the scale we set <code>(0,0.656,0.656)</code> and with a default layering and pseudo-coloring. This is how all images get passed down throughout the plugin.</p>
+<h2 id="example-workflow">Example workflow<a class="headerlink" href="#example-workflow" title="Permanent link">#</a></h2>
+<p>Once images are in a format that is helpful for analysis, we can proceed with other widgets. This does mean that some images do not need to be processed with the <code>Image Utilities</code> Widget; for example, some microscopes properly incorporate scale and channel names into the image metadata. For this tutorial, we are going to use the <code>Workflow Widget</code> to pre-process, segment, and label features of the image with a pre-made custom workflow file (see <code>cellpainting\scripting_workflow.ipynb</code> to see how). The intent of the <code>Workflow Widget</code> is to <em>easily</em> reproduce This custom workflow was designed initially with the <code>napari-assistant</code> which will be explored further in the <a href="../02_basic_usage/">Basic Usage</a> tutorial section.</p>
+<p>The goal for this workflow is to segment the nucleus, cell area (based on a voronoi tessellation of the nuclei), cytoplasm (cell area - nucleus), and the nucleoli. We will later measure the properties of these objects using the <code>Measure Widget</code>.</p>
+<p><img alt="Workflow Example" src="../screenshots/workflow-goals.png"></p>
+<h2 id="using-the-workflow-widget-for-batch-processing">Using the Workflow Widget for Batch Processing<a class="headerlink" href="#using-the-workflow-widget-for-batch-processing" title="Permanent link">#</a></h2>
 <ol>
-<li>
-<p>Utilize simple workflow</p>
-</li>
-<li>
-<p>DAPI: voronoi otsu (5,1)
-extend_labeling_via_voronoi();</p>
-</li>
-<li>
-<p>SYTO: median_sphere (1,1); top_hat_sphere (5,5); voronoi_otsu_labeling (1,1);
-DO THIS</p>
-</li>
-<li>
-<p>Membrane: median_sphere (1,1); greater_constant (200);
-could also remove small objects</p>
-</li>
-<li>
-<p>Mitochondria: median_sphere (1,1); top_hat_sphere (10,10); threshold_otsu ();
-Should I do a simpler threshold otsu? Then subtract out the nuclei?
-THEN, SUBTRACT OUT NUCLEI</p>
-</li>
+<li><code>Image Directory</code> choose the <code>ConcatenatedImages</code> found in the previous parent folder.\</li>
+<li><code>Result Directory</code> create a folder to save the output images into.</li>
+<li><code>Workflow File</code> navigate to <code>scripted_cellpainting_workflow.yaml</code></li>
 </ol>
-<p>multiply_images extend_labeling and greater_constant</p>
+<p>Now, you will now see the UI automatically update to show the <code>roots</code> (input images of the Workflow file). Furthermore, these <code>roots</code> will be populated by the channel names of the images in the chosen directory. In this workflow there are three root images required: (1) <code>Root 0: cyto_membrane</code> is <code>WGA_Phall</code>, (2) <code>Root 1: nuclei</code> is <code>H33342</code>, and (3) <code>Root 2: nucleoli</code> is <code>SYTO14</code>.</p>
+<p><img alt="Workflow-roots" src="../screenshots/workflow-roots.png"></p>
+<p>Next, switch to the <code>Tasks</code> tab. In this tab, the <code>leaves</code> or workflow tasks that sit at the terminals of task tree are automatically selected. However, we are also interested in visualizing the nuclei. So, hold control or command on your keyboard and also click <code>nuclei-labels</code> to add this task to the batch workflow. If all workflow tasks you are interested in are represented as <code>leaves</code> than you can even skip this tab!</p>
+<p><img alt="Workflow-tasks" src="../screenshots/workflow-tasks.png"></p>
+<p>Finally, press <code>Batch Workflow</code>. The <code>Image Directory</code> will be iterated through with the workflow. The Progress Bar will show updates and a log file will be saved to show the input parameters and progress of the batch processing, including any possible errors.</p>
+<h3 id="workflow-notes">Workflow notes<a class="headerlink" href="#workflow-notes" title="Permanent link">#</a></h3>
+<p>Just as we selected an additional task for the workflow, <em>any number</em> of tasks can be acquired from the workflow <em>and</em> if <code>Keep Original Images</code> is checked, these will also be saved in the resulting batch processed images. As such, the workflow widget can also be used to easily visualize intermediate steps of the Workflow to investigate how something was achieved and share that information. Below, napari is showing <em>every</em> original channel and <em>every</em> task in this workflow as a grid in napari; all of this is saved into one single file.</p>
+<p><img alt="Workflow-all" src="../screenshots/workflow-all.png"></p>
+<p><strong>Coming Soon:</strong> the ability to use layers in the workflow as roots to do single image Workflows and adding them into napari immediately!</p>
 <h2 id="measure-widget">Measure Widget<a class="headerlink" href="#measure-widget" title="Permanent link">#</a></h2>
+<p>The <code>Measure Widget</code> provides the ability to measure images in batch, group important information, and even utilize metadata to map sample treatments and conditions. This widget is the newest addition the <code>napari-ndev</code>, in part because it has taken me a long time to conceptualize how to make image measurements accessible in batch, so I am particularly looking for usage feedback. For detailed usage instructions see the <a href="../../examples/measure/measure_widget/"><code>Measure Widget</code> Example</a>.</p>
+<h3 id="how-measuring-in-python-generally-works">How measuring in Python generally works<a class="headerlink" href="#how-measuring-in-python-generally-works" title="Permanent link">#</a></h3>
+<p>It is often most helpful to represent a segmented image as 'labels'. Labels (including the <code>Labels Layer</code> in napari) have a pseudocolor scheme where each label (i.e. object) has a specific value, and that value is represented by a color. When these labels are then measured, each label object is measured independently and represented in one row. With few objects of interest in low-throughput processes, this can make sense, but, a label image with 100 objects will result in a spreadsheet with 100 rows. Accordingly, even measuring 10 images with 100 objects each leads to 1000 rows. To many scientists, these are both small object numbers and small image numbers, so you can imagine how quickly and easily datasets can be in the hundreds of thousands or millions of rows.</p>
+<p>Furthermore, many many properties of images can be labeled, from area (which is scaled properly throughout this plugin to real units), to perimeter, to solidity, to sphericity. Thus, measuring label properties in Python <em>generally</em> requires knowledge of python to make sense of this long multi-variate data. Especially when it comes to grouping data by treatments or doing counts or other aggregating functions on any measurement of the labels.</p>
+<p>The <code>Measure Widget</code> seeks to address the most common usability cases for high-throughput analyses by providing <strong>human readable</strong> outputs. Furthermore, treatment metadata mapping can easily be shared from a more advanced researcher to a novice, for reproducibility of more involved analyses.</p>
+<h3 id="initial-batch-measurement-with-the-widget">Initial Batch Measurement with the Widget<a class="headerlink" href="#initial-batch-measurement-with-the-widget" title="Permanent link">#</a></h3>
+<p><img alt="Measure-batch" src="../screenshots/measure-batch-settings.png"></p>
 <ol>
-<li>Measure objects inside each cell</li>
-</ol></div>
+<li><code>Label Directory</code>: Select the directory containing the Labels you desire to measure -- in this case choose the directory from the <code>Workflow Widget</code>. This image file can contain any number of labels (or non-labels, but those should not be measured). Channels will populate both <code>Label Image</code> select and <code>Intensity Images</code>.</li>
+<li><code>Image Directory</code>: An <strong><em>Optional</em></strong> directory -- choose the <code>ConcatenatedImages</code> directory to populate the original channel images to the <code>Intensity Images</code> select box.</li>
+<li><code>Region Directory</code>: Another <strong><em>Optional</em></strong> directory intended for 'ROI'/Region of Interest labels -- not used for this pipeline.</li>
+<li><code>Label image</code>: Using multi-selection, select <code>cell-labels</code>, <code>cyto-labels</code>, and <code>nuclei-labels</code>. We will measure <em>each</em> object in each image.</li>
+<li><code>Intensity images</code>: Using multi-selection, select <code>nucleoli-labels</code> (to measure the number of nucleoli inside the label), <code>conA</code> and <code>mitoTDR</code> (to measure the underlying intensity of the channel on the label).</li>
+<li><code>Region Props</code>. This is a list of the measurements for each label. For this example, at least select <code>label</code>, <code>area</code>, <code>intensity_mean</code> and <code>solidity</code>. <code>label</code> is the identity, and is recommended to always be checked. Otherwise you can measure shape features like area, eccentricity, and solidity or you can measure intensity features like the mean, max, min, etc. Note, that measuring something like the <code>intensity max</code> of an intensity image that represents an ROI serves as a means to identify if it is inside (i.e. the value of the ROI) or outside (i.e. 0) the region.</li>
+<li>At this point, you could hit the Measure button and it will measure all label channels in each image in batch. However, for this example we also want to add some identification and treatment data to the output. This example data comes from wells with no treatment, so we will generate some ourselves to explain the concept, but this should be straightforward enough to apply to your own data. To use the <code>ID Regex</code> and <code>Tx Map</code> tags we use dictionaries of key: value pairs where the key becomes the column name, and the value contains the regular expression to search for.</li>
+<li><code>ID Regex</code> tab. This dictionary extracts information from the filename with regular expression patterns. These data all come from <code>plate1</code> but if we had multiple plates we could extract the plate number with the following regex <code>r'(plate\d{1,2})-'</code> whatever is inside the <code>()</code> is considered the 'group' that gets returned. In this case we can provide the dictionary to return the identifying number of the plate and the well position. We specifically need the well position in order to map it to the treatment map. Copy and paste this into <code>ID Regex</code></li>
+</ol>
+<div class="highlight"><pre><span></span><code><span class="p">{</span>
+    <span class="s1">'plate'</span><span class="p">:</span> <span class="sa">r</span><span class="s1">'plate(\d{1,3})_'</span><span class="p">,</span>
+    <span class="s1">'well'</span><span class="p">:</span> <span class="sa">r</span><span class="s1">'_(\w+?)_site'</span><span class="p">,</span>
+    <span class="s1">'site'</span><span class="p">:</span> <span class="sa">r</span><span class="s1">'_site(\d{1,3})_'</span><span class="p">,</span>
+<span class="p">}</span>
+</code></pre></div>
+<p><img alt="Batch-ID-regex" src="../screenshots/measure-batch-id-regex.png"></p>
+<ol>
+<li><code>Tx Map</code> tab. This dictionary maps well positions to an overall platemap. This time, the key remains the column identification, but then another dictionary is used to map the treatments inside, see below for example. The platemap is expected to be of standard configuration, but can include wells that are not imaged. First press 'Update Treatment ID Choices' to use the previous regex for Well ID. Select <code>well</code> for <code>Treatment ID</code> and <code>384</code> for <code>Number of Wells</code>. We are going to pretend the platemap has the following treatments:</li>
+</ol>
+<div class="highlight"><pre><span></span><code><span class="p">{</span>
+    <span class="s1">'media'</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s1">'HBSS'</span><span class="p">:</span> <span class="p">[</span><span class="s1">'A1:C24'</span><span class="p">],</span>
+        <span class="s1">'DMEM'</span><span class="p">:</span> <span class="p">[</span><span class="s1">'D1:F24'</span><span class="p">],</span>
+    <span class="p">},</span>
+    <span class="s1">'treatment'</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s1">'control'</span><span class="p">:</span> <span class="p">[</span><span class="s1">'A12:P14'</span><span class="p">],</span>
+        <span class="s1">'drug'</span><span class="p">:</span> <span class="p">[</span><span class="s1">'A15:P18'</span><span class="p">],</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div>
+<p><img alt="Batch-tx-map" src="../screenshots/measure-batch-tx-map.png"></p>
+<ol>
+<li>Press the <code>Measure</code> button! We have all the options set to richly annotate our data with identifying info and treatments... in batch!</li>
+</ol>
+<h3 id="grouping-the-data">Grouping the data<a class="headerlink" href="#grouping-the-data" title="Permanent link">#</a></h3>
+<p>Navigate to the <code>Output Directory</code> and find the <code>measure_props...csv</code> for your data! You can see each measure for each label, but it's hard to read interpret this way.</p>
+<table>
+<thead>
+<tr>
+<th>label_name</th>
+<th>id</th>
+<th>site</th>
+<th>well</th>
+<th>plate</th>
+<th>label</th>
+<th>area</th>
+<th>intensity_mean-nucleoli-labels</th>
+<th>intensity_mean-conA</th>
+<th>intensity_mean-MitoTDR</th>
+<th>solidity</th>
+<th>row</th>
+<th>column</th>
+<th>media</th>
+<th>treatment</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>cell-labels</td>
+<td>plate1_A14_site1_Ch1__0__plate1_A14_site1_Ch1</td>
+<td>1</td>
+<td>A14</td>
+<td>1</td>
+<td>1</td>
+<td>1469.167104</td>
+<td>0.7454598711189221</td>
+<td>256.04100761570004</td>
+<td>295.11511423550087</td>
+<td>0.7832071576049552</td>
+<td>A</td>
+<td>14</td>
+<td>HBSS</td>
+<td>control</td>
+</tr>
+<tr>
+<td>cell-labels</td>
+<td>plate1_A14_site1_Ch1__0__plate1_A14_site1_Ch1</td>
+<td>1</td>
+<td>A14</td>
+<td>1</td>
+<td>2</td>
+<td>505.6448000000001</td>
+<td>0.089361702</td>
+<td>407.0757446808511</td>
+<td>389.1506382978723</td>
+<td>0.9767248545303407</td>
+<td>A</td>
+<td>14</td>
+<td>HBSS</td>
+<td>control</td>
+</tr>
+<tr>
+<td>cell-labels</td>
+<td>plate1_A14_site1_Ch1__0__plate1_A14_site1_Ch1</td>
+<td>1</td>
+<td>A14</td>
+<td>1</td>
+<td>3</td>
+<td>336.092416</td>
+<td>1.2586427656850192</td>
+<td>233.87580025608196</td>
+<td>326.2509603072983</td>
+<td>0.9455205811138013</td>
+<td>A</td>
+<td>14</td>
+<td>HBSS</td>
+<td>control</td>
+</tr>
+</tbody>
+</table>
+<p>Instead, we want to group the data by useful metrics. Navigate to the <code>Grouping</code> tab. Select the output <code>measure_props...csv</code> for <code>Measured Data Path</code>; the selection is interpreted to fill the remaining information in the tab. If we include the <code>id</code> name in our grouping column, then it will summarize each individual image. If you then also select other identifying information, like site, well, plate, etc. then this information will be kept in the summarized file. Ultimately, data will be grouped by the most fine-grained group (in this case, each image, aka the <code>id</code>). So, if you wanted to <em>just</em> know differences between treatments you could do group only by <code>treatment</code>; <strong>caution</strong> this hides your raw data and just reduces the information to the aggregate function.</p>
+<p>For this pipeline, we are going to group by: id, label_name (which label channel it is), site, well, plate, media, and treatment. This will summarize the data by <code>id</code> at the finest (each file), but preserve all that metadata. Then, we keep <code>Count Column</code> set to <code>label</code> so that it counts the number of each object in the image. Finally, we are going to aggregate other measured features. Select <code>Aggregation Columns</code>: <code>intensity_mean-conA</code> (to measure the intensity of ER) and <code>intensity_mean_MitoTDR</code> (mitochondria), and <code>area</code> (to compare the size of each object). Then observe how the there are multiple <code>Aggregation Functions</code> that by default is set to <code>mean</code>.</p>
+<p>Next, <code>check</code> <code>Pivot Wider</code>. This will place each individual label channel in the columns, rather than replicating in rows. This is generally more human-readable and familiar for non-coding statistical work.</p>
+<p>Finally, press <code>Group Measurements</code> button! You now have the output dataset.</p>
+<p><img alt="batch-group" src="../screenshots/measure-group-settings.png"></p>
+<h3 id="make-observations">Make observations<a class="headerlink" href="#make-observations" title="Permanent link">#</a></h3>
+<p>One of the best parts of summarizing your data is quickly checking for quality control. Investigate <code>measure_props...grouped.csv</code></p>
+<ol>
+<li>Do we get the same number of rows that we would expect? (hint, it should be the number of images, with how we grouped)</li>
+<li>Are there the same number of nuclei as cytoplasms in each image? Should there be?</li>
+<li>Is the intensity of a certain marker localized more to the cytoplasm or the nucleus?</li>
+<li>Is the are of the whole cell larger than the cytoplasm and nucleus alone? Does nucleus + cytoplasm = cell?</li>
+</ol>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">id</th>
+<th style="text-align: right;">site</th>
+<th style="text-align: left;">well</th>
+<th style="text-align: right;">plate</th>
+<th style="text-align: left;">media</th>
+<th style="text-align: left;">treatment</th>
+<th style="text-align: left;">label_count</th>
+<th style="text-align: left;">label_count.1</th>
+<th style="text-align: left;">label_count.2</th>
+<th style="text-align: left;">area_mean</th>
+<th style="text-align: left;">area_mean.1</th>
+<th style="text-align: left;">area_mean.2</th>
+<th style="text-align: left;">intensity_mean-MitoTDR_mean</th>
+<th style="text-align: left;">intensity_mean-MitoTDR_mean.1</th>
+<th style="text-align: left;">intensity_mean-MitoTDR_mean.2</th>
+<th style="text-align: left;">intensity_mean-conA_mean</th>
+<th style="text-align: left;">intensity_mean-conA_mean.1</th>
+<th style="text-align: left;">intensity_mean-conA_mean.2</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;">nan</td>
+<td style="text-align: right;">nan</td>
+<td style="text-align: left;">nan</td>
+<td style="text-align: right;">nan</td>
+<td style="text-align: left;">nan</td>
+<td style="text-align: left;">nan</td>
+<td style="text-align: left;">cell-labels</td>
+<td style="text-align: left;">cyto-labels</td>
+<td style="text-align: left;">nuclei-labels</td>
+<td style="text-align: left;">cell-labels</td>
+<td style="text-align: left;">cyto-labels</td>
+<td style="text-align: left;">nuclei-labels</td>
+<td style="text-align: left;">cell-labels</td>
+<td style="text-align: left;">cyto-labels</td>
+<td style="text-align: left;">nuclei-labels</td>
+<td style="text-align: left;">cell-labels</td>
+<td style="text-align: left;">cyto-labels</td>
+<td style="text-align: left;">nuclei-labels</td>
+</tr>
+<tr>
+<td style="text-align: left;">plate1_A14_site1_Ch1__0__plate1_A14_site1_Ch1</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: left;">A14</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: left;">HBSS</td>
+<td style="text-align: left;">control</td>
+<td style="text-align: left;">79.0</td>
+<td style="text-align: left;">79.0</td>
+<td style="text-align: left;">79.0</td>
+<td style="text-align: left;">1458.3978094177216</td>
+<td style="text-align: left;">1214.6478728101267</td>
+<td style="text-align: left;">243.74993660759498</td>
+<td style="text-align: left;">325.2266947462635</td>
+<td style="text-align: left;">307.7767026467916</td>
+<td style="text-align: left;">412.45047953549573</td>
+<td style="text-align: left;">283.3011895008876</td>
+<td style="text-align: left;">264.05000585134076</td>
+<td style="text-align: left;">377.55476585283094</td>
+</tr>
+<tr>
+<td style="text-align: left;">plate1_A14_site2_Ch1__0__plate1_A14_site2_Ch1</td>
+<td style="text-align: right;">2</td>
+<td style="text-align: left;">A14</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: left;">HBSS</td>
+<td style="text-align: left;">control</td>
+<td style="text-align: left;">92.0</td>
+<td style="text-align: left;">92.0</td>
+<td style="text-align: left;">92.0</td>
+<td style="text-align: left;">1270.5623624347827</td>
+<td style="text-align: left;">1015.8361933913045</td>
+<td style="text-align: left;">254.74487930434788</td>
+<td style="text-align: left;">335.0570967957602</td>
+<td style="text-align: left;">319.5738507170695</td>
+<td style="text-align: left;">405.50202331367353</td>
+<td style="text-align: left;">273.7174073017615</td>
+<td style="text-align: left;">256.90458122232934</td>
+<td style="text-align: left;">349.3471722687742</td>
+</tr>
+<tr>
+<td style="text-align: left;">plate1_B13_site1_Ch1__0__plate1_B13_site1_Ch1</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: left;">B13</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: left;">HBSS</td>
+<td style="text-align: left;">control</td>
+<td style="text-align: left;">59.0</td>
+<td style="text-align: left;">59.0</td>
+<td style="text-align: left;">59.0</td>
+<td style="text-align: left;">1805.06988040678</td>
+<td style="text-align: left;">1502.4123834576274</td>
+<td style="text-align: left;">302.6574969491526</td>
+<td style="text-align: left;">308.182553594441</td>
+<td style="text-align: left;">295.40835758750995</td>
+<td style="text-align: left;">377.9935857420644</td>
+<td style="text-align: left;">292.5031657524073</td>
+<td style="text-align: left;">274.4186976700165</td>
+<td style="text-align: left;">391.6966321932782</td>
+</tr>
+<tr>
+<td style="text-align: left;">plate1_B13_site2_Ch1__0__plate1_B13_site2_Ch1</td>
+<td style="text-align: right;">2</td>
+<td style="text-align: left;">B13</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: left;">HBSS</td>
+<td style="text-align: left;">control</td>
+<td style="text-align: left;">71.0</td>
+<td style="text-align: left;">71.0</td>
+<td style="text-align: left;">71.0</td>
+<td style="text-align: left;">1558.5194041690143</td>
+<td style="text-align: left;">1291.1595267605635</td>
+<td style="text-align: left;">267.3598774084507</td>
+<td style="text-align: left;">299.17016394582697</td>
+<td style="text-align: left;">285.23325714705294</td>
+<td style="text-align: left;">363.05445180651634</td>
+<td style="text-align: left;">305.7340276405519</td>
+<td style="text-align: left;">284.01603790001866</td>
+<td style="text-align: left;">406.23380996542903</td>
+</tr>
+<tr>
+<td style="text-align: left;">plate1_C12_site1_Ch1__0__plate1_C12_site1_Ch1</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: left;">C12</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: left;">HBSS</td>
+<td style="text-align: left;">control</td>
+<td style="text-align: left;">127.0</td>
+<td style="text-align: left;">127.0</td>
+<td style="text-align: left;">127.0</td>
+<td style="text-align: left;">1203.229621417323</td>
+<td style="text-align: left;">944.5570237480316</td>
+<td style="text-align: left;">258.67259766929135</td>
+<td style="text-align: left;">343.52778951543183</td>
+<td style="text-align: left;">329.7049438466621</td>
+<td style="text-align: left;">398.5256715321834</td>
+<td style="text-align: left;">283.1283666399538</td>
+<td style="text-align: left;">270.7264526431119</td>
+<td style="text-align: left;">333.90274822634825</td>
+</tr>
+<tr>
+<td style="text-align: left;">plate1_C12_site2_Ch1__0__plate1_C12_site2_Ch1</td>
+<td style="text-align: right;">2</td>
+<td style="text-align: left;">C12</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: left;">HBSS</td>
+<td style="text-align: left;">control</td>
+<td style="text-align: left;">124.0</td>
+<td style="text-align: left;">124.0</td>
+<td style="text-align: left;">124.0</td>
+<td style="text-align: left;">1166.5923096774195</td>
+<td style="text-align: left;">921.3840805161292</td>
+<td style="text-align: left;">245.20822916129035</td>
+<td style="text-align: left;">348.5899736336976</td>
+<td style="text-align: left;">331.9816108022042</td>
+<td style="text-align: left;">415.9173276097387</td>
+<td style="text-align: left;">287.77845139732943</td>
+<td style="text-align: left;">273.9409912708669</td>
+<td style="text-align: left;">343.3100275440203</td>
+</tr>
+<tr>
+<td style="text-align: left;">plate1_D16_site1_Ch1__0__plate1_D16_site1_Ch1</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: left;">D16</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: left;">DMEM</td>
+<td style="text-align: left;">drug</td>
+<td style="text-align: left;">137.0</td>
+<td style="text-align: left;">137.0</td>
+<td style="text-align: left;">137.0</td>
+<td style="text-align: left;">1136.5299405547446</td>
+<td style="text-align: left;">848.7231084379563</td>
+<td style="text-align: left;">287.80683211678837</td>
+<td style="text-align: left;">324.09437073563026</td>
+<td style="text-align: left;">314.2939434267824</td>
+<td style="text-align: left;">361.2811199284404</td>
+<td style="text-align: left;">341.1003129872079</td>
+<td style="text-align: left;">326.6836244548794</td>
+<td style="text-align: left;">397.2258103183944</td>
+</tr>
+<tr>
+<td style="text-align: left;">plate1_D16_site2_Ch1__0__plate1_D16_site2_Ch1</td>
+<td style="text-align: right;">2</td>
+<td style="text-align: left;">D16</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: left;">DMEM</td>
+<td style="text-align: left;">drug</td>
+<td style="text-align: left;">126.0</td>
+<td style="text-align: left;">126.0</td>
+<td style="text-align: left;">126.0</td>
+<td style="text-align: left;">1220.6002488888892</td>
+<td style="text-align: left;">932.7191263492065</td>
+<td style="text-align: left;">287.88112253968256</td>
+<td style="text-align: left;">305.43130665340715</td>
+<td style="text-align: left;">298.09709415581307</td>
+<td style="text-align: left;">335.4623238823955</td>
+<td style="text-align: left;">334.3002097571851</td>
+<td style="text-align: left;">323.0418712295005</td>
+<td style="text-align: left;">381.9689568813829</td>
+</tr>
+<tr>
+<td style="text-align: left;">plate1_E18_site1_Ch1__0__plate1_E18_site1_Ch1</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: left;">E18</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: left;">DMEM</td>
+<td style="text-align: left;">drug</td>
+<td style="text-align: left;">147.0</td>
+<td style="text-align: left;">147.0</td>
+<td style="text-align: left;">147.0</td>
+<td style="text-align: left;">1054.613018122449</td>
+<td style="text-align: left;">800.8962803809525</td>
+<td style="text-align: left;">253.71673774149664</td>
+<td style="text-align: left;">345.9989260804927</td>
+<td style="text-align: left;">335.50803523526207</td>
+<td style="text-align: left;">383.15517282809606</td>
+<td style="text-align: left;">296.09051609563323</td>
+<td style="text-align: left;">283.99028924506246</td>
+<td style="text-align: left;">339.21053128779465</td>
+</tr>
+<tr>
+<td style="text-align: left;">plate1_E18_site2_Ch1__0__plate1_E18_site2_Ch1</td>
+<td style="text-align: right;">2</td>
+<td style="text-align: left;">E18</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: left;">DMEM</td>
+<td style="text-align: left;">drug</td>
+<td style="text-align: left;">174.0</td>
+<td style="text-align: left;">173.0</td>
+<td style="text-align: left;">174.0</td>
+<td style="text-align: left;">894.9381222988507</td>
+<td style="text-align: left;">649.1033999537573</td>
+<td style="text-align: left;">249.56520165517242</td>
+<td style="text-align: left;">351.5135374204032</td>
+<td style="text-align: left;">347.28641992275476</td>
+<td style="text-align: left;">370.0639647086021</td>
+<td style="text-align: left;">282.8140508927973</td>
+<td style="text-align: left;">276.74482673528496</td>
+<td style="text-align: left;">304.67453165821416</td>
+</tr>
+</tbody>
+</table></div>
 
 
 

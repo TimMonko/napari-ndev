@@ -346,6 +346,8 @@
       
         
       
+        
+      
     
     
       
@@ -390,7 +392,28 @@
         
   
   <span class="md-ellipsis">
-    Tutorial Setup
+    00 - Tutorial Setup
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../tutorial/01_example_pipeline/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    01 - Example Pipeline
   </span>
   
 
@@ -2706,7 +2729,16 @@
 <span class="normal">950</span>
 <span class="normal">951</span>
 <span class="normal">952</span>
-<span class="normal">953</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span> <span class="nc">UtilitiesContainer</span><span class="p">(</span><span class="n">ScrollableContainer</span><span class="p">):</span>
+<span class="normal">953</span>
+<span class="normal">954</span>
+<span class="normal">955</span>
+<span class="normal">956</span>
+<span class="normal">957</span>
+<span class="normal">958</span>
+<span class="normal">959</span>
+<span class="normal">960</span>
+<span class="normal">961</span>
+<span class="normal">962</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span> <span class="nc">UtilitiesContainer</span><span class="p">(</span><span class="n">ScrollableContainer</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    A widget to work with images and labels in the napari viewer.</span>
 
@@ -3511,6 +3543,15 @@
         <span class="n">num_files</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_files</span><span class="o">.</span><span class="n">value</span><span class="o">.</span><span class="fm">__len__</span><span class="p">()</span>
         <span class="n">num_file_sets</span> <span class="o">=</span> <span class="n">total_num_files</span> <span class="o">//</span> <span class="n">num_files</span>
 
+        <span class="c1"># check if channel names and scale are different than in the first file</span>
+        <span class="c1"># if so, turn off the update options</span>
+        <span class="n">first_image</span> <span class="o">=</span> <span class="n">nImage</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_files</span><span class="o">.</span><span class="n">value</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+        <span class="k">if</span> <span class="n">first_image</span><span class="o">.</span><span class="n">channel_names</span> <span class="o">!=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_channel_names</span><span class="o">.</span><span class="n">value</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_update_channel_names</span><span class="o">.</span><span class="n">value</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="k">if</span> <span class="n">first_image</span><span class="o">.</span><span class="n">physical_pixel_sizes</span> <span class="o">!=</span> <span class="bp">self</span><span class="o">.</span><span class="n">p_sizes</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_update_scale</span><span class="o">.</span><span class="n">value</span> <span class="o">=</span> <span class="kc">False</span>
+
+
         <span class="c1"># save first set of files</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">save_files_as_ome_tiff</span><span class="p">()</span>
         <span class="c1"># iterate through the remaining sets of files in the directory</span>
@@ -3875,7 +3916,16 @@ directory.</p>
 <span class="normal">852</span>
 <span class="normal">853</span>
 <span class="normal">854</span>
-<span class="normal">855</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">batch_concatenate_files</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="normal">855</span>
+<span class="normal">856</span>
+<span class="normal">857</span>
+<span class="normal">858</span>
+<span class="normal">859</span>
+<span class="normal">860</span>
+<span class="normal">861</span>
+<span class="normal">862</span>
+<span class="normal">863</span>
+<span class="normal">864</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">batch_concatenate_files</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    Concatenate files in the selected directory.</span>
 
@@ -3891,6 +3941,15 @@ directory.</p>
     <span class="n">total_num_files</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">parent_dir</span><span class="o">.</span><span class="n">glob</span><span class="p">(</span><span class="sa">f</span><span class="s1">'*</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_files</span><span class="o">.</span><span class="n">value</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">suffix</span><span class="si">}</span><span class="s1">'</span><span class="p">)))</span>
     <span class="n">num_files</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_files</span><span class="o">.</span><span class="n">value</span><span class="o">.</span><span class="fm">__len__</span><span class="p">()</span>
     <span class="n">num_file_sets</span> <span class="o">=</span> <span class="n">total_num_files</span> <span class="o">//</span> <span class="n">num_files</span>
+
+    <span class="c1"># check if channel names and scale are different than in the first file</span>
+    <span class="c1"># if so, turn off the update options</span>
+    <span class="n">first_image</span> <span class="o">=</span> <span class="n">nImage</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_files</span><span class="o">.</span><span class="n">value</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+    <span class="k">if</span> <span class="n">first_image</span><span class="o">.</span><span class="n">channel_names</span> <span class="o">!=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_channel_names</span><span class="o">.</span><span class="n">value</span><span class="p">:</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_update_channel_names</span><span class="o">.</span><span class="n">value</span> <span class="o">=</span> <span class="kc">False</span>
+    <span class="k">if</span> <span class="n">first_image</span><span class="o">.</span><span class="n">physical_pixel_sizes</span> <span class="o">!=</span> <span class="bp">self</span><span class="o">.</span><span class="n">p_sizes</span><span class="p">:</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_update_scale</span><span class="o">.</span><span class="n">value</span> <span class="o">=</span> <span class="kc">False</span>
+
 
     <span class="c1"># save first set of files</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">save_files_as_ome_tiff</span><span class="p">()</span>
@@ -4328,16 +4387,7 @@ layer to get the dimensions for the shapes layer.</p>
 
             <details class="quote">
               <summary>Source code in <code>src/napari_ndev/widgets/_utilities_container.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">906</span>
-<span class="normal">907</span>
-<span class="normal">908</span>
-<span class="normal">909</span>
-<span class="normal">910</span>
-<span class="normal">911</span>
-<span class="normal">912</span>
-<span class="normal">913</span>
-<span class="normal">914</span>
-<span class="normal">915</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">915</span>
 <span class="normal">916</span>
 <span class="normal">917</span>
 <span class="normal">918</span>
@@ -4375,7 +4425,16 @@ layer to get the dimensions for the shapes layer.</p>
 <span class="normal">950</span>
 <span class="normal">951</span>
 <span class="normal">952</span>
-<span class="normal">953</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">save_layers_as_ome_tiff</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+<span class="normal">953</span>
+<span class="normal">954</span>
+<span class="normal">955</span>
+<span class="normal">956</span>
+<span class="normal">957</span>
+<span class="normal">958</span>
+<span class="normal">959</span>
+<span class="normal">960</span>
+<span class="normal">961</span>
+<span class="normal">962</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">save_layers_as_ome_tiff</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    Save the selected layers as OME-TIFF.</span>
 
@@ -4450,16 +4509,7 @@ will be extracted.</p>
 
             <details class="quote">
               <summary>Source code in <code>src/napari_ndev/widgets/_utilities_container.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">857</span>
-<span class="normal">858</span>
-<span class="normal">859</span>
-<span class="normal">860</span>
-<span class="normal">861</span>
-<span class="normal">862</span>
-<span class="normal">863</span>
-<span class="normal">864</span>
-<span class="normal">865</span>
-<span class="normal">866</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">866</span>
 <span class="normal">867</span>
 <span class="normal">868</span>
 <span class="normal">869</span>
@@ -4497,7 +4547,16 @@ will be extracted.</p>
 <span class="normal">901</span>
 <span class="normal">902</span>
 <span class="normal">903</span>
-<span class="normal">904</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">save_scenes_ome_tiff</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="normal">904</span>
+<span class="normal">905</span>
+<span class="normal">906</span>
+<span class="normal">907</span>
+<span class="normal">908</span>
+<span class="normal">909</span>
+<span class="normal">910</span>
+<span class="normal">911</span>
+<span class="normal">912</span>
+<span class="normal">913</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">save_scenes_ome_tiff</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    Save selected scenes as OME-TIFF.</span>
 

@@ -346,6 +346,8 @@
       
         
       
+        
+      
     
     
       
@@ -390,7 +392,28 @@
         
   
   <span class="md-ellipsis">
-    Tutorial Setup
+    00 - Tutorial Setup
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../tutorial/01_example_pipeline/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    01 - Example Pipeline
   </span>
   
 
@@ -1666,7 +1689,7 @@ nbscreenshot(viewer)</div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
 <h2 id="example-folder">Example folder<a class="anchor-link" href="#example-folder">¶</a></h2><p>The only required directory is the <code>label directory</code> whereby the objects that you want to measure are found. You should also select/make an <code>output directory</code> so that you know where your file is saved.</p>
-<p>Once you select the <code>label directory</code>, label names will populate both the <code>label image</code> dropdown and <code>intensity images</code>. The only required selection is a <code>label image</code> once this is done, you can hit the <code>Measure</code> button and will get the most minimal dataset possible.</p>
+<p>Once you select the <code>label directory</code>, label names will populate both the <code>label image</code> and <code>intensity images</code>. The only required selection is a <code>label image</code> once this is done, you can hit the <code>Measure</code> button and will get the most minimal dataset possible. If you would like to measure multiple <code>labels</code> at the same time, then select multiple labels and it will iterate through each label channel in the images.</p>
 <p>However, you can also add other intensity images (by loading an image or region directory, the reasoning for these namings will come in future tutorials) and select them in the widget to be measured against. Then, in <code>Region Props</code> tab you can select additional properties to measure.</p>
 <p>In this example I want to measure the <code>intensity max</code> of the corresponding <code>Labels: DAPI Class</code> because this will give me the 'type' of DAPI that is inside each <code>Morphology</code> object. This is because the background is 0, live is 1, and dead is 2. So, we can later filter by the 'DAPI Class' of each morphology object. In other words, intensity images don't have to be raw intensity values, but other labels can be used.</p>
 </div>

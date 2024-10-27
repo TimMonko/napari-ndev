@@ -382,9 +382,18 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#napari-ndev-full-installation" class="md-nav__link">
+  <a href="#optional-napari-ndev-full-installation" class="md-nav__link">
     <span class="md-ellipsis">
-      napari-ndev full installation
+      [Optional] napari-ndev full installation
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#opening-widgets-widgets" class="md-nav__link">
+    <span class="md-ellipsis">
+      opening widgets widgets
     </span>
   </a>
   
@@ -443,6 +452,8 @@
       
         
       
+        
+      
     
     
       
@@ -487,7 +498,28 @@
         
   
   <span class="md-ellipsis">
-    Tutorial Setup
+    00 - Tutorial Setup
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../tutorial/01_example_pipeline/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    01 - Example Pipeline
   </span>
   
 
@@ -1152,9 +1184,18 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#napari-ndev-full-installation" class="md-nav__link">
+  <a href="#optional-napari-ndev-full-installation" class="md-nav__link">
     <span class="md-ellipsis">
-      napari-ndev full installation
+      [Optional] napari-ndev full installation
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#opening-widgets-widgets" class="md-nav__link">
+    <span class="md-ellipsis">
+      opening widgets widgets
     </span>
   </a>
   
@@ -1199,12 +1240,14 @@
 <h3 id="opening-napari">opening napari<a class="headerlink" href="#opening-napari" title="Permanent link">#</a></h3>
 <p>In your operating system, you can search for <code>napari</code> and open the version that you just installed. If you followed the default installation, you will also likely have a shortcut to napari on your desktop, e.g. <code>napari (0.5.4)</code>.</p>
 <h2 id="napari-ndev-minimal-installation-from-ui">napari-ndev minimal installation from UI<a class="headerlink" href="#napari-ndev-minimal-installation-from-ui" title="Permanent link">#</a></h2>
-<p>Inside napari, navigate to <code>Plugins</code> --&gt; <code>Install/Uninstall Plugins...</code>. In the <code>filter...</code> text box, search for <code>napari-ndev</code>. Select <code>PyPI</code> as the Source and <code>Install</code> the most recent (default) version. This is a complete version of <code>napari-ndev</code> but lacks the full integration with other tools such as the <code>napari-assistant</code> and <code>napari-workflows</code>. This minimal installation is sufficient for full reproducibility of any analysis. For full installation see below:</p>
 <p><img alt="UI-installation" src="../resources/gifs/ui_installation.gif"></p>
-<h3 id="napari-ndev-full-installation">napari-ndev full installation<a class="headerlink" href="#napari-ndev-full-installation" title="Permanent link">#</a></h3>
-<p>This method only installs python libraries that are BSD3 licensed. Some image formats (such as czi and lif) are not available unless installing the full neuralDev package. To install extra plugins go to the integrated <code>napari console</code> and enter <code>!pip install napari-ndev[all]</code>. <strong>Note</strong>: napari will freeze when you enter this command; please be patient as it downloads and sets up the remaining packages.</p>
+<p>Inside napari, navigate to <code>Plugins</code> --&gt; <code>Install/Uninstall Plugins...</code>. In the <code>filter...</code> text box, search for <code>napari-ndev</code>. Select <code>PyPI</code> as the Source and <code>Install</code> the most recent (default) version. This is a complete version of <code>napari-ndev</code> and currently support full integration with other tools such as the <code>napari-assistant</code> and <code>napari-workflows</code>. This minimal installation is sufficient for full reproducibility of any analysis. <strong>Note</strong>: You must close the little black <code>When installing/uninstalling npe2...</code> pop-up for the installation to look to proceed. This installation will potentially take a few minutes depending on your computer and internet speed.</p>
+<h3 id="optional-napari-ndev-full-installation"><strong>[Optional]</strong> napari-ndev full installation<a class="headerlink" href="#optional-napari-ndev-full-installation" title="Permanent link">#</a></h3>
 <p><img alt="Console-installation" src="../resources/gifs/console-full-installation.gif"></p>
-<p>Restart napari for changes to take affect.</p>
+<p>This method only installs python libraries that are BSD3 licensed. Some image formats (such as czi and lif) are not available unless installing the full neuralDev package. To install extra plugins go to the integrated <code>napari console</code> (lower left button in UI) and enter <code>!pip install napari-ndev[all]</code>. <strong>Note</strong>: napari will freeze when you enter this command; please be patient as it downloads and sets up the remaining packages. <strong>Restart napari for changes to take affect.</strong></p>
+<h3 id="opening-widgets-widgets">opening widgets widgets<a class="headerlink" href="#opening-widgets-widgets" title="Permanent link">#</a></h3>
+<p><img alt="Widget opening" src="../resources/gifs/widget-opening.gif"></p>
+<p>Navigate to <code>Plugins</code> --&gt; <code>neuralDev</code> --&gt; Click any widget. <strong>Note:</strong> Something (I believe napari) appears to be currently bugged and requires that the first widget be opened twice; the first time it will give a warning, the second time it should open.</p>
 <h3 id="bio-formats-support">bio-formats support<a class="headerlink" href="#bio-formats-support" title="Permanent link">#</a></h3>
 <p>After the full installation, you may still be missing support for some image formats. To support all image formats you may find it useful to install bioformats support via <a href="https://github.com/bioio-devs/bioio-bioformats">bioio-bioformats</a>.
 To install enter into the console <code>!pip install bioio-bioformats</code>. You may also need to install java, to do so: <code>!conda install scyjava</code></p></div>
