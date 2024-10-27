@@ -4,6 +4,17 @@ import pytest
 
 from napari_ndev import morphology
 
+
+def test_convert_float_to_int():
+    """Test the convert_float_to_int function."""
+    float_image = np.array([[0.123, 0.234], [0.345, 0.456]])
+    int_image = morphology.convert_float_to_int(float_image)
+
+    assert np.issubdtype(float_image.dtype, np.floating)
+    assert np.issubdtype(int_image.dtype, np.integer)
+    assert int_image.dtype == np.uint32
+
+
 label_2d = np.asarray([[0, 1, 1, 1], [2, 0, 1, 1], [2, 2, 0, 1], [2, 2, 1, 1]])
 skeleton_label_2d = np.asarray([[0, 1, 0, 0], [2, 0, 1, 0], [0, 2, 0, 1], [0, 0, 1, 0]])
 connected_label_2d = np.asarray([[0, 1, 1, 1], [1, 0, 1, 1], [1, 1, 0, 1], [1, 1, 1, 1]])
