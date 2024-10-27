@@ -11,19 +11,17 @@
 
 A collection of widgets intended to serve any person seeking to process microscopy images from start to finish, *with no coding necessary*. `napari-ndev` was designed to address the **gap between the napari viewer and batch python scripting**.
 
-* Accepts diverse image formats and maintains metadata.
-* Allows advanced workflows to be used by novices.
-* User-friendly sparse annotation and batch training of machine learning classifiers.
-* Flexible label measurements and data summarization.
+* Accepts **diverse image formats**, dimensionality, file size, and maintains key metadata.
+* Allows **advanced, arbitrary image processing** workflows to be used by novices.
+* **User-friendly** sparse annotation and batch training of **machine learning classifiers**.
+* Flexible label measurements, parsing of metadata, and summarization for **easily readable datasets**.
 * Designed for ease of use, modification, and reproducibility.
 
-The wide breadth of this plugin's scope is only made possible by the amazing libraries and plugins from the python and napari community, especially [Robert Haase](https://github.com/haesleinhuepf).
+## [Check out the Docs to learn more!](https://timmonko.github.io/napari-ndev/)
 
-## Docs
+### See the [poster presented at BINA 2024](https://timmonko.github.io/napari-ndev/BINA_poster/) for an overview of the plugins in action!
 
-[https://timmonko.github.io/napari-ndev/](https://timmonko.github.io/napari-ndev/)
-
-----------------------------------
+### Try out the [Virtual I2K 2024 Workshop](https://timmonko.github.io/napari-ndev/tutorial/00_setup/) for an interactive tutorial to learn more!
 
 ## Installation
 
@@ -62,6 +60,8 @@ In addition, you may need to install specific [`bioio` readers](https://github.c
 For development use the `[dev]` optional libraries. You may also like to install `[docs]` and `[testing]` to verify your changes. However, `tox` will test any pull requests. You can also install `[dev-all]` to get all three of these dev dependencies.
 
 ----------------------------------
+
+The wide breadth of this plugin's scope is only made possible by the amazing libraries and plugins from the python and napari community, especially [Robert Haase](https://github.com/haesleinhuepf).
 
 This [napari] plugin was generated with [Cookiecutter] using [napari]'s [cookiecutter-napari-plugin] template.
 
