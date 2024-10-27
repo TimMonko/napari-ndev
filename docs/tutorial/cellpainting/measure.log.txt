@@ -1,0 +1,425 @@
+2024-10-26 16:04:04,962 -
+            Label Images: ['Labels: cell-labels', 'Labels: cyto-labels', 'Labels: nuclei-labels']
+            Intensity Channels: ['Labels: nucleoli-labels', 'Intensity: conA', 'Intensity: MitoTDR']
+            Num. Files: 10
+            Label Directory: C:\Users\timmo\napari-ndev\docs\tutorial\cellpainting\WorkflowOutput
+            Image Directory: C:\Users\timmo\napari-ndev\docs\tutorial\cellpainting\ConcatenatedImages
+            Region Directory: None
+            Output Directory: C:\Users\timmo\napari-ndev\docs\tutorial\cellpainting
+            ID Example: plate1_A14_site1_Ch1__0__plate1_A14_site1_Ch1
+            ID Regex Dict: {
+
+}
+            Tx ID: None
+            Tx N Well: None
+            Tx Dict: {
+
+}
+
+2024-10-26 16:04:04,964 - Processing file plate1_A14_site1_Ch1.tiff
+2024-10-26 16:04:05,046 - Processing scene: 0 :: Image:0
+2024-10-26 16:04:05,361 - Processing file plate1_A14_site2_Ch1.tiff
+2024-10-26 16:04:05,446 - Processing scene: 0 :: Image:0
+2024-10-26 16:04:05,823 - Processing file plate1_B13_site1_Ch1.tiff
+2024-10-26 16:04:05,910 - Processing scene: 0 :: Image:0
+2024-10-26 16:04:06,208 - Processing file plate1_B13_site2_Ch1.tiff
+2024-10-26 16:04:06,297 - Processing scene: 0 :: Image:0
+2024-10-26 16:04:06,612 - Processing file plate1_C12_site1_Ch1.tiff
+2024-10-26 16:04:06,702 - Processing scene: 0 :: Image:0
+2024-10-26 16:04:07,159 - Processing file plate1_C12_site2_Ch1.tiff
+2024-10-26 16:04:07,255 - Processing scene: 0 :: Image:0
+2024-10-26 16:04:07,702 - Processing file plate1_D16_site1_Ch1.tiff
+2024-10-26 16:04:07,788 - Processing scene: 0 :: Image:0
+2024-10-26 16:04:08,272 - Processing file plate1_D16_site2_Ch1.tiff
+2024-10-26 16:04:08,360 - Processing scene: 0 :: Image:0
+2024-10-26 16:04:08,814 - Processing file plate1_E18_site1_Ch1.tiff
+2024-10-26 16:04:08,901 - Processing scene: 0 :: Image:0
+2024-10-26 16:04:09,406 - Processing file plate1_E18_site2_Ch1.tiff
+2024-10-26 16:04:09,492 - Processing scene: 0 :: Image:0
+2024-10-26 20:10:46,419 -
+            Label Images: ['Labels: cell-labels', 'Labels: cyto-labels', 'Labels: nuclei-labels']
+            Intensity Channels: ['Labels: nucleoli-labels', 'Intensity: conA', 'Intensity: MitoTDR']
+            Num. Files: 10
+            Label Directory: C:\Users\timmo\napari-ndev\docs\tutorial\cellpainting\WorkflowOutput
+            Image Directory: C:\Users\timmo\napari-ndev\docs\tutorial\cellpainting\ConcatenatedImages
+            Region Directory: None
+            Output Directory: C:\Users\timmo\napari-ndev\docs\tutorial\cellpainting
+            ID Example: plate1_A14_site1_Ch1__0__plate1_A14_site1_Ch1
+            ID Regex Dict: {
+
+}
+            Tx ID: None
+            Tx N Well: None
+            Tx Dict: {
+
+}
+
+2024-10-26 20:10:46,422 - Processing file plate1_A14_site1_Ch1.tiff
+2024-10-26 20:10:46,526 - Processing scene: 0 :: Image:0
+2024-10-26 20:10:46,874 - Processing file plate1_A14_site2_Ch1.tiff
+2024-10-26 20:10:46,966 - Processing scene: 0 :: Image:0
+2024-10-26 20:10:47,352 - Processing file plate1_B13_site1_Ch1.tiff
+2024-10-26 20:10:47,443 - Processing scene: 0 :: Image:0
+2024-10-26 20:10:47,750 - Processing file plate1_B13_site2_Ch1.tiff
+2024-10-26 20:10:47,847 - Processing scene: 0 :: Image:0
+2024-10-26 20:10:48,190 - Processing file plate1_C12_site1_Ch1.tiff
+2024-10-26 20:10:48,288 - Processing scene: 0 :: Image:0
+2024-10-26 20:10:48,767 - Processing file plate1_C12_site2_Ch1.tiff
+2024-10-26 20:10:48,857 - Processing scene: 0 :: Image:0
+2024-10-26 20:10:49,329 - Processing file plate1_D16_site1_Ch1.tiff
+2024-10-26 20:10:49,422 - Processing scene: 0 :: Image:0
+2024-10-26 20:10:49,921 - Processing file plate1_D16_site2_Ch1.tiff
+2024-10-26 20:10:50,014 - Processing scene: 0 :: Image:0
+2024-10-26 20:10:50,486 - Processing file plate1_E18_site1_Ch1.tiff
+2024-10-26 20:10:50,576 - Processing scene: 0 :: Image:0
+2024-10-26 20:10:51,102 - Processing file plate1_E18_site2_Ch1.tiff
+2024-10-26 20:10:51,191 - Processing scene: 0 :: Image:0
+2024-10-26 20:10:59,406 -
+            Label Images: ['Labels: cell-labels', 'Labels: cyto-labels', 'Labels: nuclei-labels']
+            Intensity Channels: ['Labels: nucleoli-labels', 'Intensity: conA', 'Intensity: MitoTDR']
+            Num. Files: 10
+            Label Directory: C:\Users\timmo\napari-ndev\docs\tutorial\cellpainting\WorkflowOutput
+            Image Directory: C:\Users\timmo\napari-ndev\docs\tutorial\cellpainting\ConcatenatedImages
+            Region Directory: None
+            Output Directory: C:\Users\timmo\napari-ndev\docs\tutorial\cellpainting
+            ID Example: plate1_A14_site1_Ch1__0__plate1_A14_site1_Ch1
+            ID Regex Dict: {
+
+}
+            Tx ID: None
+            Tx N Well: None
+            Tx Dict: {
+
+}
+
+2024-10-26 20:10:59,408 - Processing file plate1_A14_site1_Ch1.tiff
+2024-10-26 20:10:59,497 - Processing scene: 0 :: Image:0
+2024-10-26 20:10:59,833 - Processing file plate1_A14_site2_Ch1.tiff
+2024-10-26 20:10:59,923 - Processing scene: 0 :: Image:0
+2024-10-26 20:11:00,284 - Processing file plate1_B13_site1_Ch1.tiff
+2024-10-26 20:11:00,370 - Processing scene: 0 :: Image:0
+2024-10-26 20:11:00,663 - Processing file plate1_B13_site2_Ch1.tiff
+2024-10-26 20:11:00,762 - Processing scene: 0 :: Image:0
+2024-10-26 20:11:01,104 - Processing file plate1_C12_site1_Ch1.tiff
+2024-10-26 20:11:01,192 - Processing scene: 0 :: Image:0
+2024-10-26 20:11:01,658 - Processing file plate1_C12_site2_Ch1.tiff
+2024-10-26 20:11:01,746 - Processing scene: 0 :: Image:0
+2024-10-26 20:11:02,250 - Processing file plate1_D16_site1_Ch1.tiff
+2024-10-26 20:11:02,345 - Processing scene: 0 :: Image:0
+2024-10-26 20:11:02,841 - Processing file plate1_D16_site2_Ch1.tiff
+2024-10-26 20:11:02,931 - Processing scene: 0 :: Image:0
+2024-10-26 20:11:03,394 - Processing file plate1_E18_site1_Ch1.tiff
+2024-10-26 20:11:03,485 - Processing scene: 0 :: Image:0
+2024-10-26 20:11:04,001 - Processing file plate1_E18_site2_Ch1.tiff
+2024-10-26 20:11:04,122 - Processing scene: 0 :: Image:0
+2024-10-26 20:28:14,141 -
+            Label Images: ['Labels: cell-labels', 'Labels: cyto-labels', 'Labels: nuclei-labels']
+            Intensity Channels: ['Labels: nucleoli-labels', 'Intensity: conA', 'Intensity: MitoTDR']
+            Num. Files: 10
+            Label Directory: C:\Users\timmo\napari-ndev\docs\tutorial\cellpainting\WorkflowOutput
+            Image Directory: C:\Users\timmo\napari-ndev\docs\tutorial\cellpainting\ConcatenatedImages
+            Region Directory: None
+            Output Directory: C:\Users\timmo\napari-ndev\docs\tutorial\cellpainting
+            ID Example: plate1_A14_site1_Ch1__0__plate1_A14_site1_Ch1
+            ID Regex Dict: {
+    'plate': r'plate(\d{1,3})-',
+}
+            Tx ID: id
+            Tx N Well: 384
+            Tx Dict: {
+
+}
+
+2024-10-26 20:28:14,143 - Processing file plate1_A14_site1_Ch1.tiff
+2024-10-26 20:28:14,231 - Processing scene: 0 :: Image:0
+2024-10-26 20:28:14,691 - Processing file plate1_A14_site2_Ch1.tiff
+2024-10-26 20:28:14,775 - Processing scene: 0 :: Image:0
+2024-10-26 20:28:15,272 - Processing file plate1_B13_site1_Ch1.tiff
+2024-10-26 20:28:15,372 - Processing scene: 0 :: Image:0
+2024-10-26 20:28:15,793 - Processing file plate1_B13_site2_Ch1.tiff
+2024-10-26 20:28:15,882 - Processing scene: 0 :: Image:0
+2024-10-26 20:28:16,326 - Processing file plate1_C12_site1_Ch1.tiff
+2024-10-26 20:28:16,412 - Processing scene: 0 :: Image:0
+2024-10-26 20:28:17,032 - Processing file plate1_C12_site2_Ch1.tiff
+2024-10-26 20:28:17,122 - Processing scene: 0 :: Image:0
+2024-10-26 20:28:17,701 - Processing file plate1_D16_site1_Ch1.tiff
+2024-10-26 20:28:17,788 - Processing scene: 0 :: Image:0
+2024-10-26 20:28:18,409 - Processing file plate1_D16_site2_Ch1.tiff
+2024-10-26 20:28:18,497 - Processing scene: 0 :: Image:0
+2024-10-26 20:28:19,082 - Processing file plate1_E18_site1_Ch1.tiff
+2024-10-26 20:28:19,170 - Processing scene: 0 :: Image:0
+2024-10-26 20:28:19,806 - Processing file plate1_E18_site2_Ch1.tiff
+2024-10-26 20:28:19,895 - Processing scene: 0 :: Image:0
+2024-10-26 20:28:50,520 -
+            Label Images: ['Labels: cell-labels', 'Labels: cyto-labels', 'Labels: nuclei-labels']
+            Intensity Channels: ['Labels: nucleoli-labels', 'Intensity: conA', 'Intensity: MitoTDR']
+            Num. Files: 10
+            Label Directory: C:\Users\timmo\napari-ndev\docs\tutorial\cellpainting\WorkflowOutput
+            Image Directory: C:\Users\timmo\napari-ndev\docs\tutorial\cellpainting\ConcatenatedImages
+            Region Directory: None
+            Output Directory: C:\Users\timmo\napari-ndev\docs\tutorial\cellpainting
+            ID Example: plate1_A14_site1_Ch1__0__plate1_A14_site1_Ch1
+            ID Regex Dict: {
+    'plate': r'plate(\d{1,3})_',
+}
+            Tx ID: id
+            Tx N Well: 384
+            Tx Dict: {
+
+}
+
+2024-10-26 20:28:50,522 - Processing file plate1_A14_site1_Ch1.tiff
+2024-10-26 20:28:50,609 - Processing scene: 0 :: Image:0
+2024-10-26 20:28:51,059 - Processing file plate1_A14_site2_Ch1.tiff
+2024-10-26 20:28:51,147 - Processing scene: 0 :: Image:0
+2024-10-26 20:28:51,645 - Processing file plate1_B13_site1_Ch1.tiff
+2024-10-26 20:28:51,731 - Processing scene: 0 :: Image:0
+2024-10-26 20:28:52,156 - Processing file plate1_B13_site2_Ch1.tiff
+2024-10-26 20:28:52,251 - Processing scene: 0 :: Image:0
+2024-10-26 20:28:52,718 - Processing file plate1_C12_site1_Ch1.tiff
+2024-10-26 20:28:52,808 - Processing scene: 0 :: Image:0
+2024-10-26 20:28:53,417 - Processing file plate1_C12_site2_Ch1.tiff
+2024-10-26 20:28:53,511 - Processing scene: 0 :: Image:0
+2024-10-26 20:28:54,116 - Processing file plate1_D16_site1_Ch1.tiff
+2024-10-26 20:28:54,204 - Processing scene: 0 :: Image:0
+2024-10-26 20:28:54,844 - Processing file plate1_D16_site2_Ch1.tiff
+2024-10-26 20:28:54,933 - Processing scene: 0 :: Image:0
+2024-10-26 20:28:55,536 - Processing file plate1_E18_site1_Ch1.tiff
+2024-10-26 20:28:55,626 - Processing scene: 0 :: Image:0
+2024-10-26 20:28:56,257 - Processing file plate1_E18_site2_Ch1.tiff
+2024-10-26 20:28:56,345 - Processing scene: 0 :: Image:0
+2024-10-26 20:31:58,349 -
+            Label Images: ['Labels: cell-labels', 'Labels: cyto-labels', 'Labels: nuclei-labels']
+            Intensity Channels: ['Labels: nucleoli-labels', 'Intensity: conA', 'Intensity: MitoTDR']
+            Num. Files: 10
+            Label Directory: C:\Users\timmo\napari-ndev\docs\tutorial\cellpainting\WorkflowOutput
+            Image Directory: C:\Users\timmo\napari-ndev\docs\tutorial\cellpainting\ConcatenatedImages
+            Region Directory: None
+            Output Directory: C:\Users\timmo\napari-ndev\docs\tutorial\cellpainting
+            ID Example: plate1_A14_site1_Ch1__0__plate1_A14_site1_Ch1
+            ID Regex Dict: {
+    'plate': r'plate(\d{1,3})_',
+    'well': r'_(\w+)_site',
+    'site': r'_site(\d{1,3})_',
+}
+            Tx ID: id
+            Tx N Well: 384
+            Tx Dict: {
+    'media': {
+        'HBSS': ['A1:C24'],
+        'DMEM': ['D1:F24'],
+    },
+    'treatment': {
+        'control': ['A12:P14'],
+        'drug': ['A15:P18'],
+    }
+}
+
+2024-10-26 20:31:58,352 - Processing file plate1_A14_site1_Ch1.tiff
+2024-10-26 20:31:58,443 - Processing scene: 0 :: Image:0
+2024-10-26 20:31:59,045 - Processing file plate1_A14_site2_Ch1.tiff
+2024-10-26 20:31:59,132 - Processing scene: 0 :: Image:0
+2024-10-26 20:31:59,801 - Processing file plate1_B13_site1_Ch1.tiff
+2024-10-26 20:31:59,893 - Processing scene: 0 :: Image:0
+2024-10-26 20:32:00,457 - Processing file plate1_B13_site2_Ch1.tiff
+2024-10-26 20:32:00,545 - Processing scene: 0 :: Image:0
+2024-10-26 20:32:01,172 - Processing file plate1_C12_site1_Ch1.tiff
+2024-10-26 20:32:01,259 - Processing scene: 0 :: Image:0
+2024-10-26 20:32:02,056 - Processing file plate1_C12_site2_Ch1.tiff
+2024-10-26 20:32:02,158 - Processing scene: 0 :: Image:0
+2024-10-26 20:32:02,964 - Processing file plate1_D16_site1_Ch1.tiff
+2024-10-26 20:32:03,060 - Processing scene: 0 :: Image:0
+2024-10-26 20:32:03,840 - Processing file plate1_D16_site2_Ch1.tiff
+2024-10-26 20:32:03,935 - Processing scene: 0 :: Image:0
+2024-10-26 20:32:04,702 - Processing file plate1_E18_site1_Ch1.tiff
+2024-10-26 20:32:04,802 - Processing scene: 0 :: Image:0
+2024-10-26 20:32:05,817 - Processing file plate1_E18_site2_Ch1.tiff
+2024-10-26 20:32:05,945 - Processing scene: 0 :: Image:0
+2024-10-26 20:32:24,208 -
+            Label Images: ['Labels: cell-labels', 'Labels: cyto-labels', 'Labels: nuclei-labels']
+            Intensity Channels: ['Labels: nucleoli-labels', 'Intensity: conA', 'Intensity: MitoTDR']
+            Num. Files: 10
+            Label Directory: C:\Users\timmo\napari-ndev\docs\tutorial\cellpainting\WorkflowOutput
+            Image Directory: C:\Users\timmo\napari-ndev\docs\tutorial\cellpainting\ConcatenatedImages
+            Region Directory: None
+            Output Directory: C:\Users\timmo\napari-ndev\docs\tutorial\cellpainting
+            ID Example: plate1_A14_site1_Ch1__0__plate1_A14_site1_Ch1
+            ID Regex Dict: {
+    'plate': r'plate(\d{1,3})_',
+    'well': r'_(\w+)_site',
+    'site': r'_site(\d{1,3})_',
+}
+            Tx ID: id
+            Tx N Well: 384
+            Tx Dict: {
+    'media': {
+        'HBSS': ['A1:C24'],
+        'DMEM': ['D1:F24'],
+    },
+    'treatment': {
+        'control': ['A12:P14'],
+        'drug': ['A15:P18'],
+    }
+}
+
+2024-10-26 20:32:24,210 - Processing file plate1_A14_site1_Ch1.tiff
+2024-10-26 20:32:24,306 - Processing scene: 0 :: Image:0
+2024-10-26 20:32:24,937 - Processing file plate1_A14_site2_Ch1.tiff
+2024-10-26 20:32:25,027 - Processing scene: 0 :: Image:0
+2024-10-26 20:32:25,656 - Processing file plate1_B13_site1_Ch1.tiff
+2024-10-26 20:32:25,740 - Processing scene: 0 :: Image:0
+2024-10-26 20:32:26,319 - Processing file plate1_B13_site2_Ch1.tiff
+2024-10-26 20:32:26,408 - Processing scene: 0 :: Image:0
+2024-10-26 20:32:27,018 - Processing file plate1_C12_site1_Ch1.tiff
+2024-10-26 20:32:27,107 - Processing scene: 0 :: Image:0
+2024-10-26 20:32:27,857 - Processing file plate1_C12_site2_Ch1.tiff
+2024-10-26 20:32:27,949 - Processing scene: 0 :: Image:0
+2024-10-26 20:32:28,698 - Processing file plate1_D16_site1_Ch1.tiff
+2024-10-26 20:32:28,787 - Processing scene: 0 :: Image:0
+2024-10-26 20:32:29,585 - Processing file plate1_D16_site2_Ch1.tiff
+2024-10-26 20:32:29,678 - Processing scene: 0 :: Image:0
+2024-10-26 20:32:30,452 - Processing file plate1_E18_site1_Ch1.tiff
+2024-10-26 20:32:30,545 - Processing scene: 0 :: Image:0
+2024-10-26 20:32:31,359 - Processing file plate1_E18_site2_Ch1.tiff
+2024-10-26 20:32:31,452 - Processing scene: 0 :: Image:0
+2024-10-26 20:35:23,465 -
+            Label Images: ['Labels: cell-labels', 'Labels: cyto-labels', 'Labels: nuclei-labels']
+            Intensity Channels: ['Labels: nucleoli-labels', 'Intensity: conA', 'Intensity: MitoTDR']
+            Num. Files: 10
+            Label Directory: C:\Users\timmo\napari-ndev\docs\tutorial\cellpainting\WorkflowOutput
+            Image Directory: C:\Users\timmo\napari-ndev\docs\tutorial\cellpainting\ConcatenatedImages
+            Region Directory: None
+            Output Directory: C:\Users\timmo\napari-ndev\docs\tutorial\cellpainting
+            ID Example: plate1_A14_site1_Ch1__0__plate1_A14_site1_Ch1
+            ID Regex Dict: {
+    'plate': r'plate(\d{1,3})_',
+    'well': r'_(\w+)_site',
+    'site': r'_site(\d{1,3})_',
+}
+            Tx ID: id
+            Tx N Well: 384
+            Tx Dict: {
+    'media': {
+        'HBSS': ['A1:C24'],
+        'DMEM': ['D1:F24'],
+    },
+    'treatment': {
+        'control': ['A12:P14'],
+        'drug': ['A15:P18'],
+    }
+}
+
+2024-10-26 20:35:23,469 - Processing file plate1_A14_site1_Ch1.tiff
+2024-10-26 20:35:23,557 - Processing scene: 0 :: Image:0
+2024-10-26 20:35:24,154 - Processing file plate1_A14_site2_Ch1.tiff
+2024-10-26 20:35:24,240 - Processing scene: 0 :: Image:0
+2024-10-26 20:35:24,868 - Processing file plate1_B13_site1_Ch1.tiff
+2024-10-26 20:35:24,953 - Processing scene: 0 :: Image:0
+2024-10-26 20:35:25,498 - Processing file plate1_B13_site2_Ch1.tiff
+2024-10-26 20:35:25,591 - Processing scene: 0 :: Image:0
+2024-10-26 20:35:26,168 - Processing file plate1_C12_site1_Ch1.tiff
+2024-10-26 20:35:26,254 - Processing scene: 0 :: Image:0
+2024-10-26 20:35:26,993 - Processing file plate1_C12_site2_Ch1.tiff
+2024-10-26 20:35:27,077 - Processing scene: 0 :: Image:0
+2024-10-26 20:35:27,800 - Processing file plate1_D16_site1_Ch1.tiff
+2024-10-26 20:35:27,886 - Processing scene: 0 :: Image:0
+2024-10-26 20:35:28,644 - Processing file plate1_D16_site2_Ch1.tiff
+2024-10-26 20:35:28,737 - Processing scene: 0 :: Image:0
+2024-10-26 20:35:29,463 - Processing file plate1_E18_site1_Ch1.tiff
+2024-10-26 20:35:29,551 - Processing scene: 0 :: Image:0
+2024-10-26 20:35:30,353 - Processing file plate1_E18_site2_Ch1.tiff
+2024-10-26 20:35:30,440 - Processing scene: 0 :: Image:0
+2024-10-26 20:37:04,082 -
+            Label Images: ['Labels: cell-labels', 'Labels: cyto-labels', 'Labels: nuclei-labels']
+            Intensity Channels: ['Labels: nucleoli-labels', 'Intensity: conA', 'Intensity: MitoTDR']
+            Num. Files: 10
+            Label Directory: C:\Users\timmo\napari-ndev\docs\tutorial\cellpainting\WorkflowOutput
+            Image Directory: C:\Users\timmo\napari-ndev\docs\tutorial\cellpainting\ConcatenatedImages
+            Region Directory: None
+            Output Directory: C:\Users\timmo\napari-ndev\docs\tutorial\cellpainting
+            ID Example: plate1_A14_site1_Ch1__0__plate1_A14_site1_Ch1
+            ID Regex Dict: {
+    'plate': r'plate(\d{1,3})_',
+    'well': r'_(\w+?)_site',
+    'site': r'_site(\d{1,3})_',
+}
+            Tx ID: id
+            Tx N Well: 384
+            Tx Dict: {
+    'media': {
+        'HBSS': ['A1:C24'],
+        'DMEM': ['D1:F24'],
+    },
+    'treatment': {
+        'control': ['A12:P14'],
+        'drug': ['A15:P18'],
+    }
+}
+
+2024-10-26 20:37:04,086 - Processing file plate1_A14_site1_Ch1.tiff
+2024-10-26 20:37:04,178 - Processing scene: 0 :: Image:0
+2024-10-26 20:37:04,778 - Processing file plate1_A14_site2_Ch1.tiff
+2024-10-26 20:37:04,869 - Processing scene: 0 :: Image:0
+2024-10-26 20:37:05,499 - Processing file plate1_B13_site1_Ch1.tiff
+2024-10-26 20:37:05,581 - Processing scene: 0 :: Image:0
+2024-10-26 20:37:06,138 - Processing file plate1_B13_site2_Ch1.tiff
+2024-10-26 20:37:06,221 - Processing scene: 0 :: Image:0
+2024-10-26 20:37:06,802 - Processing file plate1_C12_site1_Ch1.tiff
+2024-10-26 20:37:06,887 - Processing scene: 0 :: Image:0
+2024-10-26 20:37:07,619 - Processing file plate1_C12_site2_Ch1.tiff
+2024-10-26 20:37:07,704 - Processing scene: 0 :: Image:0
+2024-10-26 20:37:08,426 - Processing file plate1_D16_site1_Ch1.tiff
+2024-10-26 20:37:08,510 - Processing scene: 0 :: Image:0
+2024-10-26 20:37:09,273 - Processing file plate1_D16_site2_Ch1.tiff
+2024-10-26 20:37:09,358 - Processing scene: 0 :: Image:0
+2024-10-26 20:37:10,089 - Processing file plate1_E18_site1_Ch1.tiff
+2024-10-26 20:37:10,176 - Processing scene: 0 :: Image:0
+2024-10-26 20:37:10,968 - Processing file plate1_E18_site2_Ch1.tiff
+2024-10-26 20:37:11,055 - Processing scene: 0 :: Image:0
+2024-10-26 20:39:03,942 -
+            Label Images: ['Labels: cell-labels', 'Labels: cyto-labels', 'Labels: nuclei-labels']
+            Intensity Channels: ['Labels: nucleoli-labels', 'Intensity: conA', 'Intensity: MitoTDR']
+            Num. Files: 10
+            Label Directory: C:\Users\timmo\napari-ndev\docs\tutorial\cellpainting\WorkflowOutput
+            Image Directory: C:\Users\timmo\napari-ndev\docs\tutorial\cellpainting\ConcatenatedImages
+            Region Directory: None
+            Output Directory: C:\Users\timmo\napari-ndev\docs\tutorial\cellpainting
+            ID Example: plate1_A14_site1_Ch1__0__plate1_A14_site1_Ch1
+            ID Regex Dict: {
+    'plate': r'plate(\d{1,3})_',
+    'well': r'_(\w+?)_site',
+    'site': r'_site(\d{1,3})_',
+}
+            Tx ID: well
+            Tx N Well: 384
+            Tx Dict: {
+    'media': {
+        'HBSS': ['A1:C24'],
+        'DMEM': ['D1:F24'],
+    },
+    'treatment': {
+        'control': ['A12:P14'],
+        'drug': ['A15:P18'],
+    }
+}
+
+2024-10-26 20:39:03,945 - Processing file plate1_A14_site1_Ch1.tiff
+2024-10-26 20:39:04,035 - Processing scene: 0 :: Image:0
+2024-10-26 20:39:04,631 - Processing file plate1_A14_site2_Ch1.tiff
+2024-10-26 20:39:04,717 - Processing scene: 0 :: Image:0
+2024-10-26 20:39:05,349 - Processing file plate1_B13_site1_Ch1.tiff
+2024-10-26 20:39:05,436 - Processing scene: 0 :: Image:0
+2024-10-26 20:39:05,984 - Processing file plate1_B13_site2_Ch1.tiff
+2024-10-26 20:39:06,070 - Processing scene: 0 :: Image:0
+2024-10-26 20:39:06,650 - Processing file plate1_C12_site1_Ch1.tiff
+2024-10-26 20:39:06,735 - Processing scene: 0 :: Image:0
+2024-10-26 20:39:07,466 - Processing file plate1_C12_site2_Ch1.tiff
+2024-10-26 20:39:07,551 - Processing scene: 0 :: Image:0
+2024-10-26 20:39:08,273 - Processing file plate1_D16_site1_Ch1.tiff
+2024-10-26 20:39:08,360 - Processing scene: 0 :: Image:0
+2024-10-26 20:39:09,136 - Processing file plate1_D16_site2_Ch1.tiff
+2024-10-26 20:39:09,230 - Processing scene: 0 :: Image:0
+2024-10-26 20:39:09,979 - Processing file plate1_E18_site1_Ch1.tiff
+2024-10-26 20:39:10,067 - Processing scene: 0 :: Image:0
+2024-10-26 20:39:10,905 - Processing file plate1_E18_site2_Ch1.tiff
+2024-10-26 20:39:11,001 - Processing scene: 0 :: Image:0
