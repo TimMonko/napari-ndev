@@ -7,9 +7,17 @@
 [![codecov](https://codecov.io/gh/TimMonko/napari-ndev/branch/main/graph/badge.svg)](https://codecov.io/gh/TimMonko/napari-ndev)
 [![napari hub](https://img.shields.io/endpoint?url=https://api.napari-hub.org/shields/napari-ndev)](https://napari-hub.org/plugins/napari-ndev)
 
-<img src="docs/images/neuralDev-logo.svg" alt="logo" width="300">
+<img src="docs/resources/images/neuralDev-logo.svg" alt="logo" width="300">
 
-A collection of widgets intended to serve any person seeking to process microscopy images from start to finish. The wide breadth of this plugin's scope is only made possible by the amazing libraries and plugins from the napari community.
+A collection of widgets intended to serve any person seeking to process microscopy images from start to finish, *with no coding necessary*. `napari-ndev` was designed to address the **gap between the napari viewer and batch python scripting**.
+
+* Accepts diverse image formats and maintains metadata.
+* Allows advanced workflows to be used by novices.
+* User-friendly sparse annotation and batch training of machine learning classifiers.
+* Flexible label measurements and data summarization.
+* Designed for ease of use, modification, and reproducibility.
+
+The wide breadth of this plugin's scope is only made possible by the amazing libraries and plugins from the python and napari community, especially [Robert Haase](https://github.com/haesleinhuepf).
 
 ## Docs
 
