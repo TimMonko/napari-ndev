@@ -27,7 +27,7 @@ Now, investigate your concatenated images. Go to `Select Files` and find the fol
 
 Once images are in a format that is helpful for analysis, we can proceed with other widgets. This does mean that some images do not need to be processed with the `Image Utilities` Widget; for example, some microscopes properly incorporate scale and channel names into the image metadata. For this tutorial, we are going to use the `Workflow Widget` to pre-process, segment, and label features of the image with a pre-made custom workflow file (see `cellpainting\scripting_workflow.ipynb` to see how). The intent of the `Workflow Widget` is to *easily* reproduce This custom workflow was designed initially with the `napari-assistant` which will be explored further in the [Basic Usage](02_basic_usage.md) tutorial section.
 
-The goal for this workflow is to segment the nucleus, cell area (based on a voronoi tesselation of the nuclei), cytoplasm (cell area - nucleus), and the nucleoli.
+The goal for this workflow is to segment the nucleus, cell area (based on a voronoi tessellation of the nuclei), cytoplasm (cell area - nucleus), and the nucleoli.
 
 ![Workflow Example](screenshots/workflow-goals.png)
 
