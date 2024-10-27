@@ -46,6 +46,7 @@ nav:
   - Overview: index.md
   - Installation: installation.md
   - Beginner Setup: beginner_setup.md
+  - Further Widget Info: widget_further_info.md
   - Poster: BINA_poster.md
   - I2K Workshop:
     - 00 - Tutorial Setup: tutorial/00_setup.md
