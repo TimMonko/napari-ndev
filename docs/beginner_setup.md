@@ -14,9 +14,9 @@ In your operating system, you can search for `napari` and open the version that 
 
 ![UI-installation](resources/gifs/ui_installation.gif)
 
-Inside napari, navigate to `Plugins` --> `Install/Uninstall Plugins...`. In the `filter...` text box, search for `napari-ndev`. Select `PyPI` as the Source and `Install` the most recent (default) version. This is a complete version of `napari-ndev` but lacks the full integration with other tools such as the `napari-assistant` and `napari-workflows`. This minimal installation is sufficient for full reproducibility of any analysis. **Note**: You must close the little black `When installing/uninstalling npe2...` pop-up for the installation to look to proceed. This installation will potentially take a few minutes depending on your computer and internet speed.
+Inside napari, navigate to `Plugins` --> `Install/Uninstall Plugins...`. In the `filter...` text box, search for `napari-ndev`. Select `PyPI` as the Source and `Install` the most recent (default) version. This is a complete version of `napari-ndev` and currently support full integration with other tools such as the `napari-assistant` and `napari-workflows`. This minimal installation is sufficient for full reproducibility of any analysis. **Note**: You must close the little black `When installing/uninstalling npe2...` pop-up for the installation to look to proceed. This installation will potentially take a few minutes depending on your computer and internet speed.
 
-### napari-ndev full installation
+### **[Optional]** napari-ndev full installation
 
 ![Console-installation](resources/gifs/console-full-installation.gif)
 

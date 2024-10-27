@@ -129,7 +129,7 @@ Finally, press `Group Measurements` button! You now have the output dataset.
 
 ![batch-group](screenshots/measure-group-settings.png)
 
-### Make observations!
+### Make observations
 
 One of the best parts of summarizing your data is quickly checking for quality control. Investigate `measure_props...grouped.csv`
 
