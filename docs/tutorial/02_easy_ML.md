@@ -6,6 +6,14 @@ If you investigate the `primaryneurons` images you'll notice that there variable
 
 You might also be surprised when looking at some of the images that I would not recommend traditional intensity-based segmentation methods for NCOA4 and Ferritin (but would, and do, use it for DAPI). Instead, I would endorse using Machine Learning based segmentation because it is less sensitive to intensity (which is expected to be different between neurons and treatment group) and more sensitive to 'Features' of the images, which includes intensity, size, blobness, ridgeness, edgeness, etc.
 
+Machine Learning classifiers are trained using [`accelerated-pixel-and-object-classifiers` (APOC)](https://github.com/haesleinhuepf/apoc) under the hood; the examples in the `apoc` repository are excellent!
+
+The `APOC Widget` can be used to Segment Objects, Classify Pixels, and Classify Objects. Furthermore, the widget can visualize custom feature sets and be applied in the viewer or in batch.
+
+To train Machine Learning classifiers, you need to provide some sample, sparse annotation that the classifier can evaluate as the class of pixel you are interested. A typical convention is to use label 1 for background, and subsequent labels with an increasing number. This is different from Deep Learning that requires *complete* and *accurate* annotations. In comparison, Machine Learning is much more lenient.
+
+Overall, new Machine Learning classifiers can be evaluated within *seconds* and batch training can be accomplished in minutes... with great results!
+
 The skills practiced in this will be used on relatively small, 2D images; however, things are intended to generally transfer to both 3D and higher dimensional datasets.
 
 ## Sparse annotation with Image Utilities
