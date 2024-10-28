@@ -24,7 +24,7 @@
     
     
       
-        <title>00 - Tutorial Setup - napari-ndev</title>
+        <title>1) Tutorial Setup - napari-ndev</title>
       
     
     
@@ -113,7 +113,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              00 - Tutorial Setup
+              1) Tutorial Setup
             
           </span>
         </div>
@@ -370,6 +370,10 @@
       
         
       
+        
+      
+        
+      
     
     
       
@@ -423,7 +427,7 @@
           
   
   <span class="md-ellipsis">
-    00 - Tutorial Setup
+    1) Tutorial Setup
   </span>
   
 
@@ -434,7 +438,7 @@
         
   
   <span class="md-ellipsis">
-    00 - Tutorial Setup
+    1) Tutorial Setup
   </span>
   
 
@@ -471,10 +475,9 @@
     </span>
   </a>
   
-    <nav class="md-nav" aria-label="Download Tutorial Images and Files">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
+</li>
+      
+        <li class="md-nav__item">
   <a href="#cellpainting-images" class="md-nav__link">
     <span class="md-ellipsis">
       CellPainting Images
@@ -482,9 +485,22 @@
   </a>
   
 </li>
-        
-      </ul>
-    </nav>
+      
+        <li class="md-nav__item">
+  <a href="#primaryneuron-images" class="md-nav__link">
+    <span class="md-ellipsis">
+      PrimaryNeuron Images
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#neuralprogenitor-images" class="md-nav__link">
+    <span class="md-ellipsis">
+      NeuralProgenitor Images
+    </span>
+  </a>
   
 </li>
       
@@ -508,7 +524,49 @@
         
   
   <span class="md-ellipsis">
-    01 - Example Pipeline
+    2) Example Pipeline
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../02_easy_ML/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    3) Easy Machine Learning
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../03_build_pipeline/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    4) Build Your Own Pipeline
   </span>
   
 
@@ -1154,10 +1212,9 @@
     </span>
   </a>
   
-    <nav class="md-nav" aria-label="Download Tutorial Images and Files">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
+</li>
+      
+        <li class="md-nav__item">
   <a href="#cellpainting-images" class="md-nav__link">
     <span class="md-ellipsis">
       CellPainting Images
@@ -1165,9 +1222,22 @@
   </a>
   
 </li>
-        
-      </ul>
-    </nav>
+      
+        <li class="md-nav__item">
+  <a href="#primaryneuron-images" class="md-nav__link">
+    <span class="md-ellipsis">
+      PrimaryNeuron Images
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#neuralprogenitor-images" class="md-nav__link">
+    <span class="md-ellipsis">
+      NeuralProgenitor Images
+    </span>
+  </a>
   
 </li>
       
@@ -1194,9 +1264,10 @@
 <p>You have two options to download <code>napari</code> and <code>napari-ndev</code>. For users unfamiliar with using the command line and python, I would recommend following the instructions to install from UI at <a href="../../beginner_setup/">Beginner Setup</a>.</p>
 <p>If you are familiar with python, then I would recommend creating a new environment and to do a fresh installation with <code>napari-ndev[all]</code>. Further details available in <a href="../../installation/">Installation</a>.</p>
 <h2 id="download-tutorial-images-and-files">Download Tutorial Images and Files<a class="headerlink" href="#download-tutorial-images-and-files" title="Permanent link">#</a></h2>
-<p>TBD: incoming download link</p>
-<h3 id="cellpainting-images">CellPainting Images<a class="headerlink" href="#cellpainting-images" title="Permanent link">#</a></h3>
+<p>[[Download Link to be Inserted]]</p>
+<h2 id="cellpainting-images">CellPainting Images<a class="headerlink" href="#cellpainting-images" title="Permanent link">#</a></h2>
 <p>The images come from the <a href="https://bbbc.broadinstitute.org/BBBC022/">Broad Bioimage Benchmark Collection</a>. Investigate the link for the description of the images.</p>
+<p>Scale: 0.656um/pixel</p>
 <p>Channels:</p>
 <ol>
 <li>Hoescht 33342 (nuclei)</li>
@@ -1205,7 +1276,30 @@
 <li>WGA + phalloidin (plasma membrane, golgi, and actin)</li>
 <li>MitoTracker Deep Red (mitochondria)</li>
 </ol>
-<p>Scale: 0.656um/pixel</p></div>
+<p><img alt="cellpainting-image" src="../screenshots/cellpainting-image.png"></p>
+<h2 id="primaryneuron-images">PrimaryNeuron Images<a class="headerlink" href="#primaryneuron-images" title="Permanent link">#</a></h2>
+<p>These images come from my own work at the University of Minnesota in the Thomas Bastian lab. The primary neurons are derived from embryonic mouse brains, and grown for a few days in a dish. The goal is to study morphology and iron homeostasis as the neurons develop over time in conditions of iron deficiency. The images available in the tutorial are extracted from multi-scene CZI files (each original file has over 100 scenes) using the <code>Image Utilities</code> widget. Metadata from the CZI files was correct, so the widget automatically passes this downstream without any user input.</p>
+<p>Scale: 0.1241um/pixel</p>
+<p>Channels:</p>
+<ol>
+<li>AF647 - NCOA4 / nuclear coactivator 4 (a protein known to target ferritin for degradation)</li>
+<li>AF568 - Ferritin (the iron storage protein)</li>
+<li>AF488 - Phalloidin (stains actin filaments)</li>
+<li>DAPI (nuclei)</li>
+<li>Oblique (brightfield; not always present, which is ok)</li>
+</ol>
+<p><img alt="primary-neuron-image" src="../screenshots/primaryneuron-image.png"></p>
+<h2 id="neuralprogenitor-images">NeuralProgenitor Images<a class="headerlink" href="#neuralprogenitor-images" title="Permanent link">#</a></h2>
+<p>These images come from the Zhe Chen lab at the University of Minnesota. These come from a microscope that <em>very poorly</em> saves the images: the images are forced to be saved as RGB (dspite having only one channel in each image) and improper scaling metadata. The images available in this tutorial have already been concatenated and the metadata applied using the <code>Image Utilities</code>.</p>
+<p>Pax6 - Green; Tbr2 - Magenta</p>
+<p>Scale: 0.7548um/pixel</p>
+<p>Channels:</p>
+<ol>
+<li>PAX6 (a nuclear transcription factor identifying radial glia)</li>
+<li>PAX6-2 (a duplicate of PAX6, due to the way the microscope saves images)</li>
+<li>TBR2 (a nuclear transcription factor identifying intermediate progenitor cells)</li>
+</ol>
+<p><img alt="neuralprogenitor" src="../screenshots/neuralprogenitor-image.png"></p></div>
 
 
 

@@ -16,7 +16,7 @@
         <link rel="prev" href="../00_setup/">
       
       
-        <link rel="next" href="../../examples/utilities/image_utilities/">
+        <link rel="next" href="../02_easy_ML/">
       
       
       <link rel="icon" href="../../resources/images/neuralDev-icon.svg">
@@ -24,7 +24,7 @@
     
     
       
-        <title>01 - Example Pipeline - napari-ndev</title>
+        <title>2) Example Pipeline - napari-ndev</title>
       
     
     
@@ -113,7 +113,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              01 - Example Pipeline
+              2) Example Pipeline
             
           </span>
         </div>
@@ -370,6 +370,10 @@
       
         
       
+        
+      
+        
+      
     
     
       
@@ -414,7 +418,7 @@
         
   
   <span class="md-ellipsis">
-    00 - Tutorial Setup
+    1) Tutorial Setup
   </span>
   
 
@@ -444,7 +448,7 @@
           
   
   <span class="md-ellipsis">
-    01 - Example Pipeline
+    2) Example Pipeline
   </span>
   
 
@@ -455,7 +459,7 @@
         
   
   <span class="md-ellipsis">
-    01 - Example Pipeline
+    2) Example Pipeline
   </span>
   
 
@@ -588,6 +592,48 @@
   
 </nav>
       
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../02_easy_ML/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    3) Easy Machine Learning
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../03_build_pipeline/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    4) Build Your Own Pipeline
+  </span>
+  
+
+      </a>
     </li>
   
 
@@ -1341,7 +1387,7 @@
 
 <div><h1 id="example-pipeline-tutorial">Example Pipeline Tutorial<a class="headerlink" href="#example-pipeline-tutorial" title="Permanent link">#</a></h1>
 <p>The goal of this example pipeline is to get the user familiar with working with <code>napari-ndev</code> for batch processing and reproducibility (view <code>Image Utilities</code> and <code>Workflow Widget</code>). In addition, this example pipeline thoroughly explains the <code>Measure Widget</code>, since this is a shared use across many pipelines.</p>
-<p>This Example Pipeline does not cover how <code>napari-ndev</code> is used for high-throughput annotations, the machine learning tools (<code>APOC Widget</code>), and designing your own workflows. This information will iinstead be covered in the interactive <a href="../02_basic_usage/">Basic Usage Tutorial</a>.</p>
+<p>This Example Pipeline does not cover how <code>napari-ndev</code> is used for high-throughput annotations, the machine learning tools (<code>APOC Widget</code>), and designing your own workflows. This information will instead be covered in the interactive tutorials that follow.</p>
 <h2 id="image-utilities">Image Utilities<a class="headerlink" href="#image-utilities" title="Permanent link">#</a></h2>
 <p>We are going to start with the <code>Image Utilities</code> widget in order to concatenate the <a href="../00_setup/#cellpainting-images">CellPainting images</a>. This will show a common use of the Image Utilities plugin, wherein various file formats can be managed and saved in to a common OME-TIFF format, including channel names and physical pixel scaling.</p>
 <p><img alt="Batch Concatenation" src="../screenshots/batch-concatenate.gif"></p>
@@ -1364,7 +1410,7 @@
 <p>If you want to investigate the raw images press <code>Open File(s)</code> this will open the original images with their known scale <code>(1,1,1)</code>. Each image will open as grayscale, and will not be layered.</p>
 <p>Now, investigate your concatenated images. Go to <code>Select Files</code> and find the folder <code>ConcatenatedImages</code> inside the <code>Choose Directory</code> previously chosen. Select the first image and <code>Open File(s)</code>. This time, the images will be open to the scale we set <code>(0,0.656,0.656)</code> and with a default layering and pseudo-coloring. This is how all images get passed down throughout the plugin.</p>
 <h2 id="example-workflow">Example workflow<a class="headerlink" href="#example-workflow" title="Permanent link">#</a></h2>
-<p>Once images are in a format that is helpful for analysis, we can proceed with other widgets. This does mean that some images do not need to be processed with the <code>Image Utilities</code> Widget; for example, some microscopes properly incorporate scale and channel names into the image metadata. For this tutorial, we are going to use the <code>Workflow Widget</code> to pre-process, segment, and label features of the image with a pre-made custom workflow file (see <code>cellpainting\scripting_workflow.ipynb</code> to see how). The intent of the <code>Workflow Widget</code> is to <em>easily</em> reproduce This custom workflow was designed initially with the <code>napari-assistant</code> which will be explored further in the <a href="../02_basic_usage/">Basic Usage</a> tutorial section.</p>
+<p>Once images are in a format that is helpful for analysis, we can proceed with other widgets. This does mean that some images do not need to be processed with the <code>Image Utilities</code> Widget; for example, some microscopes properly incorporate scale and channel names into the image metadata. For this tutorial, we are going to use the <code>Workflow Widget</code> to pre-process, segment, and label features of the image with a pre-made custom workflow file (see <code>cellpainting\scripting_workflow.ipynb</code> to see how). The intent of the <code>Workflow Widget</code> is to <em>easily</em> reproduce This custom workflow was designed initially with the <code>napari-assistant</code> which will be explored further in the following tutorial sections.</p>
 <p>The goal for this workflow is to segment the nucleus, cell area (based on a voronoi tessellation of the nuclei), cytoplasm (cell area - nucleus), and the nucleoli. We will later measure the properties of these objects using the <code>Measure Widget</code>.</p>
 <p><img alt="Workflow Example" src="../screenshots/workflow-goals.png"></p>
 <h2 id="using-the-workflow-widget-for-batch-processing">Using the Workflow Widget for Batch Processing<a class="headerlink" href="#using-the-workflow-widget-for-batch-processing" title="Permanent link">#</a></h2>
