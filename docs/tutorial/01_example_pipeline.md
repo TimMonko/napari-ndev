@@ -2,7 +2,7 @@
 
 The goal of this example pipeline is to get the user familiar with working with `napari-ndev` for batch processing and reproducibility (view `Image Utilities` and `Workflow Widget`). In addition, this example pipeline thoroughly explains the `Measure Widget`, since this is a shared use across many pipelines.
 
-This Example Pipeline does not cover how `napari-ndev` is used for high-throughput annotations, the machine learning tools (`APOC Widget`), and designing your own workflows. This information will iinstead be covered in the interactive [Basic Usage Tutorial](02_basic_usage.md).
+This Example Pipeline does not cover how `napari-ndev` is used for high-throughput annotations, the machine learning tools (`APOC Widget`), and designing your own workflows. This information will instead be covered in the interactive tutorials that follow.
 
 ## Image Utilities
 
@@ -29,7 +29,7 @@ Now, investigate your concatenated images. Go to `Select Files` and find the fol
 
 ## Example workflow
 
-Once images are in a format that is helpful for analysis, we can proceed with other widgets. This does mean that some images do not need to be processed with the `Image Utilities` Widget; for example, some microscopes properly incorporate scale and channel names into the image metadata. For this tutorial, we are going to use the `Workflow Widget` to pre-process, segment, and label features of the image with a pre-made custom workflow file (see `cellpainting\scripting_workflow.ipynb` to see how). The intent of the `Workflow Widget` is to *easily* reproduce This custom workflow was designed initially with the `napari-assistant` which will be explored further in the [Basic Usage](02_basic_usage.md) tutorial section.
+Once images are in a format that is helpful for analysis, we can proceed with other widgets. This does mean that some images do not need to be processed with the `Image Utilities` Widget; for example, some microscopes properly incorporate scale and channel names into the image metadata. For this tutorial, we are going to use the `Workflow Widget` to pre-process, segment, and label features of the image with a pre-made custom workflow file (see `cellpainting\scripting_workflow.ipynb` to see how). The intent of the `Workflow Widget` is to *easily* reproduce This custom workflow was designed initially with the `napari-assistant` which will be explored further in the following tutorial sections.
 
 The goal for this workflow is to segment the nucleus, cell area (based on a voronoi tessellation of the nuclei), cytoplasm (cell area - nucleus), and the nucleoli. We will later measure the properties of these objects using the `Measure Widget`.
 
