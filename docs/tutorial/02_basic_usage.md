@@ -26,7 +26,7 @@ For this workflow, we will be using the `neuralprogenitors` images. Our goal is 
 2. Navigate in the toolbar to `View` -> `Scale Bar` -> `Scale Bar Visible`. Now there should be a scale bar in the bottom right
 3. Add a Shapes layer by clicking the `polygon` icon (the second button above the layer list)
 4. Click the `Rectangle` button in the `layer controls`.
-5. Click and drag on the iamge to draw a rectangle that has a 200um width.
+5. Click and drag on the image to draw a rectangle that has a 200um width.
 6. Select button number 5 (highlighted in blue in the screenshot) to select the shape.
 7. Move the shape by dragging
 8. Rotate the shape into an area of interest.
@@ -75,6 +75,14 @@ For this workflow, we will be using the `neuralprogenitors` images. Our goal is 
 ### Applying your workflow in batch with the Workflow Widget
 
 Consider the instructions for [Using the Workflow Widget for Batch Processing](01_example_pipeline.md#using-the-workflow-widget-for-batch-processing) and apply it to this workflow.
+
+### Measuring your batch workflow output
+
+In additional to how we already learned how to use the `Measure Widget`, we can also consider additional creative possibility. In this case, we want to only count cells in our region of interest (the shape rectangle that was drawn), so we want to load this in as a `Region Directory`. Then, we want to ensure that the `Shape` is added as an `Intensity Image` and that we measure the `intensity_max` or `intensity_min`. The maximum intensity of an object *if it touches the region of interest at any point* will be 1. The minimum intensity of an object *fully* inside the ROI will be 1, since *all* pixels are inside the ROI. So, you can choose how you want to consider objects relative to the ROI.
+
+Then, when grouping the data, use the `intensity_max/min_Shape` as a grouping variable! Then, all labels with a value of 1 or 0 will be counted separately. This can be extended to multiple regions of interest, because each shape has it's own value (not immediately obvious yet in napari). We have used this to label multiple brain regions consistently in whole brain section analyses.
+
+**Future addition:** The ability to simply filter objects in the Measure Widget. This can for example be used to exclude all labels that are outside the region of interest (having a intensity value of 0 relative to the ROI), isntead of having to group.
 
 ## Notes on multi-dimensional data
 
