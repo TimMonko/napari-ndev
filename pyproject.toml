@@ -112,12 +112,18 @@ xarray = "xr"
 
 
 [tool.coverage.report]
+show_missing = true
 exclude_lines = [
     "pragma: no cover",
     "if TYPE_CHECKING:",
     "raise NotImplementedError()",
     "except ImportError:",
+    "pass",
     "^ +\\.\\.\\.$",
+]
+omit = [
+    "src/napari_ndev/_tests/*",
+    "docs/*",
 ]
 
 
