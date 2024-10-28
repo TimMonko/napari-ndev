@@ -10,7 +10,7 @@ The skills practiced in this tutorial will be used on relatively small, 2D image
 
 ## Annotating regions of interest with Image Utilities
 
-1. Load in one of the neural progenitor images from `ConcatenatedImages`
+1. Load in one of the neural progenitor images from `ConcatenatedImages` using the `Image Utilities` widget.
 2. Navigate in the toolbar to `View` -> `Scale Bar` -> `Scale Bar Visible`. Now there should be a scale bar in the bottom right
 3. Add a Shapes layer by clicking the `polygon` icon (the second button above the layer list)
 4. Click the `Rectangle` button in the `layer controls`.
@@ -70,7 +70,7 @@ In additional to how we already learned how to use the `Measure Widget`, we can 
 
 Then, when grouping the data, use the `intensity_max/min_Shape` as a grouping variable! Then, all labels with a value of 1 or 0 will be counted separately. This can be extended to multiple regions of interest, because each shape has it's own value (not immediately obvious yet in napari). We have used this to label multiple brain regions consistently in whole brain section analyses.
 
-**Future addition:** The ability to simply filter objects in the Measure Widget. This can for example be used to exclude all labels that are outside the region of interest (having a intensity value of 0 relative to the ROI), isntead of having to group.
+**Future addition:** The ability to simply filter objects in the Measure Widget. This can for example be used to exclude all labels that are outside the region of interest (having a intensity value of 0 relative to the ROI), instead of having to group.
 
 ## Notes on multi-dimensional data
 
