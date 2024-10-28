@@ -20,9 +20,9 @@ A collection of widgets intended to serve any person seeking to process microsco
 
 ----------------------------------
 
-### Check out the [poster presented at BINA 2024](BINA_poster.md) for an overview of the plugins in action!
+**Check out the [poster presented at BINA 2024](BINA_poster.md) for an overview of the plugins in action!**
 
-### Also check out the [Virtual I2K 2024 Workshop](tutorial/00_setup.md) for an interactive tutorial to learn more!
+**Also check out the [Virtual I2K 2024 Workshop](tutorial/00_setup.md) for an interactive tutorial to learn more!**
 
 ## Plugin Overview
 
