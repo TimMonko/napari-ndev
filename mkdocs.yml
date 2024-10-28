@@ -51,8 +51,8 @@ nav:
   - I2K Workshop:
     - 1) Tutorial Setup: tutorial/00_setup.md
     - 2) Example Pipeline: tutorial/01_example_pipeline.md
-    - 3) Basic Usage: tutorial/02_basic_usage.md
-    # - Advanced Usage: tutorial/03_advanced_usage.md
+    - 3) Easy Machine Learning: tutorial/02_easy_ML.md
+    - 4) Build Your Own Pipeline: tutorial/03_build_pipeline.md
   - Examples:
     - Image Utilities: examples/utilities/image_utilities.ipynb
     - Workflow:
