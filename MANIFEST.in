@@ -1,7 +1,7 @@
 include LICENSE
 include README.md
 
-exclude docs/*
+prune docs/
 
 recursive-exclude * __pycache__
 recursive-exclude * *.py[co]
