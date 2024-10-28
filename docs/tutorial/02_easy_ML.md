@@ -42,11 +42,11 @@ One strength of `napari-ndev` is the ability to quickly annotate images and save
 
 ## Training/Predicting using the viewer
 
-We can train and predict with machine learning classifiers on individual images in the viewer. This is useful for intially determining a useful feature set prior to training in batch.
+We can train and predict with machine learning classifiers on individual images in the viewer. This is useful for initially determining a useful feature set prior to training in batch.
 
 1. Switch to the `Viewer` tab
 2. Select the channels that you want to use for training. For morphology, you want to select at least AF488 (phalloidin), but it may also be useful to select other signals that fill the cell. Play around!
-3. Press the `Train classifier on select layers using label` button. In a few seconds your classifier should be finished trianing!
+3. Press the `Train classifier on select layers using label` button. In a few seconds your classifier should be finished training!
 4. `Predict using classifier on selected layers` button to add the results immediately to the viewer.
 
 As you can see, there is likely some errors that need to be corrected for:
@@ -59,7 +59,7 @@ We now want to tune up the feature set. Check out the `features` of the original
 
 To visualize the feature set:
 
-1. Go to the `Custom Feature Set` tab. The feature set you have selected will automatically genereate the `custom feature string` used.
+1. Go to the `Custom Feature Set` tab. The feature set you have selected will automatically generate the `custom feature string` used.
 2. Select the image layer you want to visualize (in this case AF488)
 3. Press `Apply to Selected Image`
 4. Either turn on/off layers to visualize. Or switch napari to `grid` mode.
@@ -69,7 +69,7 @@ To visualize the feature set:
 Optionally, switch between the different feature sets to try them out. Notice how different a large pixel set is compared to a small one. Let's attempt to generate a custom feature set.
 
 1. Switch to `custom` in the `feature set` dropdown.
-2. In each feature you think could be interesting add values that you think might be useful, seperated by commas. For example, Gaussian blur might be `1,2,3`. Look up the different features if you aren't sure what their use is!
+2. In each feature you think could be interesting add values that you think might be useful, separated by commas. For example, Gaussian blur might be `1,2,3`. Look up the different features if you aren't sure what their use is!
 3. Press `Generate Feature String`. This will populate it for this tab, and also above in the `Feature String` used by the classifier. Neat!
 4. Visualize the feature set.
 5. Try this new feature set on the image in the viewer. You may wish to create a new classifier file (to preserve progress). If you wish to 'overwrite' the current classifier for ease of use, uncheck `Continue Training?` at the top. When this is checked, it can be used to iterate over the classifier for a 'batch-like' training experience on a previously used classifier (be cautious with this, but it is generally a helpful default value).
