@@ -45,6 +45,16 @@ jobs:
       # setup-miniconda: https://github.com/conda-incubator/setup-miniconda
       # and
       # tox-conda: https://github.com/tox-dev/tox-conda
+
+      - name: Get conda - ${{ matrix.python-version }}
+        id: get-conda
+        uses: conda-incubator/setup-miniconda@v3
+        with:
+          python-version: ${{ matrix.python-version }}
+          miniforge-version: latest
+          activate-environment: test
+          use-mamba: true
+
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
