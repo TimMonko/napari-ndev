@@ -50,6 +50,18 @@ jobs:
           python -m pip install --upgrade pip
           python -m pip install setuptools tox tox-gh-actions
 
+      - name: Install OpenCL (pocl)
+        id: install-pocl
+        if: matrix.platform != 'windows-latest'
+        run: |
+          mamba install -y pocl
+
+      - name: Install OpenCL (oclgrind)
+        id: install-oclgrind
+        if: matrix.platform == 'windows-latest'
+        run: |
+          mamba install -y oclgrind
+
       # this runs the platform-specific tests declared in tox.ini
       - name: Test with tox
         uses: GabrielBB/xvfb-action@v1
