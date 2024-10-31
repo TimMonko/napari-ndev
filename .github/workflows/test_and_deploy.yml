@@ -26,7 +26,7 @@ jobs:
 
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: # actions/checkout@v4
 
       # note: if you need dependencies from conda, considering using
       # setup-miniconda: https://github.com/conda-incubator/setup-miniconda
@@ -43,12 +43,9 @@ jobs:
 
       - name: Install dependencies with pip
         run: |
+          source activate test
           python -m pip install --upgrade pip
           python -m pip install setuptools tox tox-conda tox-gh-actions
-
-      # - name: Install dependencies
-      #   run: |
-      #     mamba install -y -c conda-forge tox-conda
 
       # these libraries enable testing on Qt on linux
       - name: Enable testing on Qt on Linux
