@@ -86,7 +86,9 @@ jobs:
         uses: aganders3/headless-gui@v2
         with:
           shell: bash -el {0} # without this, windows cant find tox
-          run: python -m tox
+          run: |
+            mamba activate test
+            python -m tox
         env:
           PLATFORM: ${{ matrix.platform }}
           PYTHON_VERSION: ${{ matrix.python-version }}
