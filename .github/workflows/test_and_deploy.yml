@@ -93,7 +93,6 @@ jobs:
         with:
           shell: bash -el {0} # without this, windows cant find tox
           run: |
-            mamba activate test
             python -m tox
         env:
           PLATFORM: ${{ matrix.platform }}
