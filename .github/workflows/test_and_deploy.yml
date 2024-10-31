@@ -80,11 +80,11 @@ jobs:
         run: |
           mamba install -y oclgrind
 
-      # - name: Check installations
-      #   shell: bash -el {0}
-      #   run: |
-      #     conda list
-      #     python -m pip list
+      - name: Check installations
+        shell: bash -el {0}
+        run: |
+          mamba list
+          python -m pip list
 
       - name: Test with tox
         uses: aganders3/headless-gui@v2
