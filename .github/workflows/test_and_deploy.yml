@@ -29,6 +29,10 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
+      # prevents 'Failed to get user home directory'
+      - name: Set HOME environment variable
+        run: echo "HOME=$HOME" >> $GITHUB_ENV
+
       # note: if you need dependencies from conda, considering using
       # setup-miniconda: https://github.com/conda-incubator/setup-miniconda
       # and
