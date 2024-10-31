@@ -85,9 +85,12 @@ jobs:
       - name: Test with tox
         uses: aganders3/headless-gui@v2
         with:
+          shell: bash -el {0}
           run: python -m tox
         env:
           PLATFORM: ${{ matrix.platform }}
+          PYTHON_VERSION: ${{ matrix.python-version }}
+          PYVISTA_OFF_SCREEN: true
 
       - name: Coverage
         uses: codecov/codecov-action@v4
