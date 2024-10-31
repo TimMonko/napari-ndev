@@ -69,13 +69,18 @@ jobs:
         run: |
           mamba install -y oclgrind
 
-      # this runs the platform-specific tests declared in tox.ini
-      - name: Test with tox
-        uses: GabrielBB/xvfb-action@v1
+      # # this runs the platform-specific tests declared in tox.ini
+      # - name: Test with tox
+      #   uses: GabrielBB/xvfb-action@v1
+      #   with:
+      #     run: python -m tox
+      #   env:
+      #     PLATFORM: ${{ matrix.platform }}
+
+      - name: Test with
+        uses: aganders3/headless-gui@v2
         with:
-          run: python -m tox
-        env:
-          PLATFORM: ${{ matrix.platform }}
+          run: python -m pytest -s -v --color=yes
 
       - name: Coverage
         uses: codecov/codecov-action@v4
