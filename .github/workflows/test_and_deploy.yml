@@ -46,9 +46,13 @@ jobs:
           activate-environment: test
           use-mamba: true
 
+      - name: Initialize conda
+        run: mamba init bash
+
       - name: Install dependencies with pip
         shell: bash -el {0}
         run: |
+          mamba activate test
           python -m pip install --upgrade pip
           python -m pip install setuptools tox tox-conda tox-gh-actions
 
@@ -68,12 +72,14 @@ jobs:
         if: matrix.platform == 'ubuntu-latest'
         shell: bash -el {0}
         run: |
+          mamba activate test
           mamba install -y pocl pyopencl
 
       - name: Install OpenCL macOS (pocl)
         if: matrix.platform == 'macos-latest'
         shell: bash -el {0}
         run: |
+          mamba activate test
           mamba install -y pocl pyopencl ocl_icd_wrapper_apple
 
       # Install OpenCL for Windows
@@ -81,18 +87,28 @@ jobs:
         if: matrix.platform == 'windows-latest'
         shell: bash -el {0}
         run: |
-          mamba install -y oclgrind
+          mamba activate test
+          mamba install -y oclgrind pyopencl
 
       - name: Check installations
         shell: bash -el {0}
         run: |
+          mamba activate test
           mamba list
+          python -m pip list
+
+      - name: Verify OpenCL devices
+        shell: bash -l {0}
+        run: |
+          mamba activate test
+          python -c "import pyopencl as cl; print(cl.get_platforms())"
 
       - name: Test with tox
         uses: aganders3/headless-gui@v2
         with:
           shell: bash -el {0} # without this, windows cant find tox
           run: |
+            mamba activate test
             python -m tox
         env:
           PLATFORM: ${{ matrix.platform }}
