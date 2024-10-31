@@ -51,10 +51,12 @@ jobs:
 
       - name: Install dependencies with pip
         run: |
-          mamba init
-          mamba activate test
+          conda activate test
           python -m pip install --upgrade pip
           python -m pip install setuptools tox tox-conda tox-gh-actions
+
+      - name: Verify active environment
+        run: conda info --envs
 
       # these libraries enable testing on Qt on linux
       - name: Enable testing on Qt on Linux
@@ -81,6 +83,7 @@ jobs:
 
       - name: Check installations
         run: |
+          conda list
           python -m pip list
 
       - name: Test with tox
