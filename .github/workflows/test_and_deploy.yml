@@ -64,11 +64,17 @@ jobs:
           powershell gl-ci-helpers/appveyor/install_opengl.ps1
 
       # Install OpenCL for macOS/linux
-      - name: Install OpenCL (pocl)
-        if: matrix.platform != 'windows-latest'
+      - name: Install OpenCL Linux (pocl)
+        if: matrix.platform == 'windows-latest'
         shell: bash -el {0}
         run: |
           mamba install -y pocl pyopencl
+
+      - name: Install OpenCL macOS (pocl)
+        if: matrix.platform == 'macos-latest'
+        shell: bash -el {0}
+        run: |
+          mamba install -y pocl pyopencl ocl_icd_wrapper_apple
 
       # Install OpenCL for Windows
       - name: Install OpenCL (oclgrind)
