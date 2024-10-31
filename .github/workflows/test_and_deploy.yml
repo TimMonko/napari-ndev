@@ -18,6 +18,7 @@ jobs:
   test:
     name: ${{ matrix.platform }} py${{ matrix.python-version }}
     runs-on: ${{ matrix.platform }}
+    timeout-minutes: 20
     strategy:
       fail-fast: false
       matrix:
@@ -44,7 +45,7 @@ jobs:
       - name: Install dependencies with pip
         run: |
           python -m pip install --upgrade pip
-          python -m pip install setuptools tox tox-conda tox-gh-actions pytest
+          python -m pip install setuptools tox tox-conda tox-gh-actions
 
       # these libraries enable testing on Qt on linux
       - name: Enable testing on Qt on Linux
@@ -69,18 +70,12 @@ jobs:
         run: |
           mamba install -y oclgrind
 
-      # # this runs the platform-specific tests declared in tox.ini
-      # - name: Test with tox
-      #   uses: GabrielBB/xvfb-action@v1
-      #   with:
-      #     run: python -m tox
-      #   env:
-      #     PLATFORM: ${{ matrix.platform }}
-
-      - name: Test with
+      - name: Test with tox
         uses: aganders3/headless-gui@v2
         with:
-          run: python -m pytest -s -v --color=yes
+          run: python -m tox
+        env:
+          PLATFORM: ${{ matrix.platform }}
 
       - name: Coverage
         uses: codecov/codecov-action@v4
