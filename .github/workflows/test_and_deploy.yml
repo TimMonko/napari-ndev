@@ -46,6 +46,7 @@ jobs:
         if: runner.os == 'macOS'
         run: |
           brew install pocl
+          export PYOPENCL_CTX='0'
 
       # note: if you need dependencies from conda, considering using
       # setup-miniconda: https://github.com/conda-incubator/setup-miniconda
