@@ -68,7 +68,7 @@ jobs:
       # Install OpenCL for macOS/linux
       - name: Install OpenCL Linux (pocl)
         if: matrix.platform == 'ubuntu-latest'
-        run: mamba install -y pocl pyopencl
+        run: mamba install -y pocl pyopencl ocl-icd-system
 
       - name: Install OpenCL macOS (pocl)
         if: matrix.platform == 'macos-latest'
