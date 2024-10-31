@@ -16,6 +16,10 @@ on:
 
 jobs:
   test:
+    defaults:
+      run:
+        shell: bash -l {0} # for setup-miniconda
+
     name: ${{ matrix.platform }} py${{ matrix.python-version }}
     runs-on: ${{ matrix.platform }}
     timeout-minutes: 20
