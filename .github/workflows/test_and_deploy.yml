@@ -68,7 +68,7 @@ jobs:
       - name: Install OpenCL (pocl)
         if: matrix.platform != 'windows-latest'
         run: |
-          mamba install -y pocl
+          mamba install -y pocl pyopencl
 
       # Install OpenCL for Windows
       - name: Install OpenCL (oclgrind)
