@@ -65,7 +65,7 @@ jobs:
 
       # Install OpenCL for macOS/linux
       - name: Install OpenCL Linux (pocl)
-        if: matrix.platform == 'windows-latest'
+        if: matrix.platform == 'ubuntu-latest'
         shell: bash -el {0}
         run: |
           mamba install -y pocl pyopencl
