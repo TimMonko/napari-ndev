@@ -43,7 +43,6 @@ jobs:
 
       - name: Install dependencies with pip
         run: |
-          mamba activate test
           python -m pip install --upgrade pip
           python -m pip install setuptools tox tox-conda tox-gh-actions
 
