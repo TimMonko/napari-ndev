@@ -44,7 +44,7 @@ jobs:
 
       - name: Install dependencies
         run: |
-          mamba install -y -c conda-forge tox tox-gh-actions
+          mamba install -y -c conda-forge tox-conda
 
       # these libraries enable testing on Qt on linux
       - name: Enable testing on Qt on Linux
