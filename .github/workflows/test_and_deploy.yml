@@ -29,10 +29,6 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      # prevents 'Failed to get user home directory'
-      - name: Set HOME environment variable
-        run: echo "HOME=$HOME" >> $GITHUB_ENV
-
       # note: if you need dependencies from conda, considering using
       # setup-miniconda: https://github.com/conda-incubator/setup-miniconda
       # and
@@ -43,8 +39,14 @@ jobs:
         with:
           python-version: ${{ matrix.python-version }}
           miniforge-version: latest
-          activate-environment: test
+          # activate-environment: test
           use-mamba: true
+      - name: Conda info
+        shell: bash -el {0}
+        run: conda info
+      - name: conda list
+        shell: pwsh
+        run: conda list
 
       - name: Verify active environment
         run: conda info --envs
