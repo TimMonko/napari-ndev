@@ -40,20 +40,13 @@ jobs:
           python-version: ${{ matrix.python-version }}
           miniforge-version: latest
           # activate-environment: test
-          use-mamba: true
+          # use-mamba: true
       - name: Conda info
         shell: bash -el {0}
         run: conda info
-      - name: conda list
-        shell: pwsh
-        run: conda list
-
-      - name: Verify active environment
-        run: conda info --envs
 
       - name: Install dependencies with pip
         run: |
-          conda activate test
           python -m pip install --upgrade pip
           python -m pip install setuptools tox tox-conda tox-gh-actions
 
@@ -84,6 +77,7 @@ jobs:
           mamba install -y oclgrind
 
       - name: Check installations
+        shell: bash -el {0}
         run: |
           conda list
           python -m pip list
