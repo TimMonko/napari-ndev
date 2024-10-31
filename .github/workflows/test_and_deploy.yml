@@ -41,6 +41,12 @@ jobs:
           git clone --depth 1 https://github.com/pyvista/gl-ci-helpers.git
           powershell gl-ci-helpers/appveyor/install_opengl.ps1
 
+      # Install OpenCL for macOS
+      - name: Install OpenCL for macOS
+        if: runner.os == 'macOS'
+        run: |
+          brew install pocl
+
       # note: if you need dependencies from conda, considering using
       # setup-miniconda: https://github.com/conda-incubator/setup-miniconda
       # and
@@ -79,6 +85,7 @@ jobs:
           run: python -m tox
         env:
           PLATFORM: ${{ matrix.platform }}
+          PYOPENCL_CTX: '0'
 
       - name: Coverage
         uses: codecov/codecov-action@v2
