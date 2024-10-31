@@ -52,31 +52,31 @@ jobs:
       # and
       # tox-conda: https://github.com/tox-dev/tox-conda
 
-      - name: Get conda - ${{ matrix.python-version }}
-        id: get-conda
-        uses: conda-incubator/setup-miniconda@v3
-        with:
-          python-version: ${{ matrix.python-version }}
-          miniforge-version: latest
-          activate-environment: test
-          use-mamba: true
+      # - name: Get conda - ${{ matrix.python-version }}
+      #   id: get-conda
+      #   uses: conda-incubator/setup-miniconda@v3
+      #   with:
+      #     python-version: ${{ matrix.python-version }}
+      #     miniforge-version: latest
+      #     activate-environment: test
+      #     use-mamba: true
 
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
           python -m pip install setuptools tox tox-gh-actions
 
-      - name: Install OpenCL (pocl)
-        id: install-pocl
-        if: matrix.platform != 'windows-latest'
-        run: |
-          mamba install -y pocl
+      # - name: Install OpenCL (pocl)
+      #   id: install-pocl
+      #   if: matrix.platform != 'windows-latest'
+      #   run: |
+      #     mamba install -y pocl
 
-      - name: Install OpenCL (oclgrind)
-        id: install-oclgrind
-        if: matrix.platform == 'windows-latest'
-        run: |
-          mamba install -y oclgrind
+      # - name: Install OpenCL (oclgrind)
+      #   id: install-oclgrind
+      #   if: matrix.platform == 'windows-latest'
+      #   run: |
+      #     mamba install -y oclgrind
 
       # this runs the platform-specific tests declared in tox.ini
       - name: Test with tox
