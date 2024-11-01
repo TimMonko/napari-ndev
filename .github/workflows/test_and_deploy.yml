@@ -65,13 +65,13 @@ jobs:
         id: install-pocl
         if: matrix.platform == 'ubuntu-latest'
         run: |
-          mamba install -y pocl
+          conda install -y pocl
 
       - name: Install OpenCL Windows (oclgrind)
         id: install-oclgrind
         if: matrix.platform == 'windows-latest'
         run: |
-          mamba install -y oclgrind
+          conda install -y oclgrind
 
       # this runs the platform-specific tests declared in tox.ini
       - name: Test with tox
