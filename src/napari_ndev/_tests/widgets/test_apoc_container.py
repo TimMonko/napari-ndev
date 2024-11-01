@@ -5,7 +5,6 @@ import tempfile
 from unittest.mock import patch
 
 import numpy as np
-import pyclesperanto_prototype as cle
 import pytest
 
 from napari_ndev.widgets._apoc_container import ApocContainer
@@ -155,6 +154,7 @@ def trained_classifier_file(
 
 @pytest.mark.notox
 def test_image_predict(make_napari_viewer, test_data, trained_classifier_file):
+    import pyclesperanto_prototype as cle
     viewer = make_napari_viewer()
     test_image, _, _, _ = test_data
     viewer.add_image(test_image)

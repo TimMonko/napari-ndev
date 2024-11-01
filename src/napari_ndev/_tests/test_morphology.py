@@ -1,5 +1,4 @@
 import numpy as np
-import pyclesperanto_prototype as cle
 import pytest
 
 from napari_ndev import morphology
@@ -30,6 +29,7 @@ def test_skeletonize_labels():
 
 @pytest.mark.notox
 def test_connect_breaks_between_labels():
+    import pyclesperanto_prototype as cle
     """Test the connect_breaks_between_labels function."""
     connect_distance = 1.5
     connected_labels = morphology.connect_breaks_between_labels(label_2d, connect_distance)
@@ -40,6 +40,7 @@ def test_connect_breaks_between_labels():
 
 @pytest.mark.notox
 def test_label_voronoi_based_on_intensity():
+    import pyclesperanto_prototype as cle
     """Test the label_voronoi_based_on_intensity function."""
     image = np.array([[10, 0, 1, 1], [0, 0, 1, 1], [1, 2, 1, 1], [2, 2, 10, 1]])
     labels = np.array([[1, 1, 1, 1], [1, 1, 1, 1], [1, 1, 1, 1], [1, 1, 1, 1]])
