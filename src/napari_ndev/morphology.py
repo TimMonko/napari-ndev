@@ -16,7 +16,6 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 import numpy as np
-import pyclesperanto_prototype as cle
 
 if TYPE_CHECKING:
     from bioio_base.types import ArrayLike
@@ -60,6 +59,7 @@ def skeletonize_labels(label: ArrayLike) -> np.ndarray:
 
     """
     from skimage.morphology import skeletonize
+    import pyclesperanto_prototype as cle
 
     skeleton = skeletonize(cle.pull(label))
     return (label * skeleton).astype(np.uint16)
@@ -87,6 +87,8 @@ def connect_breaks_between_labels(label: ArrayLike, connect_distance: float) -> 
         Label image with new labels connecting breaks between original labels.
 
     """
+    import pyclesperanto_prototype as cle
+    
     label_dilated = cle.dilate_labels(label, radius=connect_distance/2)
     label_merged = cle.merge_touching_labels(label_dilated)
     # relabel original labels based on the merged labels
@@ -114,6 +116,8 @@ def label_voronoi_based_on_intensity(label: ArrayLike, intensity_image: ArrayLik
         Label image with Voronoi regions based on the intensity image.
 
     """
+    import pyclesperanto_prototype as cle
+
     label_binary = cle.greater_constant(label, constant=0) # binarize
     intensity_blur = cle.gaussian_blur(intensity_image, sigma_x=1, sigma_y=1)
     intensity_peaks = cle.detect_maxima_box(intensity_blur, radius_x=0, radius_y=0)
