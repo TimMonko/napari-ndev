@@ -97,6 +97,7 @@ multiline-quotes = "double"
 [tool.ruff.lint.flake8-tidy-imports]
 # Disallow all relative imports.
 ban-relative-imports = "all"
+banned-module-level-imports = ["pyclesperanto", "pyclesperanto_prototype", "apoc"]
 
 
 [tool.ruff.lint.isort]
