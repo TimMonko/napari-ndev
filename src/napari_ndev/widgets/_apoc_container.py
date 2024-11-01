@@ -21,7 +21,6 @@ from magicgui.widgets import (
     SpinBox,
     Table,
 )
-from pyclesperanto_prototype import set_wait_for_kernel_finish
 from qtpy.QtWidgets import QTabWidget
 
 from napari import layers
@@ -491,6 +490,7 @@ class ApocContainer(Container):
 
     def batch_train(self):
         from bioio import BioImage
+        from pyclesperanto_prototype import set_wait_for_kernel_finish
 
         image_directory, image_files = helpers.get_directory_and_files(
             self._image_directory.value
@@ -588,6 +588,7 @@ class ApocContainer(Container):
     def batch_predict(self):
         from bioio import BioImage
         from bioio.writers import OmeTiffWriter
+        from pyclesperanto_prototype import set_wait_for_kernel_finish
 
         image_directory, image_files = helpers.get_directory_and_files(
             dir_path=self._image_directory.value,
@@ -664,6 +665,7 @@ class ApocContainer(Container):
         logger.removeHandler(handler)
 
     def image_train(self):
+        from pyclesperanto_prototype import set_wait_for_kernel_finish
         image_names = [image.name for image in self._image_layers.value]
         label_name = self._label_layer.value.name
         self._single_result_label.value = (
@@ -695,6 +697,7 @@ class ApocContainer(Container):
         )
 
     def image_predict(self):
+        from pyclesperanto_prototype import set_wait_for_kernel_finish
         set_wait_for_kernel_finish(
             True
         )  # https://github.com/clEsperanto/pyclesperanto_prototype/issues/163
