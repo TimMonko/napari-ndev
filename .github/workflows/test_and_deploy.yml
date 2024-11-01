@@ -59,14 +59,15 @@ jobs:
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
-          python -m pip install setuptools tox tox-gh-actions
+          python -m pip install setuptools tox tox-gh-actions pyclesperanto_prototype
 
       - name: Install OpenCL Linux (pocl)
         id: install-pocl
         if: matrix.platform == 'ubuntu-latest'
-        run: conda install -y pocl ocl-icd-system pyopencl
-                  # sudo apt-get update
-          # sudo apt-get install -y ocl-icd-opencl-dev pocl-opencl-icd
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y ocl-icd-opencl-dev
+          conda install -y pocl ocl-icd-system pyopencl
 
       - name: Install OpenCL Windows (oclgrind)
         id: install-oclgrind
@@ -77,8 +78,7 @@ jobs:
       - name: Check status of OpenCL installation
         run: |
           python -c "import pyopencl; print(pyopencl.get_platforms())"
-          python -m pip install pyclesperanto_prototype
-          python -c "import pyclesperanto_prototype; print(pyclesperanto_prototype.available_device_names(dev_type="cpu"))"
+          python -c "import pyclesperanto_prototype as cle; print(cle.get_device()); print(cle.available_device_names())"
 
       # this runs the platform-specific tests declared in tox.ini
       - name: Test with tox
