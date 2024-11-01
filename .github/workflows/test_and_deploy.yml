@@ -85,7 +85,7 @@ jobs:
       - name: Verify OpenCL devices
         run: |
           python -c "import pyopencl as cl; print(cl.get_platforms())"
-          python -c "import pyclesperanto as cle; print(cle.list_available.devices())"
+          python -c "import pyclesperanto as cle; print(cle.list_available_devices())"
 
       - name: Test with tox
         uses: aganders3/headless-gui@v2
