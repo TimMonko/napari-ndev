@@ -64,18 +64,18 @@ jobs:
       - name: Install OpenCL Linux (pocl)
         id: install-pocl
         if: matrix.platform == 'ubuntu-latest'
-        run: |
-          conda install -y pocl
+        run: conda install -y pocl ocl-icd-system pyopencl
+                  # sudo apt-get update
+          # sudo apt-get install -y ocl-icd-opencl-dev pocl-opencl-icd
 
       - name: Install OpenCL Windows (oclgrind)
         id: install-oclgrind
         if: matrix.platform == 'windows-latest'
         run: |
-          conda install -y oclgrind
+          conda install -y oclgrind pyopencl
       
       - name: Check status of OpenCL installation
         run: |
-          python -m pip install pyopencl
           python -c "import pyopencl; print(pyopencl.get_platforms())"
           python -m pip install pyclesperanto_prototype
           python -c "import pyclesperanto_prototype; print(pyclesperanto_prototype.available_device_names(dev_type="cpu"))"
