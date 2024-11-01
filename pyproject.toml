@@ -99,7 +99,7 @@ multiline-quotes = "double"
 ban-relative-imports = "all"
 
 
-[tool.ruff.lint.flake8-tidy-imports.banned-modules] # disallow gpu-dependent top level imports
+[tool.ruff.lint.flake8-tidy-imports.banned-module-level-imports] # disallow gpu-dependent top level imports
 pyclesperanto = "Importing 'pyclesperanto' top-level is not allowed."
 pyclesperanto_prototype = "Importing 'pyclesperanto_prototype' top-level is not allowed."
 apoc = "Importing 'apoc' top-level is not allowed."
