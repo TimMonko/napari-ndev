@@ -58,8 +58,8 @@ def skeletonize_labels(label: ArrayLike) -> np.ndarray:
         Skeletonized label image.
 
     """
-    from skimage.morphology import skeletonize
     import pyclesperanto_prototype as cle
+    from skimage.morphology import skeletonize
 
     skeleton = skeletonize(cle.pull(label))
     return (label * skeleton).astype(np.uint16)
@@ -88,7 +88,7 @@ def connect_breaks_between_labels(label: ArrayLike, connect_distance: float) -> 
 
     """
     import pyclesperanto_prototype as cle
-    
+
     label_dilated = cle.dilate_labels(label, radius=connect_distance/2)
     label_merged = cle.merge_touching_labels(label_dilated)
     # relabel original labels based on the merged labels
