@@ -61,6 +61,18 @@ jobs:
           python -m pip install --upgrade pip
           python -m pip install setuptools tox tox-gh-actions
 
+      - name: Install OpenCL Linux (pocl)
+        id: install-pocl
+        if: matrix.platform == 'ubuntu-latest'
+        run: |
+          mamba install -y pocl
+
+      - name: Install OpenCL Windows (oclgrind)
+        id: install-oclgrind
+        if: matrix.platform == 'windows-latest'
+        run: |
+          mamba install -y oclgrind
+
       # this runs the platform-specific tests declared in tox.ini
       - name: Test with tox
         uses: aganders3/headless-gui@v2
