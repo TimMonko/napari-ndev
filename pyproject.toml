@@ -2,6 +2,128 @@
 requires = ["setuptools>=42.0.0", "wheel", "setuptools_scm"]
 build-backend = "setuptools.build_meta"
 
+[project]
+name = "napari-ndev"
+description = "napari widgets to (batch) process images from start to finish."
+readme = "README.md"
+authors = [
+    { name = "Tim Monko", email = "timmonko@gmail.com" }
+]
+license = { text = "BSD-3-Clause" }
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Framework :: napari",
+    "Intended Audience :: Education",
+    "Intended Audience :: Science/Research",
+    "License :: OSI Approved :: BSD License",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3 :: Only",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Topic :: Scientific/Engineering :: Image Processing",
+    "Topic :: Scientific/Engineering :: Visualization",
+    "Topic :: Software Development :: User Interfaces",
+    "Topic :: Software Development :: Libraries :: Python Modules",
+    "Topic :: Utilities"
+]
+requires-python = ">=3.9"
+dependencies = [
+    "numpy>=1.26,<2.0",
+    "siphash24>=1.6",
+    "magicgui>=0.8.3",
+    "magic-class",
+    "napari[all]>=0.4.19",
+    "apoc",
+    "pyclesperanto-prototype",
+    "pyclesperanto",
+    "dask",
+    "napari-workflows",
+    "napari-pyclesperanto-assistant",
+    "napari-segment-blobs-and-things-with-membranes",
+    "natsort",
+    "seaborn",
+    "stackview",
+    "tifffile>=2023.3.15",
+    "scikit-image>=0.18.0",
+    "ngff-zarr<0.10.0",
+    "bioio>=1.1.0",
+    "bioio-ome-tiff>=1",
+    "bioio-tifffile>=1",
+    "bioio-imageio>=1",
+    "bioio-ome-zarr>=1",
+    "bioio-nd2>=1"
+]
+dynamic = ["version"]
+
+[project.urls]
+"Bug Tracker" = "https://github.com/TimMonko/napari-ndev/issues"
+"Documentation" = "https://timmonko.github.io/napari-ndev/"
+"Source Code" = "https://github.com/TimMonko/napari-ndev"
+
+[project.entry-points."napari.manifest"]
+napari-ndev = "napari_ndev:napari.yaml"
+
+[project.optional-dependencies]
+testing = [
+    "pytest",
+    "pytest-cov",
+    "tox",
+    "tox-uv",
+    "pytest-qt",
+    "napari",
+    "pyqt5",
+    "bioio-czi >= 1.0.1",
+    "napari-ndev[extras]",
+]
+dev = [
+    "ruff",
+    "pre-commit",
+]
+docs = [
+    "mkdocs",
+    "mkdocs-autorefs",
+    "mkdocs-material",
+    "mkdocstrings",
+    "mkdocstrings-python",
+    "mkdocs-jupyter",
+    "mkdocs-pdf",
+    "mkdocs-spellcheck[all]",
+    "mkdocs-literate-nav",
+    "mkdocs-table-reader-plugin",
+    "black"
+]
+extras = [
+    "napari-simpleitk-image-processing"
+]
+gpl_extras = [
+    "bioio-czi >= 1.0.1",
+    "bioio-lif >= 1"
+]
+all = [
+    "napari-ndev[extras]",
+    "napari-ndev[gpl_extras]",
+]
+dev-all = [
+    "napari-ndev[dev]",
+    "napari-ndev[docs]",
+    "napari-ndev[testing]",
+]
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.setuptools.package-data]
+"*" = ["*.yaml"]
+
+[tool.setuptools.exclude-package-data]
+"*" = [
+    "docs/*",
+    "_tests/*",
+]
 
 [tool.setuptools_scm]
 write_to = "src/napari_ndev/_version.py"
