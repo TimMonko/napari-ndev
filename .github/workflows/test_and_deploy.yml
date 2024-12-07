@@ -66,7 +66,7 @@ jobs:
         uses: aganders3/headless-gui@v2
         with:
           shell: bash -el {0}
-          run: python -m  -p auto
+          run: python -m tox -p auto
         env:
           PLATFORM: ${{ matrix.platform }}
           PYTHON_VERSION: ${{ matrix.python-version }}
