@@ -181,7 +181,7 @@ def image_overview(
                 axs[row][col].add_artist(ScaleBar(**sb_dict))
 
     plt.suptitle(plot_title, fontsize=16)
-    plt.tight_layout()
+    plt.tight_layout(pad=0.3)
     # plt.subplots_adjust(wspace=0.1, hspace=0.1)
 
     return fig
