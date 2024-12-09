@@ -84,8 +84,7 @@ class ImageOverview:
 
 def image_overview(
     image_sets: dict | list[dict],
-    xscale: float = 3,
-    yscale: float = 3,
+    plot_scale: tuple[float, float] = (3, 3),
     plot_title: str = '',
     scalebar: float | dict | None = None,
 ):
@@ -103,10 +102,10 @@ def image_overview(
             "labels" will display the image as labels.
         - labels (list of bool, optional): Whether to display labels.
         - **kwargs: Additional keyword arguments to pass to stackview.imshow.
-    xscale : float, optional
-        The x scale of the overview. Defaults to 3.
-    yscale : float, optional
-        The y scale of the overview. Defaults to 3.
+    plot_scale : tuple of float, optional
+        The scale of the plot. (Width, Height). Values lower than 2 are likely
+        to result in overlapping text. Increased values increase image size.
+        Defaults to (3, 3).
     plot_title : str, optional
         The title of the plot. Defaults to an empty string.
     scalebar : float or dict, optional
@@ -125,10 +124,11 @@ def image_overview(
     # create the subplot grid
     num_rows = len(image_sets)
     num_columns = max([len(image_set['image']) for image_set in image_sets])
+    # multiply scale of plot by number of columns and rows
     fig, axs = plt.subplots(
         num_rows,
         num_columns,
-        figsize=(num_columns * xscale, num_rows * yscale),
+        figsize=(num_columns * plot_scale[0], num_rows * plot_scale[1]),
     )
 
     if num_rows == 1:
