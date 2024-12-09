@@ -59,6 +59,7 @@ dependencies = [
     "bioio-ome-zarr>=1",
     "bioio-nd2>=1",
     "bioio-base>=1.0.4",
+    "matplotlib-scalebar>=0.8.1",
 ]
 dynamic = ["version"]
 
