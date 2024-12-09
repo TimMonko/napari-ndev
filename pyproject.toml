@@ -69,6 +69,9 @@ dynamic = ["version"]
 [project.entry-points."napari.manifest"]
 napari-ndev = "napari_ndev:napari.yaml"
 
+[project.scripts]
+napari-ndev = "napari.__main__:main"
+
 [project.optional-dependencies]
 testing = [
     "pytest",
