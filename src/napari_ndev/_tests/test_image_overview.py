@@ -3,14 +3,14 @@ import pathlib
 import matplotlib.pyplot as plt
 import numpy as np
 import pytest
-from bioio import BioImage
 
+from napari_ndev import nImage
 from napari_ndev.image_overview import ImageOverview, image_overview
 
 
 @pytest.fixture
 def image_and_label_sets():
-    img = BioImage(
+    img = nImage(
         pathlib.Path(
             r'src/napari_ndev/_tests/resources/Workflow/Images/cells3d2ch.tiff'
         )
@@ -23,7 +23,7 @@ def image_and_label_sets():
         'title': ['Image 1', 'Image 2'],
     }
 
-    lbl = BioImage(
+    lbl = nImage(
         pathlib.Path(
             r'src/napari_ndev/_tests/resources/Workflow/Labels/cells3d2ch.tiff'
         )

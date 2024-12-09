@@ -57,7 +57,8 @@ dependencies = [
     "bioio-tifffile>=1",
     "bioio-imageio>=1",
     "bioio-ome-zarr>=1",
-    "bioio-nd2>=1"
+    "bioio-nd2>=1",
+    "bioio-base>=1.0.4",
 ]
 dynamic = ["version"]
 
