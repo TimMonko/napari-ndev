@@ -85,3 +85,9 @@ You may also test the tool version of uv during development with:
 ```bash
 uv install tool .
 ```
+
+You may also test with tox in parallel ([via tox-uv](https://github.com/tox-dev/tox-uv)) with:
+
+```bash
+tox - p auto
+```
