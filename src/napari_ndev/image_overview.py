@@ -7,6 +7,8 @@ and a class `ImageOverview` to generate and save image overviews.
 
 from __future__ import annotations
 
+import inspect
+
 import matplotlib.pyplot as plt
 import stackview
 
@@ -85,6 +87,7 @@ def image_overview(
     xscale: float = 3,
     yscale: float = 3,
     plot_title: str = '',
+    scalebar: float | dict | None = None,
 ):
     """
     Create an overview of images.
@@ -106,6 +109,10 @@ def image_overview(
         The y scale of the overview. Defaults to 3.
     plot_title : str, optional
         The title of the plot. Defaults to an empty string.
+    scalebar : float or dict, optional
+        The scalebar to add to the image overview. If a float, it is used as
+        the dx parameter for the scalebar. If a dict, all **kwargs are passed
+        to the matplotlib_scalebar.scalebar.ScaleBar class. Defaults to None.
 
     Returns
     -------
@@ -145,7 +152,33 @@ def image_overview(
             if cmap is not None and cmap.lower() == 'labels':
                 image_dict['labels'] = True
 
-            stackview.imshow(**image_dict, plot=axs[row][col])
+            sv_dict = {k: v for k, v in image_dict.items() if k in inspect.signature(stackview.imshow).parameters}
+            stackview.imshow(**sv_dict, plot=axs[row][col])
+
+            # add scalebar, if dict is present
+            if scalebar is not None:
+                from matplotlib_scalebar.scalebar import ScaleBar
+
+                # get a default dictionary to pass to sb_dict, and only overwrite the keys that are present in scalebar
+                sb_dict = {
+                    'dx': 1,
+                    'units': 'um',
+                    'frameon': True,
+                    'location': 'lower right',
+                }
+
+                # if scalebar is just float, convert to dict
+                if isinstance(scalebar, float):
+                    sb_valid_dict = {'dx': scalebar}
+
+                # if scalebar is dict, only keep the keys that are valid for ScaleBar
+                if isinstance(scalebar, dict):
+                    sb_valid_dict = {k: v for k, v in scalebar.items() if k in inspect.signature(ScaleBar).parameters}
+
+                # update key: values in sb_dict with values from scalebar if key is present
+                sb_dict.update(sb_valid_dict)
+
+                axs[row][col].add_artist(ScaleBar(**sb_dict))
 
     plt.suptitle(plot_title, fontsize=16)
     plt.tight_layout()
