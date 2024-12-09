@@ -23,7 +23,7 @@ class ImageOverview:
 
     def __init__(
         self,
-        image_sets: list[dict],
+        image_sets: dict | list[dict],
         xscale: float = 3,
         yscale: float = 3,
         image_title: str = '',
@@ -81,7 +81,7 @@ class ImageOverview:
 
 
 def image_overview(
-    image_sets: list[dict],
+    image_sets: dict | list[dict],
     xscale: float = 3,
     yscale: float = 3,
     plot_title: str = '',
@@ -113,6 +113,8 @@ def image_overview(
         The matplotlib figure object containing the image overview.
 
     """
+    # convert input to list if needed
+    image_sets = [image_sets] if isinstance(image_sets, dict) else image_sets
     # create the subplot grid
     num_rows = len(image_sets)
     num_columns = max([len(image_set['image']) for image_set in image_sets])
