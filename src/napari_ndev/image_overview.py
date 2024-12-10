@@ -10,6 +10,7 @@ from __future__ import annotations
 import inspect
 
 import matplotlib.pyplot as plt
+import numpy as np
 import stackview
 
 
@@ -128,20 +129,21 @@ def image_overview(
     # create the subplot grid
 
     # if only one image set, wrap rows and columns to get a nice aspect ratio
-    # if len(image_sets) == 1:
-    #     num_images = len(image_sets[0]['image'])
+    if len(image_sets) == 1:
+        num_images = len(image_sets[0]['image'])
 
-    #     if num_images <= 3:
-    #         num_columns = num_images
-    #         num_rows = 1
-    #     # wrap so it is roughly a square aspect ratio
-    #     else:
-    #         num_columns = int(np.ceil(np.sqrt(num_images)))
-    #         num_rows = int(np.ceil(num_images / num_columns))
+        if num_images <= 3:
+            num_columns = num_images
+            num_rows = 1
+        # wrap so it is roughly a square aspect ratio
+        else:
+            num_columns = int(np.ceil(np.sqrt(num_images)))
+            num_rows = int(np.ceil(num_images / num_columns))
 
-    if len(image_sets) >= 1:
+    if len(image_sets) > 1:
         num_rows = len(image_sets)
         num_columns = max([len(image_set['image']) for image_set in image_sets])
+
     # multiply scale of plot by number of columns and rows
     fig, axs = plt.subplots(
         num_rows,
@@ -155,15 +157,19 @@ def image_overview(
         axs = [[ax] for ax in axs]
 
     # iterate through the image sets
-    for row, image_set in enumerate(image_sets):
-        for col, _image in enumerate(image_set['image']):
+    for image_set_idx, image_set in enumerate(image_sets):
+        for image_idx, _image in enumerate(image_set['image']):
+
             # calculate the correct row and column for the subplot
-            # if len(image_sets) == 1:
-            #     row = col // num_columns
-            #     col = col % num_columns
+            if len(image_sets) == 1:
+                row =  image_idx // num_columns
+                col = image_idx % num_columns
+            if len(image_sets) > 1:
+                row = image_set_idx
+                col = image_idx
 
             # create a dictionary from the col-th values of each key
-            image_dict = {key: value[col] for key, value in image_set.items()}
+            image_dict = {key: value[image_idx] for key, value in image_set.items()}
 
             # turn off the subplot and continue if there is no image
             if image_dict.get('image') is None:
