@@ -7,6 +7,8 @@ and a class `ImageOverview` to generate and save image overviews.
 
 from __future__ import annotations
 
+import inspect
+
 import matplotlib.pyplot as plt
 import stackview
 
@@ -23,10 +25,10 @@ class ImageOverview:
 
     def __init__(
         self,
-        image_sets: list[dict],
-        xscale: float = 3,
-        yscale: float = 3,
-        image_title: str = '',
+        image_sets: dict | list[dict],
+        fig_scale: tuple[float, float] = (3, 3),
+        fig_title: str = '',
+        scalebar: float | dict | None = None,
         show: bool = False,
     ):
         """
@@ -37,19 +39,23 @@ class ImageOverview:
         image_sets : list of dict
             A list of dictionaries containing image sets. See
             `napari_ndev.image_overview` for more information.
-        xscale : float, optional
-            The scale factor for the x-axis. Default is 3.
-        yscale : float, optional
-            The scale factor for the y-axis. Default is 3.
-        image_title : str, optional
+        fig_scale : tuple of float, optional
+            The scale of the plot. (Width, Height). Values lower than 2 are likely
+            to result in overlapping text. Increased values increase image size.
+            Defaults to (3, 3).
+        fig_title : str, optional
             The title of the image overview. Default is an empty string.
+        scalebar : float or dict, optional
+            The scalebar to add to the image overview. If a float, it is used as
+            the dx parameter for the scalebar. If a dict, all **kwargs are passed
+            to the matplotlib_scalebar.scalebar.ScaleBar class. Defaults to None.
         show : bool, optional
             Whether to display the generated overview. Default is False.
             Prevents memory leak when False.
 
         """
         plt.ioff()
-        self.fig = image_overview(image_sets, xscale, yscale, image_title)
+        self.fig = image_overview(image_sets, fig_scale, fig_title, scalebar)
         if show:
             plt.show()
         plt.close()
@@ -81,10 +87,10 @@ class ImageOverview:
 
 
 def image_overview(
-    image_sets: list[dict],
-    xscale: float = 3,
-    yscale: float = 3,
-    plot_title: str = '',
+    image_sets: dict | list[dict],
+    fig_scale: tuple[float, float] = (3, 3),
+    fig_title: str = '',
+    scalebar: float | dict | None = None,
 ):
     """
     Create an overview of images.
@@ -100,12 +106,16 @@ def image_overview(
             "labels" will display the image as labels.
         - labels (list of bool, optional): Whether to display labels.
         - **kwargs: Additional keyword arguments to pass to stackview.imshow.
-    xscale : float, optional
-        The x scale of the overview. Defaults to 3.
-    yscale : float, optional
-        The y scale of the overview. Defaults to 3.
-    plot_title : str, optional
+    fig_scale : tuple of float, optional
+        The scale of the plot. (Width, Height). Values lower than 2 are likely
+        to result in overlapping text. Increased values increase image size.
+        Defaults to (3, 3).
+    fig_title : str, optional
         The title of the plot. Defaults to an empty string.
+    scalebar : float or dict, optional
+        The scalebar to add to the image overview. If a float, it is used as
+        the dx parameter for the scalebar. If a dict, all **kwargs are passed
+        to the matplotlib_scalebar.scalebar.ScaleBar class. Defaults to None.
 
     Returns
     -------
@@ -113,13 +123,16 @@ def image_overview(
         The matplotlib figure object containing the image overview.
 
     """
+    # convert input to list if needed
+    image_sets = [image_sets] if isinstance(image_sets, dict) else image_sets
     # create the subplot grid
     num_rows = len(image_sets)
     num_columns = max([len(image_set['image']) for image_set in image_sets])
+    # multiply scale of plot by number of columns and rows
     fig, axs = plt.subplots(
         num_rows,
         num_columns,
-        figsize=(num_columns * xscale, num_rows * yscale),
+        figsize=(num_columns * fig_scale[0], num_rows * fig_scale[1]),
     )
 
     if num_rows == 1:
@@ -143,10 +156,35 @@ def image_overview(
             if cmap is not None and cmap.lower() == 'labels':
                 image_dict['labels'] = True
 
-            stackview.imshow(**image_dict, plot=axs[row][col])
+            sv_dict = {k: v for k, v in image_dict.items() if k in inspect.signature(stackview.imshow).parameters}
+            stackview.imshow(**sv_dict, plot=axs[row][col])
 
-    plt.suptitle(plot_title, fontsize=16)
-    plt.tight_layout()
-    # plt.subplots_adjust(wspace=0.1, hspace=0.1)
+            # add scalebar, if dict is present
+            if scalebar is not None:
+                from matplotlib_scalebar.scalebar import ScaleBar
+
+                # get a default dictionary to pass to sb_dict, and only overwrite the keys that are present in scalebar
+                sb_dict = {
+                    'dx': 1,
+                    'units': 'um',
+                    'frameon': True,
+                    'location': 'lower right',
+                }
+
+                # if scalebar is just float, convert to dict
+                if isinstance(scalebar, float):
+                    sb_valid_dict = {'dx': scalebar}
+
+                # if scalebar is dict, only keep the keys that are valid for ScaleBar
+                if isinstance(scalebar, dict):
+                    sb_valid_dict = {k: v for k, v in scalebar.items() if k in inspect.signature(ScaleBar).parameters}
+
+                # update key: values in sb_dict with values from scalebar if key is present
+                sb_dict.update(sb_valid_dict)
+
+                axs[row][col].add_artist(ScaleBar(**sb_dict))
+
+    plt.suptitle(fig_title, fontsize=16)
+    plt.tight_layout(pad=0.3)
 
     return fig

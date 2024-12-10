@@ -2619,6 +2619,18 @@ wheels = [
 ]
 
 [[package]]
+name = "matplotlib-scalebar"
+version = "0.8.1"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "matplotlib" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/ff/16/a564e2c97652e95b5aca51f21e3b281a0546159a9a6b06e2f6476bc53da6/matplotlib-scalebar-0.8.1.tar.gz", hash = "sha256:14887af1093579c5e6afae51a0a1ecc3f715cdbc5c4d7ef59cdeec76ee6bb15d", size = 1108463 }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/a9/9e/22930e3deb2c374f47c6633aff9f6f379f8c421ab868fff3b4f85eac8b8a/matplotlib_scalebar-0.8.1-py2.py3-none-any.whl", hash = "sha256:a8a2f361d4c2d576d087df3092ed95cac2f708f8b40d5d2bb992bd190e740b3a", size = 17686 },
+]
+
+[[package]]
 name = "mdit-py-plugins"
 version = "0.4.2"
 source = { registry = "https://pypi.org/simple" }
@@ -3101,11 +3113,12 @@ wheels = [
 
 [[package]]
 name = "napari-ndev"
-version = "0.9.7.dev4+gf619bf4.d20241209"
+version = "0.9.7.dev11+ge112221.d20241209"
 source = { editable = "." }
 dependencies = [
     { name = "apoc" },
     { name = "bioio" },
+    { name = "bioio-base" },
     { name = "bioio-imageio" },
     { name = "bioio-nd2" },
     { name = "bioio-ome-tiff" },
@@ -3114,6 +3127,7 @@ dependencies = [
     { name = "dask" },
     { name = "magic-class" },
     { name = "magicgui" },
+    { name = "matplotlib-scalebar" },
     { name = "napari", extra = ["all"] },
     { name = "napari-pyclesperanto-assistant" },
     { name = "napari-segment-blobs-and-things-with-membranes" },
@@ -3202,6 +3216,7 @@ testing = [
 requires-dist = [
     { name = "apoc" },
     { name = "bioio", specifier = ">=1.1.0" },
+    { name = "bioio-base", specifier = ">=1.0.4" },
     { name = "bioio-czi", marker = "extra == 'gpl-extras'", specifier = ">=1.0.1" },
     { name = "bioio-czi", marker = "extra == 'testing'", specifier = ">=1.0.1" },
     { name = "bioio-imageio", specifier = ">=1" },
@@ -3214,6 +3229,7 @@ requires-dist = [
     { name = "dask" },
     { name = "magic-class" },
     { name = "magicgui", specifier = ">=0.8.3" },
+    { name = "matplotlib-scalebar", specifier = ">=0.8.1" },
     { name = "mkdocs", marker = "extra == 'docs'" },
     { name = "mkdocs-autorefs", marker = "extra == 'docs'" },
     { name = "mkdocs-jupyter", marker = "extra == 'docs'" },
