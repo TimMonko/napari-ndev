@@ -26,8 +26,8 @@ class ImageOverview:
     def __init__(
         self,
         image_sets: dict | list[dict],
-        plot_scale: tuple[float, float] = (3, 3),
-        plot_title: str = '',
+        fig_scale: tuple[float, float] = (3, 3),
+        fig_title: str = '',
         scalebar: float | dict | None = None,
         show: bool = False,
     ):
@@ -39,11 +39,11 @@ class ImageOverview:
         image_sets : list of dict
             A list of dictionaries containing image sets. See
             `napari_ndev.image_overview` for more information.
-        plot_scale : tuple of float, optional
+        fig_scale : tuple of float, optional
             The scale of the plot. (Width, Height). Values lower than 2 are likely
             to result in overlapping text. Increased values increase image size.
             Defaults to (3, 3).
-        plot_title : str, optional
+        fig_title : str, optional
             The title of the image overview. Default is an empty string.
         scalebar : float or dict, optional
             The scalebar to add to the image overview. If a float, it is used as
@@ -55,7 +55,7 @@ class ImageOverview:
 
         """
         plt.ioff()
-        self.fig = image_overview(image_sets, plot_scale, plot_title, scalebar)
+        self.fig = image_overview(image_sets, fig_scale, fig_title, scalebar)
         if show:
             plt.show()
         plt.close()
@@ -88,8 +88,8 @@ class ImageOverview:
 
 def image_overview(
     image_sets: dict | list[dict],
-    plot_scale: tuple[float, float] = (3, 3),
-    plot_title: str = '',
+    fig_scale: tuple[float, float] = (3, 3),
+    fig_title: str = '',
     scalebar: float | dict | None = None,
 ):
     """
@@ -106,11 +106,11 @@ def image_overview(
             "labels" will display the image as labels.
         - labels (list of bool, optional): Whether to display labels.
         - **kwargs: Additional keyword arguments to pass to stackview.imshow.
-    plot_scale : tuple of float, optional
+    fig_scale : tuple of float, optional
         The scale of the plot. (Width, Height). Values lower than 2 are likely
         to result in overlapping text. Increased values increase image size.
         Defaults to (3, 3).
-    plot_title : str, optional
+    fig_title : str, optional
         The title of the plot. Defaults to an empty string.
     scalebar : float or dict, optional
         The scalebar to add to the image overview. If a float, it is used as
@@ -132,7 +132,7 @@ def image_overview(
     fig, axs = plt.subplots(
         num_rows,
         num_columns,
-        figsize=(num_columns * plot_scale[0], num_rows * plot_scale[1]),
+        figsize=(num_columns * fig_scale[0], num_rows * fig_scale[1]),
     )
 
     if num_rows == 1:
@@ -184,7 +184,7 @@ def image_overview(
 
                 axs[row][col].add_artist(ScaleBar(**sb_dict))
 
-    plt.suptitle(plot_title, fontsize=16)
+    plt.suptitle(fig_title, fontsize=16)
     plt.tight_layout(pad=0.3)
 
     return fig

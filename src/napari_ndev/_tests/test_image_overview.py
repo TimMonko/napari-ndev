@@ -59,7 +59,7 @@ def test_image_overview(image_and_label_sets):
     assert fig.axes[3].get_title() == 'Labels'
 
 def test_image_overview_plot_scale(image_and_label_sets):
-    fig = image_overview(image_and_label_sets, plot_scale=(5, 6))
+    fig = image_overview(image_and_label_sets, fig_scale=(5, 6))
 
     assert isinstance(fig, plt.Figure)
     assert np.array_equal(
@@ -68,7 +68,7 @@ def test_image_overview_plot_scale(image_and_label_sets):
 
 def test_image_overview_plot_title(image_and_label_sets):
     test_title = 'Test title'
-    fig = image_overview(image_and_label_sets, plot_title=test_title)
+    fig = image_overview(image_and_label_sets, fig_title=test_title)
 
     assert isinstance(fig, plt.Figure)
     assert fig._suptitle.get_text() == test_title
