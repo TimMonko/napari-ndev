@@ -26,9 +26,9 @@ class ImageOverview:
     def __init__(
         self,
         image_sets: dict | list[dict],
-        xscale: float = 3,
-        yscale: float = 3,
-        image_title: str = '',
+        plot_scale: tuple[float, float] = (3, 3),
+        plot_title: str = '',
+        scalebar: float | dict | None = None,
         show: bool = False,
     ):
         """
@@ -39,19 +39,23 @@ class ImageOverview:
         image_sets : list of dict
             A list of dictionaries containing image sets. See
             `napari_ndev.image_overview` for more information.
-        xscale : float, optional
-            The scale factor for the x-axis. Default is 3.
-        yscale : float, optional
-            The scale factor for the y-axis. Default is 3.
-        image_title : str, optional
+        plot_scale : tuple of float, optional
+            The scale of the plot. (Width, Height). Values lower than 2 are likely
+            to result in overlapping text. Increased values increase image size.
+            Defaults to (3, 3).
+        plot_title : str, optional
             The title of the image overview. Default is an empty string.
+        scalebar : float or dict, optional
+            The scalebar to add to the image overview. If a float, it is used as
+            the dx parameter for the scalebar. If a dict, all **kwargs are passed
+            to the matplotlib_scalebar.scalebar.ScaleBar class. Defaults to None.
         show : bool, optional
             Whether to display the generated overview. Default is False.
             Prevents memory leak when False.
 
         """
         plt.ioff()
-        self.fig = image_overview(image_sets, xscale, yscale, image_title)
+        self.fig = image_overview(image_sets, plot_scale, plot_title, scalebar)
         if show:
             plt.show()
         plt.close()
@@ -182,6 +186,5 @@ def image_overview(
 
     plt.suptitle(plot_title, fontsize=16)
     plt.tight_layout(pad=0.3)
-    # plt.subplots_adjust(wspace=0.1, hspace=0.1)
 
     return fig
