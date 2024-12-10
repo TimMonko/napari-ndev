@@ -188,6 +188,10 @@ def image_overview(
             if scalebar is not None:
                 _add_scalebar(axs[row][col], scalebar)
 
+    # remove empty subplots
+    for ax in fig.get_axes():
+        ax.axis('off') if not ax.get_images() else None
+
     plt.suptitle(fig_title, fontsize=16)
     plt.tight_layout(pad=0.3)
 

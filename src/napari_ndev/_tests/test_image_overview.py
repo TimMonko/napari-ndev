@@ -13,6 +13,41 @@ from napari_ndev.image_overview import (
 )
 
 
+def test_image_overview_wrap():
+    # create a random numpy array of size 100 x 100
+    data = np.random.rand(100, 100)
+    # create a dictionary with the image data
+    five_image_set = {
+        'image': [data, data, data, data, data],
+        'title': ['Image 1', 'Image 2', 'Image 3', 'Image 4', 'Image 5'],
+    }
+    fig = image_overview(five_image_set)
+    assert isinstance(fig, plt.Figure)
+    assert np.array_equal(
+        fig.get_size_inches(), np.array([9, 6]) # 3 columns * 3 width, 2 rows * 3 height
+    )
+    assert len(fig.axes) == 6
+    assert fig.axes[0].get_title() == 'Image 1'
+    assert not fig.axes[5].get_title()
+    assert not fig.axes[5].get_images()
+
+def test_image_overview_nowrap():
+    # create a random numpy array of size 100 x 100
+    data = np.random.rand(100, 100)
+    # create a dictionary with the image data
+    five_image_set = {
+        'image': [data, data, data],
+        'title': ['Image 1', 'Image 2', 'Image 3'],
+    }
+    fig = image_overview(five_image_set)
+    assert isinstance(fig, plt.Figure)
+    assert np.array_equal(
+        fig.get_size_inches(), np.array([9, 3]) # 3 columns * 3 width, 2 rows * 3 height
+    )
+    assert len(fig.axes) == 3
+    assert fig.axes[0].get_title() == 'Image 1'
+
+
 @pytest.fixture
 def image_and_label_sets():
     img = nImage(
