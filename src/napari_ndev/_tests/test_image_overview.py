@@ -6,7 +6,11 @@ import pytest
 from matplotlib_scalebar.scalebar import ScaleBar
 
 from napari_ndev import nImage
-from napari_ndev.image_overview import ImageOverview, image_overview
+from napari_ndev.image_overview import (
+    ImageOverview,
+    _add_scalebar,
+    image_overview,
+)
 
 
 @pytest.fixture
@@ -72,6 +76,18 @@ def test_image_overview_plot_title(image_and_label_sets):
 
     assert isinstance(fig, plt.Figure)
     assert fig._suptitle.get_text() == test_title
+
+def test_add_scalebar(image_and_label_sets):
+    fig = image_overview(image_and_label_sets)
+    _add_scalebar(fig.axes[0], 0.5)
+
+    assert isinstance(fig, plt.Figure)
+    scalebar = [
+        child for child in fig.axes[0].get_children()
+        if isinstance(child, ScaleBar)
+    ]
+    assert len(scalebar) == 1
+
 
 def test_image_overview_scalebar_float(image_and_label_sets):
     fig = image_overview(image_and_label_sets, scalebar=0.5)
