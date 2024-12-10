@@ -10,6 +10,7 @@ from __future__ import annotations
 import inspect
 
 import matplotlib.pyplot as plt
+import numpy as np
 import stackview
 
 
@@ -126,8 +127,23 @@ def image_overview(
     # convert input to list if needed
     image_sets = [image_sets] if isinstance(image_sets, dict) else image_sets
     # create the subplot grid
-    num_rows = len(image_sets)
-    num_columns = max([len(image_set['image']) for image_set in image_sets])
+
+    # if only one image set, wrap rows and columns to get a nice aspect ratio
+    if len(image_sets) == 1:
+        num_images = len(image_sets[0]['image'])
+
+        if num_images <= 3:
+            num_columns = num_images
+            num_rows = 1
+        # wrap so it is roughly a square aspect ratio
+        else:
+            num_columns = int(np.ceil(np.sqrt(num_images)))
+            num_rows = int(np.ceil(num_images / num_columns))
+
+    if len(image_sets) > 1:
+        num_rows = len(image_sets)
+        num_columns = max([len(image_set['image']) for image_set in image_sets])
+
     # multiply scale of plot by number of columns and rows
     fig, axs = plt.subplots(
         num_rows,
@@ -141,10 +157,19 @@ def image_overview(
         axs = [[ax] for ax in axs]
 
     # iterate through the image sets
-    for row, image_set in enumerate(image_sets):
-        for col, _image in enumerate(image_set['image']):
+    for image_set_idx, image_set in enumerate(image_sets):
+        for image_idx, _image in enumerate(image_set['image']):
+
+            # calculate the correct row and column for the subplot
+            if len(image_sets) == 1:
+                row =  image_idx // num_columns
+                col = image_idx % num_columns
+            if len(image_sets) > 1:
+                row = image_set_idx
+                col = image_idx
+
             # create a dictionary from the col-th values of each key
-            image_dict = {key: value[col] for key, value in image_set.items()}
+            image_dict = {key: value[image_idx] for key, value in image_set.items()}
 
             # turn off the subplot and continue if there is no image
             if image_dict.get('image') is None:
@@ -161,30 +186,36 @@ def image_overview(
 
             # add scalebar, if dict is present
             if scalebar is not None:
-                from matplotlib_scalebar.scalebar import ScaleBar
+                _add_scalebar(axs[row][col], scalebar)
 
-                # get a default dictionary to pass to sb_dict, and only overwrite the keys that are present in scalebar
-                sb_dict = {
-                    'dx': 1,
-                    'units': 'um',
-                    'frameon': True,
-                    'location': 'lower right',
-                }
-
-                # if scalebar is just float, convert to dict
-                if isinstance(scalebar, float):
-                    sb_valid_dict = {'dx': scalebar}
-
-                # if scalebar is dict, only keep the keys that are valid for ScaleBar
-                if isinstance(scalebar, dict):
-                    sb_valid_dict = {k: v for k, v in scalebar.items() if k in inspect.signature(ScaleBar).parameters}
-
-                # update key: values in sb_dict with values from scalebar if key is present
-                sb_dict.update(sb_valid_dict)
-
-                axs[row][col].add_artist(ScaleBar(**sb_dict))
+    # remove empty subplots
+    for ax in fig.get_axes():
+        ax.axis('off') if not ax.get_images() else None
 
     plt.suptitle(fig_title, fontsize=16)
     plt.tight_layout(pad=0.3)
 
     return fig
+
+def _add_scalebar(ax, scalebar):
+    from matplotlib_scalebar.scalebar import ScaleBar
+
+    # get a default dictionary to pass to sb_dict,
+    # and only overwrite the keys that are present in scalebar
+    sb_dict = {
+        'dx': 1,
+        'units': 'um',
+        'frameon': True,
+        'location': 'lower right',
+    }
+
+    # if scalebar is just float, convert to dict
+    if isinstance(scalebar, float):
+        sb_dict = {'dx': scalebar}
+    # if scalebar is dict, only keep the keys that are valid for ScaleBar
+    elif isinstance(scalebar, dict):
+        sb_valid_dict = {k: v for k, v in scalebar.items() if k in inspect.signature(ScaleBar).parameters}
+        # update key: values in sb_dict with values from scalebar if key is present
+        sb_dict.update(sb_valid_dict)
+
+    ax.add_artist(ScaleBar(**sb_dict))
