@@ -13,6 +13,7 @@ from dataclasses import dataclass
 import matplotlib.pyplot as plt
 import numpy as np
 import stackview
+from bioio_base.types import ArrayLike
 
 
 @dataclass
@@ -39,7 +40,7 @@ class ImageSet:
 
     """
 
-    image: list
+    image: list[ArrayLike]
     title: list[str] | None = None
     colormap: list[str] | None = None
     labels: list[bool] | None = None
