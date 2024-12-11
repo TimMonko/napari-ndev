@@ -37,9 +37,15 @@ class ImageOverview:
 
         Parameters
         ----------
-        image_sets : list of dict
-            A list of dictionaries containing image sets. See
-            `napari_ndev.image_overview` for more information.
+        image_sets : dict or list of dict
+            A list of dictionaries, each containing an image set. Each image set
+            should be a dictionary containing the following keys:
+            - image (list): A list of images to display.
+            - title (list of str, optional): The title of the image set.
+            - colormap (list of str, optional): The colormap to use.
+                "labels" will display the image as labels.
+            - labels (list of bool, optional): Whether to display labels.
+            - **kwargs: Additional keyword arguments to pass to stackview.imshow.
         fig_scale : tuple of float, optional
             The scale of the plot. (Width, Height). Values lower than 2 are likely
             to result in overlapping text. Increased values increase image size.
@@ -98,7 +104,7 @@ def image_overview(
 
     Parameters
     ----------
-    image_sets : list of dict
+    image_sets : dict or list of dict
         A list of dictionaries, each containing an image set. Each image set
         should be a dictionary containing the following keys:
         - image (list): A list of images to display.
