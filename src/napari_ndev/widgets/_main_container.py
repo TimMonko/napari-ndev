@@ -6,12 +6,8 @@ from magicclass.widgets import (
     ScrollableContainer,
     TabbedContainer,
 )
-
-from napari_ndev import (
-    ApocContainer,
-    MeasureContainer,
-    UtilitiesContainer,
-    WorkflowContainer,
+from magicgui.widgets import (
+    Label,
 )
 
 if TYPE_CHECKING:
@@ -47,14 +43,24 @@ class MainContainer(ScrollableContainer):
         self._init_layout()
 
     def _init_widget_containers(self):
+        self._title = Label(label='nDev')
+
+        from napari_ndev import (
+            ApocContainer,
+            MeasureContainer,
+            UtilitiesContainer,
+            WorkflowContainer,
+        )
         """Initialize the widget containers."""
-        self._apoc_container = ApocContainer(vivewer=self._viewer)
+        self._apoc_container = ApocContainer(viewer=self._viewer)
         self._measure_container = MeasureContainer(viewer=self._viewer)
         self._utilities_container = UtilitiesContainer(viewer=self._viewer)
         self._workflow_container = WorkflowContainer(viewer=self._viewer)
 
         self._tabbed_container = TabbedContainer(
-            labels=["Apoc", "Measure", "Utilities", "Workflow"],
+            # labels=["Apoc", "Measure", "Utilities", "Workflow"],
+            labels = True,
+            layout="horizontal",
             widgets=[
                 self._apoc_container,
                 self._measure_container,
@@ -65,5 +71,6 @@ class MainContainer(ScrollableContainer):
 
     def _init_layout(self):
         """Initialize the layout."""
-        self.extend(self._tabbed_container)
+        self.append(self._title)
+        self.append(self._tabbed_container)
         # self.stretch(self._tabbed_container)
