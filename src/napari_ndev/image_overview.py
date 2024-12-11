@@ -211,11 +211,11 @@ def _add_scalebar(ax, scalebar):
 
     # if scalebar is just float, convert to dict
     if isinstance(scalebar, float):
-        sb_dict = {'dx': scalebar}
+        sb_valid_dict = {'dx': scalebar}
     # if scalebar is dict, only keep the keys that are valid for ScaleBar
     elif isinstance(scalebar, dict):
         sb_valid_dict = {k: v for k, v in scalebar.items() if k in inspect.signature(ScaleBar).parameters}
-        # update key: values in sb_dict with values from scalebar if key is present
-        sb_dict.update(sb_valid_dict)
 
+    # update key: values in sb_dict with values from scalebar if key is present
+    sb_dict.update(sb_valid_dict)
     ax.add_artist(ScaleBar(**sb_dict))
