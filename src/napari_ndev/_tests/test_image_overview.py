@@ -3,7 +3,6 @@ import pathlib
 import matplotlib.pyplot as plt
 import numpy as np
 import pytest
-from bioio_base.types import ArrayLike
 from matplotlib_scalebar.scalebar import ScaleBar
 
 from napari_ndev.image_overview import (
@@ -28,7 +27,7 @@ def test_ImageSet():
 
     assert isinstance(image_set, ImageSet)
     assert isinstance(image_set.image, list)
-    assert isinstance(image_set.image[0], ArrayLike)
+    assert isinstance(image_set.image[0], np.ndarray)
     assert isinstance(image_set.title, list)
     assert isinstance(image_set.title[0], str)
     assert isinstance(image_set.labels, list)
