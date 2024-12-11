@@ -10,22 +10,24 @@ from napari_ndev.nimage import nImage
 from napari_ndev.widgets import (
     ApocContainer,
     ApocFeatureStack,
+    MainContainer,
     MeasureContainer,
     UtilitiesContainer,
     WorkflowContainer,
 )
 
 __all__ = [
-    'nImage',
-    'WorkflowContainer',
-    'UtilitiesContainer',
     'ApocContainer',
     'ApocFeatureStack',
+    'ImageOverview',
+    'MainContainer',
     'MeasureContainer',
     'PlateMapper',
-    'ImageOverview',
-    'image_overview',
+    'UtilitiesContainer',
+    'WorkflowContainer',
     'helpers',
+    'image_overview',
     'measure',
     'morphology',
+    'nImage',
 ]
