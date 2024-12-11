@@ -6,6 +6,9 @@ contributions:
     - id: napari-ndev.get_reader
       python_name: napari_ndev._napari_reader:napari_get_reader
       title: Get BioIO Reader
+    - id: napari-ndev.make_main_container
+      python_name: napari_ndev.widgets._main_container:MainContainer
+      title: Make Main Container
     - id: napari-ndev.make_utilities_container
       python_name: napari_ndev.widgets._utilities_container:UtilitiesContainer
       title: Make Image Utilities
@@ -23,6 +26,8 @@ contributions:
       title: Make Measure Container
 
   widgets:
+    - command: napari-ndev.make_main_container
+      display_name: nDev
     - command: napari-ndev.make_utilities_container
       display_name: Image Utilities
     - command: napari-ndev.make_workflow_container
