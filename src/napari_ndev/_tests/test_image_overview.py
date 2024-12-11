@@ -3,16 +3,16 @@ import pathlib
 import matplotlib.pyplot as plt
 import numpy as np
 import pytest
-from matplotlib_scalebar.scalebar import ScaleBar
 from bioio_base.types import ArrayLike
+from matplotlib_scalebar.scalebar import ScaleBar
 
-from napari_ndev import nImage
 from napari_ndev.image_overview import (
     ImageOverview,
     ImageSet,
     _add_scalebar,
     image_overview,
 )
+
 
 def test_ImageSet():
     # create a random numpy array of size 100 x 100
