@@ -4,23 +4,52 @@ import matplotlib.pyplot as plt
 import numpy as np
 import pytest
 from matplotlib_scalebar.scalebar import ScaleBar
+from bioio_base.types import ArrayLike
 
 from napari_ndev import nImage
 from napari_ndev.image_overview import (
     ImageOverview,
+    ImageSet,
     _add_scalebar,
     image_overview,
 )
 
+def test_ImageSet():
+    # create a random numpy array of size 100 x 100
+    data = np.random.rand(100, 100)
+    # create a dictionary with the image data
+    image_set = ImageSet(
+        image=[data],
+        title=['Image 1'],
+        labels=None,
+        min_display_intensity=[0],
+        max_display_intensity=[1],
+    )
+
+    assert isinstance(image_set, ImageSet)
+    assert isinstance(image_set.image, list)
+    assert isinstance(image_set.image[0], ArrayLike)
+    assert isinstance(image_set.title, list)
+    assert isinstance(image_set.title[0], str)
+    assert isinstance(image_set.labels, list)
+    assert isinstance(image_set.labels[0], bool)
+    assert image_set.labels[0] is False
+    assert isinstance(image_set.colormap, list)
+    assert image_set.colormap[0] is None
+    assert isinstance(image_set.min_display_intensity, list)
+    assert isinstance(image_set.min_display_intensity[0], (int, float))
+    assert isinstance(image_set.max_display_intensity, list)
+    assert isinstance(image_set.max_display_intensity[0], (int, float))
 
 def test_image_overview_wrap():
     # create a random numpy array of size 100 x 100
     data = np.random.rand(100, 100)
     # create a dictionary with the image data
-    five_image_set = {
-        'image': [data, data, data, data, data],
-        'title': ['Image 1', 'Image 2', 'Image 3', 'Image 4', 'Image 5'],
-    }
+    five_image_set = ImageSet(
+        image=[data, data, data, data, data],
+        title=['Image 1', 'Image 2', 'Image 3', 'Image 4', 'Image 5'],
+    )
+
     fig = image_overview(five_image_set)
     assert isinstance(fig, plt.Figure)
     assert np.array_equal(
@@ -35,11 +64,12 @@ def test_image_overview_nowrap():
     # create a random numpy array of size 100 x 100
     data = np.random.rand(100, 100)
     # create a dictionary with the image data
-    five_image_set = {
-        'image': [data, data, data],
-        'title': ['Image 1', 'Image 2', 'Image 3'],
-    }
-    fig = image_overview(five_image_set)
+    three_image_set = ImageSet(
+        image=[data, data, data],
+        title=['Image 1', 'Image 2', 'Image 3'],
+    )
+
+    fig = image_overview(three_image_set)
     assert isinstance(fig, plt.Figure)
     assert np.array_equal(
         fig.get_size_inches(), np.array([9, 3]) # 3 columns * 3 width, 2 rows * 3 height
@@ -50,30 +80,25 @@ def test_image_overview_nowrap():
 
 @pytest.fixture
 def image_and_label_sets():
-    img = nImage(
-        pathlib.Path(
-            r'src/napari_ndev/_tests/resources/Workflow/Images/cells3d2ch.tiff'
-        )
-    )
-    image_data = np.squeeze(img.data)
 
-    image_set1 = {
-        'image': [image_data[0], image_data[1]],
-        'colormap': ['PiYG', 'viridis'],
-        'title': ['Image 1', 'Image 2'],
-    }
-
-    lbl = nImage(
-        pathlib.Path(
-            r'src/napari_ndev/_tests/resources/Workflow/Labels/cells3d2ch.tiff'
-        )
+    # create an img with shape 2 x 100 x 100
+    image_data = np.random.rand(2, 100, 100)
+    image_set1 = ImageSet(
+        image=[image_data[0], image_data[1]],
+        colormap=['PiYG', 'viridis'],
+        title=['Image 1', 'Image 2'],
+        labels=[False, False],
+        min_display_intensity=[0, 0],
+        max_display_intensity=[1, 1],
     )
 
-    label_set = {
-        'image': [None, np.squeeze(lbl.data)],
-        'colormap': [None, 'Labels'],
-        'title': [None, 'Labels'],
-    }
+    # create a label image with only 1s and 0s with shape 100 x 100
+    label_data = np.random.randint(0, 2, (100, 100))
+    label_set = ImageSet(
+        image=[None, label_data],
+        colormap=[None, 'Labels'], # tests the cmap.lower() component, this actually helped because it detected a lack of list
+        title=[None, 'Labels'],
+    )
 
     return image_set1, label_set
 
