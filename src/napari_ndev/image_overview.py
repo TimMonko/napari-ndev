@@ -8,11 +8,44 @@ and a class `ImageOverview` to generate and save image overviews.
 from __future__ import annotations
 
 import inspect
+from dataclasses import dataclass
 
 import matplotlib.pyplot as plt
 import numpy as np
 import stackview
 
+@dataclass
+class ImageSet:
+    """
+    Image information passed to `stackview.imshow`.
+
+    Parameters
+    ----------
+    image : list
+        A list of image data to display.
+    title : list of str, optional
+        The title of the image.
+    colormap : list of str, optional
+        The colormap to use. "labels" will display the image as labels.
+    labels : list of bool, optional
+        Whether to display image as a labels.
+    min_display_intensity : list of float, optional
+        The minimum display intensity, in the same units as the image.
+        Use `np.percentile(image, 0.1)` for 0.1th percentile.
+    max_display_intensity : list of float, optional
+        The maximum display intensity, in the same units as the image.
+        Use `np.percentile(image, 99.8)` for 99.9th percentile.
+
+    """
+
+    image: list
+    title: list[str] | None = None
+    colormap: list[str] | None = None
+    labels: list[bool] | None = None
+    min_display_intensity: list[float] | None = None
+    max_display_intensity: list[float] | None = None
+
+stackview.imshow()
 
 class ImageOverview:
     """
