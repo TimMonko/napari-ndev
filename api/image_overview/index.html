@@ -20,7 +20,7 @@
       
       
       <link rel="icon" href="../../resources/images/neuralDev-icon.svg">
-      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.5.48">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.5.49">
     
     
       
@@ -1702,8 +1702,7 @@ show=False.</p>
 
               <details class="quote">
                 <summary>Source code in <code>src/napari_ndev/image_overview.py</code></summary>
-                <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 57</span>
-<span class="normal"> 58</span>
+                <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 58</span>
 <span class="normal"> 59</span>
 <span class="normal"> 60</span>
 <span class="normal"> 61</span>
@@ -1778,7 +1777,8 @@ show=False.</p>
 <span class="normal">130</span>
 <span class="normal">131</span>
 <span class="normal">132</span>
-<span class="normal">133</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span> <span class="nc">ImageOverview</span><span class="p">:</span>
+<span class="normal">133</span>
+<span class="normal">134</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span> <span class="nc">ImageOverview</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    A class for generating and saving image overviews.</span>
 
@@ -1790,7 +1790,7 @@ show=False.</p>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
-        <span class="n">image_sets</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">|</span> <span class="nb">list</span><span class="p">[</span><span class="nb">dict</span><span class="p">],</span>
+        <span class="n">image_sets</span><span class="p">:</span> <span class="n">ImageSet</span> <span class="o">|</span> <span class="nb">list</span><span class="p">[</span><span class="n">ImageSet</span><span class="p">]</span> <span class="o">|</span> <span class="nb">dict</span> <span class="o">|</span> <span class="nb">list</span><span class="p">[</span><span class="nb">dict</span><span class="p">],</span>
         <span class="n">fig_scale</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">3</span><span class="p">),</span>
         <span class="n">fig_title</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">''</span><span class="p">,</span>
         <span class="n">scalebar</span><span class="p">:</span> <span class="nb">float</span> <span class="o">|</span> <span class="nb">dict</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
@@ -1801,7 +1801,7 @@ show=False.</p>
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
-<span class="sd">        image_sets : dict or list of dict</span>
+<span class="sd">        image_sets : ImageSet, list of ImageSet, dict, or list of dict</span>
 <span class="sd">            A list of dictionaries, each containing an image set. Each image set</span>
 <span class="sd">            should be a dictionary containing the following keys:</span>
 <span class="sd">            - image (list): A list of images to display.</span>
@@ -1890,7 +1890,7 @@ show=False.</p>
     <ul>
         <li class="doc-section-item field-body">
 <h4 id="napari_ndev.image_overview.ImageOverview.__init__(image_sets)" class="doc doc-heading doc-heading-parameter">              <b><code>image_sets</code></b>
-<a href="#napari_ndev.image_overview.ImageOverview.__init__(image_sets)" class="headerlink" title="Permanent link">#</a></h4>              (<code>dict or list of dict</code>)
+<a href="#napari_ndev.image_overview.ImageOverview.__init__(image_sets)" class="headerlink" title="Permanent link">#</a></h4>              (<code>ImageSet, list of ImageSet, dict, or list of dict</code>)
           –
           <div class="doc-md-description">
             <p>A list of dictionaries, each containing an image set. Each image set
@@ -1952,8 +1952,7 @@ Prevents memory leak when False.</p>
 
             <details class="quote">
               <summary>Source code in <code>src/napari_ndev/image_overview.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 67</span>
-<span class="normal"> 68</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 68</span>
 <span class="normal"> 69</span>
 <span class="normal"> 70</span>
 <span class="normal"> 71</span>
@@ -1993,9 +1992,10 @@ Prevents memory leak when False.</p>
 <span class="normal">105</span>
 <span class="normal">106</span>
 <span class="normal">107</span>
-<span class="normal">108</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+<span class="normal">108</span>
+<span class="normal">109</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
     <span class="bp">self</span><span class="p">,</span>
-    <span class="n">image_sets</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">|</span> <span class="nb">list</span><span class="p">[</span><span class="nb">dict</span><span class="p">],</span>
+    <span class="n">image_sets</span><span class="p">:</span> <span class="n">ImageSet</span> <span class="o">|</span> <span class="nb">list</span><span class="p">[</span><span class="n">ImageSet</span><span class="p">]</span> <span class="o">|</span> <span class="nb">dict</span> <span class="o">|</span> <span class="nb">list</span><span class="p">[</span><span class="nb">dict</span><span class="p">],</span>
     <span class="n">fig_scale</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">3</span><span class="p">),</span>
     <span class="n">fig_title</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">''</span><span class="p">,</span>
     <span class="n">scalebar</span><span class="p">:</span> <span class="nb">float</span> <span class="o">|</span> <span class="nb">dict</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
@@ -2006,7 +2006,7 @@ Prevents memory leak when False.</p>
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
-<span class="sd">    image_sets : dict or list of dict</span>
+<span class="sd">    image_sets : ImageSet, list of ImageSet, dict, or list of dict</span>
 <span class="sd">        A list of dictionaries, each containing an image set. Each image set</span>
 <span class="sd">        should be a dictionary containing the following keys:</span>
 <span class="sd">        - image (list): A list of images to display.</span>
@@ -2085,8 +2085,7 @@ default filename will be used.</p>
 
             <details class="quote">
               <summary>Source code in <code>src/napari_ndev/image_overview.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">110</span>
-<span class="normal">111</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">111</span>
 <span class="normal">112</span>
 <span class="normal">113</span>
 <span class="normal">114</span>
@@ -2108,7 +2107,8 @@ default filename will be used.</p>
 <span class="normal">130</span>
 <span class="normal">131</span>
 <span class="normal">132</span>
-<span class="normal">133</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">save</span><span class="p">(</span>
+<span class="normal">133</span>
+<span class="normal">134</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">save</span><span class="p">(</span>
     <span class="bp">self</span><span class="p">,</span>
     <span class="n">directory</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">filename</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
@@ -2238,8 +2238,7 @@ Use <code>np.percentile(image, 99.8)</code> for 99.9th percentile.</p>
 
               <details class="quote">
                 <summary>Source code in <code>src/napari_ndev/image_overview.py</code></summary>
-                <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">19</span>
-<span class="normal">20</span>
+                <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">20</span>
 <span class="normal">21</span>
 <span class="normal">22</span>
 <span class="normal">23</span>
@@ -2274,7 +2273,8 @@ Use <code>np.percentile(image, 99.8)</code> for 99.9th percentile.</p>
 <span class="normal">52</span>
 <span class="normal">53</span>
 <span class="normal">54</span>
-<span class="normal">55</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@dataclass</span>
+<span class="normal">55</span>
+<span class="normal">56</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@dataclass</span>
 <span class="k">class</span> <span class="nc">ImageSet</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    Image information passed to `stackview.imshow`.</span>
@@ -2343,12 +2343,12 @@ Use <code>np.percentile(image, 99.8)</code> for 99.9th percentile.</p>
 
             <details class="quote">
               <summary>Source code in <code>src/napari_ndev/image_overview.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">50</span>
-<span class="normal">51</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">51</span>
 <span class="normal">52</span>
 <span class="normal">53</span>
 <span class="normal">54</span>
-<span class="normal">55</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">__post_init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="normal">55</span>
+<span class="normal">56</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">__post_init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">"""Set default values for colormap and labels if not provided."""</span>
     <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">colormap</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">colormap</span> <span class="o">=</span> <span class="p">[</span><span class="kc">None</span><span class="p">]</span> <span class="o">*</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">image</span><span class="p">)</span>
@@ -2389,11 +2389,14 @@ Use <code>np.percentile(image, 99.8)</code> for 99.9th percentile.</p>
     <ul>
         <li class="doc-section-item field-body">
 <h3 id="napari_ndev.image_overview.image_overview(image_sets)" class="doc doc-heading doc-heading-parameter">              <b><code>image_sets</code></b>
-<a href="#napari_ndev.image_overview.image_overview(image_sets)" class="headerlink" title="Permanent link">#</a></h3>              (<code>ImageSet or list of ImageSet</code>)
+<a href="#napari_ndev.image_overview.image_overview(image_sets)" class="headerlink" title="Permanent link">#</a></h3>              (<code>ImageSet, list of ImageSet, dict, or list of dict</code>)
           –
           <div class="doc-md-description">
             <p>A list of <code>napari_ndev.image_overview.ImageSet objects containing
-image information to display for</code>stackview.imshow`.</p>
+image information to display for</code>stackview.imshow`. Using a dict is
+deprecated and will be removed in the future, but is supported by
+passing the dictionary keys as arguments to the ImageSet constructor.
+Will be removed in v1.0.0.</p>
           </div>
         </li>
         <li class="doc-section-item field-body">
@@ -2446,8 +2449,7 @@ to the matplotlib_scalebar.scalebar.ScaleBar class. Defaults to None.</p>
 
             <details class="quote">
               <summary>Source code in <code>src/napari_ndev/image_overview.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">136</span>
-<span class="normal">137</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">137</span>
 <span class="normal">138</span>
 <span class="normal">139</span>
 <span class="normal">140</span>
@@ -2552,8 +2554,16 @@ to the matplotlib_scalebar.scalebar.ScaleBar class. Defaults to None.</p>
 <span class="normal">239</span>
 <span class="normal">240</span>
 <span class="normal">241</span>
-<span class="normal">242</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">image_overview</span><span class="p">(</span>
-    <span class="n">image_sets</span><span class="p">:</span> <span class="n">ImageSet</span> <span class="o">|</span> <span class="nb">list</span><span class="p">[</span><span class="n">ImageSet</span><span class="p">],</span>
+<span class="normal">242</span>
+<span class="normal">243</span>
+<span class="normal">244</span>
+<span class="normal">245</span>
+<span class="normal">246</span>
+<span class="normal">247</span>
+<span class="normal">248</span>
+<span class="normal">249</span>
+<span class="normal">250</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">image_overview</span><span class="p">(</span>
+    <span class="n">image_sets</span><span class="p">:</span> <span class="n">ImageSet</span> <span class="o">|</span> <span class="nb">list</span><span class="p">[</span><span class="n">ImageSet</span><span class="p">]</span> <span class="o">|</span> <span class="nb">dict</span> <span class="o">|</span> <span class="nb">list</span><span class="p">[</span><span class="nb">dict</span><span class="p">],</span>
     <span class="n">fig_scale</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">3</span><span class="p">),</span>
     <span class="n">fig_title</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">''</span><span class="p">,</span>
     <span class="n">scalebar</span><span class="p">:</span> <span class="nb">float</span> <span class="o">|</span> <span class="nb">dict</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
@@ -2563,9 +2573,12 @@ to the matplotlib_scalebar.scalebar.ScaleBar class. Defaults to None.</p>
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
-<span class="sd">    image_sets : ImageSet or list of ImageSet</span>
+<span class="sd">    image_sets : ImageSet, list of ImageSet, dict, or list of dict</span>
 <span class="sd">        A list of `napari_ndev.image_overview.ImageSet objects containing</span>
-<span class="sd">        image information to display for `stackview.imshow`.</span>
+<span class="sd">        image information to display for `stackview.imshow`. Using a dict is</span>
+<span class="sd">        deprecated and will be removed in the future, but is supported by</span>
+<span class="sd">        passing the dictionary keys as arguments to the ImageSet constructor.</span>
+<span class="sd">        Will be removed in v1.0.0.</span>
 <span class="sd">    fig_scale : tuple of float, optional</span>
 <span class="sd">        The scale of the plot. (Width, Height). Values lower than 2 are likely</span>
 <span class="sd">        to result in overlapping text. Increased values increase image size.</span>
@@ -2583,8 +2596,12 @@ to the matplotlib_scalebar.scalebar.ScaleBar class. Defaults to None.</p>
 <span class="sd">        The matplotlib figure object containing the image overview.</span>
 
 <span class="sd">    """</span>
-    <span class="c1"># convert input to list if needed</span>
-    <span class="n">image_sets</span> <span class="o">=</span> <span class="p">[</span><span class="n">image_sets</span><span class="p">]</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">image_sets</span><span class="p">,</span> <span class="n">ImageSet</span><span class="p">)</span> <span class="k">else</span> <span class="n">image_sets</span>
+    <span class="c1"># convert single image_set to list of image_set</span>
+    <span class="n">image_sets</span> <span class="o">=</span> <span class="p">[</span><span class="n">image_sets</span><span class="p">]</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">image_sets</span><span class="p">,</span> <span class="p">(</span><span class="n">ImageSet</span><span class="p">,</span> <span class="nb">dict</span><span class="p">))</span> <span class="k">else</span> <span class="n">image_sets</span>
+
+    <span class="c1"># if list of dicts convert to ImageSet, until deprecated</span>
+    <span class="n">image_sets</span> <span class="o">=</span> <span class="n">_convert_dict_to_ImageSet</span><span class="p">(</span><span class="n">image_sets</span><span class="p">)</span> <span class="k">if</span> <span class="nb">any</span><span class="p">(</span><span class="nb">isinstance</span><span class="p">(</span><span class="n">image_set</span><span class="p">,</span> <span class="nb">dict</span><span class="p">)</span> <span class="k">for</span> <span class="n">image_set</span> <span class="ow">in</span> <span class="n">image_sets</span><span class="p">)</span> <span class="k">else</span> <span class="n">image_sets</span>
+
     <span class="c1"># create the subplot grid</span>
 
     <span class="c1"># if only one image set, wrap rows and columns to get a nice aspect ratio</span>
@@ -2745,7 +2762,7 @@ to the matplotlib_scalebar.scalebar.ScaleBar class. Defaults to None.</p>
     <script id="__config" type="application/json">{"base": "../..", "features": ["content.code.annotate", "navigation.sections", "navigation.indexes", "toc.follow", "search.suggest", "search.share"], "search": "../../assets/javascripts/workers/search.6ce7567c.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}}</script>
     
     
-      <script src="../../assets/javascripts/bundle.83f73b43.min.js"></script>
+      <script src="../../assets/javascripts/bundle.88dd0f4e.min.js"></script>
       
     
   </body>
