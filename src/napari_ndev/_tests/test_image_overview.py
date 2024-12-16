@@ -9,6 +9,7 @@ from napari_ndev.image_overview import (
     ImageOverview,
     ImageSet,
     _add_scalebar,
+    _convert_dict_to_ImageSet,
     image_overview,
 )
 
@@ -259,3 +260,19 @@ def test_imageoverview_save(image_and_label_sets_ImageSet):
     assert save_file_path.exists()
     # remove the saved file
     save_file_path.unlink()
+
+def test_convert_dict_to_ImageSet():
+    image_data = np.random.rand(2, 100, 100)
+    image_set1 = {
+        'image': [image_data[0], image_data[1]],
+        'colormap': ['PiYG', 'viridis'],
+        'title': ['Image 1', 'Image 2'],
+        'labels': [False, False],
+        'min_display_intensity': [0, 0],
+        'max_display_intensity': [1, 1],
+    }
+
+    image_set = _convert_dict_to_ImageSet([image_set1])
+    assert isinstance(image_set, list)
+    assert isinstance(image_set[0], ImageSet)
+    assert isinstance(image_set[0].image, list)
