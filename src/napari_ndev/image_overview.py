@@ -8,6 +8,7 @@ and a class `ImageOverview` to generate and save image overviews.
 from __future__ import annotations
 
 import inspect
+import warnings
 from dataclasses import dataclass
 
 import matplotlib.pyplot as plt
@@ -66,7 +67,7 @@ class ImageOverview:
 
     def __init__(
         self,
-        image_sets: dict | list[dict],
+        image_sets: ImageSet | list[ImageSet] | dict | list[dict],
         fig_scale: tuple[float, float] = (3, 3),
         fig_title: str = '',
         scalebar: float | dict | None = None,
@@ -77,7 +78,7 @@ class ImageOverview:
 
         Parameters
         ----------
-        image_sets : dict or list of dict
+        image_sets : ImageSet, list of ImageSet, dict, or list of dict
             A list of dictionaries, each containing an image set. Each image set
             should be a dictionary containing the following keys:
             - image (list): A list of images to display.
@@ -134,7 +135,7 @@ class ImageOverview:
 
 
 def image_overview(
-    image_sets: ImageSet | list[ImageSet],
+    image_sets: ImageSet | list[ImageSet] | dict | list[dict],
     fig_scale: tuple[float, float] = (3, 3),
     fig_title: str = '',
     scalebar: float | dict | None = None,
@@ -144,9 +145,12 @@ def image_overview(
 
     Parameters
     ----------
-    image_sets : ImageSet or list of ImageSet
+    image_sets : ImageSet, list of ImageSet, dict, or list of dict
         A list of `napari_ndev.image_overview.ImageSet objects containing
-        image information to display for `stackview.imshow`.
+        image information to display for `stackview.imshow`. Using a dict is
+        deprecated and will be removed in the future, but is supported by
+        passing the dictionary keys as arguments to the ImageSet constructor.
+        Will be removed in v1.0.0.
     fig_scale : tuple of float, optional
         The scale of the plot. (Width, Height). Values lower than 2 are likely
         to result in overlapping text. Increased values increase image size.
@@ -164,8 +168,12 @@ def image_overview(
         The matplotlib figure object containing the image overview.
 
     """
-    # convert input to list if needed
-    image_sets = [image_sets] if isinstance(image_sets, ImageSet) else image_sets
+    # convert single image_set to list of image_set
+    image_sets = [image_sets] if isinstance(image_sets, (ImageSet, dict)) else image_sets
+
+    # if list of dicts convert to ImageSet, until deprecated
+    image_sets = _convert_dict_to_ImageSet(image_sets) if any(isinstance(image_set, dict) for image_set in image_sets) else image_sets
+
     # create the subplot grid
 
     # if only one image set, wrap rows and columns to get a nice aspect ratio
@@ -240,6 +248,36 @@ def image_overview(
     plt.tight_layout(pad=0.3)
 
     return fig
+
+def _convert_dict_to_ImageSet(image_sets):
+    """
+    Convert a list of dictionaries to a list of ImageSet objects.
+
+    Parameters
+    ----------
+    image_sets : list of dict
+        A list of dictionaries, each containing an image set. Each image set
+        should be a dictionary containing the following keys:
+        - image (list): A list of images to display.
+        - title (list of str, optional): The title of the image set.
+        - colormap (list of str, optional): The colormap to use.
+            "labels" will display the image as labels.
+        - labels (list of bool, optional): Whether to display labels.
+        - **kwargs: Additional keyword arguments to pass to stackview.imshow.
+
+    Returns
+    -------
+    list of ImageSet
+        A list of ImageSet objects.
+
+    """
+    warnings.warn(
+        "Using a dict to pass image information to image_overview() "
+        "is deprecated and will be removed in the future. "
+        "Please use ImageSet objects instead.",
+        category=DeprecationWarning,
+    )
+    return [ImageSet(**image_set) for image_set in image_sets]
 
 def _add_scalebar(ax, scalebar):
     from matplotlib_scalebar.scalebar import ScaleBar
