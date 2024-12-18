@@ -1647,7 +1647,28 @@ determined based on the image type.</p>
 <span class="normal">214</span>
 <span class="normal">215</span>
 <span class="normal">216</span>
-<span class="normal">217</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span> <span class="nc">nImage</span><span class="p">(</span><span class="n">BioImage</span><span class="p">):</span>
+<span class="normal">217</span>
+<span class="normal">218</span>
+<span class="normal">219</span>
+<span class="normal">220</span>
+<span class="normal">221</span>
+<span class="normal">222</span>
+<span class="normal">223</span>
+<span class="normal">224</span>
+<span class="normal">225</span>
+<span class="normal">226</span>
+<span class="normal">227</span>
+<span class="normal">228</span>
+<span class="normal">229</span>
+<span class="normal">230</span>
+<span class="normal">231</span>
+<span class="normal">232</span>
+<span class="normal">233</span>
+<span class="normal">234</span>
+<span class="normal">235</span>
+<span class="normal">236</span>
+<span class="normal">237</span>
+<span class="normal">238</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span> <span class="nc">nImage</span><span class="p">(</span><span class="n">BioImage</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    An nImage is a BioImage with additional functionality for napari-ndev.</span>
 
@@ -1677,7 +1698,28 @@ determined based on the image type.</p>
         <span class="n">image</span><span class="p">:</span> <span class="n">ImageLike</span><span class="p">,</span>
         <span class="n">reader</span><span class="p">:</span> <span class="n">Reader</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">"""Initialize an nImage with an image, and optionally a reader."""</span>
+<span class="w">        </span><span class="sd">"""</span>
+<span class="sd">        Initialize an nImage with an image, and optionally a reader.</span>
+
+<span class="sd">        If a reader is not provided, a reader will be determined by bioio.</span>
+<span class="sd">        However, if the image is supported by bioio-ome-tiff, the reader</span>
+<span class="sd">        will be set to bioio_ome_tiff.Reader to override the softer decision</span>
+<span class="sd">        made by bioio.BioImage.determine_plugin().</span>
+
+<span class="sd">        Note: The issue here is that bioio.BioImage.determine_plugin() will</span>
+<span class="sd">        sort by install time and choose the first plugin that supports the</span>
+<span class="sd">        image. This is not always the desired behavior, because bioio-tifffile</span>
+<span class="sd">        can take precedence over bioio-ome-tiff, even if the image was saved</span>
+<span class="sd">        as an OME-TIFF via bioio.writers.OmeTiffWriter (which is the case</span>
+<span class="sd">        for napari-ndev).</span>
+<span class="sd">        """</span>
+        <span class="k">if</span> <span class="n">reader</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="kn">from</span> <span class="nn">bioio</span> <span class="kn">import</span> <span class="n">plugin_feasibility_report</span> <span class="k">as</span> <span class="n">pfr</span>
+            <span class="n">fr</span> <span class="o">=</span> <span class="n">pfr</span><span class="p">(</span><span class="n">image</span><span class="p">)</span>
+            <span class="k">if</span> <span class="s1">'bioio-ome-tiff'</span> <span class="ow">in</span> <span class="n">fr</span> <span class="ow">and</span> <span class="n">fr</span><span class="p">[</span><span class="s1">'bioio-ome-tiff'</span><span class="p">]</span><span class="o">.</span><span class="n">supported</span><span class="p">:</span>
+                <span class="kn">import</span> <span class="nn">bioio_ome_tiff</span>
+                <span class="n">reader</span> <span class="o">=</span> <span class="n">bioio_ome_tiff</span><span class="o">.</span><span class="n">Reader</span>
+
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">image</span><span class="p">,</span> <span class="n">reader</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">napari_data</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">napari_metadata</span> <span class="o">=</span> <span class="p">{}</span>
@@ -1873,6 +1915,16 @@ determined based on the image type.</p>
     <div class="doc doc-contents ">
 
         <p>Initialize an nImage with an image, and optionally a reader.</p>
+<p>If a reader is not provided, a reader will be determined by bioio.
+However, if the image is supported by bioio-ome-tiff, the reader
+will be set to bioio_ome_tiff.Reader to override the softer decision
+made by bioio.BioImage.determine_plugin().</p>
+<p>Note: The issue here is that bioio.BioImage.determine_plugin() will
+sort by install time and choose the first plugin that supports the
+image. This is not always the desired behavior, because bioio-tifffile
+can take precedence over bioio-ome-tiff, even if the image was saved
+as an OME-TIFF via bioio.writers.OmeTiffWriter (which is the case
+for napari-ndev).</p>
 
             <details class="quote">
               <summary>Source code in <code>src/napari_ndev/nimage.py</code></summary>
@@ -1885,12 +1937,54 @@ determined based on the image type.</p>
 <span class="normal">52</span>
 <span class="normal">53</span>
 <span class="normal">54</span>
-<span class="normal">55</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+<span class="normal">55</span>
+<span class="normal">56</span>
+<span class="normal">57</span>
+<span class="normal">58</span>
+<span class="normal">59</span>
+<span class="normal">60</span>
+<span class="normal">61</span>
+<span class="normal">62</span>
+<span class="normal">63</span>
+<span class="normal">64</span>
+<span class="normal">65</span>
+<span class="normal">66</span>
+<span class="normal">67</span>
+<span class="normal">68</span>
+<span class="normal">69</span>
+<span class="normal">70</span>
+<span class="normal">71</span>
+<span class="normal">72</span>
+<span class="normal">73</span>
+<span class="normal">74</span>
+<span class="normal">75</span>
+<span class="normal">76</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
     <span class="bp">self</span><span class="p">,</span>
     <span class="n">image</span><span class="p">:</span> <span class="n">ImageLike</span><span class="p">,</span>
     <span class="n">reader</span><span class="p">:</span> <span class="n">Reader</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">"""Initialize an nImage with an image, and optionally a reader."""</span>
+<span class="w">    </span><span class="sd">"""</span>
+<span class="sd">    Initialize an nImage with an image, and optionally a reader.</span>
+
+<span class="sd">    If a reader is not provided, a reader will be determined by bioio.</span>
+<span class="sd">    However, if the image is supported by bioio-ome-tiff, the reader</span>
+<span class="sd">    will be set to bioio_ome_tiff.Reader to override the softer decision</span>
+<span class="sd">    made by bioio.BioImage.determine_plugin().</span>
+
+<span class="sd">    Note: The issue here is that bioio.BioImage.determine_plugin() will</span>
+<span class="sd">    sort by install time and choose the first plugin that supports the</span>
+<span class="sd">    image. This is not always the desired behavior, because bioio-tifffile</span>
+<span class="sd">    can take precedence over bioio-ome-tiff, even if the image was saved</span>
+<span class="sd">    as an OME-TIFF via bioio.writers.OmeTiffWriter (which is the case</span>
+<span class="sd">    for napari-ndev).</span>
+<span class="sd">    """</span>
+    <span class="k">if</span> <span class="n">reader</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="kn">from</span> <span class="nn">bioio</span> <span class="kn">import</span> <span class="n">plugin_feasibility_report</span> <span class="k">as</span> <span class="n">pfr</span>
+        <span class="n">fr</span> <span class="o">=</span> <span class="n">pfr</span><span class="p">(</span><span class="n">image</span><span class="p">)</span>
+        <span class="k">if</span> <span class="s1">'bioio-ome-tiff'</span> <span class="ow">in</span> <span class="n">fr</span> <span class="ow">and</span> <span class="n">fr</span><span class="p">[</span><span class="s1">'bioio-ome-tiff'</span><span class="p">]</span><span class="o">.</span><span class="n">supported</span><span class="p">:</span>
+            <span class="kn">import</span> <span class="nn">bioio_ome_tiff</span>
+            <span class="n">reader</span> <span class="o">=</span> <span class="n">bioio_ome_tiff</span><span class="o">.</span><span class="n">Reader</span>
+
     <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">image</span><span class="p">,</span> <span class="n">reader</span><span class="p">)</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">napari_data</span> <span class="o">=</span> <span class="kc">None</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">napari_metadata</span> <span class="o">=</span> <span class="p">{}</span>
@@ -1949,28 +2043,7 @@ If None, will determine whether to load in memory based on the image size.</p>
 
             <details class="quote">
               <summary>Source code in <code>src/napari_ndev/nimage.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">101</span>
-<span class="normal">102</span>
-<span class="normal">103</span>
-<span class="normal">104</span>
-<span class="normal">105</span>
-<span class="normal">106</span>
-<span class="normal">107</span>
-<span class="normal">108</span>
-<span class="normal">109</span>
-<span class="normal">110</span>
-<span class="normal">111</span>
-<span class="normal">112</span>
-<span class="normal">113</span>
-<span class="normal">114</span>
-<span class="normal">115</span>
-<span class="normal">116</span>
-<span class="normal">117</span>
-<span class="normal">118</span>
-<span class="normal">119</span>
-<span class="normal">120</span>
-<span class="normal">121</span>
-<span class="normal">122</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">122</span>
 <span class="normal">123</span>
 <span class="normal">124</span>
 <span class="normal">125</span>
@@ -1990,7 +2063,28 @@ If None, will determine whether to load in memory based on the image size.</p>
 <span class="normal">139</span>
 <span class="normal">140</span>
 <span class="normal">141</span>
-<span class="normal">142</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">get_napari_image_data</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">in_memory</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">xr</span><span class="o">.</span><span class="n">DataArray</span><span class="p">:</span>
+<span class="normal">142</span>
+<span class="normal">143</span>
+<span class="normal">144</span>
+<span class="normal">145</span>
+<span class="normal">146</span>
+<span class="normal">147</span>
+<span class="normal">148</span>
+<span class="normal">149</span>
+<span class="normal">150</span>
+<span class="normal">151</span>
+<span class="normal">152</span>
+<span class="normal">153</span>
+<span class="normal">154</span>
+<span class="normal">155</span>
+<span class="normal">156</span>
+<span class="normal">157</span>
+<span class="normal">158</span>
+<span class="normal">159</span>
+<span class="normal">160</span>
+<span class="normal">161</span>
+<span class="normal">162</span>
+<span class="normal">163</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">get_napari_image_data</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">in_memory</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">xr</span><span class="o">.</span><span class="n">DataArray</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    Get the image data as a xarray DataArray.</span>
 
@@ -2080,28 +2174,7 @@ If None, will determine whether to load in memory based on the image size.</p>
 
             <details class="quote">
               <summary>Source code in <code>src/napari_ndev/nimage.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">144</span>
-<span class="normal">145</span>
-<span class="normal">146</span>
-<span class="normal">147</span>
-<span class="normal">148</span>
-<span class="normal">149</span>
-<span class="normal">150</span>
-<span class="normal">151</span>
-<span class="normal">152</span>
-<span class="normal">153</span>
-<span class="normal">154</span>
-<span class="normal">155</span>
-<span class="normal">156</span>
-<span class="normal">157</span>
-<span class="normal">158</span>
-<span class="normal">159</span>
-<span class="normal">160</span>
-<span class="normal">161</span>
-<span class="normal">162</span>
-<span class="normal">163</span>
-<span class="normal">164</span>
-<span class="normal">165</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">165</span>
 <span class="normal">166</span>
 <span class="normal">167</span>
 <span class="normal">168</span>
@@ -2153,7 +2226,28 @@ If None, will determine whether to load in memory based on the image size.</p>
 <span class="normal">214</span>
 <span class="normal">215</span>
 <span class="normal">216</span>
-<span class="normal">217</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">get_napari_metadata</span><span class="p">(</span>
+<span class="normal">217</span>
+<span class="normal">218</span>
+<span class="normal">219</span>
+<span class="normal">220</span>
+<span class="normal">221</span>
+<span class="normal">222</span>
+<span class="normal">223</span>
+<span class="normal">224</span>
+<span class="normal">225</span>
+<span class="normal">226</span>
+<span class="normal">227</span>
+<span class="normal">228</span>
+<span class="normal">229</span>
+<span class="normal">230</span>
+<span class="normal">231</span>
+<span class="normal">232</span>
+<span class="normal">233</span>
+<span class="normal">234</span>
+<span class="normal">235</span>
+<span class="normal">236</span>
+<span class="normal">237</span>
+<span class="normal">238</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">get_napari_metadata</span><span class="p">(</span>
     <span class="bp">self</span><span class="p">,</span>
     <span class="n">path</span><span class="p">:</span> <span class="n">PathLike</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
