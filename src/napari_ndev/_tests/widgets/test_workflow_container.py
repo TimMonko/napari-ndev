@@ -1,6 +1,6 @@
 import pathlib
 
-from napari_ndev import helpers
+from napari_ndev import helpers, nImage
 from napari_ndev.widgets._workflow_container import WorkflowContainer
 
 # from napari_workflows._io_yaml_v1 import load_workflow
@@ -92,7 +92,7 @@ def test_batch_workflow_leaf_tasks(tmp_path):
     assert output_folder.exists()
     assert (output_folder / 'cells3d2ch.tiff').exists()
 
-    img = helpers.get_Image(output_folder / 'cells3d2ch.tiff')
+    img = nImage(output_folder / 'cells3d2ch.tiff')
     assert len(img.channel_names) == 2
 
 def test_batch_workflow_keep_original_images(tmp_path):
@@ -120,7 +120,7 @@ def test_batch_workflow_keep_original_images(tmp_path):
     assert output_folder.exists()
     assert (output_folder / 'cells3d2ch.tiff').exists()
 
-    img = helpers.get_Image(output_folder / 'cells3d2ch.tiff')
+    img = nImage(output_folder / 'cells3d2ch.tiff')
     assert len(img.channel_names) == 4
 
 def test_batch_workflow_all_tasks(tmp_path):
@@ -149,5 +149,5 @@ def test_batch_workflow_all_tasks(tmp_path):
     assert output_folder.exists()
     assert (output_folder / 'cells3d2ch.tiff').exists()
 
-    img = helpers.get_Image(output_folder / 'cells3d2ch.tiff')
+    img = nImage(output_folder / 'cells3d2ch.tiff')
     assert len(img.channel_names) == 6

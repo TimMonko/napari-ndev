@@ -15,7 +15,7 @@ from magicgui.widgets import (
 )
 from qtpy.QtWidgets import QTabWidget
 
-from napari_ndev import helpers
+from napari_ndev import helpers, nImage
 
 if TYPE_CHECKING:
     import napari
@@ -158,7 +158,7 @@ class WorkflowContainer(Container):
         self.image_dir, self.image_files = helpers.get_directory_and_files(
             self.image_directory.value,
         )
-        img = helpers.get_Image(self.image_files[0])
+        img = nImage(self.image_files[0])
 
         self._channel_names = helpers.get_channel_names(img)
 
@@ -237,7 +237,7 @@ class WorkflowContainer(Container):
 
         for idx_file, image_file in enumerate(image_files):
             logger.info('Processing %d: %s', idx_file + 1, image_file.name)
-            img = helpers.get_Image(image_file)
+            img = nImage(image_file)
 
             root_stack = []
             # get image corresponding to each root, and set it to the workflow
