@@ -398,10 +398,10 @@ class MeasureContainer(Container):
         self, directory: str | None = None
     ) -> tuple[BioImage, pathlib.Path]:
         """Get the first image from a directory."""
-        from bioio import BioImage
+        from napari_ndev import nImage
 
         _, files = helpers.get_directory_and_files(directory)
-        return BioImage(files[0]), files[0]
+        return nImage(files[0]), files[0]
 
     def _update_dim_and_scales(self, img):
         """Update the dimensions and scales based on the image."""
@@ -470,10 +470,7 @@ class MeasureContainer(Container):
             The measurement results as a DataFrame.
 
         """
-        from bioio import BioImage
-
-        # from skimage import measure
-        from napari_ndev import measure as ndev_measure
+        from napari_ndev import measure as ndev_measure, nImage
 
         # get all the files in the label directory
         label_dir, label_files = helpers.get_directory_and_files(
@@ -550,7 +547,7 @@ class MeasureContainer(Container):
         for idx, file in enumerate(label_files):
             # TODO: Add scene processing
             logger.info('Processing file %s', file.name)
-            lbl = BioImage(label_dir / file.name)
+            lbl = nImage(label_dir / file.name)
             id_string = helpers.create_id_string(lbl, file.stem)
 
             # get the itnensity image only if the image directory is not empty
@@ -563,7 +560,7 @@ class MeasureContainer(Container):
                     )
                     self._progress_bar.value = idx + 1
                     continue
-                img = BioImage(image_path)
+                img = nImage(image_path)
             if self._region_directory.value:
                 region_path = region_dir / file.name
                 if not region_path.exists():
@@ -573,7 +570,7 @@ class MeasureContainer(Container):
                     )
                     self._progress_bar.value = idx + 1
                     continue
-                reg = BioImage(region_path)
+                reg = nImage(region_path)
 
             for scene_idx, scene in enumerate(lbl.scenes):
                 logger.info('Processing scene: %s :: %s', scene_idx, scene)
