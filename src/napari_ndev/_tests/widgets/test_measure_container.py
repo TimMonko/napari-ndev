@@ -1,8 +1,8 @@
 import pathlib
 
 import numpy as np
-from bioio import BioImage
 
+from napari_ndev import nImage
 from napari_ndev.widgets._measure_container import MeasureContainer
 
 
@@ -39,7 +39,7 @@ def test_update_dim_and_scales():
     )
     file_name = 'SPF-4MM-22 slide 9-S6_Top Slide_TR2_p00_0_A01f00d0.tiff'
     container = MeasureContainer()
-    img = BioImage(image_directory / file_name)
+    img = nImage(image_directory / file_name)
     container._update_dim_and_scales(img)
 
     assert container._scale_tuple.value == (1.0, 0.2634, 0.2634)
