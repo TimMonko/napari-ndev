@@ -17,7 +17,7 @@ RGB_TIFF = "RGB.tiff" # has two scense
 MULTISCENE_CZI = r"0T-4C-0Z-7pos.czi"
 # PNG_FILE = "example.png"
 # GIF_FILE = "example.gif"
-# OME_TIFF = "pipeline-4.ome.tiff"
+OME_TIFF = "cells3d2ch.tiff"
 
 ###############################################################################
 
@@ -127,3 +127,27 @@ def test_for_multiscene_widget(
             data, _, _ = reader(path)[0]
             assert isinstance(data, expected_dtype)
             assert data.shape == expected_shape
+
+def test_napari_get_reader_multi_path(resources_dir: Path) -> None:
+    # Get reader
+    reader = napari_get_reader(
+        [str(resources_dir / RGB_TIFF), str(resources_dir / MULTISCENE_CZI)],
+        in_memory=True,
+    )
+
+    # Check callable
+    assert reader is None
+
+def test_napari_get_reader_ome_override(resources_dir: Path) -> None:
+    reader = napari_get_reader(
+        str(resources_dir / OME_TIFF),
+    )
+
+    assert callable(reader)
+
+def test_napari_get_reader_unsupported(resources_dir: Path) -> None:
+    reader = napari_get_reader(
+        str(resources_dir / "measure_props_Labels.csv"),
+    )
+
+    assert reader is None
