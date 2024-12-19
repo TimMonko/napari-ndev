@@ -2260,7 +2260,9 @@ type.</p>
 <span class="normal">729</span>
 <span class="normal">730</span>
 <span class="normal">731</span>
-<span class="normal">732</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span> <span class="nc">ApocContainer</span><span class="p">(</span><span class="n">Container</span><span class="p">):</span>
+<span class="normal">732</span>
+<span class="normal">733</span>
+<span class="normal">734</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span> <span class="nc">ApocContainer</span><span class="p">(</span><span class="n">Container</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    Container class for managing the ApocContainer widget in napari.</span>
 
@@ -2599,10 +2601,10 @@ type.</p>
         <span class="bp">self</span><span class="o">.</span><span class="n">_image_layers</span><span class="o">.</span><span class="n">choices</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_filter_layers</span><span class="p">(</span><span class="n">layers</span><span class="o">.</span><span class="n">Image</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">_update_metadata_from_file</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="kn">from</span> <span class="nn">bioio</span> <span class="kn">import</span> <span class="n">BioImage</span>
+        <span class="kn">from</span> <span class="nn">napari_ndev</span> <span class="kn">import</span> <span class="n">nImage</span>
 
         <span class="n">_</span><span class="p">,</span> <span class="n">files</span> <span class="o">=</span> <span class="n">helpers</span><span class="o">.</span><span class="n">get_directory_and_files</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_image_directory</span><span class="o">.</span><span class="n">value</span><span class="p">)</span>
-        <span class="n">img</span> <span class="o">=</span> <span class="n">BioImage</span><span class="p">(</span><span class="n">files</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+        <span class="n">img</span> <span class="o">=</span> <span class="n">nImage</span><span class="p">(</span><span class="n">files</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_image_channels</span><span class="o">.</span><span class="n">choices</span> <span class="o">=</span> <span class="n">helpers</span><span class="o">.</span><span class="n">get_channel_names</span><span class="p">(</span><span class="n">img</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">_update_channel_order</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
@@ -2719,8 +2721,9 @@ type.</p>
         <span class="k">return</span> <span class="n">channel_img</span>
 
     <span class="k">def</span> <span class="nf">batch_train</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="kn">from</span> <span class="nn">bioio</span> <span class="kn">import</span> <span class="n">BioImage</span>
         <span class="kn">from</span> <span class="nn">pyclesperanto_prototype</span> <span class="kn">import</span> <span class="n">set_wait_for_kernel_finish</span>
+
+        <span class="kn">from</span> <span class="nn">napari_ndev</span> <span class="kn">import</span> <span class="n">nImage</span>
 
         <span class="n">image_directory</span><span class="p">,</span> <span class="n">image_files</span> <span class="o">=</span> <span class="n">helpers</span><span class="o">.</span><span class="n">get_directory_and_files</span><span class="p">(</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_image_directory</span><span class="o">.</span><span class="n">value</span>
@@ -2780,10 +2783,10 @@ type.</p>
 
             <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s1">'Training Image </span><span class="si">%d</span><span class="s1">: </span><span class="si">%s</span><span class="s1">'</span><span class="p">,</span> <span class="n">idx</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="n">image_file</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
 
-            <span class="n">img</span> <span class="o">=</span> <span class="n">BioImage</span><span class="p">(</span><span class="n">image_directory</span> <span class="o">/</span> <span class="n">image_file</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
+            <span class="n">img</span> <span class="o">=</span> <span class="n">nImage</span><span class="p">(</span><span class="n">image_directory</span> <span class="o">/</span> <span class="n">image_file</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
             <span class="n">channel_img</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_channel_image</span><span class="p">(</span><span class="n">img</span><span class="p">,</span> <span class="n">channel_index_list</span><span class="p">)</span>
 
-            <span class="n">lbl</span> <span class="o">=</span> <span class="n">BioImage</span><span class="p">(</span><span class="n">label_directory</span> <span class="o">/</span> <span class="n">image_file</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
+            <span class="n">lbl</span> <span class="o">=</span> <span class="n">nImage</span><span class="p">(</span><span class="n">label_directory</span> <span class="o">/</span> <span class="n">image_file</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
             <span class="n">label</span> <span class="o">=</span> <span class="n">lbl</span><span class="o">.</span><span class="n">get_image_data</span><span class="p">(</span><span class="s1">'TCZYX'</span><span class="p">,</span> <span class="n">C</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
 
             <span class="c1"># &lt;- this is where setting up dask processing would be useful</span>
@@ -2816,9 +2819,10 @@ type.</p>
         <span class="k">return</span> <span class="kc">None</span>
 
     <span class="k">def</span> <span class="nf">batch_predict</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="kn">from</span> <span class="nn">bioio</span> <span class="kn">import</span> <span class="n">BioImage</span>
         <span class="kn">from</span> <span class="nn">bioio.writers</span> <span class="kn">import</span> <span class="n">OmeTiffWriter</span>
         <span class="kn">from</span> <span class="nn">pyclesperanto_prototype</span> <span class="kn">import</span> <span class="n">set_wait_for_kernel_finish</span>
+
+        <span class="kn">from</span> <span class="nn">napari_ndev</span> <span class="kn">import</span> <span class="n">nImage</span>
 
         <span class="n">image_directory</span><span class="p">,</span> <span class="n">image_files</span> <span class="o">=</span> <span class="n">helpers</span><span class="o">.</span><span class="n">get_directory_and_files</span><span class="p">(</span>
             <span class="n">dir_path</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_image_directory</span><span class="o">.</span><span class="n">value</span><span class="p">,</span>
@@ -2859,7 +2863,7 @@ type.</p>
         <span class="k">for</span> <span class="n">idx</span><span class="p">,</span> <span class="n">file</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">image_files</span><span class="p">):</span>
             <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s1">'Predicting Image </span><span class="si">%d</span><span class="s1">: </span><span class="si">%s</span><span class="s1">'</span><span class="p">,</span> <span class="n">idx</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="n">file</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
 
-            <span class="n">img</span> <span class="o">=</span> <span class="n">BioImage</span><span class="p">(</span><span class="n">file</span><span class="p">)</span>
+            <span class="n">img</span> <span class="o">=</span> <span class="n">nImage</span><span class="p">(</span><span class="n">file</span><span class="p">)</span>
             <span class="n">channel_img</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_channel_image</span><span class="p">(</span><span class="n">img</span><span class="p">,</span> <span class="n">channel_index_list</span><span class="p">)</span>
             <span class="n">squeezed_dim_order</span> <span class="o">=</span> <span class="n">helpers</span><span class="o">.</span><span class="n">get_squeezed_dim_order</span><span class="p">(</span><span class="n">img</span><span class="p">)</span>
 
