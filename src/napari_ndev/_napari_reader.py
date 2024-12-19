@@ -5,7 +5,6 @@ from functools import partial
 from pathlib import Path
 from typing import TYPE_CHECKING, Callable
 
-from bioio import BioImage
 from bioio_base.exceptions import UnsupportedFileFormatError
 from qtpy.QtWidgets import (
     QCheckBox,
@@ -66,7 +65,7 @@ def napari_get_reader(
             import bioio_ome_tiff
             reader = bioio_ome_tiff.Reader
         else:
-            plugin = BioImage.determine_plugin(path)
+            plugin = nImage.determine_plugin(path)
             reader = plugin.metadata.get_reader()
         # return napari_reader_function(path, reader, in_memory)
         return partial(
