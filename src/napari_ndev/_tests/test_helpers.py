@@ -4,26 +4,17 @@ from pathlib import Path
 
 import numpy as np
 import pytest
-from bioio import BioImage
 from bioio.writers import OmeTiffWriter
 
+from napari_ndev import nImage
 from napari_ndev.helpers import (
     check_for_missing_files,
     create_id_string,
     get_channel_names,
     get_directory_and_files,
-    get_Image,
     get_squeezed_dim_order,
     setup_logger,
 )
-
-
-def test_get_Image():
-    file = Path(
-        './src/napari_ndev/_tests/resources/Workflow/Images/cells3d2ch.tiff'
-    )
-    img = get_Image(file)
-    assert isinstance(img, BioImage)
 
 
 def test_check_for_missing_files_path(tmp_path):
@@ -68,14 +59,14 @@ def test_check_for_missing_file_str(tmp_path):
 
 
 def test_create_id_string():
-    img = BioImage(np.random.random((2, 2)))
+    img = nImage(np.random.random((2, 2)))
     identifier = 'test_id'
     id_string = create_id_string(img, identifier)
     assert id_string == 'test_id__0__Image:0'
 
 
 def test_create_id_string_no_id():
-    img = BioImage(np.random.random((2, 2)))
+    img = nImage(np.random.random((2, 2)))
     identifier = None
     id_string = create_id_string(img, identifier)
     assert id_string == 'None__0__Image:0'
@@ -86,13 +77,11 @@ def test_create_id_string_ome_metadata_no_name(resources_dir: Path):
         # './src/napari_ndev/_tests/resources/Workflow/Images/cells3d2ch.tiff'
         resources_dir / 'Workflow/Images/cells3d2ch.tiff'
     )
-    img = BioImage(file)
+    img = nImage(file)
 
     identifier = file.stem
     id_string = create_id_string(img, identifier)
-    assert (
-        img._plugin.entrypoint.name == 'bioio-ome-tiff'
-    )  # this has no ome_metadata.images.name
+
     assert img.ome_metadata.images[0].name is None
     assert img.channel_names == ['membrane', 'nuclei']
     assert id_string == 'cells3d2ch__0__Image:0'
@@ -105,7 +94,7 @@ def test_create_id_string_ometiffwriter_name(tmp_path):
         image_name='test_image',
     )
 
-    img = BioImage(tmp_path / 'test.tiff')
+    img = nImage(tmp_path / 'test.tiff')
     identifier = 'test_id'
 
     id_string = create_id_string(img, identifier)
@@ -117,13 +106,13 @@ def test_get_channel_names_CYX():
     file = Path(
         r'./src/napari_ndev/_tests/resources/Workflow/Images/cells3d2ch.tiff'
     )
-    img = BioImage(file)
+    img = nImage(file)
     assert get_channel_names(img) == img.channel_names
 
 
 def test_get_channel_names_RGB():
     file = Path(r'./src/napari_ndev/_tests/resources/RGB.tiff')
-    img = BioImage(file)
+    img = nImage(file)
     assert get_channel_names(img) == ['red', 'green', 'blue']
 
 
@@ -159,13 +148,13 @@ def test_get_squeezed_dim_order_ZYX():
     file = Path(
         r'./src/napari_ndev/_tests/resources/Workflow/Images/cells3d2ch.tiff'
     )
-    img = BioImage(file)
+    img = nImage(file)
     assert get_squeezed_dim_order(img) == 'ZYX'
 
 
 def test_get_squeezed_dim_order_RGB():
     file = Path(r'./src/napari_ndev/_tests/resources/RGB.tiff')
-    img = BioImage(file)
+    img = nImage(file)
     assert get_squeezed_dim_order(img) == 'YX'
 
 
