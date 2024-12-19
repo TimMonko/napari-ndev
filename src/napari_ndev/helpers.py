@@ -26,32 +26,9 @@ __all__ = [
     'create_id_string',
     'get_channel_names',
     'get_directory_and_files',
-    'get_Image',
     'get_squeezed_dim_order',
     'setup_logger',
 ]
-
-def get_Image(file: str | Path) -> BioImage:
-    """
-    Read the image file with BioImage.
-
-    Open the image file with BioImage.
-
-    Parameters
-    ----------
-    file : str or Path
-        The file path.
-
-    Returns
-    -------
-    BioImage
-        The image object.
-
-    """
-    from bioio import BioImage
-
-    return BioImage(file)
-
 
 def get_directory_and_files(
     dir_path: str | Path | None = None,
