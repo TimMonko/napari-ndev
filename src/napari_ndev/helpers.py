@@ -21,37 +21,16 @@ from typing import TYPE_CHECKING, Union
 if TYPE_CHECKING:
     from bioio import BioImage
 
+    from napari_ndev import nImage
+
 __all__ = [
     'check_for_missing_files',
     'create_id_string',
     'get_channel_names',
     'get_directory_and_files',
-    'get_Image',
     'get_squeezed_dim_order',
     'setup_logger',
 ]
-
-def get_Image(file: str | Path) -> BioImage:
-    """
-    Read the image file with BioImage.
-
-    Open the image file with BioImage.
-
-    Parameters
-    ----------
-    file : str or Path
-        The file path.
-
-    Returns
-    -------
-    BioImage
-        The image object.
-
-    """
-    from bioio import BioImage
-
-    return BioImage(file)
-
 
 def get_directory_and_files(
     dir_path: str | Path | None = None,
@@ -114,7 +93,7 @@ def get_directory_and_files(
     return directory, files
 
 
-def get_channel_names(img: BioImage) -> list[str]:
+def get_channel_names(img: nImage | BioImage) -> list[str]:
     """
     Get the channel names from a BioImage object.
 
@@ -139,7 +118,7 @@ def get_channel_names(img: BioImage) -> list[str]:
 
 
 def get_squeezed_dim_order(
-    img: BioImage,
+    img: nImage | BioImage,
     skip_dims: list[str] | str | None = None,
 ) -> str:
     """
@@ -165,7 +144,7 @@ def get_squeezed_dim_order(
     )
 
 
-def create_id_string(img: BioImage, identifier: str) -> str:
+def create_id_string(img: nImage | BioImage, identifier: str) -> str:
     """
     Create an ID string for the given image.
 

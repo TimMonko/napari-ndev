@@ -369,10 +369,10 @@ class ApocContainer(Container):
         self._image_layers.choices = self._filter_layers(layers.Image)
 
     def _update_metadata_from_file(self):
-        from bioio import BioImage
+        from napari_ndev import nImage
 
         _, files = helpers.get_directory_and_files(self._image_directory.value)
-        img = BioImage(files[0])
+        img = nImage(files[0])
         self._image_channels.choices = helpers.get_channel_names(img)
 
     def _update_channel_order(self):
@@ -489,8 +489,9 @@ class ApocContainer(Container):
         return channel_img
 
     def batch_train(self):
-        from bioio import BioImage
         from pyclesperanto_prototype import set_wait_for_kernel_finish
+
+        from napari_ndev import nImage
 
         image_directory, image_files = helpers.get_directory_and_files(
             self._image_directory.value
@@ -550,10 +551,10 @@ class ApocContainer(Container):
 
             logger.info('Training Image %d: %s', idx + 1, image_file.name)
 
-            img = BioImage(image_directory / image_file.name)
+            img = nImage(image_directory / image_file.name)
             channel_img = self._get_channel_image(img, channel_index_list)
 
-            lbl = BioImage(label_directory / image_file.name)
+            lbl = nImage(label_directory / image_file.name)
             label = lbl.get_image_data('TCZYX', C=0)
 
             # <- this is where setting up dask processing would be useful
@@ -586,9 +587,10 @@ class ApocContainer(Container):
         return None
 
     def batch_predict(self):
-        from bioio import BioImage
         from bioio.writers import OmeTiffWriter
         from pyclesperanto_prototype import set_wait_for_kernel_finish
+
+        from napari_ndev import nImage
 
         image_directory, image_files = helpers.get_directory_and_files(
             dir_path=self._image_directory.value,
@@ -629,7 +631,7 @@ class ApocContainer(Container):
         for idx, file in enumerate(image_files):
             logger.info('Predicting Image %d: %s', idx + 1, file.name)
 
-            img = BioImage(file)
+            img = nImage(file)
             channel_img = self._get_channel_image(img, channel_index_list)
             squeezed_dim_order = helpers.get_squeezed_dim_order(img)
 
