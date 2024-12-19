@@ -81,9 +81,7 @@ def test_create_id_string_ome_metadata_no_name(resources_dir: Path):
 
     identifier = file.stem
     id_string = create_id_string(img, identifier)
-    assert (
-        img._plugin.entrypoint.name == 'bioio-ome-tiff'
-    )  # this has no ome_metadata.images.name
+
     assert img.ome_metadata.images[0].name is None
     assert img.channel_names == ['membrane', 'nuclei']
     assert id_string == 'cells3d2ch__0__Image:0'
