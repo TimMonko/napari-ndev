@@ -59,8 +59,15 @@ def napari_get_reader(
         return None
 
     try:
-        plugin = BioImage.determine_plugin(path)
-        reader = plugin.metadata.get_reader()
+        # TODO: Test this if else functionality.
+        from bioio import plugin_feasibility_report as pfr
+        fr = pfr(path)
+        if 'bioio-ome-tiff' in fr and fr['bioio-ome-tiff'].supported:
+            import bioio_ome_tiff
+            reader = bioio_ome_tiff.Reader
+        else:
+            plugin = BioImage.determine_plugin(path)
+            reader = plugin.metadata.get_reader()
         # return napari_reader_function(path, reader, in_memory)
         return partial(
             napari_reader_function,
