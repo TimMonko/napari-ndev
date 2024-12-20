@@ -177,7 +177,7 @@ class ApocContainer(Container):
     def _initialize_widgets(self):
         self._classifier_file = FileEdit(
             label='Classifier File (.cl)',
-            mode='r',
+            mode='w',
             tooltip='Create a .txt file and rename it to .cl ending.',
         )
 
@@ -405,6 +405,13 @@ class ApocContainer(Container):
         )
 
     def _update_classifier_metadata(self):
+        # check if the file exists, create it if it doesn't
+        if not self._classifier_file.value.exists():
+            with open(self._classifier_file.value, 'w') as file:
+                file.write('')
+            return
+
+        # if file exists, read the contents
         with open(self._classifier_file.value) as file:
             content = file.read()
 
