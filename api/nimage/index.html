@@ -1667,8 +1667,7 @@ determined based on the image type.</p>
 <span class="normal">234</span>
 <span class="normal">235</span>
 <span class="normal">236</span>
-<span class="normal">237</span>
-<span class="normal">238</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span> <span class="nc">nImage</span><span class="p">(</span><span class="n">BioImage</span><span class="p">):</span>
+<span class="normal">237</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span> <span class="nc">nImage</span><span class="p">(</span><span class="n">BioImage</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    An nImage is a BioImage with additional functionality for napari-ndev.</span>
 
@@ -1835,7 +1834,7 @@ determined based on the image type.</p>
 
         <span class="n">meta</span> <span class="o">=</span> <span class="p">{}</span>
         <span class="n">scene</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">current_scene</span>
-        <span class="n">scene_index</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">current_scene_index</span>
+        <span class="n">scene_idx</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">current_scene_index</span>
         <span class="n">single_no_scene</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">scenes</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">current_scene</span> <span class="o">==</span> <span class="s2">"Image:0"</span>
         <span class="n">channel_dim</span> <span class="o">=</span> <span class="n">DimensionNames</span><span class="o">.</span><span class="n">Channel</span>
 
@@ -1843,13 +1842,12 @@ determined based on the image type.</p>
             <span class="c1"># use filename if single scene and no scene name available</span>
             <span class="k">if</span> <span class="n">single_no_scene</span><span class="p">:</span>
                 <span class="n">channels_with_scene_index</span> <span class="o">=</span> <span class="p">[</span>
-                    <span class="sa">f</span><span class="s1">'</span><span class="si">{</span><span class="n">Path</span><span class="p">(</span><span class="n">path</span><span class="p">)</span><span class="o">.</span><span class="n">stem</span><span class="si">}{</span><span class="n">LABEL_DELIMITER</span><span class="si">}{</span><span class="n">C</span><span class="si">}</span><span class="s1">'</span>
+                    <span class="sa">f</span><span class="s1">'</span><span class="si">{</span><span class="n">C</span><span class="si">}{</span><span class="n">LABEL_DELIMITER</span><span class="si">}{</span><span class="n">Path</span><span class="p">(</span><span class="n">path</span><span class="p">)</span><span class="o">.</span><span class="n">stem</span><span class="si">}</span><span class="s1">'</span>
                     <span class="k">for</span> <span class="n">C</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">napari_data</span><span class="o">.</span><span class="n">coords</span><span class="p">[</span><span class="n">channel_dim</span><span class="p">]</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span>
                 <span class="p">]</span>
             <span class="k">else</span><span class="p">:</span>
                 <span class="n">channels_with_scene_index</span> <span class="o">=</span> <span class="p">[</span>
-                    <span class="sa">f</span><span class="s1">'</span><span class="si">{</span><span class="n">scene_index</span><span class="si">}{</span><span class="n">LABEL_DELIMITER</span><span class="si">}</span><span class="s1">'</span>
-                    <span class="sa">f</span><span class="s1">'</span><span class="si">{</span><span class="n">scene</span><span class="si">}{</span><span class="n">LABEL_DELIMITER</span><span class="si">}{</span><span class="n">C</span><span class="si">}</span><span class="s1">'</span>
+                    <span class="sa">f</span><span class="s1">'</span><span class="si">{</span><span class="n">C</span><span class="si">}{</span><span class="n">LABEL_DELIMITER</span><span class="si">}{</span><span class="n">scene_idx</span><span class="si">}{</span><span class="n">LABEL_DELIMITER</span><span class="si">}{</span><span class="n">scene</span><span class="si">}</span><span class="s1">'</span>
                     <span class="k">for</span> <span class="n">C</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">napari_data</span><span class="o">.</span><span class="n">coords</span><span class="p">[</span><span class="n">channel_dim</span><span class="p">]</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span>
                 <span class="p">]</span>
             <span class="n">meta</span><span class="p">[</span><span class="s1">'name'</span><span class="p">]</span> <span class="o">=</span> <span class="n">channels_with_scene_index</span>
@@ -2246,8 +2244,7 @@ If None, will determine whether to load in memory based on the image size.</p>
 <span class="normal">234</span>
 <span class="normal">235</span>
 <span class="normal">236</span>
-<span class="normal">237</span>
-<span class="normal">238</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">get_napari_metadata</span><span class="p">(</span>
+<span class="normal">237</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">get_napari_metadata</span><span class="p">(</span>
     <span class="bp">self</span><span class="p">,</span>
     <span class="n">path</span><span class="p">:</span> <span class="n">PathLike</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
@@ -2270,7 +2267,7 @@ If None, will determine whether to load in memory based on the image size.</p>
 
     <span class="n">meta</span> <span class="o">=</span> <span class="p">{}</span>
     <span class="n">scene</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">current_scene</span>
-    <span class="n">scene_index</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">current_scene_index</span>
+    <span class="n">scene_idx</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">current_scene_index</span>
     <span class="n">single_no_scene</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">scenes</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">current_scene</span> <span class="o">==</span> <span class="s2">"Image:0"</span>
     <span class="n">channel_dim</span> <span class="o">=</span> <span class="n">DimensionNames</span><span class="o">.</span><span class="n">Channel</span>
 
@@ -2278,13 +2275,12 @@ If None, will determine whether to load in memory based on the image size.</p>
         <span class="c1"># use filename if single scene and no scene name available</span>
         <span class="k">if</span> <span class="n">single_no_scene</span><span class="p">:</span>
             <span class="n">channels_with_scene_index</span> <span class="o">=</span> <span class="p">[</span>
-                <span class="sa">f</span><span class="s1">'</span><span class="si">{</span><span class="n">Path</span><span class="p">(</span><span class="n">path</span><span class="p">)</span><span class="o">.</span><span class="n">stem</span><span class="si">}{</span><span class="n">LABEL_DELIMITER</span><span class="si">}{</span><span class="n">C</span><span class="si">}</span><span class="s1">'</span>
+                <span class="sa">f</span><span class="s1">'</span><span class="si">{</span><span class="n">C</span><span class="si">}{</span><span class="n">LABEL_DELIMITER</span><span class="si">}{</span><span class="n">Path</span><span class="p">(</span><span class="n">path</span><span class="p">)</span><span class="o">.</span><span class="n">stem</span><span class="si">}</span><span class="s1">'</span>
                 <span class="k">for</span> <span class="n">C</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">napari_data</span><span class="o">.</span><span class="n">coords</span><span class="p">[</span><span class="n">channel_dim</span><span class="p">]</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span>
             <span class="p">]</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="n">channels_with_scene_index</span> <span class="o">=</span> <span class="p">[</span>
-                <span class="sa">f</span><span class="s1">'</span><span class="si">{</span><span class="n">scene_index</span><span class="si">}{</span><span class="n">LABEL_DELIMITER</span><span class="si">}</span><span class="s1">'</span>
-                <span class="sa">f</span><span class="s1">'</span><span class="si">{</span><span class="n">scene</span><span class="si">}{</span><span class="n">LABEL_DELIMITER</span><span class="si">}{</span><span class="n">C</span><span class="si">}</span><span class="s1">'</span>
+                <span class="sa">f</span><span class="s1">'</span><span class="si">{</span><span class="n">C</span><span class="si">}{</span><span class="n">LABEL_DELIMITER</span><span class="si">}{</span><span class="n">scene_idx</span><span class="si">}{</span><span class="n">LABEL_DELIMITER</span><span class="si">}{</span><span class="n">scene</span><span class="si">}</span><span class="s1">'</span>
                 <span class="k">for</span> <span class="n">C</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">napari_data</span><span class="o">.</span><span class="n">coords</span><span class="p">[</span><span class="n">channel_dim</span><span class="p">]</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span>
             <span class="p">]</span>
         <span class="n">meta</span><span class="p">[</span><span class="s1">'name'</span><span class="p">]</span> <span class="o">=</span> <span class="n">channels_with_scene_index</span>
