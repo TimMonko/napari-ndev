@@ -2262,7 +2262,10 @@ type.</p>
 <span class="normal">731</span>
 <span class="normal">732</span>
 <span class="normal">733</span>
-<span class="normal">734</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span> <span class="nc">ApocContainer</span><span class="p">(</span><span class="n">Container</span><span class="p">):</span>
+<span class="normal">734</span>
+<span class="normal">735</span>
+<span class="normal">736</span>
+<span class="normal">737</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span> <span class="nc">ApocContainer</span><span class="p">(</span><span class="n">Container</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    Container class for managing the ApocContainer widget in napari.</span>
 
@@ -2409,7 +2412,7 @@ type.</p>
     <span class="k">def</span> <span class="nf">_initialize_widgets</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_classifier_file</span> <span class="o">=</span> <span class="n">FileEdit</span><span class="p">(</span>
             <span class="n">label</span><span class="o">=</span><span class="s1">'Classifier File (.cl)'</span><span class="p">,</span>
-            <span class="n">mode</span><span class="o">=</span><span class="s1">'r'</span><span class="p">,</span>
+            <span class="n">mode</span><span class="o">=</span><span class="s1">'w'</span><span class="p">,</span>
             <span class="n">tooltip</span><span class="o">=</span><span class="s1">'Create a .txt file and rename it to .cl ending.'</span><span class="p">,</span>
         <span class="p">)</span>
 
@@ -2637,8 +2640,11 @@ type.</p>
         <span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">_update_classifier_metadata</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_classifier_file</span><span class="o">.</span><span class="n">value</span><span class="p">)</span> <span class="k">as</span> <span class="n">file</span><span class="p">:</span>
-            <span class="n">content</span> <span class="o">=</span> <span class="n">file</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
+        <span class="n">file_path</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_classifier_file</span><span class="o">.</span><span class="n">value</span>
+
+        <span class="c1"># create file, if it doesn't exist</span>
+        <span class="n">file_path</span><span class="o">.</span><span class="n">touch</span><span class="p">(</span><span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="n">content</span> <span class="o">=</span> <span class="n">file_path</span><span class="o">.</span><span class="n">read_text</span><span class="p">()</span>
 
         <span class="c1"># Ignore rest of function if file contents are empty</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">content</span><span class="o">.</span><span class="n">strip</span><span class="p">():</span>
@@ -2668,7 +2674,7 @@ type.</p>
                 <span class="n">value</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">'='</span><span class="p">)</span> <span class="k">if</span> <span class="s1">'='</span> <span class="ow">in</span> <span class="n">value</span> <span class="k">else</span> <span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
             <span class="p">)</span>
             <span class="n">trans_table</span><span class="p">[</span><span class="s1">'filter_name'</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">filter_name</span><span class="p">)</span>
-            <span class="n">trans_table</span><span class="p">[</span><span class="s1">'radius'</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">radius</span><span class="p">))</span>
+            <span class="n">trans_table</span><span class="p">[</span><span class="s1">'radius'</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">radius</span><span class="p">))</span>
 
         <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="nb">next</span><span class="p">(</span><span class="nb">iter</span><span class="p">(</span><span class="n">table</span><span class="o">.</span><span class="n">values</span><span class="p">())))):</span>
             <span class="n">trans_table</span><span class="p">[</span><span class="nb">str</span><span class="p">(</span><span class="n">i</span><span class="p">)]</span> <span class="o">=</span> <span class="p">[</span><span class="nb">round</span><span class="p">(</span><span class="n">table</span><span class="p">[</span><span class="n">key</span><span class="p">][</span><span class="n">i</span><span class="p">],</span> <span class="mi">2</span><span class="p">)</span> <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">table</span><span class="p">]</span>
