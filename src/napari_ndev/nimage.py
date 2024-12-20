@@ -185,7 +185,7 @@ class nImage(BioImage):
 
         meta = {}
         scene = self.current_scene
-        scene_index = self.current_scene_index
+        scene_idx = self.current_scene_index
         single_no_scene = len(self.scenes) == 1 and self.current_scene == "Image:0"
         channel_dim = DimensionNames.Channel
 
@@ -193,13 +193,12 @@ class nImage(BioImage):
             # use filename if single scene and no scene name available
             if single_no_scene:
                 channels_with_scene_index = [
-                    f'{Path(path).stem}{LABEL_DELIMITER}{C}'
+                    f'{C}{LABEL_DELIMITER}{Path(path).stem}'
                     for C in self.napari_data.coords[channel_dim].data.tolist()
                 ]
             else:
                 channels_with_scene_index = [
-                    f'{scene_index}{LABEL_DELIMITER}'
-                    f'{scene}{LABEL_DELIMITER}{C}'
+                    f'{C}{LABEL_DELIMITER}{scene_idx}{LABEL_DELIMITER}{scene}'
                     for C in self.napari_data.coords[channel_dim].data.tolist()
                 ]
             meta['name'] = channels_with_scene_index
