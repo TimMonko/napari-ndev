@@ -177,7 +177,7 @@ class ApocContainer(Container):
     def _initialize_widgets(self):
         self._classifier_file = FileEdit(
             label='Classifier File (.cl)',
-            mode='r',
+            mode='w',
             tooltip='Create a .txt file and rename it to .cl ending.',
         )
 
@@ -405,8 +405,11 @@ class ApocContainer(Container):
         )
 
     def _update_classifier_metadata(self):
-        with open(self._classifier_file.value) as file:
-            content = file.read()
+        file_path = self._classifier_file.value
+
+        # create file, if it doesn't exist
+        file_path.touch(exist_ok=True)
+        content = file_path.read_text()
 
         # Ignore rest of function if file contents are empty
         if not content.strip():
@@ -436,7 +439,7 @@ class ApocContainer(Container):
                 value.split('=') if '=' in value else (value, 0)
             )
             trans_table['filter_name'].append(filter_name)
-            trans_table['radius'].append(int(radius))
+            trans_table['radius'].append(float(radius))
 
         for i in range(len(next(iter(table.values())))):
             trans_table[str(i)] = [round(table[key][i], 2) for key in table]
