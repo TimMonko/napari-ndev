@@ -7,7 +7,7 @@ from typing import TYPE_CHECKING
 
 import numpy as np
 import pandas as pd
-from magicclass.widgets import ScrollableContainer
+from magicclass.widgets import ScrollableContainer, TabbedContainer
 from magicgui.widgets import (
     CheckBox,
     ComboBox,
@@ -22,7 +22,6 @@ from magicgui.widgets import (
     SpinBox,
     Table,
 )
-from qtpy.QtWidgets import QTabWidget
 
 from napari import layers
 from napari_ndev import helpers
@@ -345,7 +344,6 @@ class ApocContainer(ScrollableContainer):
         # tabs.addTab(self._custom_apoc_container.native, 'Custom Feature Set')
         # self.native.layout().addWidget(tabs)
 
-        from magicclass.widgets import TabbedContainer
         tabs = TabbedContainer(label=None, labels=None)
         tabs.extend(
             [
