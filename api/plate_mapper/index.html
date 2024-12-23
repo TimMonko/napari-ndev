@@ -1054,6 +1054,24 @@
   
 </li>
         
+          <li class="md-nav__item">
+  <a href="#napari_ndev._plate_mapper.PlateMapper.__init__(leading_zeroes)" class="md-nav__link">
+    <span class="md-ellipsis">
+      <code class="doc-symbol doc-symbol-toc doc-symbol-parameter"></code>&nbsp;leading_zeroes
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#napari_ndev._plate_mapper.PlateMapper.__init__(treatments)" class="md-nav__link">
+    <span class="md-ellipsis">
+      <code class="doc-symbol doc-symbol-toc doc-symbol-parameter"></code>&nbsp;treatments
+    </span>
+  </a>
+  
+</li>
+        
       </ul>
     </nav>
   
@@ -1309,6 +1327,24 @@
   
 </li>
         
+          <li class="md-nav__item">
+  <a href="#napari_ndev._plate_mapper.PlateMapper.__init__(leading_zeroes)" class="md-nav__link">
+    <span class="md-ellipsis">
+      <code class="doc-symbol doc-symbol-toc doc-symbol-parameter"></code>&nbsp;leading_zeroes
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#napari_ndev._plate_mapper.PlateMapper.__init__(treatments)" class="md-nav__link">
+    <span class="md-ellipsis">
+      <code class="doc-symbol doc-symbol-toc doc-symbol-parameter"></code>&nbsp;treatments
+    </span>
+  </a>
+  
+</li>
+        
       </ul>
     </nav>
   
@@ -1479,7 +1515,25 @@
               (<code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#int">int</a></code>)
           –
           <div class="doc-md-description">
-            <p>The size of the plate (e.g., 96, 384).</p>
+            <p>The size of the plate (e.g., 96, 384).
+Defaults to 96.</p>
+          </div>
+        </li>
+        <li class="doc-section-item field-body">
+          <b><code><span title="napari_ndev._plate_mapper.PlateMapper.leading_zeroes">leading_zeroes</span></code></b>
+              (<code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#bool">bool</a></code>)
+          –
+          <div class="doc-md-description">
+            <p>Whether to include leading zeroes in the column labels.
+Defaults to False.</p>
+          </div>
+        </li>
+        <li class="doc-section-item field-body">
+          <b><code><span title="napari_ndev._plate_mapper.PlateMapper.treatments">treatments</span></code></b>
+              (<code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#dict">dict</a></code>)
+          –
+          <div class="doc-md-description">
+            <p>A dictionary mapping treatments to conditions and well ranges.</p>
           </div>
         </li>
         <li class="doc-section-item field-body">
@@ -1499,11 +1553,21 @@
           </div>
         </li>
         <li class="doc-section-item field-body">
-          <b><code><span title="napari_ndev._plate_mapper.PlateMapper.plate_map_pivot">plate_map_pivot</span></code></b>
+          <b><code><span title="napari_ndev._plate_mapper.PlateMapper.pivoted_plate_map">pivoted_plate_map</span></code></b>
               (<code><span title="pandas.DataFrame">DataFrame</span></code>)
           –
           <div class="doc-md-description">
-            <p>The wide-formatted plate map DataFrame with treatments as columns.</p>
+            <p>The wide-formatted plate map DataFrame with treatments as columns.
+Pivots only one treatment at a time.</p>
+          </div>
+        </li>
+        <li class="doc-section-item field-body">
+          <b><code><span title="napari_ndev._plate_mapper.PlateMapper.styled_plate_map">styled_plate_map</span></code></b>
+              (<code><span title="pandas.io.formats.style.Styler">Styler</span></code>)
+          –
+          <div class="doc-md-description">
+            <p>The styled pivoted plate map DataFrame with different background
+colors for each unique value.</p>
           </div>
         </li>
     </ul>
@@ -1735,7 +1799,36 @@
 <span class="normal">184</span>
 <span class="normal">185</span>
 <span class="normal">186</span>
-<span class="normal">187</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span> <span class="nc">PlateMapper</span><span class="p">:</span>
+<span class="normal">187</span>
+<span class="normal">188</span>
+<span class="normal">189</span>
+<span class="normal">190</span>
+<span class="normal">191</span>
+<span class="normal">192</span>
+<span class="normal">193</span>
+<span class="normal">194</span>
+<span class="normal">195</span>
+<span class="normal">196</span>
+<span class="normal">197</span>
+<span class="normal">198</span>
+<span class="normal">199</span>
+<span class="normal">200</span>
+<span class="normal">201</span>
+<span class="normal">202</span>
+<span class="normal">203</span>
+<span class="normal">204</span>
+<span class="normal">205</span>
+<span class="normal">206</span>
+<span class="normal">207</span>
+<span class="normal">208</span>
+<span class="normal">209</span>
+<span class="normal">210</span>
+<span class="normal">211</span>
+<span class="normal">212</span>
+<span class="normal">213</span>
+<span class="normal">214</span>
+<span class="normal">215</span>
+<span class="normal">216</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span> <span class="nc">PlateMapper</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    A class for creating and manipulating plate maps.</span>
 
@@ -1743,12 +1836,22 @@
 <span class="sd">    ----------</span>
 <span class="sd">    plate_size : int</span>
 <span class="sd">        The size of the plate (e.g., 96, 384).</span>
+<span class="sd">        Defaults to 96.</span>
+<span class="sd">    leading_zeroes : bool</span>
+<span class="sd">        Whether to include leading zeroes in the column labels.</span>
+<span class="sd">        Defaults to False.</span>
+<span class="sd">    treatments : dict</span>
+<span class="sd">        A dictionary mapping treatments to conditions and well ranges.</span>
 <span class="sd">    wells : dict</span>
 <span class="sd">        A dictionary mapping plate sizes to the number of rows and columns.</span>
 <span class="sd">    plate_map : pandas.DataFrame</span>
 <span class="sd">        The plate map DataFrame with well labels.</span>
-<span class="sd">    plate_map_pivot : pandas.DataFrame</span>
+<span class="sd">    pivoted_plate_map : pandas.DataFrame</span>
 <span class="sd">        The wide-formatted plate map DataFrame with treatments as columns.</span>
+<span class="sd">        Pivots only one treatment at a time.</span>
+<span class="sd">    styled_plate_map : pandas.io.formats.style.Styler</span>
+<span class="sd">        The styled pivoted plate map DataFrame with different background</span>
+<span class="sd">        colors for each unique value.</span>
 
 <span class="sd">    Methods</span>
 <span class="sd">    -------</span>
@@ -1765,7 +1868,7 @@
 
 <span class="sd">    """</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">plate_size</span><span class="o">=</span><span class="mi">96</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">plate_size</span><span class="o">=</span><span class="mi">96</span><span class="p">,</span> <span class="n">treatments</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">leading_zeroes</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="p">):</span>
 <span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Initialize a PlateMapper object.</span>
 
@@ -1773,9 +1876,17 @@
 <span class="sd">        ----------</span>
 <span class="sd">        plate_size : int, optional</span>
 <span class="sd">            The size of the plate. Defaults to 96.</span>
+<span class="sd">        leading_zeroes : bool, optional</span>
+<span class="sd">            Whether to include leading zeroes in the column labels.</span>
+<span class="sd">            Defaults to False.</span>
+<span class="sd">        treatments : dict, optional</span>
+<span class="sd">            A dictionary mapping treatments to conditions and well ranges.</span>
+<span class="sd">            If provided, the treatments will be assigned to the plate map.</span>
+<span class="sd">            Defaults to None.</span>
 
 <span class="sd">        """</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">plate_size</span> <span class="o">=</span> <span class="n">plate_size</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">leading_zeroes</span> <span class="o">=</span> <span class="n">leading_zeroes</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">wells</span> <span class="o">=</span> <span class="p">{</span>
             <span class="mi">6</span><span class="p">:</span> <span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">),</span>
             <span class="mi">12</span><span class="p">:</span> <span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">),</span>
@@ -1785,7 +1896,13 @@
             <span class="mi">384</span><span class="p">:</span> <span class="p">(</span><span class="mi">16</span><span class="p">,</span> <span class="mi">24</span><span class="p">),</span>
         <span class="p">}</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">plate_map</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">create_empty_plate_map</span><span class="p">()</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">plate_map_pivot</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">pivoted_plate_map</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">styled_plate_map</span> <span class="o">=</span> <span class="kc">None</span>
+
+        <span class="k">if</span> <span class="n">treatments</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">assign_treatments</span><span class="p">(</span><span class="n">treatments</span><span class="p">)</span>
+            <span class="c1"># pivot the first key in treatments</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">get_styled_plate_map</span><span class="p">(</span><span class="nb">next</span><span class="p">(</span><span class="nb">iter</span><span class="p">(</span><span class="n">treatments</span><span class="o">.</span><span class="n">keys</span><span class="p">())))</span>
 
     <span class="k">def</span> <span class="nf">create_empty_plate_map</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">"""</span>
@@ -1800,7 +1917,10 @@
         <span class="n">num_rows</span><span class="p">,</span> <span class="n">num_columns</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">wells</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">plate_size</span><span class="p">]</span>
 
         <span class="n">row_labels</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">string</span><span class="o">.</span><span class="n">ascii_uppercase</span><span class="p">)[:</span><span class="n">num_rows</span><span class="p">]</span>
-        <span class="n">column_labels</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">num_columns</span> <span class="o">+</span> <span class="mi">1</span><span class="p">))</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">leading_zeroes</span><span class="p">:</span>
+            <span class="n">column_labels</span> <span class="o">=</span> <span class="p">[</span><span class="sa">f</span><span class="s1">'</span><span class="si">{</span><span class="n">i</span><span class="si">:</span><span class="s1">02d</span><span class="si">}</span><span class="s1">'</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">num_columns</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">column_labels</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">num_columns</span> <span class="o">+</span> <span class="mi">1</span><span class="p">))</span>
 
         <span class="n">well_rows</span> <span class="o">=</span> <span class="n">row_labels</span> <span class="o">*</span> <span class="n">num_columns</span>
         <span class="n">well_rows</span><span class="o">.</span><span class="n">sort</span><span class="p">()</span>  <span class="c1"># needed to sort the rows correctly</span>
@@ -1841,13 +1961,14 @@
                         <span class="n">well_condition</span> <span class="o">=</span> <span class="p">(</span>
                             <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">plate_map</span><span class="p">[</span><span class="s1">'row'</span><span class="p">]</span> <span class="o">&gt;=</span> <span class="n">start_row</span><span class="p">)</span>
                             <span class="o">&amp;</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">plate_map</span><span class="p">[</span><span class="s1">'row'</span><span class="p">]</span> <span class="o">&lt;=</span> <span class="n">end_row</span><span class="p">)</span>
-                            <span class="o">&amp;</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">plate_map</span><span class="p">[</span><span class="s1">'column'</span><span class="p">]</span> <span class="o">&gt;=</span> <span class="n">start_col</span><span class="p">)</span>
-                            <span class="o">&amp;</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">plate_map</span><span class="p">[</span><span class="s1">'column'</span><span class="p">]</span> <span class="o">&lt;=</span> <span class="n">end_col</span><span class="p">)</span>
+                            <span class="o">&amp;</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">plate_map</span><span class="p">[</span><span class="s1">'column'</span><span class="p">]</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">int</span><span class="p">)</span> <span class="o">&gt;=</span> <span class="n">start_col</span><span class="p">)</span>
+                            <span class="o">&amp;</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">plate_map</span><span class="p">[</span><span class="s1">'column'</span><span class="p">]</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">int</span><span class="p">)</span> <span class="o">&lt;=</span> <span class="n">end_col</span><span class="p">)</span>
                         <span class="p">)</span>
                     <span class="k">else</span><span class="p">:</span>
                         <span class="n">row</span><span class="p">,</span> <span class="n">col</span> <span class="o">=</span> <span class="n">well</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="nb">int</span><span class="p">(</span><span class="n">well</span><span class="p">[</span><span class="mi">1</span><span class="p">:])</span>
-                        <span class="n">well_condition</span> <span class="o">=</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">plate_map</span><span class="p">[</span><span class="s1">'row'</span><span class="p">]</span> <span class="o">==</span> <span class="n">row</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span>
-                            <span class="bp">self</span><span class="o">.</span><span class="n">plate_map</span><span class="p">[</span><span class="s1">'column'</span><span class="p">]</span> <span class="o">==</span> <span class="n">col</span>
+                        <span class="n">well_condition</span> <span class="o">=</span> <span class="p">(</span>
+                            <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">plate_map</span><span class="p">[</span><span class="s1">'row'</span><span class="p">]</span> <span class="o">==</span> <span class="n">row</span><span class="p">)</span>
+                            <span class="o">&amp;</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">plate_map</span><span class="p">[</span><span class="s1">'column'</span><span class="p">]</span> <span class="o">==</span> <span class="n">col</span><span class="p">)</span>
                         <span class="p">)</span>
 
                     <span class="bp">self</span><span class="o">.</span><span class="n">plate_map</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">well_condition</span><span class="p">,</span> <span class="n">treatment</span><span class="p">]</span> <span class="o">=</span> <span class="n">condition</span>
@@ -1871,7 +1992,7 @@
         <span class="n">plate_map_pivot</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">plate_map</span><span class="o">.</span><span class="n">pivot</span><span class="p">(</span>
             <span class="n">index</span><span class="o">=</span><span class="s1">'row'</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="s1">'column'</span><span class="p">,</span> <span class="n">values</span><span class="o">=</span><span class="n">treatment</span>
         <span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">plate_map_pivot</span> <span class="o">=</span> <span class="n">plate_map_pivot</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">pivoted_plate_map</span> <span class="o">=</span> <span class="n">plate_map_pivot</span>
         <span class="k">return</span> <span class="n">plate_map_pivot</span>
 
     <span class="k">def</span> <span class="nf">get_styled_plate_map</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">treatment</span><span class="p">,</span> <span class="n">palette</span><span class="o">=</span><span class="s1">'colorblind'</span><span class="p">):</span>
@@ -1893,9 +2014,9 @@
 <span class="sd">        """</span>
         <span class="kn">from</span> <span class="nn">seaborn</span> <span class="kn">import</span> <span class="n">color_palette</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">plate_map_pivot</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_pivoted_plate_map</span><span class="p">(</span><span class="n">treatment</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">pivoted_plate_map</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_pivoted_plate_map</span><span class="p">(</span><span class="n">treatment</span><span class="p">)</span>
 
-        <span class="n">unique_values</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">plate_map_pivot</span><span class="o">.</span><span class="n">values</span><span class="o">.</span><span class="n">flatten</span><span class="p">())</span>
+        <span class="n">unique_values</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">pivoted_plate_map</span><span class="o">.</span><span class="n">values</span><span class="o">.</span><span class="n">flatten</span><span class="p">())</span>
         <span class="n">unique_values</span> <span class="o">=</span> <span class="n">unique_values</span><span class="p">[</span><span class="n">pd</span><span class="o">.</span><span class="n">notna</span><span class="p">(</span><span class="n">unique_values</span><span class="p">)]</span>
 
         <span class="n">color_palette_hex</span> <span class="o">=</span> <span class="n">color_palette</span><span class="p">(</span><span class="n">palette</span><span class="p">)</span><span class="o">.</span><span class="n">as_hex</span><span class="p">()</span>
@@ -1904,16 +2025,17 @@
         <span class="c1"># Use next() to get the next color</span>
         <span class="n">color_dict</span> <span class="o">=</span> <span class="p">{</span><span class="n">value</span><span class="p">:</span> <span class="nb">next</span><span class="p">(</span><span class="n">palette_cycle</span><span class="p">)</span> <span class="k">for</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">unique_values</span><span class="p">}</span>
 
-        <span class="k">def</span> <span class="nf">get_background_color</span><span class="p">(</span><span class="n">value</span><span class="p">):</span>
+        <span class="k">def</span> <span class="nf">get_background_color</span><span class="p">(</span><span class="n">value</span><span class="p">):</span> <span class="c1"># pragma: no cover</span>
             <span class="k">if</span> <span class="n">pd</span><span class="o">.</span><span class="n">isna</span><span class="p">(</span><span class="n">value</span><span class="p">):</span>
                 <span class="k">return</span> <span class="s1">''</span>
             <span class="k">return</span> <span class="sa">f</span><span class="s1">'background-color: </span><span class="si">{</span><span class="n">color_dict</span><span class="p">[</span><span class="n">value</span><span class="p">]</span><span class="si">}</span><span class="s1">'</span>
 
         <span class="n">plate_map_styled</span> <span class="o">=</span> <span class="p">(</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">plate_map_pivot</span><span class="o">.</span><span class="n">style</span><span class="o">.</span><span class="n">applymap</span><span class="p">(</span><span class="n">get_background_color</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">pivoted_plate_map</span><span class="o">.</span><span class="n">style</span><span class="o">.</span><span class="n">applymap</span><span class="p">(</span><span class="n">get_background_color</span><span class="p">)</span>
             <span class="o">.</span><span class="n">set_caption</span><span class="p">(</span><span class="sa">f</span><span class="s1">'</span><span class="si">{</span><span class="n">treatment</span><span class="si">}</span><span class="s1"> Plate Map'</span><span class="p">)</span>
             <span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="s1">''</span> <span class="k">if</span> <span class="n">pd</span><span class="o">.</span><span class="n">isna</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="k">else</span> <span class="n">x</span><span class="p">)</span>
         <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">styled_plate_map</span> <span class="o">=</span> <span class="n">plate_map_styled</span>
 
         <span class="k">return</span> <span class="n">plate_map_styled</span>
 </code></pre></div></td></tr></table></div>
@@ -1939,7 +2061,7 @@
 
 
 <a href="#napari_ndev._plate_mapper.PlateMapper.__init__" class="headerlink" title="Permanent link">#</a></h3>
-<div class="doc-signature highlight"><pre><span></span><code><span class="fm">__init__</span><span class="p">(</span><span class="nf">plate_size</span><span class="o">=</span><span class="mi">96</span><span class="p">)</span>
+<div class="doc-signature highlight"><pre><span></span><code><span class="fm">__init__</span><span class="p">(</span><span class="nf">plate_size</span><span class="o">=</span><span class="mi">96</span><span class="p">,</span> <span class="n">treatments</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">leading_zeroes</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
 </code></pre></div>
 
     <div class="doc doc-contents ">
@@ -1959,21 +2081,34 @@
             <p>The size of the plate. Defaults to 96.</p>
           </div>
         </li>
+        <li class="doc-section-item field-body">
+<h4 id="napari_ndev._plate_mapper.PlateMapper.__init__(leading_zeroes)" class="doc doc-heading doc-heading-parameter">              <b><code>leading_zeroes</code></b>
+<a href="#napari_ndev._plate_mapper.PlateMapper.__init__(leading_zeroes)" class="headerlink" title="Permanent link">#</a></h4>              (<code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#bool">bool</a></code>, default:
+                  <code>False</code>
+)
+          –
+          <div class="doc-md-description">
+            <p>Whether to include leading zeroes in the column labels.
+Defaults to False.</p>
+          </div>
+        </li>
+        <li class="doc-section-item field-body">
+<h4 id="napari_ndev._plate_mapper.PlateMapper.__init__(treatments)" class="doc doc-heading doc-heading-parameter">              <b><code>treatments</code></b>
+<a href="#napari_ndev._plate_mapper.PlateMapper.__init__(treatments)" class="headerlink" title="Permanent link">#</a></h4>              (<code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#dict">dict</a></code>, default:
+                  <code>None</code>
+)
+          –
+          <div class="doc-md-description">
+            <p>A dictionary mapping treatments to conditions and well ranges.
+If provided, the treatments will be assigned to the plate map.
+Defaults to None.</p>
+          </div>
+        </li>
     </ul>
 
             <details class="quote">
               <summary>Source code in <code>src/napari_ndev/_plate_mapper.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">37</span>
-<span class="normal">38</span>
-<span class="normal">39</span>
-<span class="normal">40</span>
-<span class="normal">41</span>
-<span class="normal">42</span>
-<span class="normal">43</span>
-<span class="normal">44</span>
-<span class="normal">45</span>
-<span class="normal">46</span>
-<span class="normal">47</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">47</span>
 <span class="normal">48</span>
 <span class="normal">49</span>
 <span class="normal">50</span>
@@ -1983,7 +2118,31 @@
 <span class="normal">54</span>
 <span class="normal">55</span>
 <span class="normal">56</span>
-<span class="normal">57</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">plate_size</span><span class="o">=</span><span class="mi">96</span><span class="p">):</span>
+<span class="normal">57</span>
+<span class="normal">58</span>
+<span class="normal">59</span>
+<span class="normal">60</span>
+<span class="normal">61</span>
+<span class="normal">62</span>
+<span class="normal">63</span>
+<span class="normal">64</span>
+<span class="normal">65</span>
+<span class="normal">66</span>
+<span class="normal">67</span>
+<span class="normal">68</span>
+<span class="normal">69</span>
+<span class="normal">70</span>
+<span class="normal">71</span>
+<span class="normal">72</span>
+<span class="normal">73</span>
+<span class="normal">74</span>
+<span class="normal">75</span>
+<span class="normal">76</span>
+<span class="normal">77</span>
+<span class="normal">78</span>
+<span class="normal">79</span>
+<span class="normal">80</span>
+<span class="normal">81</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">plate_size</span><span class="o">=</span><span class="mi">96</span><span class="p">,</span> <span class="n">treatments</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">leading_zeroes</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="p">):</span>
 <span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    Initialize a PlateMapper object.</span>
 
@@ -1991,9 +2150,17 @@
 <span class="sd">    ----------</span>
 <span class="sd">    plate_size : int, optional</span>
 <span class="sd">        The size of the plate. Defaults to 96.</span>
+<span class="sd">    leading_zeroes : bool, optional</span>
+<span class="sd">        Whether to include leading zeroes in the column labels.</span>
+<span class="sd">        Defaults to False.</span>
+<span class="sd">    treatments : dict, optional</span>
+<span class="sd">        A dictionary mapping treatments to conditions and well ranges.</span>
+<span class="sd">        If provided, the treatments will be assigned to the plate map.</span>
+<span class="sd">        Defaults to None.</span>
 
 <span class="sd">    """</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">plate_size</span> <span class="o">=</span> <span class="n">plate_size</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">leading_zeroes</span> <span class="o">=</span> <span class="n">leading_zeroes</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">wells</span> <span class="o">=</span> <span class="p">{</span>
         <span class="mi">6</span><span class="p">:</span> <span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">),</span>
         <span class="mi">12</span><span class="p">:</span> <span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">),</span>
@@ -2003,7 +2170,13 @@
         <span class="mi">384</span><span class="p">:</span> <span class="p">(</span><span class="mi">16</span><span class="p">,</span> <span class="mi">24</span><span class="p">),</span>
     <span class="p">}</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">plate_map</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">create_empty_plate_map</span><span class="p">()</span>
-    <span class="bp">self</span><span class="o">.</span><span class="n">plate_map_pivot</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">pivoted_plate_map</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">styled_plate_map</span> <span class="o">=</span> <span class="kc">None</span>
+
+    <span class="k">if</span> <span class="n">treatments</span><span class="p">:</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assign_treatments</span><span class="p">(</span><span class="n">treatments</span><span class="p">)</span>
+        <span class="c1"># pivot the first key in treatments</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">get_styled_plate_map</span><span class="p">(</span><span class="nb">next</span><span class="p">(</span><span class="nb">iter</span><span class="p">(</span><span class="n">treatments</span><span class="o">.</span><span class="n">keys</span><span class="p">())))</span>
 </code></pre></div></td></tr></table></div>
             </details>
     </div>
@@ -2052,34 +2225,7 @@
 
             <details class="quote">
               <summary>Source code in <code>src/napari_ndev/_plate_mapper.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 88</span>
-<span class="normal"> 89</span>
-<span class="normal"> 90</span>
-<span class="normal"> 91</span>
-<span class="normal"> 92</span>
-<span class="normal"> 93</span>
-<span class="normal"> 94</span>
-<span class="normal"> 95</span>
-<span class="normal"> 96</span>
-<span class="normal"> 97</span>
-<span class="normal"> 98</span>
-<span class="normal"> 99</span>
-<span class="normal">100</span>
-<span class="normal">101</span>
-<span class="normal">102</span>
-<span class="normal">103</span>
-<span class="normal">104</span>
-<span class="normal">105</span>
-<span class="normal">106</span>
-<span class="normal">107</span>
-<span class="normal">108</span>
-<span class="normal">109</span>
-<span class="normal">110</span>
-<span class="normal">111</span>
-<span class="normal">112</span>
-<span class="normal">113</span>
-<span class="normal">114</span>
-<span class="normal">115</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">115</span>
 <span class="normal">116</span>
 <span class="normal">117</span>
 <span class="normal">118</span>
@@ -2087,7 +2233,35 @@
 <span class="normal">120</span>
 <span class="normal">121</span>
 <span class="normal">122</span>
-<span class="normal">123</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">assign_treatments</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">treatments</span><span class="p">):</span>
+<span class="normal">123</span>
+<span class="normal">124</span>
+<span class="normal">125</span>
+<span class="normal">126</span>
+<span class="normal">127</span>
+<span class="normal">128</span>
+<span class="normal">129</span>
+<span class="normal">130</span>
+<span class="normal">131</span>
+<span class="normal">132</span>
+<span class="normal">133</span>
+<span class="normal">134</span>
+<span class="normal">135</span>
+<span class="normal">136</span>
+<span class="normal">137</span>
+<span class="normal">138</span>
+<span class="normal">139</span>
+<span class="normal">140</span>
+<span class="normal">141</span>
+<span class="normal">142</span>
+<span class="normal">143</span>
+<span class="normal">144</span>
+<span class="normal">145</span>
+<span class="normal">146</span>
+<span class="normal">147</span>
+<span class="normal">148</span>
+<span class="normal">149</span>
+<span class="normal">150</span>
+<span class="normal">151</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">assign_treatments</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">treatments</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    Assign treatments to specific wells in a plate map.</span>
 
@@ -2112,13 +2286,14 @@
                     <span class="n">well_condition</span> <span class="o">=</span> <span class="p">(</span>
                         <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">plate_map</span><span class="p">[</span><span class="s1">'row'</span><span class="p">]</span> <span class="o">&gt;=</span> <span class="n">start_row</span><span class="p">)</span>
                         <span class="o">&amp;</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">plate_map</span><span class="p">[</span><span class="s1">'row'</span><span class="p">]</span> <span class="o">&lt;=</span> <span class="n">end_row</span><span class="p">)</span>
-                        <span class="o">&amp;</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">plate_map</span><span class="p">[</span><span class="s1">'column'</span><span class="p">]</span> <span class="o">&gt;=</span> <span class="n">start_col</span><span class="p">)</span>
-                        <span class="o">&amp;</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">plate_map</span><span class="p">[</span><span class="s1">'column'</span><span class="p">]</span> <span class="o">&lt;=</span> <span class="n">end_col</span><span class="p">)</span>
+                        <span class="o">&amp;</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">plate_map</span><span class="p">[</span><span class="s1">'column'</span><span class="p">]</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">int</span><span class="p">)</span> <span class="o">&gt;=</span> <span class="n">start_col</span><span class="p">)</span>
+                        <span class="o">&amp;</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">plate_map</span><span class="p">[</span><span class="s1">'column'</span><span class="p">]</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">int</span><span class="p">)</span> <span class="o">&lt;=</span> <span class="n">end_col</span><span class="p">)</span>
                     <span class="p">)</span>
                 <span class="k">else</span><span class="p">:</span>
                     <span class="n">row</span><span class="p">,</span> <span class="n">col</span> <span class="o">=</span> <span class="n">well</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="nb">int</span><span class="p">(</span><span class="n">well</span><span class="p">[</span><span class="mi">1</span><span class="p">:])</span>
-                    <span class="n">well_condition</span> <span class="o">=</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">plate_map</span><span class="p">[</span><span class="s1">'row'</span><span class="p">]</span> <span class="o">==</span> <span class="n">row</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span>
-                        <span class="bp">self</span><span class="o">.</span><span class="n">plate_map</span><span class="p">[</span><span class="s1">'column'</span><span class="p">]</span> <span class="o">==</span> <span class="n">col</span>
+                    <span class="n">well_condition</span> <span class="o">=</span> <span class="p">(</span>
+                        <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">plate_map</span><span class="p">[</span><span class="s1">'row'</span><span class="p">]</span> <span class="o">==</span> <span class="n">row</span><span class="p">)</span>
+                        <span class="o">&amp;</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">plate_map</span><span class="p">[</span><span class="s1">'column'</span><span class="p">]</span> <span class="o">==</span> <span class="n">col</span><span class="p">)</span>
                     <span class="p">)</span>
 
                 <span class="bp">self</span><span class="o">.</span><span class="n">plate_map</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">well_condition</span><span class="p">,</span> <span class="n">treatment</span><span class="p">]</span> <span class="o">=</span> <span class="n">condition</span>
@@ -2158,34 +2333,37 @@
 
             <details class="quote">
               <summary>Source code in <code>src/napari_ndev/_plate_mapper.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">59</span>
-<span class="normal">60</span>
-<span class="normal">61</span>
-<span class="normal">62</span>
-<span class="normal">63</span>
-<span class="normal">64</span>
-<span class="normal">65</span>
-<span class="normal">66</span>
-<span class="normal">67</span>
-<span class="normal">68</span>
-<span class="normal">69</span>
-<span class="normal">70</span>
-<span class="normal">71</span>
-<span class="normal">72</span>
-<span class="normal">73</span>
-<span class="normal">74</span>
-<span class="normal">75</span>
-<span class="normal">76</span>
-<span class="normal">77</span>
-<span class="normal">78</span>
-<span class="normal">79</span>
-<span class="normal">80</span>
-<span class="normal">81</span>
-<span class="normal">82</span>
-<span class="normal">83</span>
-<span class="normal">84</span>
-<span class="normal">85</span>
-<span class="normal">86</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">create_empty_plate_map</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 83</span>
+<span class="normal"> 84</span>
+<span class="normal"> 85</span>
+<span class="normal"> 86</span>
+<span class="normal"> 87</span>
+<span class="normal"> 88</span>
+<span class="normal"> 89</span>
+<span class="normal"> 90</span>
+<span class="normal"> 91</span>
+<span class="normal"> 92</span>
+<span class="normal"> 93</span>
+<span class="normal"> 94</span>
+<span class="normal"> 95</span>
+<span class="normal"> 96</span>
+<span class="normal"> 97</span>
+<span class="normal"> 98</span>
+<span class="normal"> 99</span>
+<span class="normal">100</span>
+<span class="normal">101</span>
+<span class="normal">102</span>
+<span class="normal">103</span>
+<span class="normal">104</span>
+<span class="normal">105</span>
+<span class="normal">106</span>
+<span class="normal">107</span>
+<span class="normal">108</span>
+<span class="normal">109</span>
+<span class="normal">110</span>
+<span class="normal">111</span>
+<span class="normal">112</span>
+<span class="normal">113</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">create_empty_plate_map</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    Create an empty plate map DataFrame for a given plate size.</span>
 
@@ -2198,7 +2376,10 @@
     <span class="n">num_rows</span><span class="p">,</span> <span class="n">num_columns</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">wells</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">plate_size</span><span class="p">]</span>
 
     <span class="n">row_labels</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">string</span><span class="o">.</span><span class="n">ascii_uppercase</span><span class="p">)[:</span><span class="n">num_rows</span><span class="p">]</span>
-    <span class="n">column_labels</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">num_columns</span> <span class="o">+</span> <span class="mi">1</span><span class="p">))</span>
+    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">leading_zeroes</span><span class="p">:</span>
+        <span class="n">column_labels</span> <span class="o">=</span> <span class="p">[</span><span class="sa">f</span><span class="s1">'</span><span class="si">{</span><span class="n">i</span><span class="si">:</span><span class="s1">02d</span><span class="si">}</span><span class="s1">'</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">num_columns</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)]</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">column_labels</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">num_columns</span> <span class="o">+</span> <span class="mi">1</span><span class="p">))</span>
 
     <span class="n">well_rows</span> <span class="o">=</span> <span class="n">row_labels</span> <span class="o">*</span> <span class="n">num_columns</span>
     <span class="n">well_rows</span><span class="o">.</span><span class="n">sort</span><span class="p">()</span>  <span class="c1"># needed to sort the rows correctly</span>
@@ -2261,26 +2442,26 @@
 
             <details class="quote">
               <summary>Source code in <code>src/napari_ndev/_plate_mapper.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">125</span>
-<span class="normal">126</span>
-<span class="normal">127</span>
-<span class="normal">128</span>
-<span class="normal">129</span>
-<span class="normal">130</span>
-<span class="normal">131</span>
-<span class="normal">132</span>
-<span class="normal">133</span>
-<span class="normal">134</span>
-<span class="normal">135</span>
-<span class="normal">136</span>
-<span class="normal">137</span>
-<span class="normal">138</span>
-<span class="normal">139</span>
-<span class="normal">140</span>
-<span class="normal">141</span>
-<span class="normal">142</span>
-<span class="normal">143</span>
-<span class="normal">144</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">get_pivoted_plate_map</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">treatment</span><span class="p">):</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">153</span>
+<span class="normal">154</span>
+<span class="normal">155</span>
+<span class="normal">156</span>
+<span class="normal">157</span>
+<span class="normal">158</span>
+<span class="normal">159</span>
+<span class="normal">160</span>
+<span class="normal">161</span>
+<span class="normal">162</span>
+<span class="normal">163</span>
+<span class="normal">164</span>
+<span class="normal">165</span>
+<span class="normal">166</span>
+<span class="normal">167</span>
+<span class="normal">168</span>
+<span class="normal">169</span>
+<span class="normal">170</span>
+<span class="normal">171</span>
+<span class="normal">172</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">get_pivoted_plate_map</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">treatment</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    Pivot a plate map DataFrame to create a wide-formatted DataFrame with a single treatment as columns.</span>
 
@@ -2298,7 +2479,7 @@
     <span class="n">plate_map_pivot</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">plate_map</span><span class="o">.</span><span class="n">pivot</span><span class="p">(</span>
         <span class="n">index</span><span class="o">=</span><span class="s1">'row'</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="s1">'column'</span><span class="p">,</span> <span class="n">values</span><span class="o">=</span><span class="n">treatment</span>
     <span class="p">)</span>
-    <span class="bp">self</span><span class="o">.</span><span class="n">plate_map_pivot</span> <span class="o">=</span> <span class="n">plate_map_pivot</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">pivoted_plate_map</span> <span class="o">=</span> <span class="n">plate_map_pivot</span>
     <span class="k">return</span> <span class="n">plate_map_pivot</span>
 </code></pre></div></td></tr></table></div>
             </details>
@@ -2358,35 +2539,7 @@
 
             <details class="quote">
               <summary>Source code in <code>src/napari_ndev/_plate_mapper.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">146</span>
-<span class="normal">147</span>
-<span class="normal">148</span>
-<span class="normal">149</span>
-<span class="normal">150</span>
-<span class="normal">151</span>
-<span class="normal">152</span>
-<span class="normal">153</span>
-<span class="normal">154</span>
-<span class="normal">155</span>
-<span class="normal">156</span>
-<span class="normal">157</span>
-<span class="normal">158</span>
-<span class="normal">159</span>
-<span class="normal">160</span>
-<span class="normal">161</span>
-<span class="normal">162</span>
-<span class="normal">163</span>
-<span class="normal">164</span>
-<span class="normal">165</span>
-<span class="normal">166</span>
-<span class="normal">167</span>
-<span class="normal">168</span>
-<span class="normal">169</span>
-<span class="normal">170</span>
-<span class="normal">171</span>
-<span class="normal">172</span>
-<span class="normal">173</span>
-<span class="normal">174</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">174</span>
 <span class="normal">175</span>
 <span class="normal">176</span>
 <span class="normal">177</span>
@@ -2399,7 +2552,36 @@
 <span class="normal">184</span>
 <span class="normal">185</span>
 <span class="normal">186</span>
-<span class="normal">187</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">get_styled_plate_map</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">treatment</span><span class="p">,</span> <span class="n">palette</span><span class="o">=</span><span class="s1">'colorblind'</span><span class="p">):</span>
+<span class="normal">187</span>
+<span class="normal">188</span>
+<span class="normal">189</span>
+<span class="normal">190</span>
+<span class="normal">191</span>
+<span class="normal">192</span>
+<span class="normal">193</span>
+<span class="normal">194</span>
+<span class="normal">195</span>
+<span class="normal">196</span>
+<span class="normal">197</span>
+<span class="normal">198</span>
+<span class="normal">199</span>
+<span class="normal">200</span>
+<span class="normal">201</span>
+<span class="normal">202</span>
+<span class="normal">203</span>
+<span class="normal">204</span>
+<span class="normal">205</span>
+<span class="normal">206</span>
+<span class="normal">207</span>
+<span class="normal">208</span>
+<span class="normal">209</span>
+<span class="normal">210</span>
+<span class="normal">211</span>
+<span class="normal">212</span>
+<span class="normal">213</span>
+<span class="normal">214</span>
+<span class="normal">215</span>
+<span class="normal">216</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">get_styled_plate_map</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">treatment</span><span class="p">,</span> <span class="n">palette</span><span class="o">=</span><span class="s1">'colorblind'</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    Style a plate map with background colors for each unique value.</span>
 
@@ -2418,9 +2600,9 @@
 <span class="sd">    """</span>
     <span class="kn">from</span> <span class="nn">seaborn</span> <span class="kn">import</span> <span class="n">color_palette</span>
 
-    <span class="bp">self</span><span class="o">.</span><span class="n">plate_map_pivot</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_pivoted_plate_map</span><span class="p">(</span><span class="n">treatment</span><span class="p">)</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">pivoted_plate_map</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_pivoted_plate_map</span><span class="p">(</span><span class="n">treatment</span><span class="p">)</span>
 
-    <span class="n">unique_values</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">plate_map_pivot</span><span class="o">.</span><span class="n">values</span><span class="o">.</span><span class="n">flatten</span><span class="p">())</span>
+    <span class="n">unique_values</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">pivoted_plate_map</span><span class="o">.</span><span class="n">values</span><span class="o">.</span><span class="n">flatten</span><span class="p">())</span>
     <span class="n">unique_values</span> <span class="o">=</span> <span class="n">unique_values</span><span class="p">[</span><span class="n">pd</span><span class="o">.</span><span class="n">notna</span><span class="p">(</span><span class="n">unique_values</span><span class="p">)]</span>
 
     <span class="n">color_palette_hex</span> <span class="o">=</span> <span class="n">color_palette</span><span class="p">(</span><span class="n">palette</span><span class="p">)</span><span class="o">.</span><span class="n">as_hex</span><span class="p">()</span>
@@ -2429,16 +2611,17 @@
     <span class="c1"># Use next() to get the next color</span>
     <span class="n">color_dict</span> <span class="o">=</span> <span class="p">{</span><span class="n">value</span><span class="p">:</span> <span class="nb">next</span><span class="p">(</span><span class="n">palette_cycle</span><span class="p">)</span> <span class="k">for</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">unique_values</span><span class="p">}</span>
 
-    <span class="k">def</span> <span class="nf">get_background_color</span><span class="p">(</span><span class="n">value</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">get_background_color</span><span class="p">(</span><span class="n">value</span><span class="p">):</span> <span class="c1"># pragma: no cover</span>
         <span class="k">if</span> <span class="n">pd</span><span class="o">.</span><span class="n">isna</span><span class="p">(</span><span class="n">value</span><span class="p">):</span>
             <span class="k">return</span> <span class="s1">''</span>
         <span class="k">return</span> <span class="sa">f</span><span class="s1">'background-color: </span><span class="si">{</span><span class="n">color_dict</span><span class="p">[</span><span class="n">value</span><span class="p">]</span><span class="si">}</span><span class="s1">'</span>
 
     <span class="n">plate_map_styled</span> <span class="o">=</span> <span class="p">(</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">plate_map_pivot</span><span class="o">.</span><span class="n">style</span><span class="o">.</span><span class="n">applymap</span><span class="p">(</span><span class="n">get_background_color</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">pivoted_plate_map</span><span class="o">.</span><span class="n">style</span><span class="o">.</span><span class="n">applymap</span><span class="p">(</span><span class="n">get_background_color</span><span class="p">)</span>
         <span class="o">.</span><span class="n">set_caption</span><span class="p">(</span><span class="sa">f</span><span class="s1">'</span><span class="si">{</span><span class="n">treatment</span><span class="si">}</span><span class="s1"> Plate Map'</span><span class="p">)</span>
         <span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="s1">''</span> <span class="k">if</span> <span class="n">pd</span><span class="o">.</span><span class="n">isna</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="k">else</span> <span class="n">x</span><span class="p">)</span>
     <span class="p">)</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">styled_plate_map</span> <span class="o">=</span> <span class="n">plate_map_styled</span>
 
     <span class="k">return</span> <span class="n">plate_map_styled</span>
 </code></pre></div></td></tr></table></div>
