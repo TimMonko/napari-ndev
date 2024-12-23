@@ -1216,6 +1216,15 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#napari_ndev.measure.measure_regionprops(tx_leading_zeroes)" class="md-nav__link">
+    <span class="md-ellipsis">
+      <code class="doc-symbol doc-symbol-toc doc-symbol-parameter"></code>&nbsp;tx_leading_zeroes
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#napari_ndev.measure.measure_regionprops(save_data_path)" class="md-nav__link">
     <span class="md-ellipsis">
       <code class="doc-symbol doc-symbol-toc doc-symbol-parameter"></code>&nbsp;save_data_path
@@ -1504,6 +1513,15 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#napari_ndev.measure.measure_regionprops(tx_leading_zeroes)" class="md-nav__link">
+    <span class="md-ellipsis">
+      <code class="doc-symbol doc-symbol-toc doc-symbol-parameter"></code>&nbsp;tx_leading_zeroes
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#napari_ndev.measure.measure_regionprops(save_data_path)" class="md-nav__link">
     <span class="md-ellipsis">
       <code class="doc-symbol doc-symbol-toc doc-symbol-parameter"></code>&nbsp;save_data_path
@@ -1673,10 +1691,7 @@ and mapping treatment dictionaries to DataFrame ID columns.</p>
 
             <details class="quote">
               <summary>Source code in <code>src/napari_ndev/measure.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">155</span>
-<span class="normal">156</span>
-<span class="normal">157</span>
-<span class="normal">158</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">158</span>
 <span class="normal">159</span>
 <span class="normal">160</span>
 <span class="normal">161</span>
@@ -1732,7 +1747,10 @@ and mapping treatment dictionaries to DataFrame ID columns.</p>
 <span class="normal">211</span>
 <span class="normal">212</span>
 <span class="normal">213</span>
-<span class="normal">214</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">group_and_agg_measurements</span><span class="p">(</span>
+<span class="normal">214</span>
+<span class="normal">215</span>
+<span class="normal">216</span>
+<span class="normal">217</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">group_and_agg_measurements</span><span class="p">(</span>
     <span class="n">df</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span>
     <span class="n">grouping_cols</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="s1">'id'</span><span class="p">,</span>
     <span class="n">count_col</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">'label'</span><span class="p">,</span>
@@ -1818,6 +1836,7 @@ and mapping treatment dictionaries to DataFrame ID columns.</p>
     <span class="n">tx_id</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
     <span class="n">tx_dict</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
     <span class="n">tx_n_well</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">tx_leading_zeroes</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
     <span class="n">save_data_path</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
 <span class="p">)</span>
 </code></pre></div>
@@ -1957,6 +1976,16 @@ Choose from a list of properties to measure: [
           –
           <div class="doc-md-description">
             <p>The number of wells in the plate.</p>
+          </div>
+        </li>
+        <li class="doc-section-item field-body">
+<h3 id="napari_ndev.measure.measure_regionprops(tx_leading_zeroes)" class="doc doc-heading doc-heading-parameter">              <b><code>tx_leading_zeroes</code></b>
+<a href="#napari_ndev.measure.measure_regionprops(tx_leading_zeroes)" class="headerlink" title="Permanent link">#</a></h3>              (<code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#bool">bool</a></code>, default:
+                  <code>False</code>
+)
+          –
+          <div class="doc-md-description">
+            <p>Whether to use leading zeroes in the plate map.</p>
           </div>
         </li>
         <li class="doc-section-item field-body">
@@ -2111,7 +2140,10 @@ Choose from a list of properties to measure: [
 <span class="normal">150</span>
 <span class="normal">151</span>
 <span class="normal">152</span>
-<span class="normal">153</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">measure_regionprops</span><span class="p">(</span>
+<span class="normal">153</span>
+<span class="normal">154</span>
+<span class="normal">155</span>
+<span class="normal">156</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">measure_regionprops</span><span class="p">(</span>
     <span class="n">label_images</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">ArrayLike</span><span class="p">]</span> <span class="o">|</span> <span class="n">ArrayLike</span><span class="p">,</span>
     <span class="n">label_names</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">|</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">intensity_images</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">ArrayLike</span><span class="p">]</span> <span class="o">|</span> <span class="n">ArrayLike</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
@@ -2123,6 +2155,7 @@ Choose from a list of properties to measure: [
     <span class="n">tx_id</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">tx_dict</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">tx_n_well</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">tx_leading_zeroes</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
     <span class="n">save_data_path</span><span class="p">:</span> <span class="n">PathLike</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">"""</span>
@@ -2175,6 +2208,8 @@ Choose from a list of properties to measure: [
 <span class="sd">        The treatment dictionary.</span>
 <span class="sd">    tx_n_well : int or None, optional</span>
 <span class="sd">        The number of wells in the plate.</span>
+<span class="sd">    tx_leading_zeroes : bool, optional</span>
+<span class="sd">        Whether to use leading zeroes in the plate map.</span>
 <span class="sd">    save_data_path : PathLike or None, optional</span>
 <span class="sd">        The path to save the data.</span>
 
@@ -2232,7 +2267,7 @@ Choose from a list of properties to measure: [
             <span class="n">measure_df</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
 
     <span class="k">if</span> <span class="n">tx_id</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">tx_dict</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="n">_map_tx_dict_to_df_id_col</span><span class="p">(</span><span class="n">tx_dict</span><span class="p">,</span> <span class="n">tx_n_well</span><span class="p">,</span> <span class="n">measure_df</span><span class="p">,</span> <span class="n">tx_id</span><span class="p">)</span>
+        <span class="n">_map_tx_dict_to_df_id_col</span><span class="p">(</span><span class="n">tx_dict</span><span class="p">,</span> <span class="n">tx_n_well</span><span class="p">,</span> <span class="n">tx_leading_zeroes</span><span class="p">,</span> <span class="n">measure_df</span><span class="p">,</span> <span class="n">tx_id</span><span class="p">)</span>
 
     <span class="k">if</span> <span class="n">save_data_path</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
         <span class="n">measure_df</span><span class="o">.</span><span class="n">to_csv</span><span class="p">(</span><span class="n">save_data_path</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
