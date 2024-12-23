@@ -11,6 +11,40 @@ def plate_mapper():
     return PlateMapper(96)
 
 
+
+
+
+def test_plate_mapper_init_empty():
+    pm = PlateMapper()
+    plate_map = pm.plate_map
+    assert isinstance(plate_map, pd.DataFrame)
+    assert pm.pivoted_plate_map is None
+    assert pm.styled_plate_map is None
+    assert len(plate_map) == 96
+    assert len(plate_map.columns) == 3
+    assert 'row' in plate_map.columns
+    assert 'A' in plate_map['row'].values
+    assert 'column' in plate_map.columns
+    assert 1 in plate_map['column'].values
+    assert 'well_id' in plate_map.columns
+    assert 'A1' in plate_map['well_id'].values
+
+def test_plate_mapper_init_with_plate_size():
+    pm = PlateMapper(384)
+    plate_map = pm.plate_map
+    assert len(plate_map) == 384
+    assert len(plate_map.columns) == 3
+    assert 'P' in plate_map['row'].values # 16th letter
+    assert 24 in plate_map['column'].values
+
+def test_plate_mapper_leading_zeroes():
+    pm = PlateMapper(leading_zeroes=True)
+    assert 'A' in pm.plate_map['row'].values
+    assert '01' in pm.plate_map['column'].values
+    assert '12' in pm.plate_map['column'].values
+    assert 'A01' in pm.plate_map['well_id'].values
+    assert 'H12' in pm.plate_map['well_id'].values
+
 @pytest.fixture
 def treatments():
     return {
@@ -18,24 +52,13 @@ def treatments():
         'Treatment2': {'Condition3': ['D4:E5']},
     }
 
-
-def test_plate_mapper_create_empty_plate_map(plate_mapper: PlateMapper):
-    plate_map_df = plate_mapper.create_empty_plate_map()
-
-    assert isinstance(plate_map_df, pd.DataFrame)
-    assert len(plate_map_df) == 96
-    assert len(plate_map_df.columns) == 3
-    assert 'row' in plate_map_df.columns
-    assert 'column' in plate_map_df.columns
-    assert 'well_id' in plate_map_df.columns
-
-
-def test_plate_mapper_assign_treatments(
-    plate_mapper: PlateMapper, treatments: dict[str, dict[str, list[str]]]
-):
-    plate_map = plate_mapper.assign_treatments(treatments)
+def test_plate_mapper_init_with_treatments(treatments):
+    pm = PlateMapper(96, treatments=treatments)
+    plate_map = pm.plate_map
+    pivoted_pm = pm.pivoted_plate_map
 
     assert isinstance(plate_map, pd.DataFrame)
+    assert isinstance(pivoted_pm, pd.DataFrame)
     assert 'Treatment1' in plate_map.columns
     assert 'Treatment2' in plate_map.columns
     assert (
@@ -61,6 +84,14 @@ def test_plate_mapper_assign_treatments(
     assert (
         plate_map.loc[plate_map['well_id'] == 'E4', 'Treatment2'].values[0]
         == 'Condition3'
+    )
+
+def test_plate_mapper_init_with_treatments_and_leading_zeroes(treatments):
+    pm = PlateMapper(96, treatments=treatments, leading_zeroes=True)
+    plate_map = pm.plate_map
+
+    assert (
+        plate_map.loc[plate_map['well_id'] == 'A01', 'Treatment1'].values[0]
     )
 
 
