@@ -7,6 +7,7 @@ from typing import TYPE_CHECKING
 
 import numpy as np
 import pandas as pd
+from magicclass.widgets import ScrollableContainer, TabbedContainer
 from magicgui.widgets import (
     CheckBox,
     ComboBox,
@@ -21,7 +22,6 @@ from magicgui.widgets import (
     SpinBox,
     Table,
 )
-from qtpy.QtWidgets import QTabWidget
 
 from napari import layers
 from napari_ndev import helpers
@@ -30,7 +30,7 @@ if TYPE_CHECKING:
     import napari
 
 
-class ApocContainer(Container):
+class ApocContainer(ScrollableContainer):
     """
     Container class for managing the ApocContainer widget in napari.
 
@@ -153,10 +153,11 @@ class ApocContainer(Container):
         viewer: napari.viewer.Viewer = None,
         # viewer = napari_viewer
     ):
-        super().__init__()
+        super().__init__(labels=False)
+        self.min_width = 600 # TODO: remove this hardcoded value
         self._viewer = viewer if viewer is not None else None
         self._lazy_imports()
-        self._initialize_widgets()
+        self._initialize_cl_container()
         self._initialize_batch_container()
         self._initialize_viewer_container()
         self._initialize_custom_apoc_container()
@@ -174,7 +175,7 @@ class ApocContainer(Container):
             return []
         return [x for x in self._viewer.layers if isinstance(x, layer_type)]
 
-    def _initialize_widgets(self):
+    def _initialize_cl_container(self):
         self._classifier_file = FileEdit(
             label='Classifier File (.cl)',
             mode='w',
@@ -238,6 +239,19 @@ class ApocContainer(Container):
                 'A string in the form of ' "'filter1=radius1 filter2=radius2'."
             ),
         )
+        self._cl_container = Container()
+        self._cl_container.extend(
+            [
+                self._classifier_file,
+                self._continue_training,
+                self._classifier_type,
+                self._max_depth,
+                self._num_trees,
+                self._positive_class_id,
+                self._predefined_features,
+                self._feature_string,
+            ]
+        )
 
     def _initialize_batch_container(self):
         self._image_directory = FileEdit(label='Image Directory', mode='d')
@@ -274,7 +288,7 @@ class ApocContainer(Container):
 
         self._progress_bar = ProgressBar(label='Progress:')
 
-        self._batch_container = Container(layout='vertical')
+        self._batch_container = Container(layout='vertical', label='Batch')
         self._batch_container.extend(
             [
                 self._image_directory,
@@ -301,9 +315,9 @@ class ApocContainer(Container):
         self._predict_image_layer = PushButton(
             label='Predict using classifier on selected layers'
         )
-        self._single_result_label = Label()
+        self._single_result_label = LineEdit()
 
-        self._viewer_container = Container(layout='vertical')
+        self._viewer_container = Container(layout='vertical', label='Viewer')
         self._viewer_container.extend(
             [
                 self._image_layers,
@@ -318,27 +332,27 @@ class ApocContainer(Container):
         from napari_ndev import ApocFeatureStack
 
         self._custom_apoc_container = ApocFeatureStack(viewer=self._viewer)
+        self._custom_apoc_container.label = 'Custom Feature Set'
 
     def _setup_widget_layout(self):
         # from napari_ndev import ApocFeatureStack
-        self.extend(
+        self.append(self._cl_container)
+
+        # tabs = QTabWidget()
+        # tabs.addTab(self._batch_container.native, 'Batch')
+        # tabs.addTab(self._viewer_container.native, 'Viewer')
+        # tabs.addTab(self._custom_apoc_container.native, 'Custom Feature Set')
+        # self.native.layout().addWidget(tabs)
+
+        tabs = TabbedContainer(label=None, labels=None)
+        tabs.extend(
             [
-                self._classifier_file,
-                self._continue_training,
-                self._classifier_type,
-                self._positive_class_id,
-                self._max_depth,
-                self._num_trees,
-                self._predefined_features,
-                self._feature_string,
+                self._batch_container,
+                self._viewer_container,
+                self._custom_apoc_container,
             ]
         )
-
-        tabs = QTabWidget()
-        tabs.addTab(self._batch_container.native, 'Batch')
-        tabs.addTab(self._viewer_container.native, 'Viewer')
-        tabs.addTab(self._custom_apoc_container.native, 'Custom Feature Set')
-        self.native.layout().addWidget(tabs)
+        self.extend([tabs])
 
     def _connect_events(self):
         self._image_directory.changed.connect(self._update_metadata_from_file)
