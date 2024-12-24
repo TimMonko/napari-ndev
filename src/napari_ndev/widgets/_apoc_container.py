@@ -335,24 +335,22 @@ class ApocContainer(ScrollableContainer):
         self._custom_apoc_container.label = 'Custom Feature Set'
 
     def _setup_widget_layout(self):
-        # from napari_ndev import ApocFeatureStack
         self.append(self._cl_container)
 
-        # tabs = QTabWidget()
-        # tabs.addTab(self._batch_container.native, 'Batch')
-        # tabs.addTab(self._viewer_container.native, 'Viewer')
-        # tabs.addTab(self._custom_apoc_container.native, 'Custom Feature Set')
-        # self.native.layout().addWidget(tabs)
-
-        tabs = TabbedContainer(label=None, labels=None)
-        tabs.extend(
+        self._tabs = TabbedContainer(label=None, labels=None)
+        self._tabs.extend(
             [
                 self._batch_container,
                 self._viewer_container,
                 self._custom_apoc_container,
             ]
         )
-        self.extend([tabs])
+        # self.append(self._tabs) # does not connect gui to native, but is scrollable
+        self._scroll = ScrollableContainer()
+        self._scroll.append(self._tabs)
+        # the only way for _label_layer and _image_layers to stay connected is to attach it to native, not sure why
+        self.native.layout().addWidget(self._scroll.native) # connects and is scrollable, internally, but not in the main window
+
 
     def _connect_events(self):
         self._image_directory.changed.connect(self._update_metadata_from_file)
