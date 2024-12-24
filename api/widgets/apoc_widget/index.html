@@ -2277,9 +2277,7 @@ type.</p>
 <span class="normal">746</span>
 <span class="normal">747</span>
 <span class="normal">748</span>
-<span class="normal">749</span>
-<span class="normal">750</span>
-<span class="normal">751</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span> <span class="nc">ApocContainer</span><span class="p">(</span><span class="n">ScrollableContainer</span><span class="p">):</span>
+<span class="normal">749</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span> <span class="nc">ApocContainer</span><span class="p">(</span><span class="n">ScrollableContainer</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    Container class for managing the ApocContainer widget in napari.</span>
 
@@ -2584,24 +2582,22 @@ type.</p>
         <span class="bp">self</span><span class="o">.</span><span class="n">_custom_apoc_container</span><span class="o">.</span><span class="n">label</span> <span class="o">=</span> <span class="s1">'Custom Feature Set'</span>
 
     <span class="k">def</span> <span class="nf">_setup_widget_layout</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="c1"># from napari_ndev import ApocFeatureStack</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_cl_container</span><span class="p">)</span>
 
-        <span class="c1"># tabs = QTabWidget()</span>
-        <span class="c1"># tabs.addTab(self._batch_container.native, 'Batch')</span>
-        <span class="c1"># tabs.addTab(self._viewer_container.native, 'Viewer')</span>
-        <span class="c1"># tabs.addTab(self._custom_apoc_container.native, 'Custom Feature Set')</span>
-        <span class="c1"># self.native.layout().addWidget(tabs)</span>
-
-        <span class="n">tabs</span> <span class="o">=</span> <span class="n">TabbedContainer</span><span class="p">(</span><span class="n">label</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">labels</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
-        <span class="n">tabs</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_tabs</span> <span class="o">=</span> <span class="n">TabbedContainer</span><span class="p">(</span><span class="n">label</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">labels</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_tabs</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span>
             <span class="p">[</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">_batch_container</span><span class="p">,</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">_viewer_container</span><span class="p">,</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">_custom_apoc_container</span><span class="p">,</span>
             <span class="p">]</span>
         <span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">extend</span><span class="p">([</span><span class="n">tabs</span><span class="p">])</span>
+        <span class="c1"># self.append(self._tabs) # does not connect gui to native, but is scrollable</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_scroll</span> <span class="o">=</span> <span class="n">ScrollableContainer</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_scroll</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_tabs</span><span class="p">)</span>
+        <span class="c1"># the only way for _label_layer and _image_layers to stay connected is to attach it to native, not sure why</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">native</span><span class="o">.</span><span class="n">layout</span><span class="p">()</span><span class="o">.</span><span class="n">addWidget</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_scroll</span><span class="o">.</span><span class="n">native</span><span class="p">)</span> <span class="c1"># connects and is scrollable, internally, but not in the main window</span>
+
 
     <span class="k">def</span> <span class="nf">_connect_events</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_image_directory</span><span class="o">.</span><span class="n">changed</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_update_metadata_from_file</span><span class="p">)</span>
