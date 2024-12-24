@@ -335,22 +335,9 @@ class ApocContainer(ScrollableContainer):
         self._custom_apoc_container.label = 'Custom Feature Set'
 
     def _setup_widget_layout(self):
-        # from napari_ndev import ApocFeatureStack
-        # self.native.ScrollArea.setWidgetResizable(True)
         self.append(self._cl_container)
 
-
-        # from qtpy.QtWidgets import QTabWidget
-        # tabs = QTabWidget()
-        # tabs.addTab(self._batch_container.native, 'Batch')
-        # tabs.addTab(self._viewer_container.native, 'Viewer')
-        # tabs.addTab(self._custom_apoc_container.native, 'Custom Feature Set')
-        # # self.layout().addWidget(tabs)
-        # self.native.layout().addWidget(tabs)
-
-
-        self._scroll = ScrollableContainer()
-        self._tabs = TabbedContainer(label=None, labels=None, scrollable=True)
+        self._tabs = TabbedContainer(label=None, labels=None)
         self._tabs.extend(
             [
                 self._batch_container,
@@ -358,15 +345,12 @@ class ApocContainer(ScrollableContainer):
                 self._custom_apoc_container,
             ]
         )
+        # self.append(self._tabs) # does not connect gui to native, but is scrollable
+        self._scroll = ScrollableContainer()
         self._scroll.append(self._tabs)
-        # self.append(self._tabs)
-        # below 3 lines work for scrollable (because container inside), but does not connect gui to viewer
-        # self._tab_container = Container()
-        # self._tab_container.append(self._tabs)
-        # self.append(self._tab_container)
-        # self.append(self._scroll) # does not connect, but is scrollable
-        # self.root_native_widget.layout().addWidget(self._scroll.native) # perhaps useful to consider, but doesn't seem to add functionality
-        self.root_native_widget.layout().addWidget(self._tabs.native) # connects and is scrollable, but separately
+        # the only way for _label_layer and _image_layers to stay connected is to attach it to native, not sure why
+        self.native.layout().addWidget(self._scroll.native) # connects and is scrollable, internally, but not in the main window
+
 
     def _connect_events(self):
         self._image_directory.changed.connect(self._update_metadata_from_file)
