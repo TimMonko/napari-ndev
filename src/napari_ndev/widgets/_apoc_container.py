@@ -537,7 +537,7 @@ class ApocContainer(ScrollableContainer):
         # https://github.com/clEsperanto/pyclesperanto_prototype/issues/163
         set_wait_for_kernel_finish(True)
 
-        self._progress_bar.label = f'Training on %s {len(image_files)} Images'
+        self._progress_bar.label = f'Training on {len(image_files)} Images'
         self._progress_bar.value = 0
         self._progress_bar.max = len(image_files)
 
