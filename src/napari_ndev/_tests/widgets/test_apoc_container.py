@@ -167,6 +167,7 @@ def test_image_predict(make_napari_viewer, test_data, trained_classifier_file):
     result = wdg.image_predict()
 
     assert wdg._single_result_label.value == "Predicted ['test_image']"
+    assert wdg._viewer.layers['empty_classifier :: test_image'].visible
     assert cle.pull(result).any() > 0
     assert cle.pull(wdg._viewer.layers['result'].data).any() > 0
 
