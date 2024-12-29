@@ -8,11 +8,52 @@ and a class `ImageOverview` to generate and save image overviews.
 from __future__ import annotations
 
 import inspect
+import warnings
+from dataclasses import dataclass
 
 import matplotlib.pyplot as plt
 import numpy as np
 import stackview
+from bioio_base.types import ArrayLike
 
+
+@dataclass
+class ImageSet:
+    """
+    Image information passed to `stackview.imshow`.
+
+    Parameters
+    ----------
+    image : list
+        A list of image data to display.
+    title : list of str, optional
+        The title of the image.
+    colormap : list of str, optional
+        The colormap to use. "labels" will display the image as labels.
+    labels : list of bool, optional
+        Whether to display image as a labels.
+    min_display_intensity : list of float, optional
+        The minimum display intensity, in the same units as the image.
+        Use `np.percentile(image, 0.1)` for 0.1th percentile.
+    max_display_intensity : list of float, optional
+        The maximum display intensity, in the same units as the image.
+        Use `np.percentile(image, 99.8)` for 99.9th percentile.
+
+    """
+
+    image: list[ArrayLike]
+    title: list[str] | None = None
+    colormap: list[str] | None = None
+    labels: list[bool] | None = None
+    min_display_intensity: list[float] | None = None
+    max_display_intensity: list[float] | None = None
+
+    def __post_init__(self):
+        """Set default values for colormap and labels if not provided."""
+        if self.colormap is None:
+            self.colormap = [None] * len(self.image)
+        if self.labels is None:
+            self.labels = [False] * len(self.image)
 
 class ImageOverview:
     """
@@ -26,7 +67,7 @@ class ImageOverview:
 
     def __init__(
         self,
-        image_sets: dict | list[dict],
+        image_sets: ImageSet | list[ImageSet] | dict | list[dict],
         fig_scale: tuple[float, float] = (3, 3),
         fig_title: str = '',
         scalebar: float | dict | None = None,
@@ -37,9 +78,15 @@ class ImageOverview:
 
         Parameters
         ----------
-        image_sets : list of dict
-            A list of dictionaries containing image sets. See
-            `napari_ndev.image_overview` for more information.
+        image_sets : ImageSet, list of ImageSet, dict, or list of dict
+            A list of dictionaries, each containing an image set. Each image set
+            should be a dictionary containing the following keys:
+            - image (list): A list of images to display.
+            - title (list of str, optional): The title of the image set.
+            - colormap (list of str, optional): The colormap to use.
+                "labels" will display the image as labels.
+            - labels (list of bool, optional): Whether to display labels.
+            - **kwargs: Additional keyword arguments to pass to stackview.imshow.
         fig_scale : tuple of float, optional
             The scale of the plot. (Width, Height). Values lower than 2 are likely
             to result in overlapping text. Increased values increase image size.
@@ -88,7 +135,7 @@ class ImageOverview:
 
 
 def image_overview(
-    image_sets: dict | list[dict],
+    image_sets: ImageSet | list[ImageSet] | dict | list[dict],
     fig_scale: tuple[float, float] = (3, 3),
     fig_title: str = '',
     scalebar: float | dict | None = None,
@@ -98,15 +145,12 @@ def image_overview(
 
     Parameters
     ----------
-    image_sets : list of dict
-        A list of dictionaries, each containing an image set. Each image set
-        should be a dictionary containing the following keys:
-        - image (list): A list of images to display.
-        - title (list of str, optional): The title of the image set.
-        - colormap (list of str, optional): The colormap to use.
-            "labels" will display the image as labels.
-        - labels (list of bool, optional): Whether to display labels.
-        - **kwargs: Additional keyword arguments to pass to stackview.imshow.
+    image_sets : ImageSet, list of ImageSet, dict, or list of dict
+        A list of `napari_ndev.image_overview.ImageSet objects containing
+        image information to display for `stackview.imshow`. Using a dict is
+        deprecated and will be removed in the future, but is supported by
+        passing the dictionary keys as arguments to the ImageSet constructor.
+        Will be removed in v1.0.0.
     fig_scale : tuple of float, optional
         The scale of the plot. (Width, Height). Values lower than 2 are likely
         to result in overlapping text. Increased values increase image size.
@@ -124,13 +168,17 @@ def image_overview(
         The matplotlib figure object containing the image overview.
 
     """
-    # convert input to list if needed
-    image_sets = [image_sets] if isinstance(image_sets, dict) else image_sets
+    # convert single image_set to list of image_set
+    image_sets = [image_sets] if isinstance(image_sets, (ImageSet, dict)) else image_sets
+
+    # if list of dicts convert to ImageSet, until deprecated
+    image_sets = _convert_dict_to_ImageSet(image_sets) if any(isinstance(image_set, dict) for image_set in image_sets) else image_sets
+
     # create the subplot grid
 
     # if only one image set, wrap rows and columns to get a nice aspect ratio
     if len(image_sets) == 1:
-        num_images = len(image_sets[0]['image'])
+        num_images = len(image_sets[0].image)
 
         if num_images <= 3:
             num_columns = num_images
@@ -142,7 +190,7 @@ def image_overview(
 
     if len(image_sets) > 1:
         num_rows = len(image_sets)
-        num_columns = max([len(image_set['image']) for image_set in image_sets])
+        num_columns = max([len(image_set.image) for image_set in image_sets])
 
     # multiply scale of plot by number of columns and rows
     fig, axs = plt.subplots(
@@ -158,7 +206,7 @@ def image_overview(
 
     # iterate through the image sets
     for image_set_idx, image_set in enumerate(image_sets):
-        for image_idx, _image in enumerate(image_set['image']):
+        for image_idx, image in enumerate(image_set.image):
 
             # calculate the correct row and column for the subplot
             if len(image_sets) == 1:
@@ -168,21 +216,25 @@ def image_overview(
                 row = image_set_idx
                 col = image_idx
 
-            # create a dictionary from the col-th values of each key
-            image_dict = {key: value[image_idx] for key, value in image_set.items()}
-
             # turn off the subplot and continue if there is no image
-            if image_dict.get('image') is None:
+            if image is None:
                 axs[row][col].axis('off')
                 continue
 
-            # create a labels key if it doesn't exist, but does in colormap
-            cmap = image_dict.get('colormap')
+            # set labels value to true, if its in the colormap
+            cmap = image_set.colormap[image_idx]
             if cmap is not None and cmap.lower() == 'labels':
-                image_dict['labels'] = True
+                image_set.labels[image_idx] = True
 
-            sv_dict = {k: v for k, v in image_dict.items() if k in inspect.signature(stackview.imshow).parameters}
-            stackview.imshow(**sv_dict, plot=axs[row][col])
+            stackview.imshow(
+                image = image,
+                title = image_set.title[image_idx] if image_set.title else None,
+                colormap = image_set.colormap[image_idx] if image_set.colormap else None,
+                labels = image_set.labels[image_idx] if image_set.labels else False,
+                min_display_intensity = image_set.min_display_intensity[image_idx] if image_set.min_display_intensity else None,
+                max_display_intensity = image_set.max_display_intensity[image_idx] if image_set.max_display_intensity else None,
+                plot=axs[row][col]
+            )
 
             # add scalebar, if dict is present
             if scalebar is not None:
@@ -196,6 +248,36 @@ def image_overview(
     plt.tight_layout(pad=0.3)
 
     return fig
+
+def _convert_dict_to_ImageSet(image_sets):
+    """
+    Convert a list of dictionaries to a list of ImageSet objects.
+
+    Parameters
+    ----------
+    image_sets : list of dict
+        A list of dictionaries, each containing an image set. Each image set
+        should be a dictionary containing the following keys:
+        - image (list): A list of images to display.
+        - title (list of str, optional): The title of the image set.
+        - colormap (list of str, optional): The colormap to use.
+            "labels" will display the image as labels.
+        - labels (list of bool, optional): Whether to display labels.
+        - **kwargs: Additional keyword arguments to pass to stackview.imshow.
+
+    Returns
+    -------
+    list of ImageSet
+        A list of ImageSet objects.
+
+    """
+    warnings.warn(
+        "Using a dict to pass image information to image_overview() "
+        "is deprecated and will be removed in the future. "
+        "Please use ImageSet objects instead.",
+        category=DeprecationWarning,
+    )
+    return [ImageSet(**image_set) for image_set in image_sets]
 
 def _add_scalebar(ax, scalebar):
     from matplotlib_scalebar.scalebar import ScaleBar
@@ -211,11 +293,11 @@ def _add_scalebar(ax, scalebar):
 
     # if scalebar is just float, convert to dict
     if isinstance(scalebar, float):
-        sb_dict = {'dx': scalebar}
+        sb_valid_dict = {'dx': scalebar}
     # if scalebar is dict, only keep the keys that are valid for ScaleBar
     elif isinstance(scalebar, dict):
         sb_valid_dict = {k: v for k, v in scalebar.items() if k in inspect.signature(ScaleBar).parameters}
-        # update key: values in sb_dict with values from scalebar if key is present
-        sb_dict.update(sb_valid_dict)
 
+    # update key: values in sb_dict with values from scalebar if key is present
+    sb_dict.update(sb_valid_dict)
     ax.add_artist(ScaleBar(**sb_dict))

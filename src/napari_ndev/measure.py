@@ -22,7 +22,7 @@ from bioio_base.types import ArrayLike, PathLike
 
 from napari_ndev._plate_mapper import PlateMapper
 
-__all__ = ['measure_regionprops', 'group_and_agg_measurements']
+__all__ = ['group_and_agg_measurements', 'measure_regionprops']
 
 def measure_regionprops(
     label_images: list[ArrayLike] | ArrayLike,
@@ -36,6 +36,7 @@ def measure_regionprops(
     tx_id: str | None = None,
     tx_dict: dict | None = None,
     tx_n_well: int | None = None,
+    tx_leading_zeroes: bool = False,
     save_data_path: PathLike = None,
 ) -> pd.DataFrame:
     """
@@ -88,6 +89,8 @@ def measure_regionprops(
         The treatment dictionary.
     tx_n_well : int or None, optional
         The number of wells in the plate.
+    tx_leading_zeroes : bool, optional
+        Whether to use leading zeroes in the plate map.
     save_data_path : PathLike or None, optional
         The path to save the data.
 
@@ -145,7 +148,7 @@ def measure_regionprops(
             measure_df.insert(2, key, value)
 
     if tx_id is not None and tx_dict is not None:
-        _map_tx_dict_to_df_id_col(tx_dict, tx_n_well, measure_df, tx_id)
+        _map_tx_dict_to_df_id_col(tx_dict, tx_n_well, tx_leading_zeroes, measure_df, tx_id)
 
     if save_data_path is not None:
         measure_df.to_csv(save_data_path, index=False)
@@ -156,7 +159,7 @@ def group_and_agg_measurements(
     df: pd.DataFrame,
     grouping_cols: str | list[str] = 'id',
     count_col: str = 'label',
-    agg_cols: list[str] | None = None,
+    agg_cols: str | list[str] | None = None,
     agg_funcs: str | list[str] = 'mean',
 ) -> pd.DataFrame:
     """
@@ -181,6 +184,10 @@ def group_and_agg_measurements(
         The DataFrame with grouped and aggregated measurements.
 
     """
+    grouping_cols = _convert_to_list(grouping_cols)
+    agg_cols = _convert_to_list(agg_cols)
+    agg_funcs = _convert_to_list(agg_funcs)
+
     # get count data
     df_count = (
             df.copy().groupby(grouping_cols)
@@ -354,6 +361,7 @@ def _rename_intensity_columns(df: pd.DataFrame, intensity_names: list[str]):
 def _map_tx_dict_to_df_id_col(
     tx: dict | None = None,
     tx_n_well: int | None = None,
+    tx_leading_zeroes: bool = False,
     df: pd.DataFrame = None,
     id_column: str | None = None,
 ):
@@ -368,6 +376,8 @@ def _map_tx_dict_to_df_id_col(
         The dictionary of treatments.
     tx_n_well : int or None, optional
         The number of wells in the plate.
+    tx_leading_zeroes : bool, optional
+        Whether to use leading zeroes in the plate map. Default is False.
     df : pd.DataFrame
         The DataFrame to map treatments to.
     id_column : str or None, optional
@@ -380,7 +390,7 @@ def _map_tx_dict_to_df_id_col(
 
     """
     if isinstance(tx_n_well, int):
-        plate = PlateMapper(tx_n_well)
+        plate = PlateMapper(tx_n_well, leading_zeroes=tx_leading_zeroes)
         plate.assign_treatments(tx)
         tx_map = plate.plate_map.set_index('well_id').to_dict(orient='index')
     else:

@@ -7,6 +7,7 @@ from typing import TYPE_CHECKING
 
 import numpy as np
 import pandas as pd
+from magicclass.widgets import ScrollableContainer, TabbedContainer
 from magicgui.widgets import (
     CheckBox,
     ComboBox,
@@ -21,7 +22,6 @@ from magicgui.widgets import (
     SpinBox,
     Table,
 )
-from qtpy.QtWidgets import QTabWidget
 
 from napari import layers
 from napari_ndev import helpers
@@ -30,7 +30,7 @@ if TYPE_CHECKING:
     import napari
 
 
-class ApocContainer(Container):
+class ApocContainer(ScrollableContainer):
     """
     Container class for managing the ApocContainer widget in napari.
 
@@ -153,10 +153,11 @@ class ApocContainer(Container):
         viewer: napari.viewer.Viewer = None,
         # viewer = napari_viewer
     ):
-        super().__init__()
+        super().__init__(labels=False)
+        self.min_width = 600 # TODO: remove this hardcoded value
         self._viewer = viewer if viewer is not None else None
         self._lazy_imports()
-        self._initialize_widgets()
+        self._initialize_cl_container()
         self._initialize_batch_container()
         self._initialize_viewer_container()
         self._initialize_custom_apoc_container()
@@ -174,10 +175,10 @@ class ApocContainer(Container):
             return []
         return [x for x in self._viewer.layers if isinstance(x, layer_type)]
 
-    def _initialize_widgets(self):
+    def _initialize_cl_container(self):
         self._classifier_file = FileEdit(
             label='Classifier File (.cl)',
-            mode='r',
+            mode='w',
             tooltip='Create a .txt file and rename it to .cl ending.',
         )
 
@@ -238,6 +239,19 @@ class ApocContainer(Container):
                 'A string in the form of ' "'filter1=radius1 filter2=radius2'."
             ),
         )
+        self._cl_container = Container()
+        self._cl_container.extend(
+            [
+                self._classifier_file,
+                self._continue_training,
+                self._classifier_type,
+                self._max_depth,
+                self._num_trees,
+                self._positive_class_id,
+                self._predefined_features,
+                self._feature_string,
+            ]
+        )
 
     def _initialize_batch_container(self):
         self._image_directory = FileEdit(label='Image Directory', mode='d')
@@ -274,7 +288,7 @@ class ApocContainer(Container):
 
         self._progress_bar = ProgressBar(label='Progress:')
 
-        self._batch_container = Container(layout='vertical')
+        self._batch_container = Container(layout='vertical', label='Batch')
         self._batch_container.extend(
             [
                 self._image_directory,
@@ -301,9 +315,9 @@ class ApocContainer(Container):
         self._predict_image_layer = PushButton(
             label='Predict using classifier on selected layers'
         )
-        self._single_result_label = Label()
+        self._single_result_label = LineEdit()
 
-        self._viewer_container = Container(layout='vertical')
+        self._viewer_container = Container(layout='vertical', label='Viewer')
         self._viewer_container.extend(
             [
                 self._image_layers,
@@ -318,27 +332,25 @@ class ApocContainer(Container):
         from napari_ndev import ApocFeatureStack
 
         self._custom_apoc_container = ApocFeatureStack(viewer=self._viewer)
+        self._custom_apoc_container.label = 'Custom Feature Set'
 
     def _setup_widget_layout(self):
-        # from napari_ndev import ApocFeatureStack
-        self.extend(
+        self.append(self._cl_container)
+
+        self._tabs = TabbedContainer(label=None, labels=None)
+        self._tabs.extend(
             [
-                self._classifier_file,
-                self._continue_training,
-                self._classifier_type,
-                self._positive_class_id,
-                self._max_depth,
-                self._num_trees,
-                self._predefined_features,
-                self._feature_string,
+                self._batch_container,
+                self._viewer_container,
+                self._custom_apoc_container,
             ]
         )
+        # self.append(self._tabs) # does not connect gui to native, but is scrollable
+        self._scroll = ScrollableContainer()
+        self._scroll.append(self._tabs)
+        # the only way for _label_layer and _image_layers to stay connected is to attach it to native, not sure why
+        self.native.layout().addWidget(self._scroll.native) # connects and is scrollable, internally, but not in the main window
 
-        tabs = QTabWidget()
-        tabs.addTab(self._batch_container.native, 'Batch')
-        tabs.addTab(self._viewer_container.native, 'Viewer')
-        tabs.addTab(self._custom_apoc_container.native, 'Custom Feature Set')
-        self.native.layout().addWidget(tabs)
 
     def _connect_events(self):
         self._image_directory.changed.connect(self._update_metadata_from_file)
@@ -369,10 +381,10 @@ class ApocContainer(Container):
         self._image_layers.choices = self._filter_layers(layers.Image)
 
     def _update_metadata_from_file(self):
-        from bioio import BioImage
+        from napari_ndev import nImage
 
         _, files = helpers.get_directory_and_files(self._image_directory.value)
-        img = BioImage(files[0])
+        img = nImage(files[0])
         self._image_channels.choices = helpers.get_channel_names(img)
 
     def _update_channel_order(self):
@@ -405,8 +417,11 @@ class ApocContainer(Container):
         )
 
     def _update_classifier_metadata(self):
-        with open(self._classifier_file.value) as file:
-            content = file.read()
+        file_path = self._classifier_file.value
+
+        # create file, if it doesn't exist
+        file_path.touch(exist_ok=True)
+        content = file_path.read_text()
 
         # Ignore rest of function if file contents are empty
         if not content.strip():
@@ -436,7 +451,7 @@ class ApocContainer(Container):
                 value.split('=') if '=' in value else (value, 0)
             )
             trans_table['filter_name'].append(filter_name)
-            trans_table['radius'].append(int(radius))
+            trans_table['radius'].append(float(radius))
 
         for i in range(len(next(iter(table.values())))):
             trans_table[str(i)] = [round(table[key][i], 2) for key in table]
@@ -489,8 +504,9 @@ class ApocContainer(Container):
         return channel_img
 
     def batch_train(self):
-        from bioio import BioImage
         from pyclesperanto_prototype import set_wait_for_kernel_finish
+
+        from napari_ndev import nImage
 
         image_directory, image_files = helpers.get_directory_and_files(
             self._image_directory.value
@@ -521,7 +537,7 @@ class ApocContainer(Container):
         # https://github.com/clEsperanto/pyclesperanto_prototype/issues/163
         set_wait_for_kernel_finish(True)
 
-        self._progress_bar.label = f'Training on %s {len(image_files)} Images'
+        self._progress_bar.label = f'Training on {len(image_files)} Images'
         self._progress_bar.value = 0
         self._progress_bar.max = len(image_files)
 
@@ -550,10 +566,10 @@ class ApocContainer(Container):
 
             logger.info('Training Image %d: %s', idx + 1, image_file.name)
 
-            img = BioImage(image_directory / image_file.name)
+            img = nImage(image_directory / image_file.name)
             channel_img = self._get_channel_image(img, channel_index_list)
 
-            lbl = BioImage(label_directory / image_file.name)
+            lbl = nImage(label_directory / image_file.name)
             label = lbl.get_image_data('TCZYX', C=0)
 
             # <- this is where setting up dask processing would be useful
@@ -586,9 +602,10 @@ class ApocContainer(Container):
         return None
 
     def batch_predict(self):
-        from bioio import BioImage
         from bioio.writers import OmeTiffWriter
         from pyclesperanto_prototype import set_wait_for_kernel_finish
+
+        from napari_ndev import nImage
 
         image_directory, image_files = helpers.get_directory_and_files(
             dir_path=self._image_directory.value,
@@ -629,7 +646,7 @@ class ApocContainer(Container):
         for idx, file in enumerate(image_files):
             logger.info('Predicting Image %d: %s', idx + 1, file.name)
 
-            img = BioImage(file)
+            img = nImage(file)
             channel_img = self._get_channel_image(img, channel_index_list)
             squeezed_dim_order = helpers.get_squeezed_dim_order(img)
 
