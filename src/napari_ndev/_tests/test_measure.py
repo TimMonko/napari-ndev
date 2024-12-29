@@ -442,7 +442,7 @@ def test_group_and_agg_measurements_sample_data(sample_data):
 def test_group_and_agg_measurements_string_agg_func(sample_data):
     result_df = group_and_agg_measurements(
         sample_data,
-        grouping_cols=['id'],
+        grouping_cols='id',
         agg_cols=['area'],
         agg_funcs='mean',
     )
