@@ -159,7 +159,7 @@ def group_and_agg_measurements(
     df: pd.DataFrame,
     grouping_cols: str | list[str] = 'id',
     count_col: str = 'label',
-    agg_cols: list[str] | None = None,
+    agg_cols: str | list[str] | None = None,
     agg_funcs: str | list[str] = 'mean',
 ) -> pd.DataFrame:
     """
@@ -184,6 +184,10 @@ def group_and_agg_measurements(
         The DataFrame with grouped and aggregated measurements.
 
     """
+    grouping_cols = _convert_to_list(grouping_cols)
+    agg_cols = _convert_to_list(agg_cols)
+    agg_funcs = _convert_to_list(agg_funcs)
+
     # get count data
     df_count = (
             df.copy().groupby(grouping_cols)
