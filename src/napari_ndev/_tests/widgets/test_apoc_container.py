@@ -165,11 +165,12 @@ def test_image_predict(make_napari_viewer, test_data, trained_classifier_file):
     wdg._classifier_file.value = trained_classifier_file
 
     result = wdg.image_predict()
+    expected_layer_name = "empty_classifier :: ['test_image']"
 
     assert wdg._single_result_label.value == "Predicted ['test_image']"
-    assert wdg._viewer.layers['empty_classifier :: test_image'].visible
+    assert wdg._viewer.layers[expected_layer_name].visible
     assert cle.pull(result).any() > 0
-    assert cle.pull(wdg._viewer.layers['result'].data).any() > 0
+    assert cle.pull(wdg._viewer.layers[expected_layer_name].data).any() > 0
 
 
 @pytest.mark.notox
