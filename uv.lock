@@ -3113,7 +3113,7 @@ wheels = [
 
 [[package]]
 name = "napari-ndev"
-version = "0.9.7.dev11+ge112221.d20241209"
+version = "0.9.10.dev12+g932a17e.d20241220"
 source = { editable = "." }
 dependencies = [
     { name = "apoc" },
@@ -3253,7 +3253,7 @@ requires-dist = [
     { name = "napari-simpleitk-image-processing", marker = "extra == 'extras'" },
     { name = "napari-workflows" },
     { name = "natsort" },
-    { name = "ngff-zarr", specifier = "<0.10.0" },
+    { name = "ngff-zarr", specifier = ">0.10.0" },
     { name = "numpy", specifier = ">=1.26,<2.0" },
     { name = "pre-commit", marker = "extra == 'dev'" },
     { name = "pyclesperanto" },
@@ -3553,10 +3553,11 @@ wheels = [
 
 [[package]]
 name = "ngff-zarr"
-version = "0.9.1"
+version = "0.10.2"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "dask", extra = ["array"] },
+    { name = "importlib-resources" },
     { name = "itkwasm" },
     { name = "itkwasm-downsample" },
     { name = "numpy" },
@@ -3567,9 +3568,9 @@ dependencies = [
     { name = "typing-extensions" },
     { name = "zarr" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/db/35/0e430d4587efb20fece26aff4452f251259d8eee1e1b85cbe03a9e4bed8a/ngff_zarr-0.9.1.tar.gz", hash = "sha256:a5fb17dd6e33b00cdc228758d24a84efd73253ab8a05c364bfb761c535414f12", size = 111379 }
+sdist = { url = "https://files.pythonhosted.org/packages/14/41/1e00aa1f4ec6f0c58aca632f21e8c9cfb059a695458ec3e167bb2da1ac26/ngff_zarr-0.10.2.tar.gz", hash = "sha256:82320967f552af8bb1c7f94e5a9184744ca330304b8b9e0477e24372c71ccc34", size = 1329626 }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/2f/a2/8e028f52bd9afe0afae366514b6a702206429e4d631ca4f88fd90792330c/ngff_zarr-0.9.1-py3-none-any.whl", hash = "sha256:a48d691bd0f8e0e558ac6680000b8b409fa4b2c2ee379f36778359b75fba19b9", size = 39022 },
+    { url = "https://files.pythonhosted.org/packages/5f/da/ce468a1d2185216ea7c89d2cbfa16540be15719a4693621582f23761930b/ngff_zarr-0.10.2-py3-none-any.whl", hash = "sha256:d50ef04ff1639d0f713e9cd90bf04cd5c10130d1439d8154bb5c811a06151118", size = 68434 },
 ]
 
 [[package]]

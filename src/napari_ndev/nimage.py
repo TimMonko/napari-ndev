@@ -48,7 +48,28 @@ class nImage(BioImage):
         image: ImageLike,
         reader: Reader | None = None
     ) -> None:
-        """Initialize an nImage with an image, and optionally a reader."""
+        """
+        Initialize an nImage with an image, and optionally a reader.
+
+        If a reader is not provided, a reader will be determined by bioio.
+        However, if the image is supported by bioio-ome-tiff, the reader
+        will be set to bioio_ome_tiff.Reader to override the softer decision
+        made by bioio.BioImage.determine_plugin().
+
+        Note: The issue here is that bioio.BioImage.determine_plugin() will
+        sort by install time and choose the first plugin that supports the
+        image. This is not always the desired behavior, because bioio-tifffile
+        can take precedence over bioio-ome-tiff, even if the image was saved
+        as an OME-TIFF via bioio.writers.OmeTiffWriter (which is the case
+        for napari-ndev).
+        """
+        if reader is None:
+            from bioio import plugin_feasibility_report as pfr
+            fr = pfr(image)
+            if 'bioio-ome-tiff' in fr and fr['bioio-ome-tiff'].supported:
+                import bioio_ome_tiff
+                reader = bioio_ome_tiff.Reader
+
         super().__init__(image, reader)
         self.napari_data = None
         self.napari_metadata = {}
@@ -164,7 +185,7 @@ class nImage(BioImage):
 
         meta = {}
         scene = self.current_scene
-        scene_index = self.current_scene_index
+        scene_idx = self.current_scene_index
         single_no_scene = len(self.scenes) == 1 and self.current_scene == "Image:0"
         channel_dim = DimensionNames.Channel
 
@@ -172,13 +193,12 @@ class nImage(BioImage):
             # use filename if single scene and no scene name available
             if single_no_scene:
                 channels_with_scene_index = [
-                    f'{Path(path).stem}{LABEL_DELIMITER}{C}'
+                    f'{C}{LABEL_DELIMITER}{Path(path).stem}'
                     for C in self.napari_data.coords[channel_dim].data.tolist()
                 ]
             else:
                 channels_with_scene_index = [
-                    f'{scene_index}{LABEL_DELIMITER}'
-                    f'{scene}{LABEL_DELIMITER}{C}'
+                    f'{C}{LABEL_DELIMITER}{scene_idx}{LABEL_DELIMITER}{scene}'
                     for C in self.napari_data.coords[channel_dim].data.tolist()
                 ]
             meta['name'] = channels_with_scene_index
