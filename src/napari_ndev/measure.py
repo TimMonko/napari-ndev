@@ -184,6 +184,10 @@ def group_and_agg_measurements(
         The DataFrame with grouped and aggregated measurements.
 
     """
+    if isinstance(agg_funcs, str):
+        agg_funcs = [agg_funcs]
+    if isinstance(grouping_cols, str):
+        grouping_cols = [grouping_cols]
     # get count data
     df_count = (
             df.copy().groupby(grouping_cols)
