@@ -216,8 +216,8 @@ def test_update_metadata_from_file():
         )
 
         # Mock the BioImage class to return sample channel names
-        with patch('bioio.BioImage') as BioImage:
-            BioImage.return_value.channel_names = ['C0', 'C1', 'C2']
+        with patch('napari_ndev.nImage') as nImage:
+            nImage.return_value.channel_names = ['C0', 'C1', 'C2']
 
             # Call the _update_metadata_from_file method
             wdg._update_metadata_from_file()

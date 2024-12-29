@@ -7,7 +7,7 @@ If you are unfamiliar with python or the command line, instead use the bundled a
 uv is the newest and fastest way to manage python libraries. It is very easy to install, and simplifies environment manage, but requires minimal input to the command line.  [Install uv from here](https://docs.astral.sh/uv/getting-started/installation/#__tabbed_1_1).  Then, the simplest way to install `napari-ndev`:
 
 ```bash
-uv install tool napari-ndev
+uv tool install napari-ndev
 napari-ndev
 ```
 
@@ -15,7 +15,7 @@ With this method, plugins installed via the plugin menu persist between each cal
 Alternatively, download the full opinionated package, which includes non-BSD3 licensed libraries with:
 
 ```bash
-uv install tool napari-ndev[all]
+uv tool install napari-ndev[all]
 ```
 
 To update a tool with uv:
@@ -60,10 +60,10 @@ For development use the `[dev]` optional libraries. You may also like to install
 
 ### Development with uv
 
-uv can be a useful tool for building as similar an environment as possible across systems. To do so, navigate in your terminal to the `napari-ndev` source directory. Then:
+uv can be a useful tool for building as similar an environment as possible across systems. To do so, navigate in your terminal to the `napari-ndev` source directory. `--python` sets the minimum python version. `--no-workspace` prevents discovering parent workspaces. Then:
 
 ```bash
-uv init
+uv init --python 3.11 --no-workspace
 uv sync
 ```
 
