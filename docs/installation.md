@@ -56,7 +56,7 @@ In addition, you may need to install specific [`bioio` readers](https://github.c
 
 ## Development Libraries
 
-For development use the `[dev]` optional libraries. You may also like to install `[docs]` and `[testing]` to verify your changes. However, `tox` will test any pull requests. You can also install `[dev-all]` to get all three of these dev dependencies.
+For development use the `[dev]` optional libraries to verify your changes, which includes the `[docs]` and `[testing]` optional groups. However, the Github-CI will test pull requests with `[testing]` only.
 
 ### Development with uv
 
@@ -73,10 +73,10 @@ You may use uv to set a certain python version, e.g.:
 uv pin python 3.11
 ```
 
-To use uv to install extras (like with `napari-ndev[dev-all]`), use:
+To use uv to install extras (like with `napari-ndev[dev]`), use:
 
 ```bash
-uv sync --extra dev-all
+uv sync --extra dev
 ```
 
 You may also test the tool version of uv during development with:
