@@ -11,16 +11,16 @@ The available containers include:
 
 from napari_ndev.widgets._apoc_container import ApocContainer
 from napari_ndev.widgets._apoc_feature_stack import ApocFeatureStack
-from napari_ndev.widgets._main_container import MainContainer
 from napari_ndev.widgets._measure_container import MeasureContainer
+from napari_ndev.widgets._ndev_container import nDevContainer
 from napari_ndev.widgets._utilities_container import UtilitiesContainer
 from napari_ndev.widgets._workflow_container import WorkflowContainer
 
 __all__ = [
     'ApocContainer',
     'ApocFeatureStack',
-    'MainContainer',
     'MeasureContainer',
     'UtilitiesContainer',
     'WorkflowContainer',
+    'nDevContainer',
 ]

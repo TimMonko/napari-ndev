@@ -15,7 +15,7 @@ from magicgui.widgets import (
 if TYPE_CHECKING:
     import napari
 
-class MainContainer(ScrollableContainer):
+class nDevContainer(ScrollableContainer):
     """
     A widget container to container the primary ndev widgets.
 
@@ -123,5 +123,5 @@ class MainContainer(ScrollableContainer):
 if __name__ == "__main__":
     import napari
     viewer = napari.Viewer()
-    viewer.window.add_dock_widget(MainContainer(viewer=viewer))
+    viewer.window.add_dock_widget(nDevContainer(viewer=viewer))
     napari.run()
