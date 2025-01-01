@@ -12,8 +12,6 @@ from magicgui.widgets import (
     PushButton,
 )
 
-from napari_ndev import __version__
-
 if TYPE_CHECKING:
     import napari
 
@@ -43,17 +41,12 @@ class MainContainer(ScrollableContainer):
         self.min_width = 700 # TODO: remove this hardcoded value
         self._viewer = viewer if viewer is not None else None
 
-        # TODO: get image to display. Works outside of napari
-        # self._logo = Image(value=r'docs\resources\images\ndev-logo.png')
-        # self._logo.scale_widget_to_image_size()
-        # _logo_path = r'docs\resources\images\ndev-logo.png'
-        _logo_path = r'docs\resources\images\neuralDev-logo.svg'
+        _logo_path = r'resources\nDev-logo-small.png'
         self._logo_label = Label(
             value='<h1 style="text-align: center;">'
-            f'<img src="{_logo_path}" style="width: 20%; max-width: 50px;">'
+            f'<img src="{_logo_path}"/>'
             '</h1>'
         )
-        self._version_label = Label(value=f'v{__version__}')
 
 
         self._docs_link_button = PushButton(
@@ -66,6 +59,10 @@ class MainContainer(ScrollableContainer):
         )
         self._link_container = Container(
             widgets=[self._docs_link_button, self._bug_report_link_button],
+            layout='vertical',
+        )
+        self._header_container = Container(
+            widgets=[self._logo_label, self._link_container],
             layout='horizontal',
         )
 
@@ -104,9 +101,7 @@ class MainContainer(ScrollableContainer):
 
     def _init_layout(self):
         """Initialize the layout."""
-        self.append(self._logo_label)
-        self.append(self._version_label)
-        self.append(self._link_container)
+        self.append(self._header_container)
         self.append(self._tabbed_container)
         # self.stretch(self._tabbed_container)
 
