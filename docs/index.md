@@ -8,7 +8,7 @@
 [![codecov](https://codecov.io/gh/TimMonko/napari-ndev/branch/main/graph/badge.svg)](https://codecov.io/gh/TimMonko/napari-ndev)
 [![napari hub](https://img.shields.io/endpoint?url=https://api.napari-hub.org/shields/napari-ndev)](https://napari-hub.org/plugins/napari-ndev)
 
-<img src="resources/images/neuralDev-logo.svg" alt="neuralDev logo" width="300">
+<img src="../resources/nDev-logo-large.png" alt="nDev logo" width="400" style="display: block; margin: auto;">
 
 A collection of widgets intended to serve any person seeking to process microscopy images from start to finish, *with no coding necessary*. `napari-ndev` was designed to address the **gap between the napari viewer and batch python scripting**.
 
