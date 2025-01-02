@@ -86,10 +86,6 @@ testing = [
     "bioio-czi >= 1.0.1",
     "napari-ndev[extras]",
 ]
-dev = [
-    "ruff",
-    "pre-commit",
-]
 docs = [
     "mkdocs",
     "mkdocs-autorefs",
@@ -103,6 +99,12 @@ docs = [
     "mkdocs-table-reader-plugin",
     "black"
 ]
+dev = [
+    "ruff",
+    "pre-commit",
+    "napari-ndev[testing]",
+    "napari-ndev[docs]",
+]
 extras = [
     "napari-simpleitk-image-processing"
 ]
@@ -113,11 +115,6 @@ gpl_extras = [
 all = [
     "napari-ndev[extras]",
     "napari-ndev[gpl_extras]",
-]
-dev-all = [
-    "napari-ndev[dev]",
-    "napari-ndev[docs]",
-    "napari-ndev[testing]",
 ]
 
 [tool.setuptools.packages.find]
