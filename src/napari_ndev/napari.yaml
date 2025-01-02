@@ -26,7 +26,7 @@ contributions:
       title: Make Measure Container
 
   widgets:
-    - command: napari-ndev.make_nDev_container
+    - command: napari-ndev.make_ndev_container
       display_name: nDev App
     - command: napari-ndev.make_utilities_container
       display_name: Image Utilities
