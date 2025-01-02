@@ -6,6 +6,3 @@ import subprocess
 def main():
     """Run napari with the napari_ndev plugin."""
     subprocess.run(["napari", "-w", "napari-ndev"])
-
-if __name__ == "__main__":
-    main()

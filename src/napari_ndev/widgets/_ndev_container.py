@@ -119,9 +119,3 @@ class nDevContainer(ScrollableContainer):
         """Open the bug report link."""
         import webbrowser
         webbrowser.open('https://github.com/TimMonko/napari-ndev/issues')
-
-if __name__ == "__main__":
-    import napari
-    viewer = napari.Viewer()
-    viewer.window.add_dock_widget(nDevContainer(viewer=viewer))
-    napari.run()
