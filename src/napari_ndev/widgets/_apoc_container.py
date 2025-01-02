@@ -736,7 +736,11 @@ class ApocContainer(ScrollableContainer):
         if len(scale) > result_dims:
             scale = scale[-result_dims:]
 
-        self._viewer.add_labels(result, scale=scale)
+        self._viewer.add_labels(
+            result,
+            scale=scale,
+            name=f'{self._classifier_file.value.stem} :: {image_names}'
+        )
 
         self._single_result_label.value = f'Predicted {image_names}'
 
