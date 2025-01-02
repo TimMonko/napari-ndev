@@ -13,6 +13,7 @@ from napari_ndev.widgets import (
     MeasureContainer,
     UtilitiesContainer,
     WorkflowContainer,
+    nDevContainer,
 )
 
 __all__ = [
@@ -28,5 +29,6 @@ __all__ = [
     'image_overview',
     'measure',
     'morphology',
+    'nDevContainer',
     'nImage',
 ]
