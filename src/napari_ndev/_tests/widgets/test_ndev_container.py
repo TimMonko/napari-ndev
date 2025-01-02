@@ -1,4 +1,5 @@
 from pathlib import Path
+from unittest.mock import patch
 
 import pytest
 
@@ -14,6 +15,14 @@ def test_ndev_container_init_no_viewer():
     assert ndev._measure_container is not None
     assert ndev._utilities_container is not None
     assert ndev._workflow_container is not None
+
+    with patch('webbrowser.open') as mock_open:
+        ndev._open_docs_link()
+        mock_open.assert_called_once_with('https://timmonko.github.io/napari-ndev')
+
+    with patch('webbrowser.open') as mock_open:
+        ndev._open_bug_report_link()
+        mock_open.assert_called_once_with('https://github.com/TimMonko/napari-ndev/issues')
 
 @pytest.fixture
 def test_cells3d2ch_image(resources_dir: Path):
