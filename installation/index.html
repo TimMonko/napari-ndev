@@ -1284,24 +1284,27 @@
 <div><h1 id="installation">Installation<a class="headerlink" href="#installation" title="Permanent link">#</a></h1>
 <p>If you are unfamiliar with python or the command line, instead use the bundled app installer as demonstrated in <a href="../beginner_setup/">Beginner Setup</a>.</p>
 <h2 id="install-with-uv">Install with uv<a class="headerlink" href="#install-with-uv" title="Permanent link">#</a></h2>
-<p>uv is the newest and fastest way to manage python libraries. It is very easy to install, and simplifies environment manage, but requires minimal input to the command line.  <a href="https://docs.astral.sh/uv/getting-started/installation/#__tabbed_1_1">Install uv from here</a>.  Then, the simplest way to install <code>napari-ndev</code>:</p>
+<p>uv is the newest and fastest way to manage python libraries. It is very easy to install, and simplifies environment manage, but requires some minimal input to the command line.  <a href="https://docs.astral.sh/uv/getting-started/installation/#__tabbed_1_1">Install uv from here</a>. Then, the simplest way to install <code>napari-ndev</code>:</p>
 <div class="highlight"><pre><span></span><code>uv<span class="w"> </span>tool<span class="w"> </span>install<span class="w"> </span>napari-ndev
-napari-ndev
 </code></pre></div>
-<p>With this method, plugins installed via the plugin menu persist between each call to <code>napari-ndev</code>
-Alternatively, download the full opinionated package, which includes non-BSD3 licensed libraries with:</p>
+<p>Alternatively, download the full opinionated package, which includes non-BSD3 licensed libraries with:</p>
 <div class="highlight"><pre><span></span><code>uv<span class="w"> </span>tool<span class="w"> </span>install<span class="w"> </span>napari-ndev<span class="o">[</span>all<span class="o">]</span>
 </code></pre></div>
+<p>Then, you can easily open napari with the command line every time by just typing:</p>
+<div class="highlight"><pre><span></span><code>napari-ndev
+</code></pre></div>
+<p>The tool version of <code>napari-ndev</code> effectively runs as an alias for <code>napari -w napari-ndev</code> and opens the <code>nDev App</code> upon launch. With this method, additional plugins installed via the plugin menu persist between each call to <code>napari-ndev</code></p>
 <p>To update a tool with uv:</p>
 <div class="highlight"><pre><span></span><code>uv<span class="w"> </span>tool<span class="w"> </span>upgrade<span class="w"> </span>napari-ndev
 </code></pre></div>
 <h2 id="install-with-pip">Install with pip<a class="headerlink" href="#install-with-pip" title="Permanent link">#</a></h2>
-<p><strong>napari-ndev</strong> is a pure Python package, and can be installed with [pip]:</p>
+<p><strong>napari-ndev</strong> is a pure Python package, and can be installed with [pip] (and it is recommended to do so in a <a href="https://biapol.github.io/blog/mara_lampert/getting_started_with_mambaforge_and_python/readme.html">managed environment</a>):</p>
 <div class="highlight"><pre><span></span><code>pip<span class="w"> </span>install<span class="w"> </span>napari-ndev
 </code></pre></div>
 <p>The easiest way to get started with <strong>napari-ndev</strong> is to install all the optional dependencies (see note below) with:</p>
 <div class="highlight"><pre><span></span><code>pip<span class="w"> </span>install<span class="w"> </span>napari-ndev<span class="o">[</span>all<span class="o">]</span>
 </code></pre></div>
+<p>Afterwards, you can call from the command line (in the same environment) <code>napari-ndev</code> to open napari with the <code>nDev App</code> open on launch.</p>
 <h3 id="optional-libraries">Optional Libraries<a class="headerlink" href="#optional-libraries" title="Permanent link">#</a></h3>
 <p><strong>napari-ndev</strong> is most useful when interacting with some other napari plugins (e.g. napari-assistant) and can read additional filetypes. A few extra BSD3 compatible napari-plugins may be installed with [pip]:</p>
 <div class="highlight"><pre><span></span><code>pip<span class="w"> </span>install<span class="w"> </span>napari-ndev<span class="o">[</span>extras<span class="o">]</span>
@@ -1311,7 +1314,7 @@ Alternatively, download the full opinionated package, which includes non-BSD3 li
 </code></pre></div>
 <p>In addition, you may need to install specific <a href="https://github.com/bioio-devs/bioio"><code>bioio</code> readers</a> to support your specific image, such as <code>bioio-czi</code> and <code>bioio-lif</code> (included in <code>[gpl-extras]</code>) or <code>bioio-bioformats</code> (which needs conda installed).</p>
 <h2 id="development-libraries">Development Libraries<a class="headerlink" href="#development-libraries" title="Permanent link">#</a></h2>
-<p>For development use the <code>[dev]</code> optional libraries. You may also like to install <code>[docs]</code> and <code>[testing]</code> to verify your changes. However, <code>tox</code> will test any pull requests. You can also install <code>[dev-all]</code> to get all three of these dev dependencies.</p>
+<p>For development use the <code>[dev]</code> optional libraries to verify your changes, which includes the <code>[docs]</code> and <code>[testing]</code> optional groups. However, the Github-CI will test pull requests with <code>[testing]</code> only.</p>
 <h3 id="development-with-uv">Development with uv<a class="headerlink" href="#development-with-uv" title="Permanent link">#</a></h3>
 <p>uv can be a useful tool for building as similar an environment as possible across systems. To do so, navigate in your terminal to the <code>napari-ndev</code> source directory. <code>--python</code> sets the minimum python version. <code>--no-workspace</code> prevents discovering parent workspaces. Then:</p>
 <div class="highlight"><pre><span></span><code>uv<span class="w"> </span>init<span class="w"> </span>--python<span class="w"> </span><span class="m">3</span>.11<span class="w"> </span>--no-workspace
@@ -1320,13 +1323,13 @@ uv<span class="w"> </span>sync
 <p>You may use uv to set a certain python version, e.g.:</p>
 <div class="highlight"><pre><span></span><code>uv<span class="w"> </span>pin<span class="w"> </span>python<span class="w"> </span><span class="m">3</span>.11
 </code></pre></div>
-<p>To use uv to install extras (like with <code>napari-ndev[dev-all]</code>), use:</p>
-<div class="highlight"><pre><span></span><code>uv<span class="w"> </span>sync<span class="w"> </span>--extra<span class="w"> </span>dev-all
+<p>To use uv to install extras (like with <code>napari-ndev[dev]</code>), use:</p>
+<div class="highlight"><pre><span></span><code>uv<span class="w"> </span>sync<span class="w"> </span>--extra<span class="w"> </span>dev
 </code></pre></div>
 <p>You may also test the tool version of uv during development with:</p>
 <div class="highlight"><pre><span></span><code>uv<span class="w"> </span>install<span class="w"> </span>tool<span class="w"> </span>.
 </code></pre></div>
-<p>You may also test with tox in parallel (<a href="https://github.com/tox-dev/tox-uv">via tox-uv</a>) with:</p>
+<p>You can also test with tox in parallel (<a href="https://github.com/tox-dev/tox-uv">via tox-uv</a>) with:</p>
 <div class="highlight"><pre><span></span><code>tox<span class="w"> </span>-<span class="w"> </span>p<span class="w"> </span>auto
 </code></pre></div></div>
 

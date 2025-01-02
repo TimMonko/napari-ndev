@@ -2277,7 +2277,11 @@ type.</p>
 <span class="normal">746</span>
 <span class="normal">747</span>
 <span class="normal">748</span>
-<span class="normal">749</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span> <span class="nc">ApocContainer</span><span class="p">(</span><span class="n">ScrollableContainer</span><span class="p">):</span>
+<span class="normal">749</span>
+<span class="normal">750</span>
+<span class="normal">751</span>
+<span class="normal">752</span>
+<span class="normal">753</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span> <span class="nc">ApocContainer</span><span class="p">(</span><span class="n">ScrollableContainer</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    Container class for managing the ApocContainer widget in napari.</span>
 
@@ -2983,7 +2987,11 @@ type.</p>
         <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">scale</span><span class="p">)</span> <span class="o">&gt;</span> <span class="n">result_dims</span><span class="p">:</span>
             <span class="n">scale</span> <span class="o">=</span> <span class="n">scale</span><span class="p">[</span><span class="o">-</span><span class="n">result_dims</span><span class="p">:]</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">_viewer</span><span class="o">.</span><span class="n">add_labels</span><span class="p">(</span><span class="n">result</span><span class="p">,</span> <span class="n">scale</span><span class="o">=</span><span class="n">scale</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_viewer</span><span class="o">.</span><span class="n">add_labels</span><span class="p">(</span>
+            <span class="n">result</span><span class="p">,</span>
+            <span class="n">scale</span><span class="o">=</span><span class="n">scale</span><span class="p">,</span>
+            <span class="n">name</span><span class="o">=</span><span class="sa">f</span><span class="s1">'</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_classifier_file</span><span class="o">.</span><span class="n">value</span><span class="o">.</span><span class="n">stem</span><span class="si">}</span><span class="s1"> :: </span><span class="si">{</span><span class="n">image_names</span><span class="si">}</span><span class="s1">'</span>
+        <span class="p">)</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_single_result_label</span><span class="o">.</span><span class="n">value</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">'Predicted </span><span class="si">{</span><span class="n">image_names</span><span class="si">}</span><span class="s1">'</span>
 
