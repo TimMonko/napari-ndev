@@ -4,19 +4,25 @@ If you are unfamiliar with python or the command line, instead use the bundled a
 
 ## Install with uv
 
-uv is the newest and fastest way to manage python libraries. It is very easy to install, and simplifies environment manage, but requires minimal input to the command line.  [Install uv from here](https://docs.astral.sh/uv/getting-started/installation/#__tabbed_1_1).  Then, the simplest way to install `napari-ndev`:
+uv is the newest and fastest way to manage python libraries. It is very easy to install, and simplifies environment manage, but requires some minimal input to the command line.  [Install uv from here](https://docs.astral.sh/uv/getting-started/installation/#__tabbed_1_1). Then, the simplest way to install `napari-ndev`:
 
 ```bash
 uv tool install napari-ndev
-napari-ndev
 ```
 
-With this method, plugins installed via the plugin menu persist between each call to `napari-ndev`
 Alternatively, download the full opinionated package, which includes non-BSD3 licensed libraries with:
 
 ```bash
 uv tool install napari-ndev[all]
 ```
+
+Then, you can easily open napari with the command line every time by just typing:
+
+```bash
+napari-ndev
+```
+
+The tool version of `napari-ndev` effectively runs as an alias for `napari -w napari-ndev` and opens the `nDev App` upon launch. With this method, additional plugins installed via the plugin menu persist between each call to `napari-ndev`
 
 To update a tool with uv:
 
@@ -26,7 +32,7 @@ uv tool upgrade napari-ndev
 
 ## Install with pip
 
-**napari-ndev** is a pure Python package, and can be installed with [pip]:
+**napari-ndev** is a pure Python package, and can be installed with [pip] (and it is recommended to do so in a [managed environment](https://biapol.github.io/blog/mara_lampert/getting_started_with_mambaforge_and_python/readme.html)):
 
 ```bash
 pip install napari-ndev
@@ -37,6 +43,8 @@ The easiest way to get started with **napari-ndev** is to install all the option
 ```bash
 pip install napari-ndev[all]
 ```
+
+Afterwards, you can call from the command line (in the same environment) `napari-ndev` to open napari with the `nDev App` open on launch.
 
 ### Optional Libraries
 
@@ -85,7 +93,7 @@ You may also test the tool version of uv during development with:
 uv install tool .
 ```
 
-You may also test with tox in parallel ([via tox-uv](https://github.com/tox-dev/tox-uv)) with:
+You can also test with tox in parallel ([via tox-uv](https://github.com/tox-dev/tox-uv)) with:
 
 ```bash
 tox - p auto
