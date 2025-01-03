@@ -155,6 +155,7 @@ class ApocContainer(ScrollableContainer):
     ):
         super().__init__(labels=False)
         self.min_width = 600 # TODO: remove this hardcoded value
+        self.min_height = 950 # TODO: remove this hardcoded value
         self._viewer = viewer if viewer is not None else None
         self._lazy_imports()
         self._initialize_cl_container()
@@ -317,15 +318,16 @@ class ApocContainer(ScrollableContainer):
         )
         self._single_result_label = LineEdit()
 
-        self._viewer_container = Container(layout='vertical', label='Viewer')
-        self._viewer_container.extend(
-            [
+        self._viewer_container = Container(
+            widgets=[
                 self._image_layers,
                 self._label_layer,
                 self._train_image_button,
                 self._predict_image_layer,
                 self._single_result_label,
-            ]
+            ],
+            layout='vertical',
+            label='Viewer'
         )
 
     def _initialize_custom_apoc_container(self):
@@ -336,21 +338,25 @@ class ApocContainer(ScrollableContainer):
 
     def _setup_widget_layout(self):
         self.append(self._cl_container)
-
-        self._tabs = TabbedContainer(label=None, labels=None)
-        self._tabs.extend(
-            [
+        self._tabs = TabbedContainer(
+            widgets=[
                 self._batch_container,
                 self._viewer_container,
                 self._custom_apoc_container,
-            ]
+            ],
+            label=None,
+            labels=None,
         )
         # self.append(self._tabs) # does not connect gui to native, but is scrollable
-        self._scroll = ScrollableContainer()
-        self._scroll.append(self._tabs)
+        # self._scroll = ScrollableContainer(widgets=[self._tabs])
+        # from qtpy.QtCore import Qt
+        # self._scroll._widget._layout.setAlignment(Qt.AlignTop) # does not work
+        # self.append(self._scroll)
         # the only way for _label_layer and _image_layers to stay connected is to attach it to native, not sure why
-        self.native.layout().addWidget(self._scroll.native) # connects and is scrollable, internally, but not in the main window
+        self.native.layout().addWidget(self._tabs.native) # connects and is scrollable, internally, but not in the main window
+        # self.native.layout().addStretch()
 
+        # self._widget._layout.setAlignment(Qt.AlignTop) # does not work
 
     def _connect_events(self):
         self._image_directory.changed.connect(self._update_metadata_from_file)
