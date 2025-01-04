@@ -115,18 +115,20 @@ class WorkflowContainer(Container):
     def _roots_container(self):
         """Initialize the roots container."""
         self._roots_container = Container(layout='vertical')
+        # TODO: Qt AlignTop
+        self._roots_container.native.layout().addStretch() # this resets the additions to the top of the container (the name is confusing)
 
     def _tasks_container(self):
         """Initialize the tasks container."""
-        self._tasks_container = Container(layout='vertical')
-
         self._tasks_select = Select(
             choices=[],
             nullable=False,
             allow_multiple=True,
         )
-
-        self._tasks_container.append(self._tasks_select)
+        self._tasks_container = Container(
+            layout='vertical',
+            widgets=[self._tasks_select],
+        )
 
     def _init_layout(self):
         """Initialize the layout of the widgets."""
