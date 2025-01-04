@@ -7,7 +7,7 @@ from typing import TYPE_CHECKING
 
 import numpy as np
 import pandas as pd
-from magicclass.widgets import ScrollableContainer, TabbedContainer
+from magicclass.widgets import TabbedContainer
 from magicgui.widgets import (
     CheckBox,
     ComboBox,
@@ -30,7 +30,7 @@ if TYPE_CHECKING:
     import napari
 
 
-class ApocContainer(ScrollableContainer):
+class ApocContainer(Container):
     """
     Container class for managing the ApocContainer widget in napari.
 
@@ -151,10 +151,9 @@ class ApocContainer(ScrollableContainer):
     def __init__(
         self,
         viewer: napari.viewer.Viewer = None,
-        # viewer = napari_viewer
     ):
         super().__init__(labels=False)
-        self.min_width = 600 # TODO: remove this hardcoded value
+        self.min_width = 500 # TODO: remove this hardcoded value
         self._viewer = viewer if viewer is not None else None
         self._lazy_imports()
         self._initialize_cl_container()
@@ -239,9 +238,8 @@ class ApocContainer(ScrollableContainer):
                 'A string in the form of ' "'filter1=radius1 filter2=radius2'."
             ),
         )
-        self._cl_container = Container()
-        self._cl_container.extend(
-            [
+        self._cl_container = Container(
+            widgets=[
                 self._classifier_file,
                 self._continue_training,
                 self._classifier_type,
@@ -272,25 +270,26 @@ class ApocContainer(ScrollableContainer):
 
         self._batch_train_container = Container(
             layout='horizontal',
-            # label="Train Classifier on Image-Label Pairs",
-        )
-        self._batch_train_container.extend(
-            [self._label_directory, self._batch_train_button]
+            widgets=[
+                self._label_directory,
+                self._batch_train_button,
+            ]
         )
 
         self._batch_predict_container = Container(
             layout='horizontal',
-            # label="Predict Labels with Classifier on Images"
-        )
-        self._batch_predict_container.extend(
-            [self._output_directory, self._batch_predict_button]
+            widgets=[
+                self._output_directory,
+                self._batch_predict_button,
+            ]
         )
 
         self._progress_bar = ProgressBar(label='Progress:')
 
-        self._batch_container = Container(layout='vertical', label='Batch')
-        self._batch_container.extend(
-            [
+        self._batch_container = Container(
+            layout='vertical',
+            label='Batch',
+            widgets=[
                 self._image_directory,
                 self._image_channels,
                 self._channel_order_label,
@@ -317,15 +316,16 @@ class ApocContainer(ScrollableContainer):
         )
         self._single_result_label = LineEdit()
 
-        self._viewer_container = Container(layout='vertical', label='Viewer')
-        self._viewer_container.extend(
-            [
+        self._viewer_container = Container(
+            widgets=[
                 self._image_layers,
                 self._label_layer,
                 self._train_image_button,
                 self._predict_image_layer,
                 self._single_result_label,
-            ]
+            ],
+            layout='vertical',
+            label='Viewer'
         )
 
     def _initialize_custom_apoc_container(self):
@@ -336,21 +336,23 @@ class ApocContainer(ScrollableContainer):
 
     def _setup_widget_layout(self):
         self.append(self._cl_container)
-
-        self._tabs = TabbedContainer(label=None, labels=None)
-        self._tabs.extend(
-            [
+        self._tabs = TabbedContainer(
+            widgets=[
                 self._batch_container,
                 self._viewer_container,
                 self._custom_apoc_container,
-            ]
+            ],
+            label=None,
+            labels=None,
         )
         # self.append(self._tabs) # does not connect gui to native, but is scrollable
-        self._scroll = ScrollableContainer()
-        self._scroll.append(self._tabs)
+        # self._scroll = ScrollableContainer(widgets=[self._tabs])
+        # from qtpy.QtCore import Qt
+        # self._scroll._widget._layout.setAlignment(Qt.AlignTop) # does not work
+        # self.append(self._scroll)
         # the only way for _label_layer and _image_layers to stay connected is to attach it to native, not sure why
-        self.native.layout().addWidget(self._scroll.native) # connects and is scrollable, internally, but not in the main window
-
+        self.native.layout().addWidget(self._tabs.native) # connects and is scrollable, internally, but not in the main window
+        self.native.layout().addStretch() # resets the layout to squish to top
 
     def _connect_events(self):
         self._image_directory.changed.connect(self._update_metadata_from_file)
