@@ -7,7 +7,7 @@ from magicgui.widgets import (
     LineEdit,
     ProgressBar,
     PushButton,
-    TextEdit,
+    # TextEdit,
 )
 
 from napari import layers
@@ -91,7 +91,7 @@ class ApocFeatureStack(Container):
         self._generate_string_button = PushButton(
             label='Generate Feature String'
         )
-        self._feature_string = TextEdit(label='Custom Feature String')
+        self._feature_string = LineEdit(label='Custom Feature String')
 
         self._image_layer = ComboBox(
             choices=self._filter_layers(layers.Image), label='Image Layer'
