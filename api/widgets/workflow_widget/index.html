@@ -1691,7 +1691,9 @@ batch_button.clicked : Signal
 <span class="normal">294</span>
 <span class="normal">295</span>
 <span class="normal">296</span>
-<span class="normal">297</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span> <span class="nc">WorkflowContainer</span><span class="p">(</span><span class="n">Container</span><span class="p">):</span>
+<span class="normal">297</span>
+<span class="normal">298</span>
+<span class="normal">299</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span> <span class="nc">WorkflowContainer</span><span class="p">(</span><span class="n">Container</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    Container class for managing the workflow functionality in napari-ndev.</span>
 
@@ -1785,18 +1787,20 @@ batch_button.clicked : Signal
     <span class="k">def</span> <span class="nf">_roots_container</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">"""Initialize the roots container."""</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_roots_container</span> <span class="o">=</span> <span class="n">Container</span><span class="p">(</span><span class="n">layout</span><span class="o">=</span><span class="s1">'vertical'</span><span class="p">)</span>
+        <span class="c1"># TODO: Qt AlignTop</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_roots_container</span><span class="o">.</span><span class="n">native</span><span class="o">.</span><span class="n">layout</span><span class="p">()</span><span class="o">.</span><span class="n">addStretch</span><span class="p">()</span> <span class="c1"># this resets the additions to the top of the container (the name is confusing)</span>
 
     <span class="k">def</span> <span class="nf">_tasks_container</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">"""Initialize the tasks container."""</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_tasks_container</span> <span class="o">=</span> <span class="n">Container</span><span class="p">(</span><span class="n">layout</span><span class="o">=</span><span class="s1">'vertical'</span><span class="p">)</span>
-
         <span class="bp">self</span><span class="o">.</span><span class="n">_tasks_select</span> <span class="o">=</span> <span class="n">Select</span><span class="p">(</span>
             <span class="n">choices</span><span class="o">=</span><span class="p">[],</span>
             <span class="n">nullable</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
             <span class="n">allow_multiple</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
         <span class="p">)</span>
-
-        <span class="bp">self</span><span class="o">.</span><span class="n">_tasks_container</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_tasks_select</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_tasks_container</span> <span class="o">=</span> <span class="n">Container</span><span class="p">(</span>
+            <span class="n">layout</span><span class="o">=</span><span class="s1">'vertical'</span><span class="p">,</span>
+            <span class="n">widgets</span><span class="o">=</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_tasks_select</span><span class="p">],</span>
+        <span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">_init_layout</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">"""Initialize the layout of the widgets."""</span>
@@ -2076,9 +2080,7 @@ batch_button.clicked : Signal
 
             <details class="quote">
               <summary>Source code in <code>src/napari_ndev/widgets/_workflow_container.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">201</span>
-<span class="normal">202</span>
-<span class="normal">203</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">203</span>
 <span class="normal">204</span>
 <span class="normal">205</span>
 <span class="normal">206</span>
@@ -2172,7 +2174,9 @@ batch_button.clicked : Signal
 <span class="normal">294</span>
 <span class="normal">295</span>
 <span class="normal">296</span>
-<span class="normal">297</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">batch_workflow</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="normal">297</span>
+<span class="normal">298</span>
+<span class="normal">299</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">batch_workflow</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">"""Run the workflow on all images in the image directory."""</span>
     <span class="kn">import</span> <span class="nn">dask.array</span> <span class="k">as</span> <span class="nn">da</span>
     <span class="kn">from</span> <span class="nn">bioio.writers</span> <span class="kn">import</span> <span class="n">OmeTiffWriter</span>

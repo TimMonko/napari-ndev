@@ -1373,7 +1373,7 @@
         </li>
         <li class="doc-section-item field-body">
           <b><code><span title="napari_ndev.widgets._apoc_feature_stack.ApocFeatureStack._feature_string">_feature_string</span></code></b>
-              (<code><span title="magicgui.widgets.TextEdit">TextEdit</span></code>)
+              (<code>TextEdit</code>)
           –
           <div class="doc-md-description">
             <p>TextEdit to display the custom feature string.</p>
@@ -1703,7 +1703,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_generate_string_button</span> <span class="o">=</span> <span class="n">PushButton</span><span class="p">(</span>
             <span class="n">label</span><span class="o">=</span><span class="s1">'Generate Feature String'</span>
         <span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_feature_string</span> <span class="o">=</span> <span class="n">TextEdit</span><span class="p">(</span><span class="n">label</span><span class="o">=</span><span class="s1">'Custom Feature String'</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_feature_string</span> <span class="o">=</span> <span class="n">LineEdit</span><span class="p">(</span><span class="n">label</span><span class="o">=</span><span class="s1">'Custom Feature String'</span><span class="p">)</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_image_layer</span> <span class="o">=</span> <span class="n">ComboBox</span><span class="p">(</span>
             <span class="n">choices</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_filter_layers</span><span class="p">(</span><span class="n">layers</span><span class="o">.</span><span class="n">Image</span><span class="p">),</span> <span class="n">label</span><span class="o">=</span><span class="s1">'Image Layer'</span>

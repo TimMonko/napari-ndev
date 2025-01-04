@@ -1260,7 +1260,7 @@
 
     <div class="doc doc-contents ">
             <p class="doc doc-class-bases">
-              Bases: <code><span title="magicclass.widgets.ScrollableContainer">ScrollableContainer</span></code></p>
+              Bases: <code><span title="magicgui.widgets.Container">Container</span></code></p>
 
 
         <p>Container class for managing the ApocContainer widget in napari.</p>
@@ -2281,7 +2281,9 @@ type.</p>
 <span class="normal">750</span>
 <span class="normal">751</span>
 <span class="normal">752</span>
-<span class="normal">753</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span> <span class="nc">ApocContainer</span><span class="p">(</span><span class="n">ScrollableContainer</span><span class="p">):</span>
+<span class="normal">753</span>
+<span class="normal">754</span>
+<span class="normal">755</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span> <span class="nc">ApocContainer</span><span class="p">(</span><span class="n">Container</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    Container class for managing the ApocContainer widget in napari.</span>
 
@@ -2402,10 +2404,9 @@ type.</p>
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">viewer</span><span class="p">:</span> <span class="n">napari</span><span class="o">.</span><span class="n">viewer</span><span class="o">.</span><span class="n">Viewer</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-        <span class="c1"># viewer = napari_viewer</span>
     <span class="p">):</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">labels</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">min_width</span> <span class="o">=</span> <span class="mi">600</span> <span class="c1"># TODO: remove this hardcoded value</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">min_width</span> <span class="o">=</span> <span class="mi">500</span> <span class="c1"># TODO: remove this hardcoded value</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_viewer</span> <span class="o">=</span> <span class="n">viewer</span> <span class="k">if</span> <span class="n">viewer</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="kc">None</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_lazy_imports</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_initialize_cl_container</span><span class="p">()</span>
@@ -2490,9 +2491,8 @@ type.</p>
                 <span class="s1">'A string in the form of '</span> <span class="s2">"'filter1=radius1 filter2=radius2'."</span>
             <span class="p">),</span>
         <span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_cl_container</span> <span class="o">=</span> <span class="n">Container</span><span class="p">()</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_cl_container</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span>
-            <span class="p">[</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_cl_container</span> <span class="o">=</span> <span class="n">Container</span><span class="p">(</span>
+            <span class="n">widgets</span><span class="o">=</span><span class="p">[</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">_classifier_file</span><span class="p">,</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">_continue_training</span><span class="p">,</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">_classifier_type</span><span class="p">,</span>
@@ -2523,25 +2523,26 @@ type.</p>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_batch_train_container</span> <span class="o">=</span> <span class="n">Container</span><span class="p">(</span>
             <span class="n">layout</span><span class="o">=</span><span class="s1">'horizontal'</span><span class="p">,</span>
-            <span class="c1"># label="Train Classifier on Image-Label Pairs",</span>
-        <span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_batch_train_container</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span>
-            <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_label_directory</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_batch_train_button</span><span class="p">]</span>
+            <span class="n">widgets</span><span class="o">=</span><span class="p">[</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_label_directory</span><span class="p">,</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_batch_train_button</span><span class="p">,</span>
+            <span class="p">]</span>
         <span class="p">)</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_batch_predict_container</span> <span class="o">=</span> <span class="n">Container</span><span class="p">(</span>
             <span class="n">layout</span><span class="o">=</span><span class="s1">'horizontal'</span><span class="p">,</span>
-            <span class="c1"># label="Predict Labels with Classifier on Images"</span>
-        <span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_batch_predict_container</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span>
-            <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_output_directory</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_batch_predict_button</span><span class="p">]</span>
+            <span class="n">widgets</span><span class="o">=</span><span class="p">[</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_output_directory</span><span class="p">,</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_batch_predict_button</span><span class="p">,</span>
+            <span class="p">]</span>
         <span class="p">)</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_progress_bar</span> <span class="o">=</span> <span class="n">ProgressBar</span><span class="p">(</span><span class="n">label</span><span class="o">=</span><span class="s1">'Progress:'</span><span class="p">)</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">_batch_container</span> <span class="o">=</span> <span class="n">Container</span><span class="p">(</span><span class="n">layout</span><span class="o">=</span><span class="s1">'vertical'</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">'Batch'</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_batch_container</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span>
-            <span class="p">[</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_batch_container</span> <span class="o">=</span> <span class="n">Container</span><span class="p">(</span>
+            <span class="n">layout</span><span class="o">=</span><span class="s1">'vertical'</span><span class="p">,</span>
+            <span class="n">label</span><span class="o">=</span><span class="s1">'Batch'</span><span class="p">,</span>
+            <span class="n">widgets</span><span class="o">=</span><span class="p">[</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">_image_directory</span><span class="p">,</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">_image_channels</span><span class="p">,</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">_channel_order_label</span><span class="p">,</span>
@@ -2568,15 +2569,16 @@ type.</p>
         <span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_single_result_label</span> <span class="o">=</span> <span class="n">LineEdit</span><span class="p">()</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">_viewer_container</span> <span class="o">=</span> <span class="n">Container</span><span class="p">(</span><span class="n">layout</span><span class="o">=</span><span class="s1">'vertical'</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">'Viewer'</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_viewer_container</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span>
-            <span class="p">[</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_viewer_container</span> <span class="o">=</span> <span class="n">Container</span><span class="p">(</span>
+            <span class="n">widgets</span><span class="o">=</span><span class="p">[</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">_image_layers</span><span class="p">,</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">_label_layer</span><span class="p">,</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">_train_image_button</span><span class="p">,</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">_predict_image_layer</span><span class="p">,</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">_single_result_label</span><span class="p">,</span>
-            <span class="p">]</span>
+            <span class="p">],</span>
+            <span class="n">layout</span><span class="o">=</span><span class="s1">'vertical'</span><span class="p">,</span>
+            <span class="n">label</span><span class="o">=</span><span class="s1">'Viewer'</span>
         <span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">_initialize_custom_apoc_container</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
@@ -2587,21 +2589,23 @@ type.</p>
 
     <span class="k">def</span> <span class="nf">_setup_widget_layout</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_cl_container</span><span class="p">)</span>
-
-        <span class="bp">self</span><span class="o">.</span><span class="n">_tabs</span> <span class="o">=</span> <span class="n">TabbedContainer</span><span class="p">(</span><span class="n">label</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">labels</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_tabs</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span>
-            <span class="p">[</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_tabs</span> <span class="o">=</span> <span class="n">TabbedContainer</span><span class="p">(</span>
+            <span class="n">widgets</span><span class="o">=</span><span class="p">[</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">_batch_container</span><span class="p">,</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">_viewer_container</span><span class="p">,</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">_custom_apoc_container</span><span class="p">,</span>
-            <span class="p">]</span>
+            <span class="p">],</span>
+            <span class="n">label</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+            <span class="n">labels</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
         <span class="p">)</span>
         <span class="c1"># self.append(self._tabs) # does not connect gui to native, but is scrollable</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_scroll</span> <span class="o">=</span> <span class="n">ScrollableContainer</span><span class="p">()</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_scroll</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_tabs</span><span class="p">)</span>
+        <span class="c1"># self._scroll = ScrollableContainer(widgets=[self._tabs])</span>
+        <span class="c1"># from qtpy.QtCore import Qt</span>
+        <span class="c1"># self._scroll._widget._layout.setAlignment(Qt.AlignTop) # does not work</span>
+        <span class="c1"># self.append(self._scroll)</span>
         <span class="c1"># the only way for _label_layer and _image_layers to stay connected is to attach it to native, not sure why</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">native</span><span class="o">.</span><span class="n">layout</span><span class="p">()</span><span class="o">.</span><span class="n">addWidget</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_scroll</span><span class="o">.</span><span class="n">native</span><span class="p">)</span> <span class="c1"># connects and is scrollable, internally, but not in the main window</span>
-
+        <span class="bp">self</span><span class="o">.</span><span class="n">native</span><span class="o">.</span><span class="n">layout</span><span class="p">()</span><span class="o">.</span><span class="n">addWidget</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_tabs</span><span class="o">.</span><span class="n">native</span><span class="p">)</span> <span class="c1"># connects and is scrollable, internally, but not in the main window</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">native</span><span class="o">.</span><span class="n">layout</span><span class="p">()</span><span class="o">.</span><span class="n">addStretch</span><span class="p">()</span> <span class="c1"># resets the layout to squish to top</span>
 
     <span class="k">def</span> <span class="nf">_connect_events</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_image_directory</span><span class="o">.</span><span class="n">changed</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_update_metadata_from_file</span><span class="p">)</span>
