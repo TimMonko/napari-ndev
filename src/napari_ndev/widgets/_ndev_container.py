@@ -38,7 +38,7 @@ class nDevContainer(ScrollableContainer):
         """
         super().__init__(labels=False)
 
-        self.min_width = 650 # TODO: remove this hardcoded value
+        self.min_width = 600 # TODO: remove this hardcoded value
         self._viewer = viewer if viewer is not None else None
 
         _logo_path = r'src\napari_ndev\resources\nDev-logo-small.png'

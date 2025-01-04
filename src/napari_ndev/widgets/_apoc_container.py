@@ -7,7 +7,7 @@ from typing import TYPE_CHECKING
 
 import numpy as np
 import pandas as pd
-from magicclass.widgets import ScrollableContainer, TabbedContainer
+from magicclass.widgets import TabbedContainer
 from magicgui.widgets import (
     CheckBox,
     ComboBox,
@@ -30,7 +30,7 @@ if TYPE_CHECKING:
     import napari
 
 
-class ApocContainer(ScrollableContainer):
+class ApocContainer(Container):
     """
     Container class for managing the ApocContainer widget in napari.
 
@@ -151,11 +151,9 @@ class ApocContainer(ScrollableContainer):
     def __init__(
         self,
         viewer: napari.viewer.Viewer = None,
-        # viewer = napari_viewer
     ):
         super().__init__(labels=False)
-        self.min_width = 600 # TODO: remove this hardcoded value
-        self.min_height = 950 # TODO: remove this hardcoded value
+        self.min_width = 500 # TODO: remove this hardcoded value
         self._viewer = viewer if viewer is not None else None
         self._lazy_imports()
         self._initialize_cl_container()
@@ -354,9 +352,7 @@ class ApocContainer(ScrollableContainer):
         # self.append(self._scroll)
         # the only way for _label_layer and _image_layers to stay connected is to attach it to native, not sure why
         self.native.layout().addWidget(self._tabs.native) # connects and is scrollable, internally, but not in the main window
-        # self.native.layout().addStretch()
-
-        # self._widget._layout.setAlignment(Qt.AlignTop) # does not work
+        self.native.layout().addStretch() # resets the layout to squish to top
 
     def _connect_events(self):
         self._image_directory.changed.connect(self._update_metadata_from_file)
