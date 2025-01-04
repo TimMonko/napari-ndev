@@ -240,9 +240,8 @@ class ApocContainer(ScrollableContainer):
                 'A string in the form of ' "'filter1=radius1 filter2=radius2'."
             ),
         )
-        self._cl_container = Container()
-        self._cl_container.extend(
-            [
+        self._cl_container = Container(
+            widgets=[
                 self._classifier_file,
                 self._continue_training,
                 self._classifier_type,
@@ -273,25 +272,26 @@ class ApocContainer(ScrollableContainer):
 
         self._batch_train_container = Container(
             layout='horizontal',
-            # label="Train Classifier on Image-Label Pairs",
-        )
-        self._batch_train_container.extend(
-            [self._label_directory, self._batch_train_button]
+            widgets=[
+                self._label_directory,
+                self._batch_train_button,
+            ]
         )
 
         self._batch_predict_container = Container(
             layout='horizontal',
-            # label="Predict Labels with Classifier on Images"
-        )
-        self._batch_predict_container.extend(
-            [self._output_directory, self._batch_predict_button]
+            widgets=[
+                self._output_directory,
+                self._batch_predict_button,
+            ]
         )
 
         self._progress_bar = ProgressBar(label='Progress:')
 
-        self._batch_container = Container(layout='vertical', label='Batch')
-        self._batch_container.extend(
-            [
+        self._batch_container = Container(
+            layout='vertical',
+            label='Batch',
+            widgets=[
                 self._image_directory,
                 self._image_channels,
                 self._channel_order_label,
