@@ -215,7 +215,6 @@ class MeasureContainer(Container):
             'intensity_mean',
             'intensity_min',
             'intensity_std',
-            'num_pixels',
             'orientation',
             'perimeter',
             'solidity',
