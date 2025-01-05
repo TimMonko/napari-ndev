@@ -3,6 +3,7 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 import numpy as np
+from magicclass.widgets import TabbedContainer
 from magicgui.widgets import (
     CheckBox,
     ComboBox,
@@ -13,7 +14,6 @@ from magicgui.widgets import (
     PushButton,
     Select,
 )
-from qtpy.QtWidgets import QTabWidget
 
 from napari_ndev import helpers, nImage
 
@@ -114,7 +114,7 @@ class WorkflowContainer(Container):
 
     def _roots_container(self):
         """Initialize the roots container."""
-        self._roots_container = Container(layout='vertical')
+        self._roots_container = Container(layout='vertical', label='Roots')
         # TODO: Qt AlignTop
         self._roots_container.native.layout().addStretch() # this resets the additions to the top of the container (the name is confusing)
 
@@ -128,6 +128,7 @@ class WorkflowContainer(Container):
         self._tasks_container = Container(
             layout='vertical',
             widgets=[self._tasks_select],
+            label='Tasks',
         )
 
     def _init_layout(self):
@@ -143,11 +144,16 @@ class WorkflowContainer(Container):
                 self._workflow_roots,
             ]
         )
-
-        tabs = QTabWidget()
-        tabs.addTab(self._roots_container.native, 'Roots')
-        tabs.addTab(self._tasks_container.native, 'Tasks')
-        self.native.layout().addWidget(tabs)
+        self._tabs = TabbedContainer(
+            widgets=[
+                self._roots_container,
+                self._tasks_container,
+            ],
+            label=None,
+            labels=None,
+        )
+        self.native.layout().addWidget(self._tabs.native) # add the tabbed container to the layout, native needed to keep viewer interaction
+        self.native.layout().addStretch() # resets the layout to the top of the container
 
     def _connect_events(self):
         """Connect the events of the widgets to respective methods."""
