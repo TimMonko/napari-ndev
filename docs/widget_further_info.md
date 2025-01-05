@@ -2,7 +2,7 @@
 
 ## 1. Image Utilities
 
-A quick and easy way to save annotations (a napari labels layer) and corresponding images to corresponding folders. Best if the images are opened with the `neuralDev` reader (using [bioio] under the hood) -- which can be as simple as drag and drop opening by setting the appropriate default reader for each file type in Preferences -> Plugins--in order to utilize the metadata present for saving the image-label pairs.
+A quick and easy way to save annotations (a napari labels layer) and corresponding images to corresponding folders. Best if the images are opened with the `nDev` reader (using [bioio] under the hood) -- which can be as simple as drag and drop opening by setting the appropriate default reader for each file type in Preferences -> Plugins--in order to utilize the metadata present for saving the image-label pairs.
 
 Quick uniform adjustments to a folder of images, saving the output. Currently supports selecting channels, slicing Z, cropping/downsampling in XY, and doing a max projection of the sliced/cropped image data. To be added: alternative projection types, slicing in T, and compatibility with non TCZYX images (but this is not a priority since [bioio] currently always extracts images as TCZYX even if a dim is only length 1.
 
