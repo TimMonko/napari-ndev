@@ -19,7 +19,7 @@
         <link rel="next" href="../helpers/">
       
       
-      <link rel="icon" href="../../resources/images/neuralDev-icon.svg">
+      <link rel="icon" href="../../resources/images/nDev-icon.svg">
       <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.5.49">
     
     
@@ -96,7 +96,7 @@
   <nav class="md-header__inner md-grid" aria-label="Header">
     <a href="../.." title="napari-ndev" class="md-header__button md-logo" aria-label="napari-ndev" data-md-component="logo">
       
-  <img src="../../resources/images/neuralDev-icon.svg" alt="logo">
+  <img src="../../resources/images/nDev-icon.svg" alt="logo">
 
     </a>
     <label class="md-header__button md-icon" for="__drawer">
@@ -235,7 +235,7 @@
   <label class="md-nav__title" for="__drawer">
     <a href="../.." title="napari-ndev" class="md-nav__button md-logo" aria-label="napari-ndev" data-md-component="logo">
       
-  <img src="../../resources/images/neuralDev-icon.svg" alt="logo">
+  <img src="../../resources/images/nDev-icon.svg" alt="logo">
 
     </a>
     napari-ndev
@@ -1527,7 +1527,7 @@ distance.</p>
 <span class="normal">92</span>
 <span class="normal">93</span>
 <span class="normal">94</span>
-<span class="normal">95</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">connect_breaks_between_labels</span><span class="p">(</span><span class="n">label</span><span class="p">:</span> <span class="n">ArrayLike</span><span class="p">,</span> <span class="n">connect_distance</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ArrayLike</span><span class="p">:</span> <span class="c1"># pragma: no cover</span>
+<span class="normal">95</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">connect_breaks_between_labels</span><span class="p">(</span><span class="n">label</span><span class="p">:</span> <span class="n">ArrayLike</span><span class="p">,</span> <span class="n">connect_distance</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ArrayLike</span><span class="p">:</span> <span class="c1"># pragma: no cover</span>
 <span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    Connect breaks between labels in a label image.</span>
 
@@ -1550,7 +1550,7 @@ distance.</p>
 <span class="sd">        Label image with new labels connecting breaks between original labels.</span>
 
 <span class="sd">    """</span>
-    <span class="kn">import</span> <span class="nn">pyclesperanto_prototype</span> <span class="k">as</span> <span class="nn">cle</span>
+    <span class="kn">import</span><span class="w"> </span><span class="nn">pyclesperanto_prototype</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">cle</span>
 
     <span class="n">label_dilated</span> <span class="o">=</span> <span class="n">cle</span><span class="o">.</span><span class="n">dilate_labels</span><span class="p">(</span><span class="n">label</span><span class="p">,</span> <span class="n">radius</span><span class="o">=</span><span class="n">connect_distance</span><span class="o">/</span><span class="mi">2</span><span class="p">)</span>
     <span class="n">label_merged</span> <span class="o">=</span> <span class="n">cle</span><span class="o">.</span><span class="n">merge_touching_labels</span><span class="p">(</span><span class="n">label_dilated</span><span class="p">)</span>
@@ -1619,7 +1619,7 @@ distance.</p>
 <span class="normal">41</span>
 <span class="normal">42</span>
 <span class="normal">43</span>
-<span class="normal">44</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">convert_float_to_int</span><span class="p">(</span><span class="n">img</span><span class="p">:</span> <span class="n">ArrayLike</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ArrayLike</span><span class="p">:</span>
+<span class="normal">44</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">convert_float_to_int</span><span class="p">(</span><span class="n">img</span><span class="p">:</span> <span class="n">ArrayLike</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ArrayLike</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    Convert an image from float to integer.</span>
 
@@ -1723,7 +1723,7 @@ values.</p>
 <span class="normal">122</span>
 <span class="normal">123</span>
 <span class="normal">124</span>
-<span class="normal">125</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">label_voronoi_based_on_intensity</span><span class="p">(</span><span class="n">label</span><span class="p">:</span> <span class="n">ArrayLike</span><span class="p">,</span> <span class="n">intensity_image</span><span class="p">:</span> <span class="n">ArrayLike</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ArrayLike</span><span class="p">:</span> <span class="c1"># pragma: no cover</span>
+<span class="normal">125</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">label_voronoi_based_on_intensity</span><span class="p">(</span><span class="n">label</span><span class="p">:</span> <span class="n">ArrayLike</span><span class="p">,</span> <span class="n">intensity_image</span><span class="p">:</span> <span class="n">ArrayLike</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ArrayLike</span><span class="p">:</span> <span class="c1"># pragma: no cover</span>
 <span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    Create a voronoi label masks of labels based on an intensity image.</span>
 
@@ -1745,7 +1745,7 @@ values.</p>
 <span class="sd">        Label image with Voronoi regions based on the intensity image.</span>
 
 <span class="sd">    """</span>
-    <span class="kn">import</span> <span class="nn">pyclesperanto_prototype</span> <span class="k">as</span> <span class="nn">cle</span>
+    <span class="kn">import</span><span class="w"> </span><span class="nn">pyclesperanto_prototype</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">cle</span>
 
     <span class="n">label_binary</span> <span class="o">=</span> <span class="n">cle</span><span class="o">.</span><span class="n">greater_constant</span><span class="p">(</span><span class="n">label</span><span class="p">,</span> <span class="n">constant</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span> <span class="c1"># binarize</span>
     <span class="n">intensity_blur</span> <span class="o">=</span> <span class="n">cle</span><span class="o">.</span><span class="n">gaussian_blur</span><span class="p">(</span><span class="n">intensity_image</span><span class="p">,</span> <span class="n">sigma_x</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">sigma_y</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
@@ -1819,7 +1819,7 @@ values.</p>
 <span class="normal">62</span>
 <span class="normal">63</span>
 <span class="normal">64</span>
-<span class="normal">65</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">skeletonize_labels</span><span class="p">(</span><span class="n">label</span><span class="p">:</span> <span class="n">ArrayLike</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+<span class="normal">65</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">skeletonize_labels</span><span class="p">(</span><span class="n">label</span><span class="p">:</span> <span class="n">ArrayLike</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    Create skeletons and maintains label identities from a label image.</span>
 
@@ -1834,8 +1834,8 @@ values.</p>
 <span class="sd">        Skeletonized label image.</span>
 
 <span class="sd">    """</span>
-    <span class="kn">import</span> <span class="nn">pyclesperanto_prototype</span> <span class="k">as</span> <span class="nn">cle</span>
-    <span class="kn">from</span> <span class="nn">skimage.morphology</span> <span class="kn">import</span> <span class="n">skeletonize</span>
+    <span class="kn">import</span><span class="w"> </span><span class="nn">pyclesperanto_prototype</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">cle</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">skimage.morphology</span><span class="w"> </span><span class="kn">import</span> <span class="n">skeletonize</span>
 
     <span class="n">skeleton</span> <span class="o">=</span> <span class="n">skeletonize</span><span class="p">(</span><span class="n">cle</span><span class="o">.</span><span class="n">pull</span><span class="p">(</span><span class="n">label</span><span class="p">))</span>
     <span class="k">return</span> <span class="p">(</span><span class="n">label</span> <span class="o">*</span> <span class="n">skeleton</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">uint16</span><span class="p">)</span>
@@ -1881,7 +1881,7 @@ values.</p>
       <div class="md-copyright">
   
     <div class="md-copyright__highlight">
-      Copyright &copy; 2023-2024 Tim Monko
+      Copyright &copy; 2023-2025 Tim Monko
     </div>
   
   

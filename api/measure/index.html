@@ -19,7 +19,7 @@
         <link rel="next" href="../morphology/">
       
       
-      <link rel="icon" href="../../resources/images/neuralDev-icon.svg">
+      <link rel="icon" href="../../resources/images/nDev-icon.svg">
       <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.5.49">
     
     
@@ -96,7 +96,7 @@
   <nav class="md-header__inner md-grid" aria-label="Header">
     <a href="../.." title="napari-ndev" class="md-header__button md-logo" aria-label="napari-ndev" data-md-component="logo">
       
-  <img src="../../resources/images/neuralDev-icon.svg" alt="logo">
+  <img src="../../resources/images/nDev-icon.svg" alt="logo">
 
     </a>
     <label class="md-header__button md-icon" for="__drawer">
@@ -235,7 +235,7 @@
   <label class="md-nav__title" for="__drawer">
     <a href="../.." title="napari-ndev" class="md-nav__button md-logo" aria-label="napari-ndev" data-md-component="logo">
       
-  <img src="../../resources/images/neuralDev-icon.svg" alt="logo">
+  <img src="../../resources/images/nDev-icon.svg" alt="logo">
 
     </a>
     napari-ndev
@@ -1754,7 +1754,7 @@ and mapping treatment dictionaries to DataFrame ID columns.</p>
 <span class="normal">218</span>
 <span class="normal">219</span>
 <span class="normal">220</span>
-<span class="normal">221</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">group_and_agg_measurements</span><span class="p">(</span>
+<span class="normal">221</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">group_and_agg_measurements</span><span class="p">(</span>
     <span class="n">df</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span>
     <span class="n">grouping_cols</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="s1">'id'</span><span class="p">,</span>
     <span class="n">count_col</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">'label'</span><span class="p">,</span>
@@ -2151,7 +2151,7 @@ Choose from a list of properties to measure: [
 <span class="normal">153</span>
 <span class="normal">154</span>
 <span class="normal">155</span>
-<span class="normal">156</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">measure_regionprops</span><span class="p">(</span>
+<span class="normal">156</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">measure_regionprops</span><span class="p">(</span>
     <span class="n">label_images</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">ArrayLike</span><span class="p">]</span> <span class="o">|</span> <span class="n">ArrayLike</span><span class="p">,</span>
     <span class="n">label_names</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">|</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">intensity_images</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">ArrayLike</span><span class="p">]</span> <span class="o">|</span> <span class="n">ArrayLike</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
@@ -2227,7 +2227,7 @@ Choose from a list of properties to measure: [
 <span class="sd">        The DataFrame with measured properties.</span>
 
 <span class="sd">    """</span>
-    <span class="kn">from</span> <span class="nn">skimage</span> <span class="kn">import</span> <span class="n">measure</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">skimage</span><span class="w"> </span><span class="kn">import</span> <span class="n">measure</span>
 
     <span class="k">if</span> <span class="n">properties</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
         <span class="n">properties</span> <span class="o">=</span> <span class="p">[</span><span class="s1">'area'</span><span class="p">]</span>
@@ -2323,7 +2323,7 @@ Choose from a list of properties to measure: [
       <div class="md-copyright">
   
     <div class="md-copyright__highlight">
-      Copyright &copy; 2023-2024 Tim Monko
+      Copyright &copy; 2023-2025 Tim Monko
     </div>
   
   

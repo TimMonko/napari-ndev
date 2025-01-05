@@ -19,7 +19,7 @@
         <link rel="next" href="../custom_apoc_feature_set/">
       
       
-      <link rel="icon" href="../../../resources/images/neuralDev-icon.svg">
+      <link rel="icon" href="../../../resources/images/nDev-icon.svg">
       <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.5.49">
     
     
@@ -96,7 +96,7 @@
   <nav class="md-header__inner md-grid" aria-label="Header">
     <a href="../../.." title="napari-ndev" class="md-header__button md-logo" aria-label="napari-ndev" data-md-component="logo">
       
-  <img src="../../../resources/images/neuralDev-icon.svg" alt="logo">
+  <img src="../../../resources/images/nDev-icon.svg" alt="logo">
 
     </a>
     <label class="md-header__button md-icon" for="__drawer">
@@ -235,7 +235,7 @@
   <label class="md-nav__title" for="__drawer">
     <a href="../../.." title="napari-ndev" class="md-nav__button md-logo" aria-label="napari-ndev" data-md-component="logo">
       
-  <img src="../../../resources/images/neuralDev-icon.svg" alt="logo">
+  <img src="../../../resources/images/nDev-icon.svg" alt="logo">
 
     </a>
     napari-ndev
@@ -2283,7 +2283,7 @@ type.</p>
 <span class="normal">752</span>
 <span class="normal">753</span>
 <span class="normal">754</span>
-<span class="normal">755</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span> <span class="nc">ApocContainer</span><span class="p">(</span><span class="n">Container</span><span class="p">):</span>
+<span class="normal">755</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span><span class="w"> </span><span class="nc">ApocContainer</span><span class="p">(</span><span class="n">Container</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    Container class for managing the ApocContainer widget in napari.</span>
 
@@ -2401,7 +2401,7 @@ type.</p>
 
 <span class="sd">    """</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">viewer</span><span class="p">:</span> <span class="n">napari</span><span class="o">.</span><span class="n">viewer</span><span class="o">.</span><span class="n">Viewer</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="p">):</span>
@@ -2416,18 +2416,18 @@ type.</p>
         <span class="bp">self</span><span class="o">.</span><span class="n">_setup_widget_layout</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_connect_events</span><span class="p">()</span>
 
-    <span class="k">def</span> <span class="nf">_lazy_imports</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="kn">import</span> <span class="nn">apoc</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_lazy_imports</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="kn">import</span><span class="w"> </span><span class="nn">apoc</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">apoc</span> <span class="o">=</span> <span class="n">apoc</span>
 
-    <span class="k">def</span> <span class="nf">_filter_layers</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">layer_type</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_filter_layers</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">layer_type</span><span class="p">):</span>
         <span class="c1"># only do this if the viewer is not None</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_viewer</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">return</span> <span class="p">[]</span>
         <span class="k">return</span> <span class="p">[</span><span class="n">x</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_viewer</span><span class="o">.</span><span class="n">layers</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">layer_type</span><span class="p">)]</span>
 
-    <span class="k">def</span> <span class="nf">_initialize_cl_container</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_initialize_cl_container</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_classifier_file</span> <span class="o">=</span> <span class="n">FileEdit</span><span class="p">(</span>
             <span class="n">label</span><span class="o">=</span><span class="s1">'Classifier File (.cl)'</span><span class="p">,</span>
             <span class="n">mode</span><span class="o">=</span><span class="s1">'w'</span><span class="p">,</span>
@@ -2504,7 +2504,7 @@ type.</p>
             <span class="p">]</span>
         <span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">_initialize_batch_container</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_initialize_batch_container</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_image_directory</span> <span class="o">=</span> <span class="n">FileEdit</span><span class="p">(</span><span class="n">label</span><span class="o">=</span><span class="s1">'Image Directory'</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s1">'d'</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_label_directory</span> <span class="o">=</span> <span class="n">FileEdit</span><span class="p">(</span><span class="n">label</span><span class="o">=</span><span class="s1">'Label Directory'</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s1">'d'</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_output_directory</span> <span class="o">=</span> <span class="n">FileEdit</span><span class="p">(</span><span class="n">label</span><span class="o">=</span><span class="s1">'Output Directory'</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s1">'d'</span><span class="p">)</span>
@@ -2552,7 +2552,7 @@ type.</p>
             <span class="p">]</span>
         <span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">_initialize_viewer_container</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_initialize_viewer_container</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_image_layers</span> <span class="o">=</span> <span class="n">Select</span><span class="p">(</span>
             <span class="n">choices</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_filter_layers</span><span class="p">(</span><span class="n">layers</span><span class="o">.</span><span class="n">Image</span><span class="p">),</span>
             <span class="n">label</span><span class="o">=</span><span class="s1">'Image Layers'</span><span class="p">,</span>
@@ -2581,13 +2581,13 @@ type.</p>
             <span class="n">label</span><span class="o">=</span><span class="s1">'Viewer'</span>
         <span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">_initialize_custom_apoc_container</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="kn">from</span> <span class="nn">napari_ndev</span> <span class="kn">import</span> <span class="n">ApocFeatureStack</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_initialize_custom_apoc_container</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="kn">from</span><span class="w"> </span><span class="nn">napari_ndev</span><span class="w"> </span><span class="kn">import</span> <span class="n">ApocFeatureStack</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_custom_apoc_container</span> <span class="o">=</span> <span class="n">ApocFeatureStack</span><span class="p">(</span><span class="n">viewer</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_viewer</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_custom_apoc_container</span><span class="o">.</span><span class="n">label</span> <span class="o">=</span> <span class="s1">'Custom Feature Set'</span>
 
-    <span class="k">def</span> <span class="nf">_setup_widget_layout</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_setup_widget_layout</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_cl_container</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_tabs</span> <span class="o">=</span> <span class="n">TabbedContainer</span><span class="p">(</span>
             <span class="n">widgets</span><span class="o">=</span><span class="p">[</span>
@@ -2607,7 +2607,7 @@ type.</p>
         <span class="bp">self</span><span class="o">.</span><span class="n">native</span><span class="o">.</span><span class="n">layout</span><span class="p">()</span><span class="o">.</span><span class="n">addWidget</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_tabs</span><span class="o">.</span><span class="n">native</span><span class="p">)</span> <span class="c1"># connects and is scrollable, internally, but not in the main window</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">native</span><span class="o">.</span><span class="n">layout</span><span class="p">()</span><span class="o">.</span><span class="n">addStretch</span><span class="p">()</span> <span class="c1"># resets the layout to squish to top</span>
 
-    <span class="k">def</span> <span class="nf">_connect_events</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_connect_events</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_image_directory</span><span class="o">.</span><span class="n">changed</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_update_metadata_from_file</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_image_channels</span><span class="o">.</span><span class="n">changed</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_update_channel_order</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_classifier_file</span><span class="o">.</span><span class="n">changed</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_update_classifier_metadata</span><span class="p">)</span>
@@ -2631,18 +2631,18 @@ type.</p>
                 <span class="bp">self</span><span class="o">.</span><span class="n">_update_layer_choices</span>
             <span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">_update_layer_choices</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_update_layer_choices</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_label_layer</span><span class="o">.</span><span class="n">choices</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_filter_layers</span><span class="p">(</span><span class="n">layers</span><span class="o">.</span><span class="n">Labels</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_image_layers</span><span class="o">.</span><span class="n">choices</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_filter_layers</span><span class="p">(</span><span class="n">layers</span><span class="o">.</span><span class="n">Image</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">_update_metadata_from_file</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="kn">from</span> <span class="nn">napari_ndev</span> <span class="kn">import</span> <span class="n">nImage</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_update_metadata_from_file</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="kn">from</span><span class="w"> </span><span class="nn">napari_ndev</span><span class="w"> </span><span class="kn">import</span> <span class="n">nImage</span>
 
         <span class="n">_</span><span class="p">,</span> <span class="n">files</span> <span class="o">=</span> <span class="n">helpers</span><span class="o">.</span><span class="n">get_directory_and_files</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_image_directory</span><span class="o">.</span><span class="n">value</span><span class="p">)</span>
         <span class="n">img</span> <span class="o">=</span> <span class="n">nImage</span><span class="p">(</span><span class="n">files</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_image_channels</span><span class="o">.</span><span class="n">choices</span> <span class="o">=</span> <span class="n">helpers</span><span class="o">.</span><span class="n">get_channel_names</span><span class="p">(</span><span class="n">img</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">_update_channel_order</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_update_channel_order</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_channel_order_label</span><span class="o">.</span><span class="n">value</span> <span class="o">=</span> <span class="s1">'Selected Channel Order: '</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_image_channels</span><span class="o">.</span><span class="n">value</span>
         <span class="p">)</span>
@@ -2650,11 +2650,11 @@ type.</p>
     <span class="c1">##############################</span>
     <span class="c1"># Classifier Related Functions</span>
     <span class="c1">##############################</span>
-    <span class="k">def</span> <span class="nf">_set_value_from_pattern</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pattern</span><span class="p">,</span> <span class="n">content</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_set_value_from_pattern</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pattern</span><span class="p">,</span> <span class="n">content</span><span class="p">):</span>
         <span class="n">match</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="n">pattern</span><span class="p">,</span> <span class="n">content</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">match</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span> <span class="k">if</span> <span class="n">match</span> <span class="k">else</span> <span class="kc">None</span>
 
-    <span class="k">def</span> <span class="nf">_process_classifier_metadata</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">content</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_process_classifier_metadata</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">content</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_classifier_type</span><span class="o">.</span><span class="n">value</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_set_value_from_pattern</span><span class="p">(</span>
             <span class="sa">r</span><span class="s1">'classifier_class_name\s*=\s*([^\n]+)'</span><span class="p">,</span> <span class="n">content</span>
         <span class="p">)</span>
@@ -2671,7 +2671,7 @@ type.</p>
             <span class="ow">or</span> <span class="mi">2</span>
         <span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">_update_classifier_metadata</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_update_classifier_metadata</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="n">file_path</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_classifier_file</span><span class="o">.</span><span class="n">value</span>
 
         <span class="c1"># create file, if it doesn't exist</span>
@@ -2696,7 +2696,7 @@ type.</p>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_classifier_statistics_table</span><span class="p">(</span><span class="n">custom_classifier</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">_classifier_statistics_table</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">custom_classifier</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_classifier_statistics_table</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">custom_classifier</span><span class="p">):</span>
         <span class="n">table</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">custom_classifier</span><span class="o">.</span><span class="n">statistics</span><span class="p">()</span>
 
         <span class="n">trans_table</span> <span class="o">=</span> <span class="p">{</span><span class="s1">'filter_name'</span><span class="p">:</span> <span class="p">[],</span> <span class="s1">'radius'</span><span class="p">:</span> <span class="p">[]}</span>
@@ -2718,7 +2718,7 @@ type.</p>
                 <span class="n">name</span><span class="o">=</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">basename</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_classifier_file</span><span class="o">.</span><span class="n">value</span><span class="p">),</span>
             <span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">_get_feature_set</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_get_feature_set</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_predefined_features</span><span class="o">.</span><span class="n">value</span><span class="o">.</span><span class="n">value</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
             <span class="n">feature_set</span> <span class="o">=</span> <span class="s1">''</span>
         <span class="k">else</span><span class="p">:</span>
@@ -2731,7 +2731,7 @@ type.</p>
         <span class="p">)</span>
         <span class="k">return</span> <span class="n">feature_set</span>
 
-    <span class="k">def</span> <span class="nf">_get_training_classifier_instance</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_get_training_classifier_instance</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_classifier_type</span><span class="o">.</span><span class="n">value</span> <span class="o">==</span> <span class="s1">'PixelClassifier'</span><span class="p">:</span>
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">apoc</span><span class="o">.</span><span class="n">PixelClassifier</span><span class="p">(</span>
                 <span class="n">opencl_filename</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_classifier_file</span><span class="o">.</span><span class="n">value</span><span class="p">,</span>
@@ -2751,17 +2751,17 @@ type.</p>
     <span class="c1">##############################</span>
     <span class="c1"># Training and Prediction</span>
     <span class="c1">##############################</span>
-    <span class="k">def</span> <span class="nf">_get_channel_image</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">img</span><span class="p">,</span> <span class="n">channel_index_list</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_get_channel_image</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">img</span><span class="p">,</span> <span class="n">channel_index_list</span><span class="p">):</span>
         <span class="k">if</span> <span class="s1">'S'</span> <span class="ow">in</span> <span class="n">img</span><span class="o">.</span><span class="n">dims</span><span class="o">.</span><span class="n">order</span><span class="p">:</span>
             <span class="n">channel_img</span> <span class="o">=</span> <span class="n">img</span><span class="o">.</span><span class="n">get_image_data</span><span class="p">(</span><span class="s1">'TSZYX'</span><span class="p">,</span> <span class="n">S</span><span class="o">=</span><span class="n">channel_index_list</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="n">channel_img</span> <span class="o">=</span> <span class="n">img</span><span class="o">.</span><span class="n">get_image_data</span><span class="p">(</span><span class="s1">'TCZYX'</span><span class="p">,</span> <span class="n">C</span><span class="o">=</span><span class="n">channel_index_list</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">channel_img</span>
 
-    <span class="k">def</span> <span class="nf">batch_train</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="kn">from</span> <span class="nn">pyclesperanto_prototype</span> <span class="kn">import</span> <span class="n">set_wait_for_kernel_finish</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">batch_train</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="kn">from</span><span class="w"> </span><span class="nn">pyclesperanto_prototype</span><span class="w"> </span><span class="kn">import</span> <span class="n">set_wait_for_kernel_finish</span>
 
-        <span class="kn">from</span> <span class="nn">napari_ndev</span> <span class="kn">import</span> <span class="n">nImage</span>
+        <span class="kn">from</span><span class="w"> </span><span class="nn">napari_ndev</span><span class="w"> </span><span class="kn">import</span> <span class="n">nImage</span>
 
         <span class="n">image_directory</span><span class="p">,</span> <span class="n">image_files</span> <span class="o">=</span> <span class="n">helpers</span><span class="o">.</span><span class="n">get_directory_and_files</span><span class="p">(</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_image_directory</span><span class="o">.</span><span class="n">value</span>
@@ -2846,7 +2846,7 @@ type.</p>
         <span class="bp">self</span><span class="o">.</span><span class="n">_progress_bar</span><span class="o">.</span><span class="n">label</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">'Trained on </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">image_files</span><span class="p">)</span><span class="si">}</span><span class="s1"> Images'</span>
         <span class="n">logger</span><span class="o">.</span><span class="n">removeHandler</span><span class="p">(</span><span class="n">handler</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">_get_prediction_classifier_instance</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_get_prediction_classifier_instance</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_classifier_type</span><span class="o">.</span><span class="n">value</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_classifier_type_mapping</span><span class="p">:</span>
             <span class="n">classifier_class</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_classifier_type_mapping</span><span class="p">[</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">_classifier_type</span><span class="o">.</span><span class="n">value</span>
@@ -2856,11 +2856,11 @@ type.</p>
             <span class="p">)</span>
         <span class="k">return</span> <span class="kc">None</span>
 
-    <span class="k">def</span> <span class="nf">batch_predict</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="kn">from</span> <span class="nn">bioio.writers</span> <span class="kn">import</span> <span class="n">OmeTiffWriter</span>
-        <span class="kn">from</span> <span class="nn">pyclesperanto_prototype</span> <span class="kn">import</span> <span class="n">set_wait_for_kernel_finish</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">batch_predict</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="kn">from</span><span class="w"> </span><span class="nn">bioio.writers</span><span class="w"> </span><span class="kn">import</span> <span class="n">OmeTiffWriter</span>
+        <span class="kn">from</span><span class="w"> </span><span class="nn">pyclesperanto_prototype</span><span class="w"> </span><span class="kn">import</span> <span class="n">set_wait_for_kernel_finish</span>
 
-        <span class="kn">from</span> <span class="nn">napari_ndev</span> <span class="kn">import</span> <span class="n">nImage</span>
+        <span class="kn">from</span><span class="w"> </span><span class="nn">napari_ndev</span><span class="w"> </span><span class="kn">import</span> <span class="n">nImage</span>
 
         <span class="n">image_directory</span><span class="p">,</span> <span class="n">image_files</span> <span class="o">=</span> <span class="n">helpers</span><span class="o">.</span><span class="n">get_directory_and_files</span><span class="p">(</span>
             <span class="n">dir_path</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_image_directory</span><span class="o">.</span><span class="n">value</span><span class="p">,</span>
@@ -2936,8 +2936,8 @@ type.</p>
         <span class="bp">self</span><span class="o">.</span><span class="n">_progress_bar</span><span class="o">.</span><span class="n">label</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">'Predicted </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">image_files</span><span class="p">)</span><span class="si">}</span><span class="s1"> Images'</span>
         <span class="n">logger</span><span class="o">.</span><span class="n">removeHandler</span><span class="p">(</span><span class="n">handler</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">image_train</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="kn">from</span> <span class="nn">pyclesperanto_prototype</span> <span class="kn">import</span> <span class="n">set_wait_for_kernel_finish</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">image_train</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="kn">from</span><span class="w"> </span><span class="nn">pyclesperanto_prototype</span><span class="w"> </span><span class="kn">import</span> <span class="n">set_wait_for_kernel_finish</span>
         <span class="n">image_names</span> <span class="o">=</span> <span class="p">[</span><span class="n">image</span><span class="o">.</span><span class="n">name</span> <span class="k">for</span> <span class="n">image</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_image_layers</span><span class="o">.</span><span class="n">value</span><span class="p">]</span>
         <span class="n">label_name</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_label_layer</span><span class="o">.</span><span class="n">value</span><span class="o">.</span><span class="n">name</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_single_result_label</span><span class="o">.</span><span class="n">value</span> <span class="o">=</span> <span class="p">(</span>
@@ -2968,8 +2968,8 @@ type.</p>
             <span class="sa">f</span><span class="s1">'Trained on </span><span class="si">{</span><span class="n">image_names</span><span class="si">}</span><span class="s1"> using </span><span class="si">{</span><span class="n">label_name</span><span class="si">}</span><span class="s1">'</span>
         <span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">image_predict</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="kn">from</span> <span class="nn">pyclesperanto_prototype</span> <span class="kn">import</span> <span class="n">set_wait_for_kernel_finish</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">image_predict</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="kn">from</span><span class="w"> </span><span class="nn">pyclesperanto_prototype</span><span class="w"> </span><span class="kn">import</span> <span class="n">set_wait_for_kernel_finish</span>
         <span class="n">set_wait_for_kernel_finish</span><span class="p">(</span>
             <span class="kc">True</span>
         <span class="p">)</span>  <span class="c1"># https://github.com/clEsperanto/pyclesperanto_prototype/issues/163</span>
@@ -3001,7 +3001,7 @@ type.</p>
 
         <span class="k">return</span> <span class="n">result</span>
 
-    <span class="k">def</span> <span class="nf">insert_custom_feature_string</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">insert_custom_feature_string</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_feature_string</span><span class="o">.</span><span class="n">value</span> <span class="o">=</span> <span class="p">(</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_custom_apoc_container</span><span class="o">.</span><span class="n">_feature_string</span><span class="o">.</span><span class="n">value</span>
         <span class="p">)</span>
@@ -3066,7 +3066,7 @@ type.</p>
       <div class="md-copyright">
   
     <div class="md-copyright__highlight">
-      Copyright &copy; 2023-2024 Tim Monko
+      Copyright &copy; 2023-2025 Tim Monko
     </div>
   
   

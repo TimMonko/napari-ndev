@@ -19,7 +19,7 @@
         <link rel="next" href="../../image_overview/">
       
       
-      <link rel="icon" href="../../../resources/images/neuralDev-icon.svg">
+      <link rel="icon" href="../../../resources/images/nDev-icon.svg">
       <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.5.49">
     
     
@@ -96,7 +96,7 @@
   <nav class="md-header__inner md-grid" aria-label="Header">
     <a href="../../.." title="napari-ndev" class="md-header__button md-logo" aria-label="napari-ndev" data-md-component="logo">
       
-  <img src="../../../resources/images/neuralDev-icon.svg" alt="logo">
+  <img src="../../../resources/images/nDev-icon.svg" alt="logo">
 
     </a>
     <label class="md-header__button md-icon" for="__drawer">
@@ -235,7 +235,7 @@
   <label class="md-nav__title" for="__drawer">
     <a href="../../.." title="napari-ndev" class="md-nav__button md-logo" aria-label="napari-ndev" data-md-component="logo">
       
-  <img src="../../../resources/images/neuralDev-icon.svg" alt="logo">
+  <img src="../../../resources/images/nDev-icon.svg" alt="logo">
 
     </a>
     napari-ndev
@@ -1519,7 +1519,7 @@ by default False</p>
 <span class="normal">80</span>
 <span class="normal">81</span>
 <span class="normal">82</span>
-<span class="normal">83</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">napari_get_reader</span><span class="p">(</span>
+<span class="normal">83</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">napari_get_reader</span><span class="p">(</span>
     <span class="n">path</span><span class="p">:</span> <span class="n">PathLike</span><span class="p">,</span>
     <span class="n">in_memory</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">open_first_scene_only</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
@@ -1550,10 +1550,10 @@ by default False</p>
 
     <span class="k">try</span><span class="p">:</span>
         <span class="c1"># TODO: Test this if else functionality.</span>
-        <span class="kn">from</span> <span class="nn">bioio</span> <span class="kn">import</span> <span class="n">plugin_feasibility_report</span> <span class="k">as</span> <span class="n">pfr</span>
+        <span class="kn">from</span><span class="w"> </span><span class="nn">bioio</span><span class="w"> </span><span class="kn">import</span> <span class="n">plugin_feasibility_report</span> <span class="k">as</span> <span class="n">pfr</span>
         <span class="n">fr</span> <span class="o">=</span> <span class="n">pfr</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
         <span class="k">if</span> <span class="s1">'bioio-ome-tiff'</span> <span class="ow">in</span> <span class="n">fr</span> <span class="ow">and</span> <span class="n">fr</span><span class="p">[</span><span class="s1">'bioio-ome-tiff'</span><span class="p">]</span><span class="o">.</span><span class="n">supported</span><span class="p">:</span>
-            <span class="kn">import</span> <span class="nn">bioio_ome_tiff</span>
+            <span class="kn">import</span><span class="w"> </span><span class="nn">bioio_ome_tiff</span>
             <span class="n">reader</span> <span class="o">=</span> <span class="n">bioio_ome_tiff</span><span class="o">.</span><span class="n">Reader</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="n">plugin</span> <span class="o">=</span> <span class="n">nImage</span><span class="o">.</span><span class="n">determine_plugin</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
@@ -1712,7 +1712,7 @@ by default False.</p>
 <span class="normal">129</span>
 <span class="normal">130</span>
 <span class="normal">131</span>
-<span class="normal">132</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">napari_reader_function</span><span class="p">(</span>
+<span class="normal">132</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">napari_reader_function</span><span class="p">(</span>
     <span class="n">path</span><span class="p">:</span> <span class="n">PathLike</span><span class="p">,</span>
     <span class="n">reader</span><span class="p">:</span> <span class="n">Callable</span><span class="p">,</span>
     <span class="n">in_memory</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
@@ -1802,7 +1802,7 @@ by default False.</p>
       <div class="md-copyright">
   
     <div class="md-copyright__highlight">
-      Copyright &copy; 2023-2024 Tim Monko
+      Copyright &copy; 2023-2025 Tim Monko
     </div>
   
   

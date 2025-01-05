@@ -17,7 +17,7 @@
       
       
       
-      <link rel="icon" href="../../resources/images/neuralDev-icon.svg">
+      <link rel="icon" href="../../resources/images/nDev-icon.svg">
       <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.5.49">
     
     
@@ -94,7 +94,7 @@
   <nav class="md-header__inner md-grid" aria-label="Header">
     <a href="../.." title="napari-ndev" class="md-header__button md-logo" aria-label="napari-ndev" data-md-component="logo">
       
-  <img src="../../resources/images/neuralDev-icon.svg" alt="logo">
+  <img src="../../resources/images/nDev-icon.svg" alt="logo">
 
     </a>
     <label class="md-header__button md-icon" for="__drawer">
@@ -233,7 +233,7 @@
   <label class="md-nav__title" for="__drawer">
     <a href="../.." title="napari-ndev" class="md-nav__button md-logo" aria-label="napari-ndev" data-md-component="logo">
       
-  <img src="../../resources/images/neuralDev-icon.svg" alt="logo">
+  <img src="../../resources/images/nDev-icon.svg" alt="logo">
 
     </a>
     napari-ndev
@@ -1667,7 +1667,7 @@ determined based on the image type.</p>
 <span class="normal">234</span>
 <span class="normal">235</span>
 <span class="normal">236</span>
-<span class="normal">237</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span> <span class="nc">nImage</span><span class="p">(</span><span class="n">BioImage</span><span class="p">):</span>
+<span class="normal">237</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span><span class="w"> </span><span class="nc">nImage</span><span class="p">(</span><span class="n">BioImage</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    An nImage is a BioImage with additional functionality for napari-ndev.</span>
 
@@ -1692,7 +1692,7 @@ determined based on the image type.</p>
 
 <span class="sd">    """</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">image</span><span class="p">:</span> <span class="n">ImageLike</span><span class="p">,</span>
         <span class="n">reader</span><span class="p">:</span> <span class="n">Reader</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
@@ -1713,10 +1713,10 @@ determined based on the image type.</p>
 <span class="sd">        for napari-ndev).</span>
 <span class="sd">        """</span>
         <span class="k">if</span> <span class="n">reader</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="kn">from</span> <span class="nn">bioio</span> <span class="kn">import</span> <span class="n">plugin_feasibility_report</span> <span class="k">as</span> <span class="n">pfr</span>
+            <span class="kn">from</span><span class="w"> </span><span class="nn">bioio</span><span class="w"> </span><span class="kn">import</span> <span class="n">plugin_feasibility_report</span> <span class="k">as</span> <span class="n">pfr</span>
             <span class="n">fr</span> <span class="o">=</span> <span class="n">pfr</span><span class="p">(</span><span class="n">image</span><span class="p">)</span>
             <span class="k">if</span> <span class="s1">'bioio-ome-tiff'</span> <span class="ow">in</span> <span class="n">fr</span> <span class="ow">and</span> <span class="n">fr</span><span class="p">[</span><span class="s1">'bioio-ome-tiff'</span><span class="p">]</span><span class="o">.</span><span class="n">supported</span><span class="p">:</span>
-                <span class="kn">import</span> <span class="nn">bioio_ome_tiff</span>
+                <span class="kn">import</span><span class="w"> </span><span class="nn">bioio_ome_tiff</span>
                 <span class="n">reader</span> <span class="o">=</span> <span class="n">bioio_ome_tiff</span><span class="o">.</span><span class="n">Reader</span>
 
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">image</span><span class="p">,</span> <span class="n">reader</span><span class="p">)</span>
@@ -1724,7 +1724,7 @@ determined based on the image type.</p>
         <span class="bp">self</span><span class="o">.</span><span class="n">napari_metadata</span> <span class="o">=</span> <span class="p">{}</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">path</span> <span class="o">=</span> <span class="n">image</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">image</span><span class="p">,</span> <span class="p">(</span><span class="nb">str</span><span class="p">,</span> <span class="n">Path</span><span class="p">))</span> <span class="k">else</span> <span class="kc">None</span>
 
-    <span class="k">def</span> <span class="nf">_determine_in_memory</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_determine_in_memory</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">path</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
         <span class="n">max_in_mem_bytes</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mf">4e9</span><span class="p">,</span>
@@ -1754,8 +1754,8 @@ determined based on the image type.</p>
 <span class="sd">            True if image should be loaded in memory, False otherwise.</span>
 
 <span class="sd">        """</span>
-        <span class="kn">from</span> <span class="nn">bioio_base.io</span> <span class="kn">import</span> <span class="n">pathlike_to_fs</span>
-        <span class="kn">from</span> <span class="nn">psutil</span> <span class="kn">import</span> <span class="n">virtual_memory</span>
+        <span class="kn">from</span><span class="w"> </span><span class="nn">bioio_base.io</span><span class="w"> </span><span class="kn">import</span> <span class="n">pathlike_to_fs</span>
+        <span class="kn">from</span><span class="w"> </span><span class="nn">psutil</span><span class="w"> </span><span class="kn">import</span> <span class="n">virtual_memory</span>
 
         <span class="k">if</span> <span class="n">path</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">path</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">path</span>
@@ -1768,7 +1768,7 @@ determined based on the image type.</p>
             <span class="ow">and</span> <span class="n">filesize</span> <span class="o">&lt;</span> <span class="n">max_in_mem_percent</span> <span class="o">*</span> <span class="n">available_mem</span>
         <span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">get_napari_image_data</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">in_memory</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">xr</span><span class="o">.</span><span class="n">DataArray</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_napari_image_data</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">in_memory</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">xr</span><span class="o">.</span><span class="n">DataArray</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Get the image data as a xarray DataArray.</span>
 
@@ -1811,7 +1811,7 @@ determined based on the image type.</p>
 
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">napari_data</span>
 
-    <span class="k">def</span> <span class="nf">get_napari_metadata</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_napari_metadata</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">path</span><span class="p">:</span> <span class="n">PathLike</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
@@ -1956,7 +1956,7 @@ for napari-ndev).</p>
 <span class="normal">73</span>
 <span class="normal">74</span>
 <span class="normal">75</span>
-<span class="normal">76</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+<span class="normal">76</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
     <span class="bp">self</span><span class="p">,</span>
     <span class="n">image</span><span class="p">:</span> <span class="n">ImageLike</span><span class="p">,</span>
     <span class="n">reader</span><span class="p">:</span> <span class="n">Reader</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
@@ -1977,10 +1977,10 @@ for napari-ndev).</p>
 <span class="sd">    for napari-ndev).</span>
 <span class="sd">    """</span>
     <span class="k">if</span> <span class="n">reader</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="kn">from</span> <span class="nn">bioio</span> <span class="kn">import</span> <span class="n">plugin_feasibility_report</span> <span class="k">as</span> <span class="n">pfr</span>
+        <span class="kn">from</span><span class="w"> </span><span class="nn">bioio</span><span class="w"> </span><span class="kn">import</span> <span class="n">plugin_feasibility_report</span> <span class="k">as</span> <span class="n">pfr</span>
         <span class="n">fr</span> <span class="o">=</span> <span class="n">pfr</span><span class="p">(</span><span class="n">image</span><span class="p">)</span>
         <span class="k">if</span> <span class="s1">'bioio-ome-tiff'</span> <span class="ow">in</span> <span class="n">fr</span> <span class="ow">and</span> <span class="n">fr</span><span class="p">[</span><span class="s1">'bioio-ome-tiff'</span><span class="p">]</span><span class="o">.</span><span class="n">supported</span><span class="p">:</span>
-            <span class="kn">import</span> <span class="nn">bioio_ome_tiff</span>
+            <span class="kn">import</span><span class="w"> </span><span class="nn">bioio_ome_tiff</span>
             <span class="n">reader</span> <span class="o">=</span> <span class="n">bioio_ome_tiff</span><span class="o">.</span><span class="n">Reader</span>
 
     <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">image</span><span class="p">,</span> <span class="n">reader</span><span class="p">)</span>
@@ -2082,7 +2082,7 @@ If None, will determine whether to load in memory based on the image size.</p>
 <span class="normal">160</span>
 <span class="normal">161</span>
 <span class="normal">162</span>
-<span class="normal">163</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">get_napari_image_data</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">in_memory</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">xr</span><span class="o">.</span><span class="n">DataArray</span><span class="p">:</span>
+<span class="normal">163</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">get_napari_image_data</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">in_memory</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">xr</span><span class="o">.</span><span class="n">DataArray</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    Get the image data as a xarray DataArray.</span>
 
@@ -2244,7 +2244,7 @@ If None, will determine whether to load in memory based on the image size.</p>
 <span class="normal">234</span>
 <span class="normal">235</span>
 <span class="normal">236</span>
-<span class="normal">237</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">get_napari_metadata</span><span class="p">(</span>
+<span class="normal">237</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">get_napari_metadata</span><span class="p">(</span>
     <span class="bp">self</span><span class="p">,</span>
     <span class="n">path</span><span class="p">:</span> <span class="n">PathLike</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
@@ -2368,7 +2368,7 @@ If None, will determine whether to load in memory based on the image size.</p>
       <div class="md-copyright">
   
     <div class="md-copyright__highlight">
-      Copyright &copy; 2023-2024 Tim Monko
+      Copyright &copy; 2023-2025 Tim Monko
     </div>
   
   

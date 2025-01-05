@@ -19,7 +19,7 @@
         <link rel="next" href="../BINA_poster/">
       
       
-      <link rel="icon" href="../resources/images/neuralDev-icon.svg">
+      <link rel="icon" href="../resources/images/nDev-icon.svg">
       <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.5.49">
     
     
@@ -96,7 +96,7 @@
   <nav class="md-header__inner md-grid" aria-label="Header">
     <a href=".." title="napari-ndev" class="md-header__button md-logo" aria-label="napari-ndev" data-md-component="logo">
       
-  <img src="../resources/images/neuralDev-icon.svg" alt="logo">
+  <img src="../resources/images/nDev-icon.svg" alt="logo">
 
     </a>
     <label class="md-header__button md-icon" for="__drawer">
@@ -235,7 +235,7 @@
   <label class="md-nav__title" for="__drawer">
     <a href=".." title="napari-ndev" class="md-nav__button md-logo" aria-label="napari-ndev" data-md-component="logo">
       
-  <img src="../resources/images/neuralDev-icon.svg" alt="logo">
+  <img src="../resources/images/nDev-icon.svg" alt="logo">
 
     </a>
     napari-ndev
@@ -1241,7 +1241,7 @@
 
 <div><h1 id="further-info">Further Info<a class="headerlink" href="#further-info" title="Permanent link">#</a></h1>
 <h2 id="1-image-utilities">1. Image Utilities<a class="headerlink" href="#1-image-utilities" title="Permanent link">#</a></h2>
-<p>A quick and easy way to save annotations (a napari labels layer) and corresponding images to corresponding folders. Best if the images are opened with the <code>neuralDev</code> reader (using <a href="https://github.com/bioio-devs/bioio">bioio</a> under the hood) -- which can be as simple as drag and drop opening by setting the appropriate default reader for each file type in Preferences -&gt; Plugins--in order to utilize the metadata present for saving the image-label pairs.</p>
+<p>A quick and easy way to save annotations (a napari labels layer) and corresponding images to corresponding folders. Best if the images are opened with the <code>nDev</code> reader (using <a href="https://github.com/bioio-devs/bioio">bioio</a> under the hood) -- which can be as simple as drag and drop opening by setting the appropriate default reader for each file type in Preferences -&gt; Plugins--in order to utilize the metadata present for saving the image-label pairs.</p>
 <p>Quick uniform adjustments to a folder of images, saving the output. Currently supports selecting channels, slicing Z, cropping/downsampling in XY, and doing a max projection of the sliced/cropped image data. To be added: alternative projection types, slicing in T, and compatibility with non TCZYX images (but this is not a priority since <a href="https://github.com/bioio-devs/bioio">bioio</a> currently always extracts images as TCZYX even if a dim is only length 1.</p>
 <h2 id="2-workflow-widget">2. Workflow Widget<a class="headerlink" href="#2-workflow-widget" title="Permanent link">#</a></h2>
 <p>Batch pre-processing/processing images using <a href="https://github.com/haesleinhuepf/napari-workflows">napari-workflows</a>.  Images are processed outside the napari-viewer using <a href="https://github.com/bioio-devs/bioio">bioio</a> as both reader and writer. Prior to passing the images to napari-workflows, the user selects the correct images as the roots (inputs) and thus napari-workflows matches the processing to create the outputs. The advantage of using napari-workflows for batch processing is that it provides an incredibly flexible processing interface without writing a novel widget for small changes to processing steps like specific filters, segmentation, or measurements. Currently only intended for use with images as inputs and images as outputs from napari-workflows, though there is future potential to have other outputs possible, such as .csv measurement arrays.</p>
@@ -1278,7 +1278,7 @@
       <div class="md-copyright">
   
     <div class="md-copyright__highlight">
-      Copyright &copy; 2023-2024 Tim Monko
+      Copyright &copy; 2023-2025 Tim Monko
     </div>
   
   

@@ -19,7 +19,7 @@
         <link rel="next" href="../measure/">
       
       
-      <link rel="icon" href="../../resources/images/neuralDev-icon.svg">
+      <link rel="icon" href="../../resources/images/nDev-icon.svg">
       <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.5.49">
     
     
@@ -96,7 +96,7 @@
   <nav class="md-header__inner md-grid" aria-label="Header">
     <a href="../.." title="napari-ndev" class="md-header__button md-logo" aria-label="napari-ndev" data-md-component="logo">
       
-  <img src="../../resources/images/neuralDev-icon.svg" alt="logo">
+  <img src="../../resources/images/nDev-icon.svg" alt="logo">
 
     </a>
     <label class="md-header__button md-icon" for="__drawer">
@@ -235,7 +235,7 @@
   <label class="md-nav__title" for="__drawer">
     <a href="../.." title="napari-ndev" class="md-nav__button md-logo" aria-label="napari-ndev" data-md-component="logo">
       
-  <img src="../../resources/images/neuralDev-icon.svg" alt="logo">
+  <img src="../../resources/images/nDev-icon.svg" alt="logo">
 
     </a>
     napari-ndev
@@ -1828,7 +1828,7 @@ colors for each unique value.</p>
 <span class="normal">213</span>
 <span class="normal">214</span>
 <span class="normal">215</span>
-<span class="normal">216</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span> <span class="nc">PlateMapper</span><span class="p">:</span>
+<span class="normal">216</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span><span class="w"> </span><span class="nc">PlateMapper</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    A class for creating and manipulating plate maps.</span>
 
@@ -1868,7 +1868,7 @@ colors for each unique value.</p>
 
 <span class="sd">    """</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">plate_size</span><span class="o">=</span><span class="mi">96</span><span class="p">,</span> <span class="n">treatments</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">leading_zeroes</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">plate_size</span><span class="o">=</span><span class="mi">96</span><span class="p">,</span> <span class="n">treatments</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">leading_zeroes</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="p">):</span>
 <span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Initialize a PlateMapper object.</span>
 
@@ -1904,7 +1904,7 @@ colors for each unique value.</p>
             <span class="c1"># pivot the first key in treatments</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">get_styled_plate_map</span><span class="p">(</span><span class="nb">next</span><span class="p">(</span><span class="nb">iter</span><span class="p">(</span><span class="n">treatments</span><span class="o">.</span><span class="n">keys</span><span class="p">())))</span>
 
-    <span class="k">def</span> <span class="nf">create_empty_plate_map</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">create_empty_plate_map</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Create an empty plate map DataFrame for a given plate size.</span>
 
@@ -1936,7 +1936,7 @@ colors for each unique value.</p>
         <span class="bp">self</span><span class="o">.</span><span class="n">plate_map</span> <span class="o">=</span> <span class="n">plate_map_df</span>
         <span class="k">return</span> <span class="n">plate_map_df</span>
 
-    <span class="k">def</span> <span class="nf">assign_treatments</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">treatments</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">assign_treatments</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">treatments</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Assign treatments to specific wells in a plate map.</span>
 
@@ -1974,7 +1974,7 @@ colors for each unique value.</p>
                     <span class="bp">self</span><span class="o">.</span><span class="n">plate_map</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">well_condition</span><span class="p">,</span> <span class="n">treatment</span><span class="p">]</span> <span class="o">=</span> <span class="n">condition</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">plate_map</span>
 
-    <span class="k">def</span> <span class="nf">get_pivoted_plate_map</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">treatment</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_pivoted_plate_map</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">treatment</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Pivot a plate map DataFrame to create a wide-formatted DataFrame with a single treatment as columns.</span>
 
@@ -1995,7 +1995,7 @@ colors for each unique value.</p>
         <span class="bp">self</span><span class="o">.</span><span class="n">pivoted_plate_map</span> <span class="o">=</span> <span class="n">plate_map_pivot</span>
         <span class="k">return</span> <span class="n">plate_map_pivot</span>
 
-    <span class="k">def</span> <span class="nf">get_styled_plate_map</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">treatment</span><span class="p">,</span> <span class="n">palette</span><span class="o">=</span><span class="s1">'colorblind'</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_styled_plate_map</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">treatment</span><span class="p">,</span> <span class="n">palette</span><span class="o">=</span><span class="s1">'colorblind'</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Style a plate map with background colors for each unique value.</span>
 
@@ -2012,7 +2012,7 @@ colors for each unique value.</p>
 <span class="sd">            The styled plate map DataFrame with different background colors for each unique value.</span>
 
 <span class="sd">        """</span>
-        <span class="kn">from</span> <span class="nn">seaborn</span> <span class="kn">import</span> <span class="n">color_palette</span>
+        <span class="kn">from</span><span class="w"> </span><span class="nn">seaborn</span><span class="w"> </span><span class="kn">import</span> <span class="n">color_palette</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">pivoted_plate_map</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_pivoted_plate_map</span><span class="p">(</span><span class="n">treatment</span><span class="p">)</span>
 
@@ -2025,7 +2025,7 @@ colors for each unique value.</p>
         <span class="c1"># Use next() to get the next color</span>
         <span class="n">color_dict</span> <span class="o">=</span> <span class="p">{</span><span class="n">value</span><span class="p">:</span> <span class="nb">next</span><span class="p">(</span><span class="n">palette_cycle</span><span class="p">)</span> <span class="k">for</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">unique_values</span><span class="p">}</span>
 
-        <span class="k">def</span> <span class="nf">get_background_color</span><span class="p">(</span><span class="n">value</span><span class="p">):</span> <span class="c1"># pragma: no cover</span>
+        <span class="k">def</span><span class="w"> </span><span class="nf">get_background_color</span><span class="p">(</span><span class="n">value</span><span class="p">):</span> <span class="c1"># pragma: no cover</span>
             <span class="k">if</span> <span class="n">pd</span><span class="o">.</span><span class="n">isna</span><span class="p">(</span><span class="n">value</span><span class="p">):</span>
                 <span class="k">return</span> <span class="s1">''</span>
             <span class="k">return</span> <span class="sa">f</span><span class="s1">'background-color: </span><span class="si">{</span><span class="n">color_dict</span><span class="p">[</span><span class="n">value</span><span class="p">]</span><span class="si">}</span><span class="s1">'</span>
@@ -2142,7 +2142,7 @@ Defaults to None.</p>
 <span class="normal">78</span>
 <span class="normal">79</span>
 <span class="normal">80</span>
-<span class="normal">81</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">plate_size</span><span class="o">=</span><span class="mi">96</span><span class="p">,</span> <span class="n">treatments</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">leading_zeroes</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="p">):</span>
+<span class="normal">81</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">plate_size</span><span class="o">=</span><span class="mi">96</span><span class="p">,</span> <span class="n">treatments</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">leading_zeroes</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="p">):</span>
 <span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    Initialize a PlateMapper object.</span>
 
@@ -2261,7 +2261,7 @@ Defaults to None.</p>
 <span class="normal">148</span>
 <span class="normal">149</span>
 <span class="normal">150</span>
-<span class="normal">151</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">assign_treatments</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">treatments</span><span class="p">):</span>
+<span class="normal">151</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">assign_treatments</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">treatments</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    Assign treatments to specific wells in a plate map.</span>
 
@@ -2363,7 +2363,7 @@ Defaults to None.</p>
 <span class="normal">110</span>
 <span class="normal">111</span>
 <span class="normal">112</span>
-<span class="normal">113</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">create_empty_plate_map</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="normal">113</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">create_empty_plate_map</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    Create an empty plate map DataFrame for a given plate size.</span>
 
@@ -2461,7 +2461,7 @@ Defaults to None.</p>
 <span class="normal">169</span>
 <span class="normal">170</span>
 <span class="normal">171</span>
-<span class="normal">172</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">get_pivoted_plate_map</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">treatment</span><span class="p">):</span>
+<span class="normal">172</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">get_pivoted_plate_map</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">treatment</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    Pivot a plate map DataFrame to create a wide-formatted DataFrame with a single treatment as columns.</span>
 
@@ -2581,7 +2581,7 @@ Defaults to None.</p>
 <span class="normal">213</span>
 <span class="normal">214</span>
 <span class="normal">215</span>
-<span class="normal">216</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">get_styled_plate_map</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">treatment</span><span class="p">,</span> <span class="n">palette</span><span class="o">=</span><span class="s1">'colorblind'</span><span class="p">):</span>
+<span class="normal">216</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">get_styled_plate_map</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">treatment</span><span class="p">,</span> <span class="n">palette</span><span class="o">=</span><span class="s1">'colorblind'</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    Style a plate map with background colors for each unique value.</span>
 
@@ -2598,7 +2598,7 @@ Defaults to None.</p>
 <span class="sd">        The styled plate map DataFrame with different background colors for each unique value.</span>
 
 <span class="sd">    """</span>
-    <span class="kn">from</span> <span class="nn">seaborn</span> <span class="kn">import</span> <span class="n">color_palette</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">seaborn</span><span class="w"> </span><span class="kn">import</span> <span class="n">color_palette</span>
 
     <span class="bp">self</span><span class="o">.</span><span class="n">pivoted_plate_map</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_pivoted_plate_map</span><span class="p">(</span><span class="n">treatment</span><span class="p">)</span>
 
@@ -2611,7 +2611,7 @@ Defaults to None.</p>
     <span class="c1"># Use next() to get the next color</span>
     <span class="n">color_dict</span> <span class="o">=</span> <span class="p">{</span><span class="n">value</span><span class="p">:</span> <span class="nb">next</span><span class="p">(</span><span class="n">palette_cycle</span><span class="p">)</span> <span class="k">for</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">unique_values</span><span class="p">}</span>
 
-    <span class="k">def</span> <span class="nf">get_background_color</span><span class="p">(</span><span class="n">value</span><span class="p">):</span> <span class="c1"># pragma: no cover</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_background_color</span><span class="p">(</span><span class="n">value</span><span class="p">):</span> <span class="c1"># pragma: no cover</span>
         <span class="k">if</span> <span class="n">pd</span><span class="o">.</span><span class="n">isna</span><span class="p">(</span><span class="n">value</span><span class="p">):</span>
             <span class="k">return</span> <span class="s1">''</span>
         <span class="k">return</span> <span class="sa">f</span><span class="s1">'background-color: </span><span class="si">{</span><span class="n">color_dict</span><span class="p">[</span><span class="n">value</span><span class="p">]</span><span class="si">}</span><span class="s1">'</span>
@@ -2675,7 +2675,7 @@ Defaults to None.</p>
       <div class="md-copyright">
   
     <div class="md-copyright__highlight">
-      Copyright &copy; 2023-2024 Tim Monko
+      Copyright &copy; 2023-2025 Tim Monko
     </div>
   
   

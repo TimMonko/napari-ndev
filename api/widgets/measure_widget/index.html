@@ -19,7 +19,7 @@
         <link rel="next" href="../napari_reader/">
       
       
-      <link rel="icon" href="../../../resources/images/neuralDev-icon.svg">
+      <link rel="icon" href="../../../resources/images/nDev-icon.svg">
       <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.5.49">
     
     
@@ -96,7 +96,7 @@
   <nav class="md-header__inner md-grid" aria-label="Header">
     <a href="../../.." title="napari-ndev" class="md-header__button md-logo" aria-label="napari-ndev" data-md-component="logo">
       
-  <img src="../../../resources/images/neuralDev-icon.svg" alt="logo">
+  <img src="../../../resources/images/nDev-icon.svg" alt="logo">
 
     </a>
     <label class="md-header__button md-icon" for="__drawer">
@@ -235,7 +235,7 @@
   <label class="md-nav__title" for="__drawer">
     <a href="../../.." title="napari-ndev" class="md-nav__button md-logo" aria-label="napari-ndev" data-md-component="logo">
       
-  <img src="../../../resources/images/neuralDev-icon.svg" alt="logo">
+  <img src="../../../resources/images/nDev-icon.svg" alt="logo">
 
     </a>
     napari-ndev
@@ -2390,7 +2390,7 @@
 <span class="normal">716</span>
 <span class="normal">717</span>
 <span class="normal">718</span>
-<span class="normal">719</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span> <span class="nc">MeasureContainer</span><span class="p">(</span><span class="n">Container</span><span class="p">):</span>
+<span class="normal">719</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span><span class="w"> </span><span class="nc">MeasureContainer</span><span class="p">(</span><span class="n">Container</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    Widget to measure labels from folders.</span>
 
@@ -2494,7 +2494,7 @@
 
 <span class="sd">    """</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">viewer</span><span class="p">:</span> <span class="n">napari</span><span class="o">.</span><span class="n">viewer</span><span class="o">.</span><span class="n">Viewer</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="p">):</span>
@@ -2524,7 +2524,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_init_layout</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_connect_events</span><span class="p">()</span>
 
-    <span class="k">def</span> <span class="nf">_init_widgets</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_init_widgets</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">"""Initialize non-container widgets."""</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_label_directory</span> <span class="o">=</span> <span class="n">FileEdit</span><span class="p">(</span><span class="n">label</span><span class="o">=</span><span class="s1">'Label directory'</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s1">'d'</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_image_directory</span> <span class="o">=</span> <span class="n">FileEdit</span><span class="p">(</span>
@@ -2559,7 +2559,7 @@
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_progress_bar</span> <span class="o">=</span> <span class="n">ProgressBar</span><span class="p">(</span><span class="n">label</span><span class="o">=</span><span class="s1">'Progress:'</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">_init_regionprops_container</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_init_regionprops_container</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">"""Initialize the container for region properties checkboxes."""</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_props_container</span> <span class="o">=</span> <span class="n">Container</span><span class="p">(</span><span class="n">layout</span><span class="o">=</span><span class="s1">'vertical'</span><span class="p">)</span>
 
@@ -2588,7 +2588,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_prop</span><span class="o">.</span><span class="n">label</span><span class="o">.</span><span class="n">value</span> <span class="o">=</span> <span class="kc">True</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_prop</span><span class="o">.</span><span class="n">area</span><span class="o">.</span><span class="n">value</span> <span class="o">=</span> <span class="kc">True</span>
 
-    <span class="k">def</span> <span class="nf">_init_id_regex_container</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_init_id_regex_container</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">"""Initialize the container for ID regex settings."""</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_id_regex_container</span> <span class="o">=</span> <span class="n">Container</span><span class="p">(</span><span class="n">layout</span><span class="o">=</span><span class="s1">'vertical'</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_example_id_string</span> <span class="o">=</span> <span class="n">LineEdit</span><span class="p">(</span>
@@ -2604,7 +2604,7 @@
             <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_example_id_string</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_id_regex_dict</span><span class="p">]</span>
         <span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">_init_tx_map_container</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_init_tx_map_container</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">"""Initialize the container for treatment map settings."""</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_tx_map_container</span> <span class="o">=</span> <span class="n">Container</span><span class="p">(</span><span class="n">layout</span><span class="o">=</span><span class="s1">'vertical'</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_update_tx_id_choices_button</span> <span class="o">=</span> <span class="n">PushButton</span><span class="p">(</span><span class="n">label</span><span class="o">=</span><span class="s1">'Update Treatment ID Choices'</span><span class="p">)</span>
@@ -2636,7 +2636,7 @@
             <span class="p">]</span>
         <span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">_init_grouping_container</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_init_grouping_container</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">"""Initialize the container for grouping settings."""</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_grouping_container</span> <span class="o">=</span> <span class="n">Container</span><span class="p">(</span><span class="n">layout</span><span class="o">=</span><span class="s1">'vertical'</span><span class="p">)</span>
 
@@ -2689,7 +2689,7 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">_group_measurements_button</span><span class="p">,</span>
         <span class="p">])</span>
 
-    <span class="k">def</span> <span class="nf">_init_layout</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_init_layout</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">"""Initialize the layout of the container."""</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span>
             <span class="p">[</span>
@@ -2712,7 +2712,7 @@
         <span class="n">tabs</span><span class="o">.</span><span class="n">addTab</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_grouping_container</span><span class="o">.</span><span class="n">native</span><span class="p">,</span> <span class="s1">'Grouping'</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">native</span><span class="o">.</span><span class="n">layout</span><span class="p">()</span><span class="o">.</span><span class="n">addWidget</span><span class="p">(</span><span class="n">tabs</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">_connect_events</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_connect_events</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">"""Connect events to handle user actions."""</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_image_directory</span><span class="o">.</span><span class="n">changed</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_update_image_choices</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_label_directory</span><span class="o">.</span><span class="n">changed</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_update_label_choices</span><span class="p">)</span>
@@ -2722,7 +2722,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_measured_data_path</span><span class="o">.</span><span class="n">changed</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_update_grouping_cols</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_group_measurements_button</span><span class="o">.</span><span class="n">clicked</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">group_measurements</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">_update_tx_id_choices</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_update_tx_id_choices</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">"""Update the choices for treatment ID."""</span>
         <span class="n">id_regex_dict</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_safe_dict_eval</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_id_regex_dict</span><span class="o">.</span><span class="n">value</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">id_regex_dict</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
@@ -2731,7 +2731,7 @@
         <span class="n">regex_choices</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">id_regex_dict</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_tx_id</span><span class="o">.</span><span class="n">choices</span> <span class="o">=</span> <span class="p">[</span><span class="s1">'id'</span><span class="p">]</span> <span class="o">+</span> <span class="n">regex_choices</span>
 
-    <span class="k">def</span> <span class="nf">_update_grouping_cols</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_update_grouping_cols</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">"""Update the columns for grouping."""</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_measured_data_path</span><span class="o">.</span><span class="n">value</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">return</span>
@@ -2754,16 +2754,16 @@
 
         <span class="k">return</span>
 
-    <span class="k">def</span> <span class="nf">_get_0th_img_from_dir</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_get_0th_img_from_dir</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span> <span class="n">directory</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">BioImage</span><span class="p">,</span> <span class="n">pathlib</span><span class="o">.</span><span class="n">Path</span><span class="p">]:</span>
 <span class="w">        </span><span class="sd">"""Get the first image from a directory."""</span>
-        <span class="kn">from</span> <span class="nn">napari_ndev</span> <span class="kn">import</span> <span class="n">nImage</span>
+        <span class="kn">from</span><span class="w"> </span><span class="nn">napari_ndev</span><span class="w"> </span><span class="kn">import</span> <span class="n">nImage</span>
 
         <span class="n">_</span><span class="p">,</span> <span class="n">files</span> <span class="o">=</span> <span class="n">helpers</span><span class="o">.</span><span class="n">get_directory_and_files</span><span class="p">(</span><span class="n">directory</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">nImage</span><span class="p">(</span><span class="n">files</span><span class="p">[</span><span class="mi">0</span><span class="p">]),</span> <span class="n">files</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
 
-    <span class="k">def</span> <span class="nf">_update_dim_and_scales</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">img</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_update_dim_and_scales</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">img</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">"""Update the dimensions and scales based on the image."""</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_squeezed_dims</span> <span class="o">=</span> <span class="n">helpers</span><span class="o">.</span><span class="n">get_squeezed_dim_order</span><span class="p">(</span><span class="n">img</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_scale_tuple</span><span class="o">.</span><span class="n">value</span> <span class="o">=</span> <span class="p">(</span>
@@ -2772,7 +2772,7 @@
             <span class="n">img</span><span class="o">.</span><span class="n">physical_pixel_sizes</span><span class="o">.</span><span class="n">X</span> <span class="ow">or</span> <span class="mi">1</span><span class="p">,</span>
         <span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">_update_choices</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">directory</span><span class="p">,</span> <span class="n">prefix</span><span class="p">,</span> <span class="n">update_label</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_update_choices</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">directory</span><span class="p">,</span> <span class="n">prefix</span><span class="p">,</span> <span class="n">update_label</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">"""Update the choices for labels and intensity images."""</span>
         <span class="n">img</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_0th_img_from_dir</span><span class="p">(</span><span class="n">directory</span><span class="p">)</span>
         <span class="n">img_channels</span> <span class="o">=</span> <span class="n">helpers</span><span class="o">.</span><span class="n">get_channel_names</span><span class="p">(</span><span class="n">img</span><span class="p">)</span>
@@ -2786,11 +2786,11 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_intensity_choices</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">img_channels</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_intensity_images</span><span class="o">.</span><span class="n">choices</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_intensity_choices</span>
 
-    <span class="k">def</span> <span class="nf">_update_image_choices</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_update_image_choices</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">"""Update the choices for intensity images."""</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_update_choices</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_image_directory</span><span class="o">.</span><span class="n">value</span><span class="p">,</span> <span class="s1">'Intensity'</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">_update_label_choices</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_update_label_choices</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">"""Update the choices for label images."""</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_update_choices</span><span class="p">(</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_label_directory</span><span class="o">.</span><span class="n">value</span><span class="p">,</span> <span class="s1">'Labels'</span><span class="p">,</span> <span class="n">update_label</span><span class="o">=</span><span class="kc">True</span>
@@ -2799,11 +2799,11 @@
         <span class="n">id_string</span> <span class="o">=</span> <span class="n">helpers</span><span class="o">.</span><span class="n">create_id_string</span><span class="p">(</span><span class="n">img</span><span class="p">,</span> <span class="n">file_id</span><span class="o">.</span><span class="n">stem</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_example_id_string</span><span class="o">.</span><span class="n">value</span> <span class="o">=</span> <span class="n">id_string</span>
 
-    <span class="k">def</span> <span class="nf">_update_region_choices</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_update_region_choices</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">"""Update the choices for region images."""</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_update_choices</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_region_directory</span><span class="o">.</span><span class="n">value</span><span class="p">,</span> <span class="s1">'Region'</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">_safe_dict_eval</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dict_string</span><span class="p">,</span> <span class="n">dict_name</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_safe_dict_eval</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dict_string</span><span class="p">,</span> <span class="n">dict_name</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">"""Safely evaluate a string as a dictionary."""</span>
         <span class="k">if</span> <span class="n">dict_string</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">return</span> <span class="kc">None</span>
@@ -2816,7 +2816,7 @@
         <span class="k">except</span> <span class="p">(</span><span class="ne">ValueError</span><span class="p">,</span> <span class="ne">SyntaxError</span><span class="p">):</span>
             <span class="k">return</span> <span class="kc">None</span>
 
-    <span class="k">def</span> <span class="nf">batch_measure</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">batch_measure</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Perform batch measurement of labels and intensity images.</span>
 
@@ -2830,7 +2830,7 @@
 <span class="sd">            The measurement results as a DataFrame.</span>
 
 <span class="sd">        """</span>
-        <span class="kn">from</span> <span class="nn">napari_ndev</span> <span class="kn">import</span> <span class="n">measure</span> <span class="k">as</span> <span class="n">ndev_measure</span><span class="p">,</span> <span class="n">nImage</span>
+        <span class="kn">from</span><span class="w"> </span><span class="nn">napari_ndev</span><span class="w"> </span><span class="kn">import</span> <span class="n">measure</span> <span class="k">as</span> <span class="n">ndev_measure</span><span class="p">,</span> <span class="n">nImage</span>
 
         <span class="c1"># get all the files in the label directory</span>
         <span class="n">label_dir</span><span class="p">,</span> <span class="n">label_files</span> <span class="o">=</span> <span class="n">helpers</span><span class="o">.</span><span class="n">get_directory_and_files</span><span class="p">(</span>
@@ -3016,7 +3016,7 @@
 
         <span class="k">return</span> <span class="n">measure_props_df</span>
 
-    <span class="k">def</span> <span class="nf">group_measurements</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">group_measurements</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Group measurements based on user input.</span>
 
@@ -3031,7 +3031,7 @@
 <span class="sd">            The grouped measurements as a DataFrame.</span>
 
 <span class="sd">        """</span>
-        <span class="kn">from</span> <span class="nn">napari_ndev</span> <span class="kn">import</span> <span class="n">measure</span> <span class="k">as</span> <span class="n">ndev_measure</span>
+        <span class="kn">from</span><span class="w"> </span><span class="nn">napari_ndev</span><span class="w"> </span><span class="kn">import</span> <span class="n">measure</span> <span class="k">as</span> <span class="n">ndev_measure</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_progress_bar</span><span class="o">.</span><span class="n">label</span> <span class="o">=</span> <span class="s1">'Grouping Measurements'</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_progress_bar</span><span class="o">.</span><span class="n">value</span> <span class="o">=</span> <span class="mi">0</span>
@@ -3153,7 +3153,7 @@
 <span class="normal">161</span>
 <span class="normal">162</span>
 <span class="normal">163</span>
-<span class="normal">164</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+<span class="normal">164</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
     <span class="bp">self</span><span class="p">,</span>
     <span class="n">viewer</span><span class="p">:</span> <span class="n">napari</span><span class="o">.</span><span class="n">viewer</span><span class="o">.</span><span class="n">Viewer</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
 <span class="p">):</span>
@@ -3418,7 +3418,7 @@ output directory.</p>
 <span class="normal">653</span>
 <span class="normal">654</span>
 <span class="normal">655</span>
-<span class="normal">656</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">batch_measure</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
+<span class="normal">656</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">batch_measure</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    Perform batch measurement of labels and intensity images.</span>
 
@@ -3432,7 +3432,7 @@ output directory.</p>
 <span class="sd">        The measurement results as a DataFrame.</span>
 
 <span class="sd">    """</span>
-    <span class="kn">from</span> <span class="nn">napari_ndev</span> <span class="kn">import</span> <span class="n">measure</span> <span class="k">as</span> <span class="n">ndev_measure</span><span class="p">,</span> <span class="n">nImage</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">napari_ndev</span><span class="w"> </span><span class="kn">import</span> <span class="n">measure</span> <span class="k">as</span> <span class="n">ndev_measure</span><span class="p">,</span> <span class="n">nImage</span>
 
     <span class="c1"># get all the files in the label directory</span>
     <span class="n">label_dir</span><span class="p">,</span> <span class="n">label_files</span> <span class="o">=</span> <span class="n">helpers</span><span class="o">.</span><span class="n">get_directory_and_files</span><span class="p">(</span>
@@ -3717,7 +3717,7 @@ the measured data with '_grouped' appended.</p>
 <span class="normal">716</span>
 <span class="normal">717</span>
 <span class="normal">718</span>
-<span class="normal">719</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">group_measurements</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="normal">719</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">group_measurements</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    Group measurements based on user input.</span>
 
@@ -3732,7 +3732,7 @@ the measured data with '_grouped' appended.</p>
 <span class="sd">        The grouped measurements as a DataFrame.</span>
 
 <span class="sd">    """</span>
-    <span class="kn">from</span> <span class="nn">napari_ndev</span> <span class="kn">import</span> <span class="n">measure</span> <span class="k">as</span> <span class="n">ndev_measure</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">napari_ndev</span><span class="w"> </span><span class="kn">import</span> <span class="n">measure</span> <span class="k">as</span> <span class="n">ndev_measure</span>
 
     <span class="bp">self</span><span class="o">.</span><span class="n">_progress_bar</span><span class="o">.</span><span class="n">label</span> <span class="o">=</span> <span class="s1">'Grouping Measurements'</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">_progress_bar</span><span class="o">.</span><span class="n">value</span> <span class="o">=</span> <span class="mi">0</span>
@@ -3830,7 +3830,7 @@ the measured data with '_grouped' appended.</p>
       <div class="md-copyright">
   
     <div class="md-copyright__highlight">
-      Copyright &copy; 2023-2024 Tim Monko
+      Copyright &copy; 2023-2025 Tim Monko
     </div>
   
   

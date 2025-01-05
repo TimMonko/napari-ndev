@@ -19,7 +19,7 @@
         <link rel="next" href="../workflow_widget/">
       
       
-      <link rel="icon" href="../../../resources/images/neuralDev-icon.svg">
+      <link rel="icon" href="../../../resources/images/nDev-icon.svg">
       <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.5.49">
     
     
@@ -96,7 +96,7 @@
   <nav class="md-header__inner md-grid" aria-label="Header">
     <a href="../../.." title="napari-ndev" class="md-header__button md-logo" aria-label="napari-ndev" data-md-component="logo">
       
-  <img src="../../../resources/images/neuralDev-icon.svg" alt="logo">
+  <img src="../../../resources/images/nDev-icon.svg" alt="logo">
 
     </a>
     <label class="md-header__button md-icon" for="__drawer">
@@ -235,7 +235,7 @@
   <label class="md-nav__title" for="__drawer">
     <a href="../../.." title="napari-ndev" class="md-nav__button md-logo" aria-label="napari-ndev" data-md-component="logo">
       
-  <img src="../../../resources/images/neuralDev-icon.svg" alt="logo">
+  <img src="../../../resources/images/nDev-icon.svg" alt="logo">
 
     </a>
     napari-ndev
@@ -2804,7 +2804,7 @@
 <span class="normal">959</span>
 <span class="normal">960</span>
 <span class="normal">961</span>
-<span class="normal">962</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span> <span class="nc">UtilitiesContainer</span><span class="p">(</span><span class="n">ScrollableContainer</span><span class="p">):</span>
+<span class="normal">962</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span><span class="w"> </span><span class="nc">UtilitiesContainer</span><span class="p">(</span><span class="n">ScrollableContainer</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    A widget to work with images and labels in the napari viewer.</span>
 
@@ -2889,7 +2889,7 @@
 
 <span class="sd">    """</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">viewer</span><span class="p">:</span> <span class="n">napari</span><span class="o">.</span><span class="n">viewer</span><span class="o">.</span><span class="n">Viewer</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">viewer</span><span class="p">:</span> <span class="n">napari</span><span class="o">.</span><span class="n">viewer</span><span class="o">.</span><span class="n">Viewer</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Initialize the UtilitiesContainer widget.</span>
 
@@ -2917,7 +2917,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_init_layout</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_connect_events</span><span class="p">()</span>
 
-    <span class="k">def</span> <span class="nf">_init_layout</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_init_layout</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">"""Initialize the layout of the widget."""</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span>
             <span class="p">[</span>
@@ -2935,7 +2935,7 @@
             <span class="p">]</span>
         <span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">_init_widgets</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_init_widgets</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">"""Initialize widgets."""</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_save_directory</span> <span class="o">=</span> <span class="n">FileEdit</span><span class="p">(</span>
             <span class="n">mode</span><span class="o">=</span><span class="s1">'d'</span><span class="p">,</span>
@@ -2948,7 +2948,7 @@
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_results</span> <span class="o">=</span> <span class="n">TextEdit</span><span class="p">(</span><span class="n">label</span><span class="o">=</span><span class="s1">'Info'</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">_init_save_name_container</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_init_save_name_container</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">"""Initialize the save name container."""</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_save_name_container</span> <span class="o">=</span> <span class="n">Container</span><span class="p">(</span><span class="n">layout</span><span class="o">=</span><span class="s1">'horizontal'</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_save_name</span> <span class="o">=</span> <span class="n">LineEdit</span><span class="p">(</span>
@@ -2965,7 +2965,7 @@
         <span class="p">])</span>
 
 
-    <span class="k">def</span> <span class="nf">_init_file_options_container</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_init_file_options_container</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">"""Initialize the file options collapsible container."""</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_file_options_container</span> <span class="o">=</span> <span class="n">CollapsibleContainer</span><span class="p">(</span>
             <span class="n">layout</span><span class="o">=</span><span class="s1">'vertical'</span><span class="p">,</span>
@@ -2993,7 +2993,7 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">_save_directory_prefix</span><span class="p">,</span>
         <span class="p">])</span>
 
-    <span class="k">def</span> <span class="nf">_init_open_image_container</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_init_open_image_container</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">"""Initialize the open image container."""</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_open_image_container</span> <span class="o">=</span> <span class="n">Container</span><span class="p">(</span><span class="n">layout</span><span class="o">=</span><span class="s1">'horizontal'</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_open_image_button</span> <span class="o">=</span> <span class="n">PushButton</span><span class="p">(</span><span class="n">label</span><span class="o">=</span><span class="s1">'Open File(s)'</span><span class="p">)</span>
@@ -3005,7 +3005,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_open_image_container</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_open_image_button</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_open_image_container</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_select_next_image_button</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">_init_concatenate_files_container</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_init_concatenate_files_container</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_concatenate_files_container</span> <span class="o">=</span> <span class="n">Container</span><span class="p">(</span>
             <span class="n">layout</span><span class="o">=</span><span class="s1">'horizontal'</span><span class="p">,</span>
         <span class="p">)</span>
@@ -3025,7 +3025,7 @@
         <span class="p">])</span>
 
 
-    <span class="k">def</span> <span class="nf">_init_metadata_container</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_init_metadata_container</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_metadata_container</span> <span class="o">=</span> <span class="n">CollapsibleContainer</span><span class="p">(</span>
             <span class="n">layout</span><span class="o">=</span><span class="s1">'vertical'</span><span class="p">,</span>  <span class="c1"># label='Update Metadata from',</span>
             <span class="n">text</span><span class="o">=</span><span class="s1">'Metadata'</span><span class="p">,</span>
@@ -3072,7 +3072,7 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">_scale_layers_button</span><span class="p">,</span>
         <span class="p">])</span>
 
-    <span class="k">def</span> <span class="nf">_init_scene_container</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_init_scene_container</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">"""Initialize the scene container, allowing scene saving."""</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_scene_container</span> <span class="o">=</span> <span class="n">Container</span><span class="p">(</span>
             <span class="n">layout</span><span class="o">=</span><span class="s1">'horizontal'</span><span class="p">,</span>
@@ -3090,7 +3090,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_scene_container</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_scenes_to_extract</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_scene_container</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_extract_scenes</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">_init_save_layers_container</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_init_save_layers_container</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">"""Initialize the container to save images, labels, and shapes."""</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_save_layers_container</span> <span class="o">=</span> <span class="n">Container</span><span class="p">(</span>
             <span class="n">layout</span><span class="o">=</span><span class="s1">'horizontal'</span><span class="p">,</span>
@@ -3114,7 +3114,7 @@
             <span class="c1"># self._export_figure_button,</span>
         <span class="p">])</span>
 
-    <span class="k">def</span> <span class="nf">_init_figure_options_container</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_init_figure_options_container</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">"""Initialize the container for figure options."""</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_figure_options_container</span> <span class="o">=</span> <span class="n">CollapsibleContainer</span><span class="p">(</span>
             <span class="n">layout</span><span class="o">=</span><span class="s1">'vertical'</span><span class="p">,</span>
@@ -3157,7 +3157,7 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">_camera_angle</span><span class="p">,</span>
         <span class="p">])</span>
 
-    <span class="k">def</span> <span class="nf">_connect_events</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_connect_events</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">"""Connect the events of the widgets to respective methods."""</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_files</span><span class="o">.</span><span class="n">changed</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">update_metadata_on_file_select</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_append_scene_button</span><span class="o">.</span><span class="n">clicked</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">append_scene_to_name</span><span class="p">)</span>
@@ -3177,7 +3177,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_results</span><span class="o">.</span><span class="n">_on_value_change</span><span class="p">()</span>
 
     <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">p_sizes</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">p_sizes</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Get the physical pixel sizes.</span>
 
@@ -3187,7 +3187,7 @@
 <span class="sd">            The physical pixel sizes.</span>
 
 <span class="sd">        """</span>
-        <span class="kn">from</span> <span class="nn">bioio_base.types</span> <span class="kn">import</span> <span class="n">PhysicalPixelSizes</span>
+        <span class="kn">from</span><span class="w"> </span><span class="nn">bioio_base.types</span><span class="w"> </span><span class="kn">import</span> <span class="n">PhysicalPixelSizes</span>
 
         <span class="k">return</span> <span class="n">PhysicalPixelSizes</span><span class="p">(</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_scale_tuple</span><span class="o">.</span><span class="n">value</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
@@ -3196,7 +3196,7 @@
         <span class="p">)</span>
 
     <span class="c1"># Converted</span>
-    <span class="k">def</span> <span class="nf">_update_metadata_from_Image</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_update_metadata_from_Image</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">img</span><span class="p">:</span> <span class="n">BioImage</span><span class="p">,</span>
         <span class="n">update_channel_names</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
@@ -3230,7 +3230,7 @@
             <span class="p">)</span>
 
     <span class="c1"># Converted</span>
-    <span class="k">def</span> <span class="nf">update_metadata_on_file_select</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">update_metadata_on_file_select</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">"""Update self._save_name.value and metadata if selected."""</span>
         <span class="c1"># TODO: get true stem of file, in case .ome.tiff</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_save_name</span><span class="o">.</span><span class="n">value</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_files</span><span class="o">.</span><span class="n">value</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">stem</span><span class="p">)</span>
@@ -3243,7 +3243,7 @@
         <span class="p">)</span>
 
     <span class="c1"># Added</span>
-    <span class="k">def</span> <span class="nf">append_scene_to_name</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">append_scene_to_name</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">"""Append the scene to the save name."""</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_viewer</span><span class="o">.</span><span class="n">layers</span><span class="o">.</span><span class="n">selection</span><span class="o">.</span><span class="n">active</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">try</span><span class="p">:</span>
@@ -3254,7 +3254,7 @@
             <span class="k">except</span> <span class="ne">AttributeError</span><span class="p">:</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">_results</span><span class="o">.</span><span class="n">value</span> <span class="o">=</span> <span class="p">(</span>
                     <span class="s1">'Tried to append scene to name, but layer not opened with'</span>
-                    <span class="s1">' neuralDev reader.'</span>
+                    <span class="s1">' nDev reader.'</span>
                 <span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_results</span><span class="o">.</span><span class="n">value</span> <span class="o">=</span> <span class="p">(</span>
@@ -3266,7 +3266,7 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">_save_name</span><span class="o">.</span><span class="n">value</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">'</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_save_name</span><span class="o">.</span><span class="n">value</span><span class="si">}</span><span class="s1">_</span><span class="si">{</span><span class="n">scene</span><span class="si">}</span><span class="s1">'</span>
 
     <span class="c1"># Converted</span>
-    <span class="k">def</span> <span class="nf">update_metadata_from_layer</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">update_metadata_from_layer</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Update metadata from the selected layer.</span>
 
@@ -3296,25 +3296,25 @@
             <span class="p">)</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_results</span><span class="o">.</span><span class="n">value</span> <span class="o">=</span> <span class="p">(</span>
                 <span class="s1">'Tried to update metadata, but could only update scale'</span>
-                <span class="s1">' because layer not opened with neuralDev reader.'</span>
+                <span class="s1">' because layer not opened with nDev reader.'</span>
                 <span class="sa">f</span><span class="s1">'</span><span class="se">\n</span><span class="s1">At </span><span class="si">{</span><span class="n">time</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="s2">"%H:%M:%S"</span><span class="p">)</span><span class="si">}</span><span class="s1">'</span>
             <span class="p">)</span>
 
     <span class="c1"># Converted</span>
-    <span class="k">def</span> <span class="nf">open_images</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">open_images</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">"""Open the selected images in the napari viewer with napari-ndev."""</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_viewer</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_files</span><span class="o">.</span><span class="n">value</span><span class="p">,</span> <span class="n">plugin</span><span class="o">=</span><span class="s1">'napari-ndev'</span><span class="p">)</span>
 
     <span class="nd">@staticmethod</span>
-    <span class="k">def</span> <span class="nf">_natural_sort_key</span><span class="p">(</span><span class="n">s</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_natural_sort_key</span><span class="p">(</span><span class="n">s</span><span class="p">):</span>
         <span class="k">return</span> <span class="p">[</span>
             <span class="nb">int</span><span class="p">(</span><span class="n">text</span><span class="p">)</span> <span class="k">if</span> <span class="n">text</span><span class="o">.</span><span class="n">isdigit</span><span class="p">()</span> <span class="k">else</span> <span class="n">text</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
             <span class="k">for</span> <span class="n">text</span> <span class="ow">in</span> <span class="n">re</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="sa">r</span><span class="s1">'(\d+)'</span><span class="p">,</span> <span class="n">s</span><span class="p">)</span>
         <span class="p">]</span>
 
     <span class="c1"># Converted</span>
-    <span class="k">def</span> <span class="nf">select_next_images</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="kn">from</span> <span class="nn">natsort</span> <span class="kn">import</span> <span class="n">os_sorted</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">select_next_images</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="kn">from</span><span class="w"> </span><span class="nn">natsort</span><span class="w"> </span><span class="kn">import</span> <span class="n">os_sorted</span>
 <span class="w">        </span><span class="sd">"""Open the next set of images in the directyory."""</span>
         <span class="n">num_files</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_files</span><span class="o">.</span><span class="n">value</span><span class="o">.</span><span class="fm">__len__</span><span class="p">()</span>
 
@@ -3349,7 +3349,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">update_metadata_on_file_select</span><span class="p">()</span>
 
     <span class="c1"># Converted</span>
-    <span class="k">def</span> <span class="nf">rescale_by</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">rescale_by</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">"""Rescale the selected layers based on the given scale."""</span>
         <span class="n">layers</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_viewer</span><span class="o">.</span><span class="n">layers</span><span class="o">.</span><span class="n">selection</span>
         <span class="n">scale_tup</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_scale_tuple</span><span class="o">.</span><span class="n">value</span>
@@ -3360,7 +3360,7 @@
             <span class="c1"># are missing in the new layer</span>
             <span class="n">layer</span><span class="o">.</span><span class="n">scale</span> <span class="o">=</span> <span class="n">scale_tup</span><span class="p">[</span><span class="o">-</span><span class="n">scale_len</span><span class="p">:]</span>
 
-    <span class="k">def</span> <span class="nf">concatenate_files</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">concatenate_files</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">files</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="n">Path</span> <span class="o">|</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span> <span class="o">|</span> <span class="n">Path</span><span class="p">],</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
@@ -3401,7 +3401,7 @@
                     <span class="n">array_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">array</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">(</span><span class="n">array_list</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">concatenate_layers</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">concatenate_layers</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">layers</span><span class="p">:</span> <span class="n">Layer</span> <span class="o">|</span> <span class="nb">list</span><span class="p">[</span><span class="n">Layer</span><span class="p">],</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
@@ -3442,7 +3442,7 @@
 
         <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">(</span><span class="n">array_list</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">_get_dims_for_shape_layer</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">layers</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">]:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_get_dims_for_shape_layer</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">layers</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">]:</span>
         <span class="c1"># TODO: Fix this not getting the first instance of the image layer</span>
         <span class="c1"># get first instance of a napari.layers.Image or napari.layers.Labels</span>
         <span class="n">dim_layer</span> <span class="o">=</span> <span class="nb">next</span><span class="p">(</span>
@@ -3462,7 +3462,7 @@
         <span class="n">label_dim</span> <span class="o">=</span> <span class="n">label_dim</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="k">if</span> <span class="n">label_dim</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="mi">3</span> <span class="k">else</span> <span class="n">label_dim</span>
         <span class="k">return</span> <span class="n">label_dim</span>
 
-    <span class="k">def</span> <span class="nf">_get_save_loc</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_get_save_loc</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span> <span class="n">root_dir</span><span class="p">:</span> <span class="n">Path</span><span class="p">,</span> <span class="n">parent</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">file_name</span><span class="p">:</span> <span class="nb">str</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Path</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">"""</span>
@@ -3487,7 +3487,7 @@
         <span class="n">save_directory</span><span class="o">.</span><span class="n">mkdir</span><span class="p">(</span><span class="n">parents</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">save_directory</span> <span class="o">/</span> <span class="n">file_name</span>
 
-    <span class="k">def</span> <span class="nf">_common_save_logic</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_common_save_logic</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">data</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
         <span class="n">uri</span><span class="p">:</span> <span class="n">Path</span><span class="p">,</span>
@@ -3520,7 +3520,7 @@
 
 <span class="sd">        """</span>
         <span class="c1"># TODO: add image_name to save method</span>
-        <span class="kn">from</span> <span class="nn">bioio.writers</span> <span class="kn">import</span> <span class="n">OmeTiffWriter</span>
+        <span class="kn">from</span><span class="w"> </span><span class="nn">bioio.writers</span><span class="w"> </span><span class="kn">import</span> <span class="n">OmeTiffWriter</span>
 
         <span class="c1"># BioImage does not allow saving labels as np.int64</span>
         <span class="c1"># napari generates labels differently depending on the OS</span>
@@ -3560,14 +3560,14 @@
             <span class="p">)</span>
         <span class="k">return</span>
 
-    <span class="k">def</span> <span class="nf">_determine_save_directory</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">save_dir</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_determine_save_directory</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">save_dir</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_save_directory_prefix</span><span class="o">.</span><span class="n">value</span> <span class="o">!=</span> <span class="s1">''</span><span class="p">:</span>
             <span class="n">save_dir</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">'</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_save_directory_prefix</span><span class="o">.</span><span class="n">value</span><span class="si">}</span><span class="s1">_</span><span class="si">{</span><span class="n">save_dir</span><span class="si">}</span><span class="s1">'</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="n">save_dir</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">'</span><span class="si">{</span><span class="n">save_dir</span><span class="si">}</span><span class="s1">'</span>
         <span class="k">return</span> <span class="n">save_dir</span>
 
-    <span class="k">def</span> <span class="nf">save_files_as_ome_tiff</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">save_files_as_ome_tiff</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">"""Save the selected files as OME-TIFF using BioImage."""</span>
         <span class="n">img_data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">concatenate_files</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_files</span><span class="o">.</span><span class="n">value</span><span class="p">)</span>
         <span class="n">save_dir</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_determine_save_directory</span><span class="p">(</span><span class="s1">'ConcatenatedImages'</span><span class="p">)</span>
@@ -3592,7 +3592,7 @@
 
         <span class="k">return</span> <span class="n">img_data</span>
 
-    <span class="k">def</span> <span class="nf">batch_concatenate_files</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">batch_concatenate_files</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Concatenate files in the selected directory.</span>
 
@@ -3630,7 +3630,7 @@
             <span class="sa">f</span><span class="s1">'</span><span class="se">\n</span><span class="s1">At </span><span class="si">{</span><span class="n">time</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="s2">"%H:%M:%S"</span><span class="p">)</span><span class="si">}</span><span class="s1">'</span>
         <span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">save_scenes_ome_tiff</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">save_scenes_ome_tiff</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Save selected scenes as OME-TIFF.</span>
 
@@ -3679,7 +3679,7 @@
         <span class="p">)</span>
         <span class="k">return</span>
 
-    <span class="k">def</span> <span class="nf">save_layers_as_ome_tiff</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">save_layers_as_ome_tiff</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Save the selected layers as OME-TIFF.</span>
 
@@ -3835,7 +3835,7 @@
 <span class="normal">148</span>
 <span class="normal">149</span>
 <span class="normal">150</span>
-<span class="normal">151</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">viewer</span><span class="p">:</span> <span class="n">napari</span><span class="o">.</span><span class="n">viewer</span><span class="o">.</span><span class="n">Viewer</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+<span class="normal">151</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">viewer</span><span class="p">:</span> <span class="n">napari</span><span class="o">.</span><span class="n">viewer</span><span class="o">.</span><span class="n">Viewer</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    Initialize the UtilitiesContainer widget.</span>
 
@@ -3905,7 +3905,7 @@
 <span class="normal">496</span>
 <span class="normal">497</span>
 <span class="normal">498</span>
-<span class="normal">499</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">append_scene_to_name</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="normal">499</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">append_scene_to_name</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">"""Append the scene to the save name."""</span>
     <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_viewer</span><span class="o">.</span><span class="n">layers</span><span class="o">.</span><span class="n">selection</span><span class="o">.</span><span class="n">active</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
         <span class="k">try</span><span class="p">:</span>
@@ -3916,7 +3916,7 @@
         <span class="k">except</span> <span class="ne">AttributeError</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_results</span><span class="o">.</span><span class="n">value</span> <span class="o">=</span> <span class="p">(</span>
                 <span class="s1">'Tried to append scene to name, but layer not opened with'</span>
-                <span class="s1">' neuralDev reader.'</span>
+                <span class="s1">' nDev reader.'</span>
             <span class="p">)</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_results</span><span class="o">.</span><span class="n">value</span> <span class="o">=</span> <span class="p">(</span>
@@ -3991,7 +3991,7 @@ directory.</p>
 <span class="normal">861</span>
 <span class="normal">862</span>
 <span class="normal">863</span>
-<span class="normal">864</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">batch_concatenate_files</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="normal">864</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">batch_concatenate_files</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    Concatenate files in the selected directory.</span>
 
@@ -4119,7 +4119,7 @@ and then leave empty channels not represented by the color channels.</p>
 <span class="normal">632</span>
 <span class="normal">633</span>
 <span class="normal">634</span>
-<span class="normal">635</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">concatenate_files</span><span class="p">(</span>
+<span class="normal">635</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">concatenate_files</span><span class="p">(</span>
     <span class="bp">self</span><span class="p">,</span>
     <span class="n">files</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="n">Path</span> <span class="o">|</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span> <span class="o">|</span> <span class="n">Path</span><span class="p">],</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
@@ -4249,7 +4249,7 @@ layer to get the dimensions for the shapes layer.</p>
 <span class="normal">673</span>
 <span class="normal">674</span>
 <span class="normal">675</span>
-<span class="normal">676</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">concatenate_layers</span><span class="p">(</span>
+<span class="normal">676</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">concatenate_layers</span><span class="p">(</span>
     <span class="bp">self</span><span class="p">,</span>
     <span class="n">layers</span><span class="p">:</span> <span class="n">Layer</span> <span class="o">|</span> <span class="nb">list</span><span class="p">[</span><span class="n">Layer</span><span class="p">],</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
@@ -4314,7 +4314,7 @@ layer to get the dimensions for the shapes layer.</p>
               <summary>Source code in <code>src/napari_ndev/widgets/_utilities_container.py</code></summary>
               <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">537</span>
 <span class="normal">538</span>
-<span class="normal">539</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">open_images</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="normal">539</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">open_images</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">"""Open the selected images in the napari viewer with napari-ndev."""</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">_viewer</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_files</span><span class="o">.</span><span class="n">value</span><span class="p">,</span> <span class="n">plugin</span><span class="o">=</span><span class="s1">'napari-ndev'</span><span class="p">)</span>
 </code></pre></div></td></tr></table></div>
@@ -4349,7 +4349,7 @@ layer to get the dimensions for the shapes layer.</p>
 <span class="normal">591</span>
 <span class="normal">592</span>
 <span class="normal">593</span>
-<span class="normal">594</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">rescale_by</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="normal">594</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">rescale_by</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">"""Rescale the selected layers based on the given scale."""</span>
     <span class="n">layers</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_viewer</span><span class="o">.</span><span class="n">layers</span><span class="o">.</span><span class="n">selection</span>
     <span class="n">scale_tup</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_scale_tuple</span><span class="o">.</span><span class="n">value</span>
@@ -4405,7 +4405,7 @@ layer to get the dimensions for the shapes layer.</p>
 <span class="normal">823</span>
 <span class="normal">824</span>
 <span class="normal">825</span>
-<span class="normal">826</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">save_files_as_ome_tiff</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+<span class="normal">826</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">save_files_as_ome_tiff</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">"""Save the selected files as OME-TIFF using BioImage."""</span>
     <span class="n">img_data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">concatenate_files</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_files</span><span class="o">.</span><span class="n">value</span><span class="p">)</span>
     <span class="n">save_dir</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_determine_save_directory</span><span class="p">(</span><span class="s1">'ConcatenatedImages'</span><span class="p">)</span>
@@ -4500,7 +4500,7 @@ layer to get the dimensions for the shapes layer.</p>
 <span class="normal">959</span>
 <span class="normal">960</span>
 <span class="normal">961</span>
-<span class="normal">962</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">save_layers_as_ome_tiff</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+<span class="normal">962</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">save_layers_as_ome_tiff</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    Save the selected layers as OME-TIFF.</span>
 
@@ -4622,7 +4622,7 @@ will be extracted.</p>
 <span class="normal">910</span>
 <span class="normal">911</span>
 <span class="normal">912</span>
-<span class="normal">913</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">save_scenes_ome_tiff</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="normal">913</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">save_scenes_ome_tiff</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    Save selected scenes as OME-TIFF.</span>
 
@@ -4731,7 +4731,7 @@ will be extracted.</p>
 <span class="normal">531</span>
 <span class="normal">532</span>
 <span class="normal">533</span>
-<span class="normal">534</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">update_metadata_from_layer</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="normal">534</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">update_metadata_from_layer</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    Update metadata from the selected layer.</span>
 
@@ -4761,7 +4761,7 @@ will be extracted.</p>
         <span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_results</span><span class="o">.</span><span class="n">value</span> <span class="o">=</span> <span class="p">(</span>
             <span class="s1">'Tried to update metadata, but could only update scale'</span>
-            <span class="s1">' because layer not opened with neuralDev reader.'</span>
+            <span class="s1">' because layer not opened with nDev reader.'</span>
             <span class="sa">f</span><span class="s1">'</span><span class="se">\n</span><span class="s1">At </span><span class="si">{</span><span class="n">time</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="s2">"%H:%M:%S"</span><span class="p">)</span><span class="si">}</span><span class="s1">'</span>
         <span class="p">)</span>
 </code></pre></div></td></tr></table></div>
@@ -4797,7 +4797,7 @@ will be extracted.</p>
 <span class="normal">473</span>
 <span class="normal">474</span>
 <span class="normal">475</span>
-<span class="normal">476</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">update_metadata_on_file_select</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="normal">476</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">update_metadata_on_file_select</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">"""Update self._save_name.value and metadata if selected."""</span>
     <span class="c1"># TODO: get true stem of file, in case .ome.tiff</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">_save_name</span><span class="o">.</span><span class="n">value</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_files</span><span class="o">.</span><span class="n">value</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">stem</span><span class="p">)</span>
@@ -4859,7 +4859,7 @@ will be extracted.</p>
       <div class="md-copyright">
   
     <div class="md-copyright__highlight">
-      Copyright &copy; 2023-2024 Tim Monko
+      Copyright &copy; 2023-2025 Tim Monko
     </div>
   
   
