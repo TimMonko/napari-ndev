@@ -3113,7 +3113,7 @@ wheels = [
 
 [[package]]
 name = "napari-ndev"
-version = "0.9.10.dev12+g932a17e.d20241220"
+version = "0.10.1.dev5+gbbc54b0"
 source = { editable = "." }
 dependencies = [
     { name = "apoc" },
@@ -3153,10 +3153,6 @@ all = [
     { name = "napari-simpleitk-image-processing" },
 ]
 dev = [
-    { name = "pre-commit" },
-    { name = "ruff" },
-]
-dev-all = [
     { name = "bioio-czi" },
     { name = "black" },
     { name = "mkdocs" },
@@ -3242,12 +3238,11 @@ requires-dist = [
     { name = "mkdocstrings-python", marker = "extra == 'docs'" },
     { name = "napari", marker = "extra == 'testing'" },
     { name = "napari", extras = ["all"], specifier = ">=0.4.19" },
-    { name = "napari-ndev", extras = ["dev"], marker = "extra == 'dev-all'" },
-    { name = "napari-ndev", extras = ["docs"], marker = "extra == 'dev-all'" },
+    { name = "napari-ndev", extras = ["docs"], marker = "extra == 'dev'" },
     { name = "napari-ndev", extras = ["extras"], marker = "extra == 'all'" },
     { name = "napari-ndev", extras = ["extras"], marker = "extra == 'testing'" },
     { name = "napari-ndev", extras = ["gpl-extras"], marker = "extra == 'all'" },
-    { name = "napari-ndev", extras = ["testing"], marker = "extra == 'dev-all'" },
+    { name = "napari-ndev", extras = ["testing"], marker = "extra == 'dev'" },
     { name = "napari-pyclesperanto-assistant" },
     { name = "napari-segment-blobs-and-things-with-membranes" },
     { name = "napari-simpleitk-image-processing", marker = "extra == 'extras'" },
