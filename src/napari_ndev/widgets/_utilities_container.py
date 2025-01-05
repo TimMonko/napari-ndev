@@ -487,7 +487,7 @@ class UtilitiesContainer(ScrollableContainer):
             except AttributeError:
                 self._results.value = (
                     'Tried to append scene to name, but layer not opened with'
-                    ' neuralDev reader.'
+                    ' nDev reader.'
                 )
         else:
             self._results.value = (
@@ -529,7 +529,7 @@ class UtilitiesContainer(ScrollableContainer):
             )
             self._results.value = (
                 'Tried to update metadata, but could only update scale'
-                ' because layer not opened with neuralDev reader.'
+                ' because layer not opened with nDev reader.'
                 f'\nAt {time.strftime("%H:%M:%S")}'
             )
 
