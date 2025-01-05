@@ -167,7 +167,6 @@ def test_update_metadata_from_layer(make_napari_viewer, test_data):
 
     assert (
         'Tried to update metadata, but could only update scale'
-        # ' because layer not opened with neuralDev reader'
     ) in container._results.value
     assert container._scale_tuple.value == (1, 2, 3)
 

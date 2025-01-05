@@ -20,13 +20,13 @@ Inside napari, navigate to `Plugins` --> `Install/Uninstall Plugins...`. In the 
 
 ![Console-installation](resources/gifs/console-full-installation.gif)
 
-This method only installs python libraries that are BSD3 licensed. Some image formats (such as czi and lif) are not available unless installing the full neuralDev package. To install extra plugins go to the integrated `napari console` (lower left button in UI) and enter `!pip install napari-ndev[all]`. **Note**: napari will freeze when you enter this command; please be patient as it downloads and sets up the remaining packages. **Restart napari for changes to take affect.**
+This method only installs python libraries that are BSD3 licensed. Some image formats (such as czi and lif) are not available unless installing the full nDev package. To install extra plugins go to the integrated `napari console` (lower left button in UI) and enter `!pip install napari-ndev[all]`. **Note**: napari will freeze when you enter this command; please be patient as it downloads and sets up the remaining packages. **Restart napari for changes to take affect.**
 
 ### opening widgets
 
 ![Widget opening](resources/gifs/widget-opening.gif)
 
-Navigate to `Plugins` --> `neuralDev` --> Click any widget. **Note:** Something (I believe napari) appears to be currently bugged and requires that the first widget be opened twice; the first time it will give a warning, the second time it should open.
+Navigate to `Plugins` --> `nDev` --> Click any widget. **Note:** Something (I believe napari) appears to be currently bugged and requires that the first widget be opened twice; the first time it will give a warning, the second time it should open.
 
 ### bio-formats support
 

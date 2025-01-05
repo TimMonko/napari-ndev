@@ -1,6 +1,5 @@
-# napari-ndev (neuralDev)
+# napari-ndev (nDev)
 
-<!-- ![Logo](images/neuralDev-logo.svg) -->
 [![License BSD-3](https://img.shields.io/pypi/l/napari-ndev.svg?color=green)](https://github.com/TimMonko/napari-ndev/raw/main/LICENSE)
 [![PyPI](https://img.shields.io/pypi/v/napari-ndev.svg?color=green)](https://pypi.org/project/napari-ndev)
 [![Python Version](https://img.shields.io/pypi/pyversions/napari-ndev.svg?color=green)](https://python.org)
