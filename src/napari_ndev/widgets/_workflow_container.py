@@ -15,6 +15,7 @@ from magicgui.widgets import (
     Select,
 )
 
+from napari.qt.threading import thread_worker
 from napari_ndev import helpers, nImage
 
 if TYPE_CHECKING:
@@ -84,6 +85,8 @@ class WorkflowContainer(Container):
         self.roots = []
         self._channel_names = []
         self._img_dims = ''
+        self.image_files = []
+        self.workflow = None
 
         self._init_widgets()
         self._roots_container()
@@ -205,8 +208,8 @@ class WorkflowContainer(Container):
         self._update_task_choices(self.workflow)
         return
 
-    # @thread_worker
-    def batch_workflow(self):
+    @thread_worker
+    def _batch_workflow_threaded(self):
         """Run the workflow on all images in the image directory."""
         import dask.array as da
         from bioio.writers import OmeTiffWriter
@@ -239,9 +242,9 @@ class WorkflowContainer(Container):
             self._tasks_select.value,
         )
 
-        self._progress_bar.label = f'Workflow on {len(image_files)} images'
-        self._progress_bar.value = 0
-        self._progress_bar.max = len(image_files)
+        # self._progress_bar.label = f'Workflow on {len(image_files)} images'
+        # self._progress_bar.value = 0
+        # self._progress_bar.max = len(image_files)
 
         for idx_file, image_file in enumerate(image_files):
             logger.info('Processing %d: %s', idx_file + 1, image_file.name)
@@ -299,10 +302,18 @@ class WorkflowContainer(Container):
                 physical_pixel_sizes=img.physical_pixel_sizes,
             )
 
-            self._progress_bar.value = idx_file + 1
+            # self._progress_bar.value = idx_file + 1
+            yield
+            # yield self._progress_bar.value
 
         logger.removeHandler(handler)
         return
+
+    def batch_workflow(self):
+        bf = self._batch_workflow_threaded()
+        bf.start()
+        return
+
 
 # useful to check layout
 if __name__ == '__main__':
