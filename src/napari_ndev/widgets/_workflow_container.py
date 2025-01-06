@@ -89,21 +89,26 @@ class WorkflowContainer(Container):
         self.workflow = None
 
         self._init_widgets()
-        self._roots_container()
+        self._init_batch_container()
         self._tasks_container()
         self._init_layout()
         self._connect_events()
 
     def _init_widgets(self):
         """Initialize non-Container widgets."""
-        self.image_directory = FileEdit(label='Image Directory', mode='d')
-        self.result_directory = FileEdit(label='Result Directory', mode='d')
-
         self.workflow_file = FileEdit(
             label='Workflow File',
             filter='*.yaml',
             tooltip='Select a workflow file to load',
         )
+        self._workflow_roots = LineEdit(label='Workflow Roots:')
+        self._progress_bar = ProgressBar(label='Progress:')
+
+    def _init_batch_container(self):
+        """Initialize the batch container tab widgets."""
+        # first create the informational widgets
+        self.image_directory = FileEdit(label='Image Directory', mode='d')
+        self.result_directory = FileEdit(label='Result Directory', mode='d')
         self._keep_original_images = CheckBox(
             label='Keep Original Images',
             value=False,
@@ -111,14 +116,31 @@ class WorkflowContainer(Container):
             'concatenated with the results',
         )
         self.batch_button = PushButton(label='Batch Workflow')
+        self._batch_info_container = Container(
+            layout='vertical',
+            widgets=[
+                self.image_directory,
+                self.result_directory,
+                self._keep_original_images,
+                self.batch_button,
+            ],
+        )
 
-        self._progress_bar = ProgressBar(label='Progress:')
-        self._workflow_roots = LineEdit(label='Workflow Roots:')
+        # create the container where roots will later be added
+        self._batch_roots_container = Container(layout='vertical', label=None)
+        self._batch_roots_container.native.layout().addStretch() # this resets the additions to the top of the container (the name is confusing)
 
-    def _roots_container(self):
-        """Initialize the roots container."""
-        self._roots_container = Container(layout='vertical', label='Roots')
-        self._roots_container.native.layout().addStretch() # this resets the additions to the top of the container (the name is confusing)
+        # establish the layout of the batch container
+        self._batch_container = Container(
+            layout='vertical',
+            widgets=[
+                self._batch_info_container,
+                self._batch_roots_container,
+            ],
+            label='Batch',
+            labels=None,
+        )
+
 
     def _tasks_container(self):
         """Initialize the tasks container."""
@@ -137,18 +159,14 @@ class WorkflowContainer(Container):
         """Initialize the layout of the widgets."""
         self.extend(
             [
-                self.image_directory,
-                self.result_directory,
                 self.workflow_file,
-                self._keep_original_images,
-                self.batch_button,
-                self._progress_bar,
                 self._workflow_roots,
+                self._progress_bar,
             ]
         )
         self._tabs = TabbedContainer(
             widgets=[
-                self._roots_container,
+                self._batch_container,
                 self._tasks_container,
             ],
             label=None,
@@ -172,7 +190,7 @@ class WorkflowContainer(Container):
 
         self._channel_names = helpers.get_channel_names(img)
 
-        for widget in self._roots_container:
+        for widget in self._batch_roots_container:
             widget.choices = self._channel_names
 
         self._squeezed_img_dims = helpers.get_squeezed_dim_order(img)
@@ -180,17 +198,17 @@ class WorkflowContainer(Container):
 
     def _update_roots(self):
         """Get the roots from the workflow and update the ComboBox widgets."""
-        self._roots_container.clear()
+        self._batch_roots_container.clear()
 
         for idx, root in enumerate(self.workflow.roots()):
             short_root = helpers.elide_string_middle(root, max_length=12)
             root_combo = ComboBox(
-                label=f'{idx}: {short_root}',
+                label=f'Root {idx}: {short_root}',
                 choices=self._channel_names,
                 nullable=True,
                 value=None,
             )
-            self._roots_container.append(root_combo)
+            self._batch_roots_container.append(root_combo)
         return
 
     def _update_task_choices(self, workflow):
@@ -225,7 +243,7 @@ class WorkflowContainer(Container):
 
         # get indexes of channel names, in case not all images have
         # the same channel names, the index should be in the same order
-        root_list = [widget.value for widget in self._roots_container]
+        root_list = [widget.value for widget in self._batch_roots_container]
         root_index_list = [self._channel_names.index(r) for r in root_list]
 
         # Setting up Logging File
@@ -245,11 +263,6 @@ class WorkflowContainer(Container):
             root_list,
             self._tasks_select.value,
         )
-
-
-        # self._progress_bar.label = f'Workflow on {len(image_files)} images'
-        # self._progress_bar.value = 0
-        # self._progress_bar.max = len(image_files)
 
         for idx_file, image_file in enumerate(image_files):
             logger.info('Processing %d: %s', idx_file + 1, image_file.name)
@@ -307,9 +320,7 @@ class WorkflowContainer(Container):
                 physical_pixel_sizes=img.physical_pixel_sizes,
             )
 
-            # self._progress_bar.value = idx_file + 1
             yield idx_file + 1
-            # yield self._progress_bar.value
 
         logger.removeHandler(handler)
         return
@@ -319,8 +330,8 @@ class WorkflowContainer(Container):
         self._progress_bar.value = 0
         self._progress_bar.max = len(self.image_files)
 
-        batch_worker = self._batch_workflow_threaded()
-        batch_worker.start()
-        batch_worker.yielded.connect(self._update_progress_bar)
+        self._batch_worker = self._batch_workflow_threaded()
+        self._batch_worker.yielded.connect(self._update_progress_bar)
+        self._batch_worker.start()
 
         return
