@@ -9,7 +9,7 @@ from magicgui.widgets import (
     ComboBox,
     Container,
     FileEdit,
-    Label,
+    LineEdit,
     ProgressBar,
     PushButton,
     Select,
@@ -110,12 +110,11 @@ class WorkflowContainer(Container):
         self.batch_button = PushButton(label='Batch Workflow')
 
         self._progress_bar = ProgressBar(label='Progress:')
-        self._workflow_roots = Label(label='Workflow Roots:')
+        self._workflow_roots = LineEdit(label='Workflow Roots:')
 
     def _roots_container(self):
         """Initialize the roots container."""
         self._roots_container = Container(layout='vertical', label='Roots')
-        # TODO: Qt AlignTop
         self._roots_container.native.layout().addStretch() # this resets the additions to the top of the container (the name is confusing)
 
     def _tasks_container(self):
@@ -181,14 +180,14 @@ class WorkflowContainer(Container):
         self._roots_container.clear()
 
         for idx, root in enumerate(self.workflow.roots()):
+            short_root = helpers.elide_string_middle(root, max_length=12)
             root_combo = ComboBox(
-                label=f'Root {idx}: {root}',
+                label=f'{idx}: {short_root}',
                 choices=self._channel_names,
                 nullable=True,
                 value=None,
             )
             self._roots_container.append(root_combo)
-            # self.append(root_combo)
         return
 
     def _update_task_choices(self, workflow):
@@ -206,6 +205,7 @@ class WorkflowContainer(Container):
         self._update_task_choices(self.workflow)
         return
 
+    # @thread_worker
     def batch_workflow(self):
         """Run the workflow on all images in the image directory."""
         import dask.array as da
@@ -303,3 +303,17 @@ class WorkflowContainer(Container):
 
         logger.removeHandler(handler)
         return
+
+# useful to check layout
+if __name__ == '__main__':
+    import napari
+    from napari import Viewer
+    viewer = Viewer()
+    container = WorkflowContainer(viewer)
+
+#     # trying to set image_directory.value will always break when add_dock_widget.... but not with plugin method
+#     # container.image_directory.value = r'src\napari_ndev\_tests\resources\Workflow\Images'
+# #     # container.result_directory.value = r'src\napari_ndev\_tests\resources\Workflow\Results'
+# #     # container.workflow_file.value = r'src\napari_ndev\_tests\resources\Workflow\workflows\cpu_workflow-2roots-2leafs.yaml'
+    viewer.window.add_dock_widget(container, area='right')
+    napari.run()
