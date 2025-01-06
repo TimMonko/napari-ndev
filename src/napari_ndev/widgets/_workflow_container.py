@@ -208,6 +208,10 @@ class WorkflowContainer(Container):
         self._update_task_choices(self.workflow)
         return
 
+    def _update_progress_bar(self, value):
+        self._progress_bar.value = value
+        return
+
     @thread_worker
     def _batch_workflow_threaded(self):
         """Run the workflow on all images in the image directory."""
@@ -241,6 +245,7 @@ class WorkflowContainer(Container):
             root_list,
             self._tasks_select.value,
         )
+
 
         # self._progress_bar.label = f'Workflow on {len(image_files)} images'
         # self._progress_bar.value = 0
@@ -303,28 +308,19 @@ class WorkflowContainer(Container):
             )
 
             # self._progress_bar.value = idx_file + 1
-            yield
+            yield idx_file + 1
             # yield self._progress_bar.value
 
         logger.removeHandler(handler)
         return
 
     def batch_workflow(self):
-        bf = self._batch_workflow_threaded()
-        bf.start()
+        self._progress_bar.label = f'Workflow on {len(self.image_files)} images'
+        self._progress_bar.value = 0
+        self._progress_bar.max = len(self.image_files)
+
+        batch_worker = self._batch_workflow_threaded()
+        batch_worker.start()
+        batch_worker.yielded.connect(self._update_progress_bar)
+
         return
-
-
-# useful to check layout
-if __name__ == '__main__':
-    import napari
-    from napari import Viewer
-    viewer = Viewer()
-    container = WorkflowContainer(viewer)
-
-#     # trying to set image_directory.value will always break when add_dock_widget.... but not with plugin method
-#     # container.image_directory.value = r'src\napari_ndev\_tests\resources\Workflow\Images'
-# #     # container.result_directory.value = r'src\napari_ndev\_tests\resources\Workflow\Results'
-# #     # container.workflow_file.value = r'src\napari_ndev\_tests\resources\Workflow\workflows\cpu_workflow-2roots-2leafs.yaml'
-    viewer.window.add_dock_widget(container, area='right')
-    napari.run()
