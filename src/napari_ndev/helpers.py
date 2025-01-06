@@ -26,6 +26,7 @@ if TYPE_CHECKING:
 __all__ = [
     'check_for_missing_files',
     'create_id_string',
+    'elide_string_middle',
     'get_channel_names',
     'get_directory_and_files',
     'get_squeezed_dim_order',
@@ -239,3 +240,27 @@ def setup_logger(log_loc=Union[str, Path]):
     handler.setFormatter(formatter)
     logger.addHandler(handler)
     return logger, handler
+
+def elide_string_middle(input_string, max_length=15):
+    """
+    Elide the middle of a string if it exceeds the specified length.
+
+    Parameters
+    ----------
+    input_string : str
+        The input string.
+    max_length : int, optional
+        The maximum length of the string. Defaults to 15.
+
+    Returns
+    -------
+    str
+        The elided string.
+
+    """
+    if len(input_string) <= max_length:
+        return input_string
+    if max_length <= 3:
+        return input_string[:max_length]  # If max_length is too small, just truncate
+    half_length = (max_length - 3) // 2
+    return input_string[:half_length] + '...' + input_string[-half_length:]
