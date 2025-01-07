@@ -945,6 +945,15 @@
   
 </li>
         
+          <li class="md-nav__item">
+  <a href="#napari_ndev.widgets._workflow_container.WorkflowContainer.batch_workflow_threaded" class="md-nav__link">
+    <span class="md-ellipsis">
+      <code class="doc-symbol doc-symbol-toc doc-symbol-method"></code>&nbsp;batch_workflow_threaded
+    </span>
+  </a>
+  
+</li>
+        
       </ul>
     </nav>
   
@@ -1257,6 +1266,15 @@
   <a href="#napari_ndev.widgets._workflow_container.WorkflowContainer.batch_workflow" class="md-nav__link">
     <span class="md-ellipsis">
       <code class="doc-symbol doc-symbol-toc doc-symbol-method"></code>&nbsp;batch_workflow
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#napari_ndev.widgets._workflow_container.WorkflowContainer.batch_workflow_threaded" class="md-nav__link">
+    <span class="md-ellipsis">
+      <code class="doc-symbol doc-symbol-toc doc-symbol-method"></code>&nbsp;batch_workflow_threaded
     </span>
   </a>
   
@@ -1693,7 +1711,45 @@ batch_button.clicked : Signal
 <span class="normal">296</span>
 <span class="normal">297</span>
 <span class="normal">298</span>
-<span class="normal">299</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span><span class="w"> </span><span class="nc">WorkflowContainer</span><span class="p">(</span><span class="n">Container</span><span class="p">):</span>
+<span class="normal">299</span>
+<span class="normal">300</span>
+<span class="normal">301</span>
+<span class="normal">302</span>
+<span class="normal">303</span>
+<span class="normal">304</span>
+<span class="normal">305</span>
+<span class="normal">306</span>
+<span class="normal">307</span>
+<span class="normal">308</span>
+<span class="normal">309</span>
+<span class="normal">310</span>
+<span class="normal">311</span>
+<span class="normal">312</span>
+<span class="normal">313</span>
+<span class="normal">314</span>
+<span class="normal">315</span>
+<span class="normal">316</span>
+<span class="normal">317</span>
+<span class="normal">318</span>
+<span class="normal">319</span>
+<span class="normal">320</span>
+<span class="normal">321</span>
+<span class="normal">322</span>
+<span class="normal">323</span>
+<span class="normal">324</span>
+<span class="normal">325</span>
+<span class="normal">326</span>
+<span class="normal">327</span>
+<span class="normal">328</span>
+<span class="normal">329</span>
+<span class="normal">330</span>
+<span class="normal">331</span>
+<span class="normal">332</span>
+<span class="normal">333</span>
+<span class="normal">334</span>
+<span class="normal">335</span>
+<span class="normal">336</span>
+<span class="normal">337</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span><span class="w"> </span><span class="nc">WorkflowContainer</span><span class="p">(</span><span class="n">Container</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    Container class for managing the workflow functionality in napari-ndev.</span>
 
@@ -1756,23 +1812,30 @@ batch_button.clicked : Signal
         <span class="bp">self</span><span class="o">.</span><span class="n">roots</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_channel_names</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_img_dims</span> <span class="o">=</span> <span class="s1">''</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">image_files</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">workflow</span> <span class="o">=</span> <span class="kc">None</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_init_widgets</span><span class="p">()</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_roots_container</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_init_batch_container</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_tasks_container</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_init_layout</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_connect_events</span><span class="p">()</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_init_widgets</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">"""Initialize non-Container widgets."""</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">image_directory</span> <span class="o">=</span> <span class="n">FileEdit</span><span class="p">(</span><span class="n">label</span><span class="o">=</span><span class="s1">'Image Directory'</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s1">'d'</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">result_directory</span> <span class="o">=</span> <span class="n">FileEdit</span><span class="p">(</span><span class="n">label</span><span class="o">=</span><span class="s1">'Result Directory'</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s1">'d'</span><span class="p">)</span>
-
         <span class="bp">self</span><span class="o">.</span><span class="n">workflow_file</span> <span class="o">=</span> <span class="n">FileEdit</span><span class="p">(</span>
             <span class="n">label</span><span class="o">=</span><span class="s1">'Workflow File'</span><span class="p">,</span>
             <span class="nb">filter</span><span class="o">=</span><span class="s1">'*.yaml'</span><span class="p">,</span>
             <span class="n">tooltip</span><span class="o">=</span><span class="s1">'Select a workflow file to load'</span><span class="p">,</span>
         <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_workflow_roots</span> <span class="o">=</span> <span class="n">LineEdit</span><span class="p">(</span><span class="n">label</span><span class="o">=</span><span class="s1">'Workflow Roots:'</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_progress_bar</span> <span class="o">=</span> <span class="n">ProgressBar</span><span class="p">(</span><span class="n">label</span><span class="o">=</span><span class="s1">'Progress:'</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_init_batch_container</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""Initialize the batch container tab widgets."""</span>
+        <span class="c1"># first create the informational widgets</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">image_directory</span> <span class="o">=</span> <span class="n">FileEdit</span><span class="p">(</span><span class="n">label</span><span class="o">=</span><span class="s1">'Image Directory'</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s1">'d'</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">result_directory</span> <span class="o">=</span> <span class="n">FileEdit</span><span class="p">(</span><span class="n">label</span><span class="o">=</span><span class="s1">'Result Directory'</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s1">'d'</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_keep_original_images</span> <span class="o">=</span> <span class="n">CheckBox</span><span class="p">(</span>
             <span class="n">label</span><span class="o">=</span><span class="s1">'Keep Original Images'</span><span class="p">,</span>
             <span class="n">value</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
@@ -1780,15 +1843,31 @@ batch_button.clicked : Signal
             <span class="s1">'concatenated with the results'</span><span class="p">,</span>
         <span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">batch_button</span> <span class="o">=</span> <span class="n">PushButton</span><span class="p">(</span><span class="n">label</span><span class="o">=</span><span class="s1">'Batch Workflow'</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_batch_info_container</span> <span class="o">=</span> <span class="n">Container</span><span class="p">(</span>
+            <span class="n">layout</span><span class="o">=</span><span class="s1">'vertical'</span><span class="p">,</span>
+            <span class="n">widgets</span><span class="o">=</span><span class="p">[</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">image_directory</span><span class="p">,</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">result_directory</span><span class="p">,</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_keep_original_images</span><span class="p">,</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">batch_button</span><span class="p">,</span>
+            <span class="p">],</span>
+        <span class="p">)</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">_progress_bar</span> <span class="o">=</span> <span class="n">ProgressBar</span><span class="p">(</span><span class="n">label</span><span class="o">=</span><span class="s1">'Progress:'</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_workflow_roots</span> <span class="o">=</span> <span class="n">Label</span><span class="p">(</span><span class="n">label</span><span class="o">=</span><span class="s1">'Workflow Roots:'</span><span class="p">)</span>
+        <span class="c1"># create the container where roots will later be added</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_batch_roots_container</span> <span class="o">=</span> <span class="n">Container</span><span class="p">(</span><span class="n">layout</span><span class="o">=</span><span class="s1">'vertical'</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_batch_roots_container</span><span class="o">.</span><span class="n">native</span><span class="o">.</span><span class="n">layout</span><span class="p">()</span><span class="o">.</span><span class="n">addStretch</span><span class="p">()</span> <span class="c1"># this resets the additions to the top of the container (the name is confusing)</span>
 
-    <span class="k">def</span><span class="w"> </span><span class="nf">_roots_container</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">"""Initialize the roots container."""</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_roots_container</span> <span class="o">=</span> <span class="n">Container</span><span class="p">(</span><span class="n">layout</span><span class="o">=</span><span class="s1">'vertical'</span><span class="p">)</span>
-        <span class="c1"># TODO: Qt AlignTop</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_roots_container</span><span class="o">.</span><span class="n">native</span><span class="o">.</span><span class="n">layout</span><span class="p">()</span><span class="o">.</span><span class="n">addStretch</span><span class="p">()</span> <span class="c1"># this resets the additions to the top of the container (the name is confusing)</span>
+        <span class="c1"># establish the layout of the batch container</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_batch_container</span> <span class="o">=</span> <span class="n">Container</span><span class="p">(</span>
+            <span class="n">layout</span><span class="o">=</span><span class="s1">'vertical'</span><span class="p">,</span>
+            <span class="n">widgets</span><span class="o">=</span><span class="p">[</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_batch_info_container</span><span class="p">,</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_batch_roots_container</span><span class="p">,</span>
+            <span class="p">],</span>
+            <span class="n">label</span><span class="o">=</span><span class="s1">'Batch'</span><span class="p">,</span>
+            <span class="n">labels</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="p">)</span>
+
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_tasks_container</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">"""Initialize the tasks container."""</span>
@@ -1800,32 +1879,34 @@ batch_button.clicked : Signal
         <span class="bp">self</span><span class="o">.</span><span class="n">_tasks_container</span> <span class="o">=</span> <span class="n">Container</span><span class="p">(</span>
             <span class="n">layout</span><span class="o">=</span><span class="s1">'vertical'</span><span class="p">,</span>
             <span class="n">widgets</span><span class="o">=</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_tasks_select</span><span class="p">],</span>
+            <span class="n">label</span><span class="o">=</span><span class="s1">'Tasks'</span><span class="p">,</span>
         <span class="p">)</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_init_layout</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">"""Initialize the layout of the widgets."""</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span>
             <span class="p">[</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">image_directory</span><span class="p">,</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">result_directory</span><span class="p">,</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">workflow_file</span><span class="p">,</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">_keep_original_images</span><span class="p">,</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">batch_button</span><span class="p">,</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">_progress_bar</span><span class="p">,</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">_workflow_roots</span><span class="p">,</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_progress_bar</span><span class="p">,</span>
             <span class="p">]</span>
         <span class="p">)</span>
-
-        <span class="n">tabs</span> <span class="o">=</span> <span class="n">QTabWidget</span><span class="p">()</span>
-        <span class="n">tabs</span><span class="o">.</span><span class="n">addTab</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_roots_container</span><span class="o">.</span><span class="n">native</span><span class="p">,</span> <span class="s1">'Roots'</span><span class="p">)</span>
-        <span class="n">tabs</span><span class="o">.</span><span class="n">addTab</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_tasks_container</span><span class="o">.</span><span class="n">native</span><span class="p">,</span> <span class="s1">'Tasks'</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">native</span><span class="o">.</span><span class="n">layout</span><span class="p">()</span><span class="o">.</span><span class="n">addWidget</span><span class="p">(</span><span class="n">tabs</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_tabs</span> <span class="o">=</span> <span class="n">TabbedContainer</span><span class="p">(</span>
+            <span class="n">widgets</span><span class="o">=</span><span class="p">[</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_batch_container</span><span class="p">,</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_tasks_container</span><span class="p">,</span>
+            <span class="p">],</span>
+            <span class="n">label</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+            <span class="n">labels</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">native</span><span class="o">.</span><span class="n">layout</span><span class="p">()</span><span class="o">.</span><span class="n">addWidget</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_tabs</span><span class="o">.</span><span class="n">native</span><span class="p">)</span> <span class="c1"># add the tabbed container to the layout, native needed to keep viewer interaction</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">native</span><span class="o">.</span><span class="n">layout</span><span class="p">()</span><span class="o">.</span><span class="n">addStretch</span><span class="p">()</span> <span class="c1"># resets the layout to the top of the container</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_connect_events</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">"""Connect the events of the widgets to respective methods."""</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">image_directory</span><span class="o">.</span><span class="n">changed</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_get_image_info</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">workflow_file</span><span class="o">.</span><span class="n">changed</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_get_workflow_info</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">batch_button</span><span class="o">.</span><span class="n">clicked</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">batch_workflow</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">batch_button</span><span class="o">.</span><span class="n">clicked</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">batch_workflow_threaded</span><span class="p">)</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_get_image_info</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">"""Get channels and dims from first image in the directory."""</span>
@@ -1836,7 +1917,7 @@ batch_button.clicked : Signal
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_channel_names</span> <span class="o">=</span> <span class="n">helpers</span><span class="o">.</span><span class="n">get_channel_names</span><span class="p">(</span><span class="n">img</span><span class="p">)</span>
 
-        <span class="k">for</span> <span class="n">widget</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_roots_container</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">widget</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_batch_roots_container</span><span class="p">:</span>
             <span class="n">widget</span><span class="o">.</span><span class="n">choices</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_channel_names</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_squeezed_img_dims</span> <span class="o">=</span> <span class="n">helpers</span><span class="o">.</span><span class="n">get_squeezed_dim_order</span><span class="p">(</span><span class="n">img</span><span class="p">)</span>
@@ -1844,17 +1925,17 @@ batch_button.clicked : Signal
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_update_roots</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">"""Get the roots from the workflow and update the ComboBox widgets."""</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_roots_container</span><span class="o">.</span><span class="n">clear</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_batch_roots_container</span><span class="o">.</span><span class="n">clear</span><span class="p">()</span>
 
         <span class="k">for</span> <span class="n">idx</span><span class="p">,</span> <span class="n">root</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">workflow</span><span class="o">.</span><span class="n">roots</span><span class="p">()):</span>
+            <span class="n">short_root</span> <span class="o">=</span> <span class="n">helpers</span><span class="o">.</span><span class="n">elide_string</span><span class="p">(</span><span class="n">root</span><span class="p">,</span> <span class="n">max_length</span><span class="o">=</span><span class="mi">12</span><span class="p">)</span>
             <span class="n">root_combo</span> <span class="o">=</span> <span class="n">ComboBox</span><span class="p">(</span>
-                <span class="n">label</span><span class="o">=</span><span class="sa">f</span><span class="s1">'Root </span><span class="si">{</span><span class="n">idx</span><span class="si">}</span><span class="s1">: </span><span class="si">{</span><span class="n">root</span><span class="si">}</span><span class="s1">'</span><span class="p">,</span>
+                <span class="n">label</span><span class="o">=</span><span class="sa">f</span><span class="s1">'Root </span><span class="si">{</span><span class="n">idx</span><span class="si">}</span><span class="s1">: </span><span class="si">{</span><span class="n">short_root</span><span class="si">}</span><span class="s1">'</span><span class="p">,</span>
                 <span class="n">choices</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_channel_names</span><span class="p">,</span>
                 <span class="n">nullable</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
                 <span class="n">value</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
             <span class="p">)</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_roots_container</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">root_combo</span><span class="p">)</span>
-            <span class="c1"># self.append(root_combo)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_batch_roots_container</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">root_combo</span><span class="p">)</span>
         <span class="k">return</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_update_task_choices</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">workflow</span><span class="p">):</span>
@@ -1872,6 +1953,10 @@ batch_button.clicked : Signal
         <span class="bp">self</span><span class="o">.</span><span class="n">_update_task_choices</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">workflow</span><span class="p">)</span>
         <span class="k">return</span>
 
+    <span class="k">def</span><span class="w"> </span><span class="nf">_update_progress_bar</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_progress_bar</span><span class="o">.</span><span class="n">value</span> <span class="o">=</span> <span class="n">value</span>
+        <span class="k">return</span>
+
     <span class="k">def</span><span class="w"> </span><span class="nf">batch_workflow</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">"""Run the workflow on all images in the image directory."""</span>
         <span class="kn">import</span><span class="w"> </span><span class="nn">dask.array</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">da</span>
@@ -1884,7 +1969,7 @@ batch_button.clicked : Signal
 
         <span class="c1"># get indexes of channel names, in case not all images have</span>
         <span class="c1"># the same channel names, the index should be in the same order</span>
-        <span class="n">root_list</span> <span class="o">=</span> <span class="p">[</span><span class="n">widget</span><span class="o">.</span><span class="n">value</span> <span class="k">for</span> <span class="n">widget</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_roots_container</span><span class="p">]</span>
+        <span class="n">root_list</span> <span class="o">=</span> <span class="p">[</span><span class="n">widget</span><span class="o">.</span><span class="n">value</span> <span class="k">for</span> <span class="n">widget</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_batch_roots_container</span><span class="p">]</span>
         <span class="n">root_index_list</span> <span class="o">=</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_channel_names</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">r</span><span class="p">)</span> <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">root_list</span><span class="p">]</span>
 
         <span class="c1"># Setting up Logging File</span>
@@ -1904,10 +1989,6 @@ batch_button.clicked : Signal
             <span class="n">root_list</span><span class="p">,</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_tasks_select</span><span class="o">.</span><span class="n">value</span><span class="p">,</span>
         <span class="p">)</span>
-
-        <span class="bp">self</span><span class="o">.</span><span class="n">_progress_bar</span><span class="o">.</span><span class="n">label</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">'Workflow on </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">image_files</span><span class="p">)</span><span class="si">}</span><span class="s1"> images'</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_progress_bar</span><span class="o">.</span><span class="n">value</span> <span class="o">=</span> <span class="mi">0</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_progress_bar</span><span class="o">.</span><span class="n">max</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">image_files</span><span class="p">)</span>
 
         <span class="k">for</span> <span class="n">idx_file</span><span class="p">,</span> <span class="n">image_file</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">image_files</span><span class="p">):</span>
             <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s1">'Processing </span><span class="si">%d</span><span class="s1">: </span><span class="si">%s</span><span class="s1">'</span><span class="p">,</span> <span class="n">idx_file</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="n">image_file</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
@@ -1965,9 +2046,22 @@ batch_button.clicked : Signal
                 <span class="n">physical_pixel_sizes</span><span class="o">=</span><span class="n">img</span><span class="o">.</span><span class="n">physical_pixel_sizes</span><span class="p">,</span>
             <span class="p">)</span>
 
-            <span class="bp">self</span><span class="o">.</span><span class="n">_progress_bar</span><span class="o">.</span><span class="n">value</span> <span class="o">=</span> <span class="n">idx_file</span> <span class="o">+</span> <span class="mi">1</span>
+            <span class="k">yield</span> <span class="n">idx_file</span> <span class="o">+</span> <span class="mi">1</span>
 
         <span class="n">logger</span><span class="o">.</span><span class="n">removeHandler</span><span class="p">(</span><span class="n">handler</span><span class="p">)</span>
+        <span class="k">return</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">batch_workflow_threaded</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""Run the batch workflow with threading and progress bar updates."""</span>
+        <span class="kn">from</span><span class="w"> </span><span class="nn">napari.qt</span><span class="w"> </span><span class="kn">import</span> <span class="n">create_worker</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_progress_bar</span><span class="o">.</span><span class="n">label</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">'Workflow on </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">image_files</span><span class="p">)</span><span class="si">}</span><span class="s1"> images'</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_progress_bar</span><span class="o">.</span><span class="n">value</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_progress_bar</span><span class="o">.</span><span class="n">max</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">image_files</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_batch_worker</span> <span class="o">=</span> <span class="n">create_worker</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">batch_workflow</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_batch_worker</span><span class="o">.</span><span class="n">yielded</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_update_progress_bar</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_batch_worker</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
         <span class="k">return</span>
 </code></pre></div></td></tr></table></div>
               </details>
@@ -2036,7 +2130,9 @@ batch_button.clicked : Signal
 <span class="normal">89</span>
 <span class="normal">90</span>
 <span class="normal">91</span>
-<span class="normal">92</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">viewer</span><span class="p">:</span> <span class="n">napari</span><span class="o">.</span><span class="n">viewer</span><span class="o">.</span><span class="n">Viewer</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+<span class="normal">92</span>
+<span class="normal">93</span>
+<span class="normal">94</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">viewer</span><span class="p">:</span> <span class="n">napari</span><span class="o">.</span><span class="n">viewer</span><span class="o">.</span><span class="n">Viewer</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    Initialize the WorkflowContainer widget.</span>
 
@@ -2051,9 +2147,11 @@ batch_button.clicked : Signal
     <span class="bp">self</span><span class="o">.</span><span class="n">roots</span> <span class="o">=</span> <span class="p">[]</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">_channel_names</span> <span class="o">=</span> <span class="p">[]</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">_img_dims</span> <span class="o">=</span> <span class="s1">''</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">image_files</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">workflow</span> <span class="o">=</span> <span class="kc">None</span>
 
     <span class="bp">self</span><span class="o">.</span><span class="n">_init_widgets</span><span class="p">()</span>
-    <span class="bp">self</span><span class="o">.</span><span class="n">_roots_container</span><span class="p">()</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_init_batch_container</span><span class="p">()</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">_tasks_container</span><span class="p">()</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">_init_layout</span><span class="p">()</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">_connect_events</span><span class="p">()</span>
@@ -2080,36 +2178,7 @@ batch_button.clicked : Signal
 
             <details class="quote">
               <summary>Source code in <code>src/napari_ndev/widgets/_workflow_container.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">203</span>
-<span class="normal">204</span>
-<span class="normal">205</span>
-<span class="normal">206</span>
-<span class="normal">207</span>
-<span class="normal">208</span>
-<span class="normal">209</span>
-<span class="normal">210</span>
-<span class="normal">211</span>
-<span class="normal">212</span>
-<span class="normal">213</span>
-<span class="normal">214</span>
-<span class="normal">215</span>
-<span class="normal">216</span>
-<span class="normal">217</span>
-<span class="normal">218</span>
-<span class="normal">219</span>
-<span class="normal">220</span>
-<span class="normal">221</span>
-<span class="normal">222</span>
-<span class="normal">223</span>
-<span class="normal">224</span>
-<span class="normal">225</span>
-<span class="normal">226</span>
-<span class="normal">227</span>
-<span class="normal">228</span>
-<span class="normal">229</span>
-<span class="normal">230</span>
-<span class="normal">231</span>
-<span class="normal">232</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">232</span>
 <span class="normal">233</span>
 <span class="normal">234</span>
 <span class="normal">235</span>
@@ -2176,7 +2245,32 @@ batch_button.clicked : Signal
 <span class="normal">296</span>
 <span class="normal">297</span>
 <span class="normal">298</span>
-<span class="normal">299</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">batch_workflow</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="normal">299</span>
+<span class="normal">300</span>
+<span class="normal">301</span>
+<span class="normal">302</span>
+<span class="normal">303</span>
+<span class="normal">304</span>
+<span class="normal">305</span>
+<span class="normal">306</span>
+<span class="normal">307</span>
+<span class="normal">308</span>
+<span class="normal">309</span>
+<span class="normal">310</span>
+<span class="normal">311</span>
+<span class="normal">312</span>
+<span class="normal">313</span>
+<span class="normal">314</span>
+<span class="normal">315</span>
+<span class="normal">316</span>
+<span class="normal">317</span>
+<span class="normal">318</span>
+<span class="normal">319</span>
+<span class="normal">320</span>
+<span class="normal">321</span>
+<span class="normal">322</span>
+<span class="normal">323</span>
+<span class="normal">324</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">batch_workflow</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">"""Run the workflow on all images in the image directory."""</span>
     <span class="kn">import</span><span class="w"> </span><span class="nn">dask.array</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">da</span>
     <span class="kn">from</span><span class="w"> </span><span class="nn">bioio.writers</span><span class="w"> </span><span class="kn">import</span> <span class="n">OmeTiffWriter</span>
@@ -2188,7 +2282,7 @@ batch_button.clicked : Signal
 
     <span class="c1"># get indexes of channel names, in case not all images have</span>
     <span class="c1"># the same channel names, the index should be in the same order</span>
-    <span class="n">root_list</span> <span class="o">=</span> <span class="p">[</span><span class="n">widget</span><span class="o">.</span><span class="n">value</span> <span class="k">for</span> <span class="n">widget</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_roots_container</span><span class="p">]</span>
+    <span class="n">root_list</span> <span class="o">=</span> <span class="p">[</span><span class="n">widget</span><span class="o">.</span><span class="n">value</span> <span class="k">for</span> <span class="n">widget</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_batch_roots_container</span><span class="p">]</span>
     <span class="n">root_index_list</span> <span class="o">=</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_channel_names</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">r</span><span class="p">)</span> <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">root_list</span><span class="p">]</span>
 
     <span class="c1"># Setting up Logging File</span>
@@ -2208,10 +2302,6 @@ batch_button.clicked : Signal
         <span class="n">root_list</span><span class="p">,</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_tasks_select</span><span class="o">.</span><span class="n">value</span><span class="p">,</span>
     <span class="p">)</span>
-
-    <span class="bp">self</span><span class="o">.</span><span class="n">_progress_bar</span><span class="o">.</span><span class="n">label</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">'Workflow on </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">image_files</span><span class="p">)</span><span class="si">}</span><span class="s1"> images'</span>
-    <span class="bp">self</span><span class="o">.</span><span class="n">_progress_bar</span><span class="o">.</span><span class="n">value</span> <span class="o">=</span> <span class="mi">0</span>
-    <span class="bp">self</span><span class="o">.</span><span class="n">_progress_bar</span><span class="o">.</span><span class="n">max</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">image_files</span><span class="p">)</span>
 
     <span class="k">for</span> <span class="n">idx_file</span><span class="p">,</span> <span class="n">image_file</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">image_files</span><span class="p">):</span>
         <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s1">'Processing </span><span class="si">%d</span><span class="s1">: </span><span class="si">%s</span><span class="s1">'</span><span class="p">,</span> <span class="n">idx_file</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="n">image_file</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
@@ -2269,9 +2359,55 @@ batch_button.clicked : Signal
             <span class="n">physical_pixel_sizes</span><span class="o">=</span><span class="n">img</span><span class="o">.</span><span class="n">physical_pixel_sizes</span><span class="p">,</span>
         <span class="p">)</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">_progress_bar</span><span class="o">.</span><span class="n">value</span> <span class="o">=</span> <span class="n">idx_file</span> <span class="o">+</span> <span class="mi">1</span>
+        <span class="k">yield</span> <span class="n">idx_file</span> <span class="o">+</span> <span class="mi">1</span>
 
     <span class="n">logger</span><span class="o">.</span><span class="n">removeHandler</span><span class="p">(</span><span class="n">handler</span><span class="p">)</span>
+    <span class="k">return</span>
+</code></pre></div></td></tr></table></div>
+            </details>
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h3 id="napari_ndev.widgets._workflow_container.WorkflowContainer.batch_workflow_threaded" class="doc doc-heading">
+<code class="doc-symbol doc-symbol-heading doc-symbol-method"></code>            <span class="doc doc-object-name doc-function-name">batch_workflow_threaded</span>
+
+
+<a href="#napari_ndev.widgets._workflow_container.WorkflowContainer.batch_workflow_threaded" class="headerlink" title="Permanent link">#</a></h3>
+<div class="doc-signature highlight"><pre><span></span><code><span class="nf">batch_workflow_threaded</span><span class="p">()</span>
+</code></pre></div>
+
+    <div class="doc doc-contents ">
+
+        <p>Run the batch workflow with threading and progress bar updates.</p>
+
+            <details class="quote">
+              <summary>Source code in <code>src/napari_ndev/widgets/_workflow_container.py</code></summary>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">326</span>
+<span class="normal">327</span>
+<span class="normal">328</span>
+<span class="normal">329</span>
+<span class="normal">330</span>
+<span class="normal">331</span>
+<span class="normal">332</span>
+<span class="normal">333</span>
+<span class="normal">334</span>
+<span class="normal">335</span>
+<span class="normal">336</span>
+<span class="normal">337</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">batch_workflow_threaded</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Run the batch workflow with threading and progress bar updates."""</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">napari.qt</span><span class="w"> </span><span class="kn">import</span> <span class="n">create_worker</span>
+
+    <span class="bp">self</span><span class="o">.</span><span class="n">_progress_bar</span><span class="o">.</span><span class="n">label</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">'Workflow on </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">image_files</span><span class="p">)</span><span class="si">}</span><span class="s1"> images'</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_progress_bar</span><span class="o">.</span><span class="n">value</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_progress_bar</span><span class="o">.</span><span class="n">max</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">image_files</span><span class="p">)</span>
+
+    <span class="bp">self</span><span class="o">.</span><span class="n">_batch_worker</span> <span class="o">=</span> <span class="n">create_worker</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">batch_workflow</span><span class="p">)</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_batch_worker</span><span class="o">.</span><span class="n">yielded</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_update_progress_bar</span><span class="p">)</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_batch_worker</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
     <span class="k">return</span>
 </code></pre></div></td></tr></table></div>
             </details>
