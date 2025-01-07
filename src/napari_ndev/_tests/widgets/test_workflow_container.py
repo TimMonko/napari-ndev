@@ -21,7 +21,7 @@ class MockWorkflow:
 def test_workflow_container_init_no_viewer():
     container = WorkflowContainer()
 
-    assert container.viewer is None
+    assert container._viewer is None
     assert container.roots == []
     assert container._channel_names == []
     assert container._img_dims == ''
@@ -30,7 +30,7 @@ def test_workflow_container_init_with_viewer(make_napari_viewer):
     viewer = make_napari_viewer()
     container = WorkflowContainer(viewer)
 
-    assert container.viewer == viewer
+    assert container._viewer == viewer
     assert container.roots == []
     assert container._channel_names == []
     assert container._img_dims == ''
