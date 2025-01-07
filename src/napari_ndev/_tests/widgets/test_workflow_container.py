@@ -95,7 +95,7 @@ def test_batch_workflow_threaded(tmp_path, qtbot):
     worker = container._batch_workflow_threaded()
 
     with qtbot.waitSignal(worker.finished, timeout=10000):
-        pass
+        worker.start()
 
     assert output_folder.exists()
     assert (output_folder / 'cells3d2ch.tiff').exists()
