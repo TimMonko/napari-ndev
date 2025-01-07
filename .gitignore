@@ -83,3 +83,4 @@ venv/
 # written by setuptools_scm
 **/_version.py
 /docs/tutorial/DownloadArchive
+src/napari_ndev/widgets/multithreading_testing.ipynb

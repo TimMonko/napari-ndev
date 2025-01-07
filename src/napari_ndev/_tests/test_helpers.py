@@ -10,6 +10,7 @@ from napari_ndev import nImage
 from napari_ndev.helpers import (
     check_for_missing_files,
     create_id_string,
+    elide_string,
     get_channel_names,
     get_directory_and_files,
     get_squeezed_dim_order,
@@ -189,3 +190,37 @@ def test_setup_logger():
         handler.close()
         # Clean up the temporary log file
         log_path.unlink()
+
+def test_elide_string():
+    # Test cases where the string is shorter than the max length
+    assert elide_string("short", 10) == "short"
+    assert elide_string("short", 6) == "short"
+
+    # Test cases where the string is exactly the max length
+    assert elide_string("exactly15chars", 15) == "exactly15chars"
+
+    # Test cases where the string is longer than the max length
+    assert elide_string("thisisaverylongstring", 10) == "thi...ing"
+    assert elide_string("thisisaverylongstring", 15) == "thisis...string"
+    assert elide_string("thisisaverylongstring", 5) == "thisi"
+
+    # Test cases for different elide locations
+    assert elide_string("thisisaverylongstring", 10, "start") == "...gstring"
+    assert elide_string("thisisaverylongstring", 10, "end") == "thisisa..."
+    assert elide_string("thisisaverylongstring", 10, "middle") == "thi...ing"
+
+    # Test cases for very small max_length
+    assert elide_string("thisisaverylongstring", 3) == "thi"
+    assert elide_string("thisisaverylongstring", 4) == "this"
+    assert elide_string("thisisaverylongstring", 5) == "thisi"
+
+    # Test cases for invalid location
+    with pytest.raises(ValueError, match='Invalid location. Must be "start", "middle", or "end".'):
+        elide_string("thisisaverylongstring", 10, "invalid")
+
+    # Test cases for edge cases
+    assert elide_string("", 10) == ""
+    assert elide_string("a", 1) == "a"
+    assert elide_string("ab", 1) == "a"
+    assert elide_string("abc", 2) == "ab"
+    assert elide_string("abcd", 3) == "abc"
