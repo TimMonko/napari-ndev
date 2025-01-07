@@ -26,7 +26,7 @@ if TYPE_CHECKING:
 __all__ = [
     'check_for_missing_files',
     'create_id_string',
-    'elide_string_middle',
+    'elide_string',
     'get_channel_names',
     'get_directory_and_files',
     'get_squeezed_dim_order',
@@ -241,9 +241,9 @@ def setup_logger(log_loc=Union[str, Path]):
     logger.addHandler(handler)
     return logger, handler
 
-def elide_string_middle(input_string, max_length=15):
+def elide_string(input_string, max_length=15, location='middle'):
     """
-    Elide the middle of a string if it exceeds the specified length.
+    Elide a string if it exceeds the specified length.
 
     Parameters
     ----------
@@ -251,6 +251,9 @@ def elide_string_middle(input_string, max_length=15):
         The input string.
     max_length : int, optional
         The maximum length of the string. Defaults to 15.
+    location : str, optional
+        The location to elide the string. Can be 'start', 'middle', or 'end'.
+        Defaults to 'middle'.
 
     Returns
     -------
@@ -258,9 +261,18 @@ def elide_string_middle(input_string, max_length=15):
         The elided string.
 
     """
+    # If the string is already shorter than the max length, return it
     if len(input_string) <= max_length:
         return input_string
-    if max_length <= 3:
-        return input_string[:max_length]  # If max_length is too small, just truncate
-    half_length = (max_length - 3) // 2
-    return input_string[:half_length] + '...' + input_string[-half_length:]
+    # If max_length is too small, just truncate
+    if max_length <= 5:
+        return input_string[:max_length]
+    # Elide the string based on the location
+    if location == 'start':
+        return '...' + input_string[-(max_length - 3):]
+    if location == 'end':
+        return input_string[:max_length - 3] + '...'
+    if location == 'middle':
+        half_length = (max_length - 3) // 2
+        return input_string[:half_length] + '...' + input_string[-half_length:]
+    raise ValueError('Invalid location. Must be "start", "middle", or "end".')

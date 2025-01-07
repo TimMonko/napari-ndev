@@ -201,7 +201,7 @@ class WorkflowContainer(Container):
         self._batch_roots_container.clear()
 
         for idx, root in enumerate(self.workflow.roots()):
-            short_root = helpers.elide_string_middle(root, max_length=12)
+            short_root = helpers.elide_string(root, max_length=12)
             root_combo = ComboBox(
                 label=f'Root {idx}: {short_root}',
                 choices=self._channel_names,
