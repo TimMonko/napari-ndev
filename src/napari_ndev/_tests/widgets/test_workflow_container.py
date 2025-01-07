@@ -66,7 +66,40 @@ def test_workflow_container_get_workflow_info():
     assert container._tasks_select.value == list(container.workflow.leafs())
     assert list(container._tasks_select.choices) == list(container.workflow._tasks.keys())
 
+def test_update_progress_bar():
+    container = WorkflowContainer()
+    container._progress_bar.value = 0
+    container._progress_bar.max = 10
+    container._update_progress_bar(9)
+    assert container._progress_bar.value == 9
 
+def test_batch_workflow_threaded(tmp_path, qtbot):
+    container = WorkflowContainer()
+    wf_path = pathlib.Path(
+        'src/napari_ndev/_tests/resources/Workflow/workflows/'
+        'cpu_workflow-2roots-2leafs.yaml'
+    )
+    container.workflow_file.value = wf_path
+
+    container.image_directory.value = pathlib.Path(
+        'src/napari_ndev/_tests/resources/Workflow/Images'
+    )
+
+    output_folder = tmp_path / 'Output'
+    output_folder.mkdir()
+    container.result_directory.value = output_folder
+
+    container._batch_roots_container[0].value = 'membrane'
+    container._batch_roots_container[1].value = 'nuclei'
+
+    worker = container._batch_workflow_threaded()
+
+    with qtbot.waitSignal(worker.finished, timeout=10000):
+        pass
+
+    assert output_folder.exists()
+    assert (output_folder / 'cells3d2ch.tiff').exists()
+    assert (output_folder / 'workflow.log.txt').exists()
 
 def test_batch_workflow_leaf_tasks(tmp_path, qtbot):
     container = WorkflowContainer()
@@ -93,6 +126,8 @@ def test_batch_workflow_leaf_tasks(tmp_path, qtbot):
     with qtbot.waitSignal(container._batch_worker.finished, timeout=10000):
         pass
 
+    # confirm a value was yielded by batch_workflow
+    assert container._progress_bar.value == 1
     # output folder does exist
     assert output_folder.exists()
     assert (output_folder / 'cells3d2ch.tiff').exists()
