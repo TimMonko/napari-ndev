@@ -83,13 +83,15 @@ class WorkflowContainer(Container):
         self.viewer = viewer if viewer is not None else None
         self.roots = []
         self._channel_names = []
+        self._layers = []
         self._img_dims = ''
         self.image_files = []
         self.workflow = None
 
         self._init_widgets()
+        self._init_viewer_container()
         self._init_batch_container()
-        self._tasks_container()
+        self._init_tasks_container()
         self._init_layout()
         self._connect_events()
 
@@ -102,6 +104,21 @@ class WorkflowContainer(Container):
         )
         self._workflow_roots = LineEdit(label='Workflow Roots:')
         self._progress_bar = ProgressBar(label='Progress:')
+
+    def _init_viewer_container(self):
+        """Initialize the viewer container tab widgets."""
+        self.viewer_button = PushButton(text='Viewer Workflow')
+        self._viewer_roots_container = Container(layout='vertical', label=None)
+        self._viewer_roots_container.native.layout().addStretch() # this resets the additions to the top of the container (the name is confusing)
+        self._viewer_container = Container(
+            layout='vertical',
+            widgets=[
+                self.viewer_button,
+                self._viewer_roots_container,
+            ],
+            label='Viewer',
+            labels=None,
+        )
 
     def _init_batch_container(self):
         """Initialize the batch container tab widgets."""
@@ -141,7 +158,7 @@ class WorkflowContainer(Container):
         )
 
 
-    def _tasks_container(self):
+    def _init_tasks_container(self):
         """Initialize the tasks container."""
         self._tasks_select = Select(
             choices=[],
@@ -165,6 +182,7 @@ class WorkflowContainer(Container):
         )
         self._tabs = TabbedContainer(
             widgets=[
+                self._viewer_container,
                 self._batch_container,
                 self._tasks_container,
             ],
@@ -198,16 +216,26 @@ class WorkflowContainer(Container):
     def _update_roots(self):
         """Get the roots from the workflow and update the ComboBox widgets."""
         self._batch_roots_container.clear()
+        self._viewer_roots_container.clear()
 
         for idx, root in enumerate(self.workflow.roots()):
             short_root = helpers.elide_string(root, max_length=12)
-            root_combo = ComboBox(
+
+            batch_root_combo = ComboBox(
                 label=f'Root {idx}: {short_root}',
                 choices=self._channel_names,
                 nullable=True,
                 value=None,
             )
-            self._batch_roots_container.append(root_combo)
+            self._batch_roots_container.append(batch_root_combo)
+
+            viewer_root_combo = ComboBox(
+                label=f'Root {idx}: {short_root}',
+                choices=self._layers,
+                nullable=True,
+                value=None,
+            )
+            self._viewer_roots_container.append(viewer_root_combo)
         return
 
     def _update_task_choices(self, workflow):
