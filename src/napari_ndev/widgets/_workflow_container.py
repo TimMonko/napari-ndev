@@ -15,7 +15,6 @@ from magicgui.widgets import (
     Select,
 )
 
-from napari.qt.threading import thread_worker
 from napari_ndev import helpers, nImage
 
 if TYPE_CHECKING:
@@ -179,7 +178,7 @@ class WorkflowContainer(Container):
         """Connect the events of the widgets to respective methods."""
         self.image_directory.changed.connect(self._get_image_info)
         self.workflow_file.changed.connect(self._get_workflow_info)
-        self.batch_button.clicked.connect(self.batch_workflow)
+        self.batch_button.clicked.connect(self.batch_workflow_threaded)
 
     def _get_image_info(self):
         """Get channels and dims from first image in the directory."""
@@ -230,8 +229,7 @@ class WorkflowContainer(Container):
         self._progress_bar.value = value
         return
 
-    @thread_worker
-    def _batch_workflow_threaded(self):
+    def batch_workflow(self):
         """Run the workflow on all images in the image directory."""
         import dask.array as da
         from bioio.writers import OmeTiffWriter
@@ -325,13 +323,15 @@ class WorkflowContainer(Container):
         logger.removeHandler(handler)
         return
 
-    def batch_workflow(self):
+    def batch_workflow_threaded(self):
+        """Run the batch workflow with threading and progress bar updates."""
+        from napari.qt import create_worker
+
         self._progress_bar.label = f'Workflow on {len(self.image_files)} images'
         self._progress_bar.value = 0
         self._progress_bar.max = len(self.image_files)
 
-        self._batch_worker = self._batch_workflow_threaded()
+        self._batch_worker = create_worker(self.batch_workflow)
         self._batch_worker.yielded.connect(self._update_progress_bar)
         self._batch_worker.start()
-
         return

@@ -73,7 +73,7 @@ def test_update_progress_bar():
     container._update_progress_bar(9)
     assert container._progress_bar.value == 9
 
-def test_batch_workflow_threaded(tmp_path, qtbot):
+def test_batch_workflow_not_threaded(tmp_path):
     container = WorkflowContainer()
     wf_path = pathlib.Path(
         'src/napari_ndev/_tests/resources/Workflow/workflows/'
@@ -92,10 +92,11 @@ def test_batch_workflow_threaded(tmp_path, qtbot):
     container._batch_roots_container[0].value = 'membrane'
     container._batch_roots_container[1].value = 'nuclei'
 
-    worker = container._batch_workflow_threaded()
+    # test the _batch_workflow_threaded generator method
+    generator = container.batch_workflow()
 
-    with qtbot.waitSignal(worker.finished, timeout=10000):
-        worker.start()
+    for _ in generator:
+        pass
 
     assert output_folder.exists()
     assert (output_folder / 'cells3d2ch.tiff').exists()
@@ -120,7 +121,7 @@ def test_batch_workflow_leaf_tasks(tmp_path, qtbot):
     container._batch_roots_container[0].value = 'membrane'
     container._batch_roots_container[1].value = 'nuclei'
 
-    container.batch_workflow()
+    container.batch_workflow_threaded()
 
     # wait for multithreading to complete
     with qtbot.waitSignal(container._batch_worker.finished, timeout=10000):
@@ -166,6 +167,9 @@ def test_batch_workflow_keep_original_images(tmp_path, qtbot):
 
     img = nImage(output_folder / 'cells3d2ch.tiff')
     assert len(img.channel_names) == 4
+    assert img.channel_names == [
+        'membrane', 'nuclei', 'membrane-label', 'nucleus-label'
+    ]
 
 def test_batch_workflow_all_tasks(tmp_path, qtbot):
     container = WorkflowContainer()
@@ -188,7 +192,7 @@ def test_batch_workflow_all_tasks(tmp_path, qtbot):
 
     container._tasks_select.value = list(container.workflow._tasks.keys())
 
-    container.batch_workflow()
+    container.batch_workflow_threaded()
 
     # wait for multithreading to complete
     with qtbot.waitSignal(container._batch_worker.finished, timeout=10000):
