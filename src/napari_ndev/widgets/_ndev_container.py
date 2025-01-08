@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+from pathlib import Path
 from typing import TYPE_CHECKING
 
 from magicclass.widgets import (
@@ -38,10 +39,10 @@ class nDevContainer(ScrollableContainer):
         """
         super().__init__(labels=False)
 
-        self.min_width = 700 # TODO: remove this hardcoded value
+        self.min_width = 600 # TODO: remove this hardcoded value
         self._viewer = viewer if viewer is not None else None
 
-        _logo_path = r'resources\nDev-logo-small.png'
+        _logo_path = Path(__file__).parent.parent / 'resources' / 'nDev-logo-small.png'
         self._logo_label = Label(
             value='<h1 style="text-align: center;">'
             f'<img src="{_logo_path}"/>'
