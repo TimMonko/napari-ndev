@@ -34,8 +34,6 @@ class WorkflowContainer(Container):
     ----------
     viewer : napari.viewer.Viewer
         The napari viewer instance.
-    roots : list
-        List of ComboBox widgets representing the workflow roots.
     _channel_names : list
         List of channel names extracted from the image data.
     _img_dims : str
@@ -80,18 +78,25 @@ class WorkflowContainer(Container):
 
         """
         super().__init__()
-        self.viewer = viewer if viewer is not None else None
-        self.roots = []
+        self._viewer = viewer if viewer is not None else None
         self._channel_names = []
         self._img_dims = ''
         self.image_files = []
         self.workflow = None
+        self._root_scale = None
 
         self._init_widgets()
+        self._init_viewer_container()
         self._init_batch_container()
-        self._tasks_container()
+        self._init_tasks_container()
         self._init_layout()
         self._connect_events()
+
+    def _get_viewer_layers(self):
+        """Get layers from the viewer."""
+        if self._viewer is None:
+            return []
+        return list(self._viewer.layers)
 
     def _init_widgets(self):
         """Initialize non-Container widgets."""
@@ -102,6 +107,21 @@ class WorkflowContainer(Container):
         )
         self._workflow_roots = LineEdit(label='Workflow Roots:')
         self._progress_bar = ProgressBar(label='Progress:')
+
+    def _init_viewer_container(self):
+        """Initialize the viewer container tab widgets."""
+        self.viewer_button = PushButton(text='Viewer Workflow')
+        self._viewer_roots_container = Container(layout='vertical', label=None)
+        self._viewer_roots_container.native.layout().addStretch() # this resets the additions to the top of the container (the name is confusing)
+        self._viewer_container = Container(
+            layout='vertical',
+            widgets=[
+                self.viewer_button,
+                self._viewer_roots_container,
+            ],
+            label='Viewer',
+            labels=None,
+        )
 
     def _init_batch_container(self):
         """Initialize the batch container tab widgets."""
@@ -141,7 +161,7 @@ class WorkflowContainer(Container):
         )
 
 
-    def _tasks_container(self):
+    def _init_tasks_container(self):
         """Initialize the tasks container."""
         self._tasks_select = Select(
             choices=[],
@@ -165,6 +185,7 @@ class WorkflowContainer(Container):
         )
         self._tabs = TabbedContainer(
             widgets=[
+                self._viewer_container,
                 self._batch_container,
                 self._tasks_container,
             ],
@@ -179,6 +200,15 @@ class WorkflowContainer(Container):
         self.image_directory.changed.connect(self._get_image_info)
         self.workflow_file.changed.connect(self._get_workflow_info)
         self.batch_button.clicked.connect(self.batch_workflow_threaded)
+        self.viewer_button.clicked.connect(self.viewer_workflow_threaded)
+
+        if self._viewer is not None:
+            self._viewer.layers.events.removed.connect(
+                self._update_layer_choices
+            )
+            self._viewer.layers.events.inserted.connect(
+                self._update_layer_choices
+            )
 
     def _get_image_info(self):
         """Get channels and dims from first image in the directory."""
@@ -195,19 +225,36 @@ class WorkflowContainer(Container):
         self._squeezed_img_dims = helpers.get_squeezed_dim_order(img)
         return self._squeezed_img_dims
 
+    def _update_layer_choices(self):
+        """Update the choices of the layers for the viewer workflow."""
+        for widget in self._viewer_roots_container:
+            widget.choices = self._get_viewer_layers()
+        return
+
     def _update_roots(self):
         """Get the roots from the workflow and update the ComboBox widgets."""
         self._batch_roots_container.clear()
+        self._viewer_roots_container.clear()
 
         for idx, root in enumerate(self.workflow.roots()):
             short_root = helpers.elide_string(root, max_length=12)
-            root_combo = ComboBox(
+
+            batch_root_combo = ComboBox(
                 label=f'Root {idx}: {short_root}',
                 choices=self._channel_names,
                 nullable=True,
                 value=None,
             )
-            self._batch_roots_container.append(root_combo)
+            self._batch_roots_container.append(batch_root_combo)
+
+            viewer_root_combo = ComboBox(
+                label=f'Root {idx}: {short_root}',
+                choices=self._get_viewer_layers(),
+                nullable=True,
+                value=None,
+            )
+            self._viewer_roots_container.append(viewer_root_combo)
+
         return
 
     def _update_task_choices(self, workflow):
@@ -334,4 +381,48 @@ class WorkflowContainer(Container):
         self._batch_worker = create_worker(self.batch_workflow)
         self._batch_worker.yielded.connect(self._update_progress_bar)
         self._batch_worker.start()
+        return
+
+    def viewer_workflow(self):
+        """Run the workflow on the viewer layers."""
+        workflow  = self.workflow
+
+        root_layer_list = [widget.value for widget in self._viewer_roots_container]
+        self._root_scale = root_layer_list[0].scale
+
+        for root_idx, root_layer in enumerate(root_layer_list):
+            workflow.set(
+                name=workflow.roots()[root_idx],
+                func_or_data=root_layer.data,
+            )
+
+        for task_idx, task in enumerate(self._tasks_select.value):
+            result = workflow.get(name=task)
+            yield task_idx, task, result
+
+        return
+
+    def _viewer_workflow_yielded(self, value):
+        task_idx, task, result = value
+        # TODO: estimate layer type and call proper add function (could be label)
+        self._viewer.add_image(
+            result,
+            name=task,
+            blending='additive',
+            scale=self._root_scale if self._root_scale is not None else None
+        )
+        self._progress_bar.value = task_idx + 1
+        return
+
+    def viewer_workflow_threaded(self):
+        """Run the viewer workflow with threading and progress bar updates."""
+        from napari.qt import create_worker
+
+        self._progress_bar.label = 'Workflow on Viewer Layers'
+        self._progress_bar.value = 0
+        self._progress_bar.max = len(self._tasks_select.value)
+
+        self._viewer_worker = create_worker(self.viewer_workflow)
+        self._viewer_worker.yielded.connect(self._viewer_workflow_yielded)
+        self._viewer_worker.start()
         return
