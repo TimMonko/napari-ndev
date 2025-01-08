@@ -278,9 +278,6 @@ class WorkflowContainer(Container):
         self._progress_bar.value = value
         return
 
-    def viewer_workflow(self):
-        pass
-
     def batch_workflow(self):
         """Run the workflow on all images in the image directory."""
         import dask.array as da
@@ -388,15 +385,46 @@ class WorkflowContainer(Container):
         self._batch_worker.start()
         return
 
+    def viewer_workflow(self):
+        """Run the workflow on the viewer layers."""
+        workflow  = self.workflow
+
+        root_layer_list = [widget.value for widget in self._viewer_roots_container]
+        self._root_scale = root_layer_list[0].scale
+
+        for root_idx, root_layer in enumerate(root_layer_list):
+            workflow.set(
+                name=workflow.roots()[root_idx],
+                func_or_data=root_layer.data,
+            )
+
+        for task_idx, task in enumerate(self._tasks_select.value):
+            result = workflow.get(name=task)
+            yield task_idx, task, result
+
+        return
+
+    def _viewer_workflow_yielded(self, value):
+        task_idx, task, result = value
+        # TODO: estimate layer type and call proper add function (could be label)
+        self._viewer.add_image(
+            result,
+            name=task,
+            blending='additive',
+            scale=self._root_scale
+        )
+        self._progress_bar.value = task_idx + 1
+        return
+
     def viewer_workflow_threaded(self):
         """Run the viewer workflow with threading and progress bar updates."""
         from napari.qt import create_worker
 
         self._progress_bar.label = 'Workflow on Viewer Layers'
         self._progress_bar.value = 0
-        self._progress_bar.max = len(self.roots.value) # TODO: check correct
+        self._progress_bar.max = len(self._tasks_select.value)
 
         self._viewer_worker = create_worker(self.viewer_workflow)
-        self._viewer_worker.yielded.connect(self._update_progress_bar)
+        self._viewer_worker.yielded.connect(self._viewer_workflow_yielded)
         self._viewer_worker.start()
         return
