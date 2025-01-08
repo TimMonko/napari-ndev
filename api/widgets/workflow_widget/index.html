@@ -954,6 +954,24 @@
   
 </li>
         
+          <li class="md-nav__item">
+  <a href="#napari_ndev.widgets._workflow_container.WorkflowContainer.viewer_workflow" class="md-nav__link">
+    <span class="md-ellipsis">
+      <code class="doc-symbol doc-symbol-toc doc-symbol-method"></code>&nbsp;viewer_workflow
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#napari_ndev.widgets._workflow_container.WorkflowContainer.viewer_workflow_threaded" class="md-nav__link">
+    <span class="md-ellipsis">
+      <code class="doc-symbol doc-symbol-toc doc-symbol-method"></code>&nbsp;viewer_workflow_threaded
+    </span>
+  </a>
+  
+</li>
+        
       </ul>
     </nav>
   
@@ -1280,6 +1298,24 @@
   
 </li>
         
+          <li class="md-nav__item">
+  <a href="#napari_ndev.widgets._workflow_container.WorkflowContainer.viewer_workflow" class="md-nav__link">
+    <span class="md-ellipsis">
+      <code class="doc-symbol doc-symbol-toc doc-symbol-method"></code>&nbsp;viewer_workflow
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#napari_ndev.widgets._workflow_container.WorkflowContainer.viewer_workflow_threaded" class="md-nav__link">
+    <span class="md-ellipsis">
+      <code class="doc-symbol doc-symbol-toc doc-symbol-method"></code>&nbsp;viewer_workflow_threaded
+    </span>
+  </a>
+  
+</li>
+        
       </ul>
     </nav>
   
@@ -1373,14 +1409,6 @@
           –
           <div class="doc-md-description">
             <p>The napari viewer instance.</p>
-          </div>
-        </li>
-        <li class="doc-section-item field-body">
-          <b><code><span title="napari_ndev.widgets._workflow_container.WorkflowContainer.roots">roots</span></code></b>
-              (<code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#list">list</a></code>)
-          –
-          <div class="doc-md-description">
-            <p>List of ComboBox widgets representing the workflow roots.</p>
           </div>
         </li>
         <li class="doc-section-item field-body">
@@ -1749,7 +1777,98 @@ batch_button.clicked : Signal
 <span class="normal">334</span>
 <span class="normal">335</span>
 <span class="normal">336</span>
-<span class="normal">337</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span><span class="w"> </span><span class="nc">WorkflowContainer</span><span class="p">(</span><span class="n">Container</span><span class="p">):</span>
+<span class="normal">337</span>
+<span class="normal">338</span>
+<span class="normal">339</span>
+<span class="normal">340</span>
+<span class="normal">341</span>
+<span class="normal">342</span>
+<span class="normal">343</span>
+<span class="normal">344</span>
+<span class="normal">345</span>
+<span class="normal">346</span>
+<span class="normal">347</span>
+<span class="normal">348</span>
+<span class="normal">349</span>
+<span class="normal">350</span>
+<span class="normal">351</span>
+<span class="normal">352</span>
+<span class="normal">353</span>
+<span class="normal">354</span>
+<span class="normal">355</span>
+<span class="normal">356</span>
+<span class="normal">357</span>
+<span class="normal">358</span>
+<span class="normal">359</span>
+<span class="normal">360</span>
+<span class="normal">361</span>
+<span class="normal">362</span>
+<span class="normal">363</span>
+<span class="normal">364</span>
+<span class="normal">365</span>
+<span class="normal">366</span>
+<span class="normal">367</span>
+<span class="normal">368</span>
+<span class="normal">369</span>
+<span class="normal">370</span>
+<span class="normal">371</span>
+<span class="normal">372</span>
+<span class="normal">373</span>
+<span class="normal">374</span>
+<span class="normal">375</span>
+<span class="normal">376</span>
+<span class="normal">377</span>
+<span class="normal">378</span>
+<span class="normal">379</span>
+<span class="normal">380</span>
+<span class="normal">381</span>
+<span class="normal">382</span>
+<span class="normal">383</span>
+<span class="normal">384</span>
+<span class="normal">385</span>
+<span class="normal">386</span>
+<span class="normal">387</span>
+<span class="normal">388</span>
+<span class="normal">389</span>
+<span class="normal">390</span>
+<span class="normal">391</span>
+<span class="normal">392</span>
+<span class="normal">393</span>
+<span class="normal">394</span>
+<span class="normal">395</span>
+<span class="normal">396</span>
+<span class="normal">397</span>
+<span class="normal">398</span>
+<span class="normal">399</span>
+<span class="normal">400</span>
+<span class="normal">401</span>
+<span class="normal">402</span>
+<span class="normal">403</span>
+<span class="normal">404</span>
+<span class="normal">405</span>
+<span class="normal">406</span>
+<span class="normal">407</span>
+<span class="normal">408</span>
+<span class="normal">409</span>
+<span class="normal">410</span>
+<span class="normal">411</span>
+<span class="normal">412</span>
+<span class="normal">413</span>
+<span class="normal">414</span>
+<span class="normal">415</span>
+<span class="normal">416</span>
+<span class="normal">417</span>
+<span class="normal">418</span>
+<span class="normal">419</span>
+<span class="normal">420</span>
+<span class="normal">421</span>
+<span class="normal">422</span>
+<span class="normal">423</span>
+<span class="normal">424</span>
+<span class="normal">425</span>
+<span class="normal">426</span>
+<span class="normal">427</span>
+<span class="normal">428</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span><span class="w"> </span><span class="nc">WorkflowContainer</span><span class="p">(</span><span class="n">Container</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    Container class for managing the workflow functionality in napari-ndev.</span>
 
@@ -1762,8 +1881,6 @@ batch_button.clicked : Signal
 <span class="sd">    ----------</span>
 <span class="sd">    viewer : napari.viewer.Viewer</span>
 <span class="sd">        The napari viewer instance.</span>
-<span class="sd">    roots : list</span>
-<span class="sd">        List of ComboBox widgets representing the workflow roots.</span>
 <span class="sd">    _channel_names : list</span>
 <span class="sd">        List of channel names extracted from the image data.</span>
 <span class="sd">    _img_dims : str</span>
@@ -1808,18 +1925,25 @@ batch_button.clicked : Signal
 
 <span class="sd">        """</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">viewer</span> <span class="o">=</span> <span class="n">viewer</span> <span class="k">if</span> <span class="n">viewer</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="kc">None</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">roots</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_viewer</span> <span class="o">=</span> <span class="n">viewer</span> <span class="k">if</span> <span class="n">viewer</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="kc">None</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_channel_names</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_img_dims</span> <span class="o">=</span> <span class="s1">''</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">image_files</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">workflow</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_root_scale</span> <span class="o">=</span> <span class="kc">None</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_init_widgets</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_init_viewer_container</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_init_batch_container</span><span class="p">()</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_tasks_container</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_init_tasks_container</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_init_layout</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_connect_events</span><span class="p">()</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_get_viewer_layers</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""Get layers from the viewer."""</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_viewer</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="p">[]</span>
+        <span class="k">return</span> <span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_viewer</span><span class="o">.</span><span class="n">layers</span><span class="p">)</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_init_widgets</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">"""Initialize non-Container widgets."""</span>
@@ -1830,6 +1954,21 @@ batch_button.clicked : Signal
         <span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_workflow_roots</span> <span class="o">=</span> <span class="n">LineEdit</span><span class="p">(</span><span class="n">label</span><span class="o">=</span><span class="s1">'Workflow Roots:'</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_progress_bar</span> <span class="o">=</span> <span class="n">ProgressBar</span><span class="p">(</span><span class="n">label</span><span class="o">=</span><span class="s1">'Progress:'</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_init_viewer_container</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""Initialize the viewer container tab widgets."""</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">viewer_button</span> <span class="o">=</span> <span class="n">PushButton</span><span class="p">(</span><span class="n">text</span><span class="o">=</span><span class="s1">'Viewer Workflow'</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_viewer_roots_container</span> <span class="o">=</span> <span class="n">Container</span><span class="p">(</span><span class="n">layout</span><span class="o">=</span><span class="s1">'vertical'</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_viewer_roots_container</span><span class="o">.</span><span class="n">native</span><span class="o">.</span><span class="n">layout</span><span class="p">()</span><span class="o">.</span><span class="n">addStretch</span><span class="p">()</span> <span class="c1"># this resets the additions to the top of the container (the name is confusing)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_viewer_container</span> <span class="o">=</span> <span class="n">Container</span><span class="p">(</span>
+            <span class="n">layout</span><span class="o">=</span><span class="s1">'vertical'</span><span class="p">,</span>
+            <span class="n">widgets</span><span class="o">=</span><span class="p">[</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">viewer_button</span><span class="p">,</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_viewer_roots_container</span><span class="p">,</span>
+            <span class="p">],</span>
+            <span class="n">label</span><span class="o">=</span><span class="s1">'Viewer'</span><span class="p">,</span>
+            <span class="n">labels</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="p">)</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_init_batch_container</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">"""Initialize the batch container tab widgets."""</span>
@@ -1869,7 +2008,7 @@ batch_button.clicked : Signal
         <span class="p">)</span>
 
 
-    <span class="k">def</span><span class="w"> </span><span class="nf">_tasks_container</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_init_tasks_container</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">"""Initialize the tasks container."""</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_tasks_select</span> <span class="o">=</span> <span class="n">Select</span><span class="p">(</span>
             <span class="n">choices</span><span class="o">=</span><span class="p">[],</span>
@@ -1893,6 +2032,7 @@ batch_button.clicked : Signal
         <span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_tabs</span> <span class="o">=</span> <span class="n">TabbedContainer</span><span class="p">(</span>
             <span class="n">widgets</span><span class="o">=</span><span class="p">[</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_viewer_container</span><span class="p">,</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">_batch_container</span><span class="p">,</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">_tasks_container</span><span class="p">,</span>
             <span class="p">],</span>
@@ -1907,6 +2047,15 @@ batch_button.clicked : Signal
         <span class="bp">self</span><span class="o">.</span><span class="n">image_directory</span><span class="o">.</span><span class="n">changed</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_get_image_info</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">workflow_file</span><span class="o">.</span><span class="n">changed</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_get_workflow_info</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">batch_button</span><span class="o">.</span><span class="n">clicked</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">batch_workflow_threaded</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">viewer_button</span><span class="o">.</span><span class="n">clicked</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">viewer_workflow_threaded</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_viewer</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_viewer</span><span class="o">.</span><span class="n">layers</span><span class="o">.</span><span class="n">events</span><span class="o">.</span><span class="n">removed</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_update_layer_choices</span>
+            <span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_viewer</span><span class="o">.</span><span class="n">layers</span><span class="o">.</span><span class="n">events</span><span class="o">.</span><span class="n">inserted</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_update_layer_choices</span>
+            <span class="p">)</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_get_image_info</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">"""Get channels and dims from first image in the directory."""</span>
@@ -1923,19 +2072,36 @@ batch_button.clicked : Signal
         <span class="bp">self</span><span class="o">.</span><span class="n">_squeezed_img_dims</span> <span class="o">=</span> <span class="n">helpers</span><span class="o">.</span><span class="n">get_squeezed_dim_order</span><span class="p">(</span><span class="n">img</span><span class="p">)</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_squeezed_img_dims</span>
 
+    <span class="k">def</span><span class="w"> </span><span class="nf">_update_layer_choices</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""Update the choices of the layers for the viewer workflow."""</span>
+        <span class="k">for</span> <span class="n">widget</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_viewer_roots_container</span><span class="p">:</span>
+            <span class="n">widget</span><span class="o">.</span><span class="n">choices</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_viewer_layers</span><span class="p">()</span>
+        <span class="k">return</span>
+
     <span class="k">def</span><span class="w"> </span><span class="nf">_update_roots</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">"""Get the roots from the workflow and update the ComboBox widgets."""</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_batch_roots_container</span><span class="o">.</span><span class="n">clear</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_viewer_roots_container</span><span class="o">.</span><span class="n">clear</span><span class="p">()</span>
 
         <span class="k">for</span> <span class="n">idx</span><span class="p">,</span> <span class="n">root</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">workflow</span><span class="o">.</span><span class="n">roots</span><span class="p">()):</span>
             <span class="n">short_root</span> <span class="o">=</span> <span class="n">helpers</span><span class="o">.</span><span class="n">elide_string</span><span class="p">(</span><span class="n">root</span><span class="p">,</span> <span class="n">max_length</span><span class="o">=</span><span class="mi">12</span><span class="p">)</span>
-            <span class="n">root_combo</span> <span class="o">=</span> <span class="n">ComboBox</span><span class="p">(</span>
+
+            <span class="n">batch_root_combo</span> <span class="o">=</span> <span class="n">ComboBox</span><span class="p">(</span>
                 <span class="n">label</span><span class="o">=</span><span class="sa">f</span><span class="s1">'Root </span><span class="si">{</span><span class="n">idx</span><span class="si">}</span><span class="s1">: </span><span class="si">{</span><span class="n">short_root</span><span class="si">}</span><span class="s1">'</span><span class="p">,</span>
                 <span class="n">choices</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_channel_names</span><span class="p">,</span>
                 <span class="n">nullable</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
                 <span class="n">value</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
             <span class="p">)</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_batch_roots_container</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">root_combo</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_batch_roots_container</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">batch_root_combo</span><span class="p">)</span>
+
+            <span class="n">viewer_root_combo</span> <span class="o">=</span> <span class="n">ComboBox</span><span class="p">(</span>
+                <span class="n">label</span><span class="o">=</span><span class="sa">f</span><span class="s1">'Root </span><span class="si">{</span><span class="n">idx</span><span class="si">}</span><span class="s1">: </span><span class="si">{</span><span class="n">short_root</span><span class="si">}</span><span class="s1">'</span><span class="p">,</span>
+                <span class="n">choices</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_get_viewer_layers</span><span class="p">(),</span>
+                <span class="n">nullable</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                <span class="n">value</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+            <span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_viewer_roots_container</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">viewer_root_combo</span><span class="p">)</span>
+
         <span class="k">return</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_update_task_choices</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">workflow</span><span class="p">):</span>
@@ -2063,6 +2229,50 @@ batch_button.clicked : Signal
         <span class="bp">self</span><span class="o">.</span><span class="n">_batch_worker</span><span class="o">.</span><span class="n">yielded</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_update_progress_bar</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_batch_worker</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
         <span class="k">return</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">viewer_workflow</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""Run the workflow on the viewer layers."""</span>
+        <span class="n">workflow</span>  <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">workflow</span>
+
+        <span class="n">root_layer_list</span> <span class="o">=</span> <span class="p">[</span><span class="n">widget</span><span class="o">.</span><span class="n">value</span> <span class="k">for</span> <span class="n">widget</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_viewer_roots_container</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_root_scale</span> <span class="o">=</span> <span class="n">root_layer_list</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">scale</span>
+
+        <span class="k">for</span> <span class="n">root_idx</span><span class="p">,</span> <span class="n">root_layer</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">root_layer_list</span><span class="p">):</span>
+            <span class="n">workflow</span><span class="o">.</span><span class="n">set</span><span class="p">(</span>
+                <span class="n">name</span><span class="o">=</span><span class="n">workflow</span><span class="o">.</span><span class="n">roots</span><span class="p">()[</span><span class="n">root_idx</span><span class="p">],</span>
+                <span class="n">func_or_data</span><span class="o">=</span><span class="n">root_layer</span><span class="o">.</span><span class="n">data</span><span class="p">,</span>
+            <span class="p">)</span>
+
+        <span class="k">for</span> <span class="n">task_idx</span><span class="p">,</span> <span class="n">task</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_tasks_select</span><span class="o">.</span><span class="n">value</span><span class="p">):</span>
+            <span class="n">result</span> <span class="o">=</span> <span class="n">workflow</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="n">task</span><span class="p">)</span>
+            <span class="k">yield</span> <span class="n">task_idx</span><span class="p">,</span> <span class="n">task</span><span class="p">,</span> <span class="n">result</span>
+
+        <span class="k">return</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_viewer_workflow_yielded</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+        <span class="n">task_idx</span><span class="p">,</span> <span class="n">task</span><span class="p">,</span> <span class="n">result</span> <span class="o">=</span> <span class="n">value</span>
+        <span class="c1"># TODO: estimate layer type and call proper add function (could be label)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_viewer</span><span class="o">.</span><span class="n">add_image</span><span class="p">(</span>
+            <span class="n">result</span><span class="p">,</span>
+            <span class="n">name</span><span class="o">=</span><span class="n">task</span><span class="p">,</span>
+            <span class="n">blending</span><span class="o">=</span><span class="s1">'additive'</span><span class="p">,</span>
+            <span class="n">scale</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_root_scale</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_root_scale</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="kc">None</span>
+        <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_progress_bar</span><span class="o">.</span><span class="n">value</span> <span class="o">=</span> <span class="n">task_idx</span> <span class="o">+</span> <span class="mi">1</span>
+        <span class="k">return</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">viewer_workflow_threaded</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""Run the viewer workflow with threading and progress bar updates."""</span>
+        <span class="kn">from</span><span class="w"> </span><span class="nn">napari.qt</span><span class="w"> </span><span class="kn">import</span> <span class="n">create_worker</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_progress_bar</span><span class="o">.</span><span class="n">label</span> <span class="o">=</span> <span class="s1">'Workflow on Viewer Layers'</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_progress_bar</span><span class="o">.</span><span class="n">value</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_progress_bar</span><span class="o">.</span><span class="n">max</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_tasks_select</span><span class="o">.</span><span class="n">value</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_viewer_worker</span> <span class="o">=</span> <span class="n">create_worker</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">viewer_workflow</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_viewer_worker</span><span class="o">.</span><span class="n">yielded</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_viewer_workflow_yielded</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_viewer_worker</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
+        <span class="k">return</span>
 </code></pre></div></td></tr></table></div>
               </details>
 
@@ -2110,7 +2320,9 @@ batch_button.clicked : Signal
 
             <details class="quote">
               <summary>Source code in <code>src/napari_ndev/widgets/_workflow_container.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">72</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">70</span>
+<span class="normal">71</span>
+<span class="normal">72</span>
 <span class="normal">73</span>
 <span class="normal">74</span>
 <span class="normal">75</span>
@@ -2131,8 +2343,7 @@ batch_button.clicked : Signal
 <span class="normal">90</span>
 <span class="normal">91</span>
 <span class="normal">92</span>
-<span class="normal">93</span>
-<span class="normal">94</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">viewer</span><span class="p">:</span> <span class="n">napari</span><span class="o">.</span><span class="n">viewer</span><span class="o">.</span><span class="n">Viewer</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+<span class="normal">93</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">viewer</span><span class="p">:</span> <span class="n">napari</span><span class="o">.</span><span class="n">viewer</span><span class="o">.</span><span class="n">Viewer</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    Initialize the WorkflowContainer widget.</span>
 
@@ -2143,16 +2354,17 @@ batch_button.clicked : Signal
 
 <span class="sd">    """</span>
     <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
-    <span class="bp">self</span><span class="o">.</span><span class="n">viewer</span> <span class="o">=</span> <span class="n">viewer</span> <span class="k">if</span> <span class="n">viewer</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="kc">None</span>
-    <span class="bp">self</span><span class="o">.</span><span class="n">roots</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_viewer</span> <span class="o">=</span> <span class="n">viewer</span> <span class="k">if</span> <span class="n">viewer</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="kc">None</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">_channel_names</span> <span class="o">=</span> <span class="p">[]</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">_img_dims</span> <span class="o">=</span> <span class="s1">''</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">image_files</span> <span class="o">=</span> <span class="p">[]</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">workflow</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_root_scale</span> <span class="o">=</span> <span class="kc">None</span>
 
     <span class="bp">self</span><span class="o">.</span><span class="n">_init_widgets</span><span class="p">()</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_init_viewer_container</span><span class="p">()</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">_init_batch_container</span><span class="p">()</span>
-    <span class="bp">self</span><span class="o">.</span><span class="n">_tasks_container</span><span class="p">()</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_init_tasks_container</span><span class="p">()</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">_init_layout</span><span class="p">()</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">_connect_events</span><span class="p">()</span>
 </code></pre></div></td></tr></table></div>
@@ -2178,54 +2390,7 @@ batch_button.clicked : Signal
 
             <details class="quote">
               <summary>Source code in <code>src/napari_ndev/widgets/_workflow_container.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">232</span>
-<span class="normal">233</span>
-<span class="normal">234</span>
-<span class="normal">235</span>
-<span class="normal">236</span>
-<span class="normal">237</span>
-<span class="normal">238</span>
-<span class="normal">239</span>
-<span class="normal">240</span>
-<span class="normal">241</span>
-<span class="normal">242</span>
-<span class="normal">243</span>
-<span class="normal">244</span>
-<span class="normal">245</span>
-<span class="normal">246</span>
-<span class="normal">247</span>
-<span class="normal">248</span>
-<span class="normal">249</span>
-<span class="normal">250</span>
-<span class="normal">251</span>
-<span class="normal">252</span>
-<span class="normal">253</span>
-<span class="normal">254</span>
-<span class="normal">255</span>
-<span class="normal">256</span>
-<span class="normal">257</span>
-<span class="normal">258</span>
-<span class="normal">259</span>
-<span class="normal">260</span>
-<span class="normal">261</span>
-<span class="normal">262</span>
-<span class="normal">263</span>
-<span class="normal">264</span>
-<span class="normal">265</span>
-<span class="normal">266</span>
-<span class="normal">267</span>
-<span class="normal">268</span>
-<span class="normal">269</span>
-<span class="normal">270</span>
-<span class="normal">271</span>
-<span class="normal">272</span>
-<span class="normal">273</span>
-<span class="normal">274</span>
-<span class="normal">275</span>
-<span class="normal">276</span>
-<span class="normal">277</span>
-<span class="normal">278</span>
-<span class="normal">279</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">279</span>
 <span class="normal">280</span>
 <span class="normal">281</span>
 <span class="normal">282</span>
@@ -2270,7 +2435,54 @@ batch_button.clicked : Signal
 <span class="normal">321</span>
 <span class="normal">322</span>
 <span class="normal">323</span>
-<span class="normal">324</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">batch_workflow</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="normal">324</span>
+<span class="normal">325</span>
+<span class="normal">326</span>
+<span class="normal">327</span>
+<span class="normal">328</span>
+<span class="normal">329</span>
+<span class="normal">330</span>
+<span class="normal">331</span>
+<span class="normal">332</span>
+<span class="normal">333</span>
+<span class="normal">334</span>
+<span class="normal">335</span>
+<span class="normal">336</span>
+<span class="normal">337</span>
+<span class="normal">338</span>
+<span class="normal">339</span>
+<span class="normal">340</span>
+<span class="normal">341</span>
+<span class="normal">342</span>
+<span class="normal">343</span>
+<span class="normal">344</span>
+<span class="normal">345</span>
+<span class="normal">346</span>
+<span class="normal">347</span>
+<span class="normal">348</span>
+<span class="normal">349</span>
+<span class="normal">350</span>
+<span class="normal">351</span>
+<span class="normal">352</span>
+<span class="normal">353</span>
+<span class="normal">354</span>
+<span class="normal">355</span>
+<span class="normal">356</span>
+<span class="normal">357</span>
+<span class="normal">358</span>
+<span class="normal">359</span>
+<span class="normal">360</span>
+<span class="normal">361</span>
+<span class="normal">362</span>
+<span class="normal">363</span>
+<span class="normal">364</span>
+<span class="normal">365</span>
+<span class="normal">366</span>
+<span class="normal">367</span>
+<span class="normal">368</span>
+<span class="normal">369</span>
+<span class="normal">370</span>
+<span class="normal">371</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">batch_workflow</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">"""Run the workflow on all images in the image directory."""</span>
     <span class="kn">import</span><span class="w"> </span><span class="nn">dask.array</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">da</span>
     <span class="kn">from</span><span class="w"> </span><span class="nn">bioio.writers</span><span class="w"> </span><span class="kn">import</span> <span class="n">OmeTiffWriter</span>
@@ -2386,18 +2598,18 @@ batch_button.clicked : Signal
 
             <details class="quote">
               <summary>Source code in <code>src/napari_ndev/widgets/_workflow_container.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">326</span>
-<span class="normal">327</span>
-<span class="normal">328</span>
-<span class="normal">329</span>
-<span class="normal">330</span>
-<span class="normal">331</span>
-<span class="normal">332</span>
-<span class="normal">333</span>
-<span class="normal">334</span>
-<span class="normal">335</span>
-<span class="normal">336</span>
-<span class="normal">337</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">batch_workflow_threaded</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">373</span>
+<span class="normal">374</span>
+<span class="normal">375</span>
+<span class="normal">376</span>
+<span class="normal">377</span>
+<span class="normal">378</span>
+<span class="normal">379</span>
+<span class="normal">380</span>
+<span class="normal">381</span>
+<span class="normal">382</span>
+<span class="normal">383</span>
+<span class="normal">384</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">batch_workflow_threaded</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">"""Run the batch workflow with threading and progress bar updates."""</span>
     <span class="kn">from</span><span class="w"> </span><span class="nn">napari.qt</span><span class="w"> </span><span class="kn">import</span> <span class="n">create_worker</span>
 
@@ -2408,6 +2620,110 @@ batch_button.clicked : Signal
     <span class="bp">self</span><span class="o">.</span><span class="n">_batch_worker</span> <span class="o">=</span> <span class="n">create_worker</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">batch_workflow</span><span class="p">)</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">_batch_worker</span><span class="o">.</span><span class="n">yielded</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_update_progress_bar</span><span class="p">)</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">_batch_worker</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
+    <span class="k">return</span>
+</code></pre></div></td></tr></table></div>
+            </details>
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h3 id="napari_ndev.widgets._workflow_container.WorkflowContainer.viewer_workflow" class="doc doc-heading">
+<code class="doc-symbol doc-symbol-heading doc-symbol-method"></code>            <span class="doc doc-object-name doc-function-name">viewer_workflow</span>
+
+
+<a href="#napari_ndev.widgets._workflow_container.WorkflowContainer.viewer_workflow" class="headerlink" title="Permanent link">#</a></h3>
+<div class="doc-signature highlight"><pre><span></span><code><span class="nf">viewer_workflow</span><span class="p">()</span>
+</code></pre></div>
+
+    <div class="doc doc-contents ">
+
+        <p>Run the workflow on the viewer layers.</p>
+
+            <details class="quote">
+              <summary>Source code in <code>src/napari_ndev/widgets/_workflow_container.py</code></summary>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">386</span>
+<span class="normal">387</span>
+<span class="normal">388</span>
+<span class="normal">389</span>
+<span class="normal">390</span>
+<span class="normal">391</span>
+<span class="normal">392</span>
+<span class="normal">393</span>
+<span class="normal">394</span>
+<span class="normal">395</span>
+<span class="normal">396</span>
+<span class="normal">397</span>
+<span class="normal">398</span>
+<span class="normal">399</span>
+<span class="normal">400</span>
+<span class="normal">401</span>
+<span class="normal">402</span>
+<span class="normal">403</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">viewer_workflow</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Run the workflow on the viewer layers."""</span>
+    <span class="n">workflow</span>  <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">workflow</span>
+
+    <span class="n">root_layer_list</span> <span class="o">=</span> <span class="p">[</span><span class="n">widget</span><span class="o">.</span><span class="n">value</span> <span class="k">for</span> <span class="n">widget</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_viewer_roots_container</span><span class="p">]</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_root_scale</span> <span class="o">=</span> <span class="n">root_layer_list</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">scale</span>
+
+    <span class="k">for</span> <span class="n">root_idx</span><span class="p">,</span> <span class="n">root_layer</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">root_layer_list</span><span class="p">):</span>
+        <span class="n">workflow</span><span class="o">.</span><span class="n">set</span><span class="p">(</span>
+            <span class="n">name</span><span class="o">=</span><span class="n">workflow</span><span class="o">.</span><span class="n">roots</span><span class="p">()[</span><span class="n">root_idx</span><span class="p">],</span>
+            <span class="n">func_or_data</span><span class="o">=</span><span class="n">root_layer</span><span class="o">.</span><span class="n">data</span><span class="p">,</span>
+        <span class="p">)</span>
+
+    <span class="k">for</span> <span class="n">task_idx</span><span class="p">,</span> <span class="n">task</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_tasks_select</span><span class="o">.</span><span class="n">value</span><span class="p">):</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="n">workflow</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="n">task</span><span class="p">)</span>
+        <span class="k">yield</span> <span class="n">task_idx</span><span class="p">,</span> <span class="n">task</span><span class="p">,</span> <span class="n">result</span>
+
+    <span class="k">return</span>
+</code></pre></div></td></tr></table></div>
+            </details>
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h3 id="napari_ndev.widgets._workflow_container.WorkflowContainer.viewer_workflow_threaded" class="doc doc-heading">
+<code class="doc-symbol doc-symbol-heading doc-symbol-method"></code>            <span class="doc doc-object-name doc-function-name">viewer_workflow_threaded</span>
+
+
+<a href="#napari_ndev.widgets._workflow_container.WorkflowContainer.viewer_workflow_threaded" class="headerlink" title="Permanent link">#</a></h3>
+<div class="doc-signature highlight"><pre><span></span><code><span class="nf">viewer_workflow_threaded</span><span class="p">()</span>
+</code></pre></div>
+
+    <div class="doc doc-contents ">
+
+        <p>Run the viewer workflow with threading and progress bar updates.</p>
+
+            <details class="quote">
+              <summary>Source code in <code>src/napari_ndev/widgets/_workflow_container.py</code></summary>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">417</span>
+<span class="normal">418</span>
+<span class="normal">419</span>
+<span class="normal">420</span>
+<span class="normal">421</span>
+<span class="normal">422</span>
+<span class="normal">423</span>
+<span class="normal">424</span>
+<span class="normal">425</span>
+<span class="normal">426</span>
+<span class="normal">427</span>
+<span class="normal">428</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">viewer_workflow_threaded</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Run the viewer workflow with threading and progress bar updates."""</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">napari.qt</span><span class="w"> </span><span class="kn">import</span> <span class="n">create_worker</span>
+
+    <span class="bp">self</span><span class="o">.</span><span class="n">_progress_bar</span><span class="o">.</span><span class="n">label</span> <span class="o">=</span> <span class="s1">'Workflow on Viewer Layers'</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_progress_bar</span><span class="o">.</span><span class="n">value</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_progress_bar</span><span class="o">.</span><span class="n">max</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_tasks_select</span><span class="o">.</span><span class="n">value</span><span class="p">)</span>
+
+    <span class="bp">self</span><span class="o">.</span><span class="n">_viewer_worker</span> <span class="o">=</span> <span class="n">create_worker</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">viewer_workflow</span><span class="p">)</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_viewer_worker</span><span class="o">.</span><span class="n">yielded</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_viewer_workflow_yielded</span><span class="p">)</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_viewer_worker</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
     <span class="k">return</span>
 </code></pre></div></td></tr></table></div>
             </details>
