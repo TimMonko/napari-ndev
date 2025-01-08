@@ -34,8 +34,6 @@ class WorkflowContainer(Container):
     ----------
     viewer : napari.viewer.Viewer
         The napari viewer instance.
-    roots : list
-        List of ComboBox widgets representing the workflow roots.
     _channel_names : list
         List of channel names extracted from the image data.
     _img_dims : str
@@ -81,11 +79,11 @@ class WorkflowContainer(Container):
         """
         super().__init__()
         self._viewer = viewer if viewer is not None else None
-        self.roots = []
         self._channel_names = []
         self._img_dims = ''
         self.image_files = []
         self.workflow = None
+        self._root_scale = None
 
         self._init_widgets()
         self._init_viewer_container()
@@ -411,7 +409,7 @@ class WorkflowContainer(Container):
             result,
             name=task,
             blending='additive',
-            scale=self._root_scale
+            scale=self._root_scale if self._root_scale is not None else None
         )
         self._progress_bar.value = task_idx + 1
         return
