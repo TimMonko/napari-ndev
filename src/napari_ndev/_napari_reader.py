@@ -7,14 +7,11 @@ from typing import TYPE_CHECKING, Callable
 
 from bioio_base.exceptions import UnsupportedFileFormatError
 from qtpy.QtWidgets import (
-    QCheckBox,
-    QGroupBox,
     QListWidget,
     QListWidgetItem,
-    QVBoxLayout,
 )
 
-from napari_ndev import nImage
+from napari_ndev import get_settings, nImage
 
 if TYPE_CHECKING:
 
@@ -53,6 +50,9 @@ def napari_get_reader(
         The reader function for the given path
 
     """
+    settings = get_settings()
+    open_first_scene_only = settings.SCENE_HANDLING == "View First Scene Only"
+
     if isinstance(path, list):
         logger.info("Bioio: Expected a single path, got a list of paths.")
         return None
@@ -68,6 +68,7 @@ def napari_get_reader(
             plugin = nImage.determine_plugin(path)
             reader = plugin.metadata.get_reader()
         # return napari_reader_function(path, reader, in_memory)
+
         return partial(
             napari_reader_function,
             reader=reader,
@@ -131,56 +132,13 @@ def napari_reader_function(
 
     return [(img_data.data, img_meta, layer_type)]
 
-def _widget_is_checked(widget_name: str) -> bool:
-    import napari
-
-    # Get napari viewer from current process
-    viewer = napari.current_viewer()
-
-    # Get scene management widget
-    scene_manager_choices_widget = viewer.window._dock_widgets[BIOIO_CHOICES]
-    for child in scene_manager_choices_widget.widget().children():
-        if isinstance(child, QCheckBox) and child.text() == widget_name:
-                return child.isChecked()
-
-    return False
-
-
 # Function to handle multi-scene files.
 def _get_scenes(path: PathLike, img: nImage, in_memory: bool) -> None:
     import napari
 
     # Get napari viewer from current process
     viewer = napari.current_viewer()
-
-    # Add a checkbox widget if not present
-    if BIOIO_CHOICES not in viewer.window._dock_widgets:
-        # Create a checkbox widget to set "Clear On Scene Select" or not
-        scene_clear_checkbox = QCheckBox(CLEAR_LAYERS_ON_SELECT)
-        scene_clear_checkbox.setChecked(False)
-
-        # Create a checkbox widget to set "Unpack Channels" or not
-        channel_unpack_checkbox = QCheckBox(UNPACK_CHANNELS_TO_LAYERS)
-        channel_unpack_checkbox.setChecked(True)
-
-        # # Create a checkbox widget to set "Mosaic Merge" or not
-        # dont_merge_mosaics_checkbox = QCheckBox(DONT_MERGE_MOSAICS)
-        # dont_merge_mosaics_checkbox.setChecked(False)
-
-        # Add all scene management state to a single box
-        scene_manager_group = QGroupBox()
-        scene_manager_group_layout = QVBoxLayout()
-        scene_manager_group_layout.addWidget(scene_clear_checkbox)
-        scene_manager_group_layout.addWidget(channel_unpack_checkbox)
-        # scene_manager_group_layout.addWidget(dont_merge_mosaics_checkbox)
-        scene_manager_group.setLayout(scene_manager_group_layout)
-        scene_manager_group.setFixedHeight(100)
-
-        viewer.window.add_dock_widget(
-            scene_manager_group,
-            area="right",
-            name=BIOIO_CHOICES,
-        )
+    settings = get_settings()
 
     # Create the list widget and populate with the ids & scenes in the file
     list_widget = QListWidget()
@@ -213,11 +171,12 @@ def _get_scenes(path: PathLike, img: nImage, in_memory: bool) -> None:
         meta = img.get_napari_metadata("")
 
         # Optionally clear layers
-        if _widget_is_checked(CLEAR_LAYERS_ON_SELECT):
+        if settings.CLEAR_LAYERS_ON_NEW_SCENE:
             viewer.layers.clear()
 
         # Optionally remove channel axis
-        if not _widget_is_checked(UNPACK_CHANNELS_TO_LAYERS):
+        if not settings.UNPACK_CHANNELS_AS_LAYERS:
+            # If not unpacking channels, remove channel axis from metadata
             meta["name"] = scene_text
             meta.pop("channel_axis", None)
 
