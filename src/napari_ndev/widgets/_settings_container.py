@@ -46,6 +46,7 @@ class SettingsContainer(Container):
         self.extend([
             self._bioio_settings_container,
         ])
+        self.native.layout().addStretch()
 
         self._scene_handling_combo.changed.connect(self._update_settings)
         self._clear_on_scene_select_checkbox.changed.connect(self._update_settings)
