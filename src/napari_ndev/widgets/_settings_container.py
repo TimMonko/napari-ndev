@@ -43,15 +43,15 @@ class SettingsContainer(Container):
             'If "View All Scenes" then the scenes will be added as a slider \n'
             'dimension in the viewer.'
         )
-        self._clear_on_scene_select_checkbox = CheckBox(
-            value=self.settings.CLEAR_LAYERS_ON_NEW_SCENE,
-            label='Clear All Layers On New Scene Selection',
-            tooltip='Whether to clear the viewer when selecting a new scene.',
-        )
         self._unpack_channels_as_layers_checkbox = CheckBox(
             value=self.settings.UNPACK_CHANNELS_AS_LAYERS,
             label='Unpack Channels as Layers',
             tooltip='Whether to unpack channels as layers.',
+        )
+        self._clear_on_scene_select_checkbox = CheckBox(
+            value=self.settings.CLEAR_LAYERS_ON_NEW_SCENE,
+            label='Clear All Layers On New Scene Selection',
+            tooltip='Whether to clear the viewer when selecting a new scene.',
         )
         self._bioio_settings_container = Container(
             widgets=[
