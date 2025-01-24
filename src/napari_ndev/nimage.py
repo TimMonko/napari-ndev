@@ -18,7 +18,7 @@ from napari_ndev import get_settings
 
 logger = logging.getLogger(__name__)
 
-LABEL_DELIMITER = " :: "
+DELIM = " :: "
 
 class nImage(BioImage):
     """
@@ -65,14 +65,14 @@ class nImage(BioImage):
         as an OME-TIFF via bioio.writers.OmeTiffWriter (which is the case
         for napari-ndev).
         """
-        settings = get_settings()
+        self.settings = get_settings()
 
         if reader is None:
             from bioio import plugin_feasibility_report as pfr
             fr = pfr(image)
-            if settings.PREFERRED_READER in fr and fr[settings.PREFERRED_READER].supported:
+            if self.settings.PREFERRED_READER in fr and fr[self.settings.PREFERRED_READER].supported:
                 reader_module = importlib.import_module(
-                    settings.PREFERRED_READER.replace('-', '_')
+                    self.settings.PREFERRED_READER.replace('-', '_')
                 )
                 reader = reader_module.Reader
 
@@ -170,7 +170,7 @@ class nImage(BioImage):
 
     def get_napari_metadata(
         self,
-        path: PathLike,
+        path: PathLike | None = None,
     ) -> dict:
         """
         Get the metadata for the image to be displayed in napari.
@@ -188,34 +188,49 @@ class nImage(BioImage):
         """
         if self.napari_data is None:
             self.get_napari_image_data() # this also sets self.path
+        # override the nImage path only if provided
+        path = self.path if path is None else path
 
+        # Determine available metadata information
         meta = {}
         scene = self.current_scene
         scene_idx = self.current_scene_index
-        single_no_scene = len(self.scenes) == 1 and self.current_scene == "Image:0"
-        channel_dim = DimensionNames.Channel
+        path_stem = Path(self.path).stem if self.path is not None else 'unknown path'
 
-        if channel_dim in self.napari_data.dims:
-            # use filename if single scene and no scene name available
-            if single_no_scene:
-                channels_with_scene_index = [
-                    f'{C}{LABEL_DELIMITER}{Path(path).stem}'
-                    for C in self.napari_data.coords[channel_dim].data.tolist()
-                ]
-            else:
-                channels_with_scene_index = [
-                    f'{C}{LABEL_DELIMITER}{scene_idx}{LABEL_DELIMITER}{scene}'
-                    for C in self.napari_data.coords[channel_dim].data.tolist()
-                ]
-            meta['name'] = channels_with_scene_index
-            meta['channel_axis'] = self.napari_data.dims.index(channel_dim)
+        NO_SCENE = len(self.scenes) == 1 and self.current_scene == 'Image:0' # Image:0 is the default scene name, suggesting there is no information
+        CHANNEL_DIM = DimensionNames.Channel
+        IS_MULTICHANNEL = CHANNEL_DIM in self.napari_data.dims
 
-        # not multi-chnanel, use current scene as image name
-        else:
-            if single_no_scene:
-                meta['name'] = Path(path).stem
+        # Build metadata under various condition
+        # add channel_axis if unpacking channels as layers
+        if IS_MULTICHANNEL:
+            channel_names = self.napari_data.coords[CHANNEL_DIM].data.tolist()
+
+            if self.settings.UNPACK_CHANNELS_AS_LAYERS:
+                meta['channel_axis'] = self.napari_data.dims.index(CHANNEL_DIM)
+
+                if NO_SCENE:
+                    meta['name'] = [
+                        f'{C}{DELIM}{path_stem}'
+                        for C in channel_names
+                    ]
+                else:
+                    meta['name'] = [
+                        f'{C}{DELIM}{scene_idx}{DELIM}{scene}{DELIM}{path_stem}'
+                        for C in channel_names
+                    ]
+
+            if not self.settings.UNPACK_CHANNELS_AS_LAYERS:
+                meta['name'] = (
+                    f'{DELIM}'.join(channel_names) +
+                    f'{DELIM}{scene_idx}{DELIM}{scene}{DELIM}{path_stem}'
+                )
+
+        if not IS_MULTICHANNEL:
+            if NO_SCENE:
+                meta['name'] = path_stem
             else:
-                meta['name'] = self.reader.current_scene
+                meta['name'] = f'{scene_idx}{DELIM}{scene}{DELIM}{path_stem}'
 
         # Handle if RGB
         if DimensionNames.Samples in self.reader.dims.order:
