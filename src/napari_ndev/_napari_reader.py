@@ -6,8 +6,7 @@ from functools import partial
 from typing import TYPE_CHECKING, Callable
 
 from bioio_base.exceptions import UnsupportedFileFormatError
-from magicclass.widgets import ScrollableContainer
-from magicgui.widgets import Select
+from magicgui.widgets import Container, Select
 
 from napari_ndev import get_settings, nImage
 
@@ -159,7 +158,45 @@ def _open_scene_container(path: PathLike, img: nImage, in_memory: bool) -> None:
         area='right',
         name=path,
     )
-class nImageSceneWidget(ScrollableContainer):
+class nImageSceneWidget(Container):
+    """
+    Widget to select a scene from a multi-scene file.
+
+    Parameters
+    ----------
+    viewer : napari.viewer.Viewer
+        The napari viewer instance.
+    path : PathLike
+        Path to the file.
+    img : nImage
+        The nImage instance.
+    in_memory : bool
+        Whether the image should be added in memory.
+
+    Attributes
+    ----------
+    viewer : napari.viewer.Viewer
+        The napari viewer instance.
+    path : PathLike
+        Path to the file.
+    img : nImage
+        The nImage instance.
+    in_memory : bool
+        Whether the image should be added in memory.
+    settings : Settings
+        The settings instance.
+    scenes : list
+        List of scenes in the image.
+    _scene_list_widget : magicgui.widgets.Select
+        Widget to select a scene from a multi-scene file.
+
+    Methods
+    -------
+    open_scene
+        Opens the selected scene(s) in the viewer.
+
+    """
+
     def __init__(
         self,
         viewer: napari.viewer.Viewer,
@@ -167,6 +204,21 @@ class nImageSceneWidget(ScrollableContainer):
         img: nImage,
         in_memory: bool,
     ):
+        """
+        Initialize the nImageSceneWidget.
+
+        Parameters
+        ----------
+        viewer : napari.viewer.Viewer
+            The napari viewer instance.
+        path : PathLike
+            Path to the file.
+        img : nImage
+            The nImage instance.
+        in_memory : bool
+            Whether the image should be added in memory.
+
+        """
         super().__init__(labels=False)
         self.max_height = 200
         self.viewer = viewer
@@ -195,6 +247,7 @@ class nImageSceneWidget(ScrollableContainer):
         self._scene_list_widget.changed.connect(self.open_scene)
 
     def open_scene(self) -> None:
+        """Open the selected scene(s) in the viewer."""
         if self.settings.CLEAR_LAYERS_ON_NEW_SCENE:
             self.viewer.layers.clear()
 

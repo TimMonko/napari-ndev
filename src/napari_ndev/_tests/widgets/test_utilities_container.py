@@ -151,7 +151,7 @@ def test_update_metadata_from_file(make_napari_viewer, test_rgb_image):
     container.update_metadata_on_file_select()
 
     assert container._save_name.value == 'RGB'
-    assert container._dim_order.value == 'TCZYXS'
+    assert container._dim_shape.value == 'TCZYXS'
     assert container._squeezed_dims == 'YX'
     assert container._channel_names.value == "['red', 'green', 'blue']"
 
@@ -253,6 +253,6 @@ def test_open_images(make_napari_viewer, test_rgb_image):
     container._files.value = path
     container.open_images()
 
-    assert container._dim_order.value == "TCZYXS"
+    assert container._dim_shape.value == "TCZYXS"
     assert container._squeezed_dims == "YX"
     assert container._channel_names.value == "['red', 'green', 'blue']"
