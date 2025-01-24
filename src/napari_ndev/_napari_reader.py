@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import importlib
 import logging
 from functools import partial
 from pathlib import Path
@@ -61,9 +62,11 @@ def napari_get_reader(
         # TODO: Test this if else functionality.
         from bioio import plugin_feasibility_report as pfr
         fr = pfr(path)
-        if 'bioio-ome-tiff' in fr and fr['bioio-ome-tiff'].supported:
-            import bioio_ome_tiff
-            reader = bioio_ome_tiff.Reader
+        if settings.PREFERRED_READER in fr and fr[settings.PREFERRED_READER].supported:
+            reader_module = importlib.import_module(
+                settings.PREFERRED_READER.replace('-', '_')
+            )
+            reader = reader_module.Reader
         else:
             plugin = nImage.determine_plugin(path)
             reader = plugin.metadata.get_reader()

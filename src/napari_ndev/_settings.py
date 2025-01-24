@@ -16,6 +16,9 @@ class Settings:
         with open(self.settings_file) as file:
             settings = yaml.safe_load(file)
 
+            self.PREFERRED_READER = settings.get(
+                'PREFERRED_READER', 'bioio-ome-tiff'
+            )
             self.SCENE_HANDLING = settings.get(
                 'SCENE_HANDLING', 'Open Scene Widget'
             )
@@ -26,13 +29,16 @@ class Settings:
                 'UNPACK_CHANNELS_AS_LAYERS', True
             )
 
+
     def save_settings(self):
         """Save the current settings to the settings file."""
         settings = {
+            'PREFERRED_READER': self.PREFERRED_READER,
             'SCENE_HANDLING': self.SCENE_HANDLING,
             'CLEAR_LAYERS_ON_NEW_SCENE': self.CLEAR_LAYERS_ON_NEW_SCENE,
-            'UNPACK_CHANNELS_AS_LAYERS': self.UNPACK_CHANNELS_AS_LAYERS
+            'UNPACK_CHANNELS_AS_LAYERS': self.UNPACK_CHANNELS_AS_LAYERS,
         }
+
         with open(self.settings_file, 'w') as file:
             yaml.safe_dump(settings, file)
 
