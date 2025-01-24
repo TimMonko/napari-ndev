@@ -1,3 +1,5 @@
+from importlib.metadata import entry_points
+
 from magicgui.widgets import CheckBox, ComboBox, Container
 
 from napari_ndev._settings import get_settings
@@ -7,10 +9,27 @@ class SettingsContainer(Container):
     def __init__(self):
         super().__init__()
         self.settings = get_settings()
+        self._available_readers = [
+            reader.name for reader in entry_points(group='bioio.readers')
+        ]
+        self._preferred_reader = (
+            self.settings.PREFERRED_READER
+            if self.settings.PREFERRED_READER in self._available_readers
+            else 'bioio-ome-tiff'
+        )
 
         self._init_widgets()
+        self._connect_events()
 
     def _init_widgets(self):
+        self._preferred_reader_combo = ComboBox(
+            label='Preferred Reader',
+            value=self._preferred_reader,
+            choices=self._available_readers,
+            tooltip='Preferred reader to use when opening images. \n'
+            'If the reader is not available, it will attempt to fallback \n'
+            'to the next available working reader.',
+        )
         self._scene_handling_combo = ComboBox(
             label='Multi-Scene Handling',
             value = self.settings.SCENE_HANDLING,
@@ -36,6 +55,7 @@ class SettingsContainer(Container):
         )
         self._bioio_settings_container = Container(
             widgets=[
+                self._preferred_reader_combo,
                 self._scene_handling_combo,
                 self._clear_on_scene_select_checkbox,
                 self._unpack_channels_as_layers_checkbox,
@@ -48,12 +68,15 @@ class SettingsContainer(Container):
         ])
         self.native.layout().addStretch()
 
+    def _connect_events(self):
+        self._preferred_reader_combo.changed.connect(self._update_settings)
         self._scene_handling_combo.changed.connect(self._update_settings)
         self._clear_on_scene_select_checkbox.changed.connect(self._update_settings)
         self._unpack_channels_as_layers_checkbox.changed.connect(self._update_settings)
 
     def _update_settings(self):
         widget_to_setting = {
+            'PREFERRED_READER': self._preferred_reader_combo,
             'SCENE_HANDLING': self._scene_handling_combo,
             'CLEAR_LAYERS_ON_NEW_SCENE': self._clear_on_scene_select_checkbox,
             'UNPACK_CHANNELS_AS_LAYERS': self._unpack_channels_as_layers_checkbox,

@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import contextlib
+import importlib
 import logging
 from pathlib import Path
 
@@ -13,6 +14,7 @@ from bioio_base.reader import Reader
 from bioio_base.types import ImageLike
 
 from napari.types import PathLike
+from napari_ndev import get_settings
 
 logger = logging.getLogger(__name__)
 
@@ -63,12 +65,16 @@ class nImage(BioImage):
         as an OME-TIFF via bioio.writers.OmeTiffWriter (which is the case
         for napari-ndev).
         """
+        settings = get_settings()
+
         if reader is None:
             from bioio import plugin_feasibility_report as pfr
             fr = pfr(image)
-            if 'bioio-ome-tiff' in fr and fr['bioio-ome-tiff'].supported:
-                import bioio_ome_tiff
-                reader = bioio_ome_tiff.Reader
+            if settings.PREFERRED_READER in fr and fr[settings.PREFERRED_READER].supported:
+                reader_module = importlib.import_module(
+                    settings.PREFERRED_READER.replace('-', '_')
+                )
+                reader = reader_module.Reader
 
         super().__init__(image, reader)
         self.napari_data = None
