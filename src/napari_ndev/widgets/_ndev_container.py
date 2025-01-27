@@ -72,9 +72,10 @@ class nDevContainer(ScrollableContainer):
         self._init_callbacks()
 
     def _init_widget_containers(self):
-        from napari_ndev import (
+        from napari_ndev.widgets import (
             ApocContainer,
             MeasureContainer,
+            SettingsContainer,
             UtilitiesContainer,
             WorkflowContainer,
         )
@@ -87,6 +88,8 @@ class nDevContainer(ScrollableContainer):
         self._utilities_container.label = "Utilities"
         self._workflow_container = WorkflowContainer(viewer=self._viewer)
         self._workflow_container.label = "Workflow"
+        self._settings_container = SettingsContainer()
+        self._settings_container.label = "Settings"
 
         self._tabbed_container = TabbedContainer(
             # labels=["Apoc", "Measure", "Utilities", "Workflow"],
@@ -97,6 +100,7 @@ class nDevContainer(ScrollableContainer):
                 self._apoc_container,
                 self._workflow_container,
                 self._measure_container,
+                self._settings_container,
             ],
         )
 
