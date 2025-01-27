@@ -1,6 +1,9 @@
 from __future__ import annotations
 
 from pathlib import Path
+from unittest import mock
+
+import pytest
 
 from napari_ndev import nImage
 
@@ -29,6 +32,7 @@ def test_nImage_ome_reader(resources_dir: Path):
 
     """
     import bioio
+    import bioio_tifffile
 
     img_path = resources_dir / CELLS3D2CH_OME_TIFF
     fr = bioio.plugin_feasibility_report(img_path)
@@ -36,8 +40,19 @@ def test_nImage_ome_reader(resources_dir: Path):
     assert fr['bioio-ome-tiff'].supported is True
 
     nimg = nImage(img_path)
+    assert nimg.settings.PREFERRED_READER == 'bioio-ome-tiff'
+    # the below only exists if 'bioio-ome-tiff' is used
     assert hasattr(nimg, 'ome_metadata')
     assert nimg.channel_names == ['membrane', 'nuclei']
+
+    nimg = nImage(img_path, reader=bioio_tifffile.Reader)
+
+    # check that despite preferred reader, the reader is still bioio_tifffile
+    # because there is no ome_metadata
+    assert nimg.settings.PREFERRED_READER == 'bioio-ome-tiff'
+    # check that calling nimg.ome_metadata raises NotImplementedError
+    with pytest.raises(NotImplementedError):
+        _ = nimg.ome_metadata
 
 def test_nImage_save_read(resources_dir: Path, tmp_path: Path):
     """
@@ -84,9 +99,57 @@ def test_get_napari_image_data(resources_dir: Path):
     assert img.napari_data.shape == (1440, 1920, 3)
     assert img.napari_data.dims == ('Y', 'X', 'S')
 
+def test_get_napari_image_data_not_in_memory(resources_dir: Path):
+    import dask
+
+    img = nImage(resources_dir / RGB_TIFF)
+    img.get_napari_image_data(in_memory=False)
+    assert img.napari_data is not None
+    # check that the data is a dask array
+    assert isinstance(img.napari_data.data, dask.array.core.Array)
+
 def test_get_napari_metadata(resources_dir: Path):
     img = nImage(resources_dir / RGB_TIFF)
     img.get_napari_metadata(path = img.path)
-    assert img.napari_metadata['name'] == 'Image:0'
+    assert img.napari_metadata['name'] == '0 :: Image:0 :: RGB'
     assert img.napari_metadata['scale'] == (264.5833333333333, 264.5833333333333)
     assert img.napari_metadata['rgb'] is True
+
+def test_nImage_determine_in_memory_large_file(resources_dir: Path):
+    img = nImage(resources_dir / RGB_TIFF)
+    with mock.patch(
+        'psutil.virtual_memory',
+        return_value=mock.Mock(available=1e9)
+    ):
+        with mock.patch(
+            'bioio_base.io.pathlike_to_fs',
+            return_value=(mock.Mock(size=lambda x: 5e9), '')
+        ):
+            assert img._determine_in_memory() is False
+
+
+def test_get_napari_image_data_mosaic_tile_in_memory(resources_dir: Path):
+    import xarray as xr
+    from bioio_base.dimensions import DimensionNames
+
+    with mock.patch.object(nImage, 'reader', create=True) as mock_reader:
+        mock_reader.dims.order = [DimensionNames.MosaicTile]
+        mock_reader.mosaic_xarray_data.squeeze.return_value = xr.DataArray([1, 2, 3])
+        img = nImage(resources_dir / RGB_TIFF)
+        data = img.get_napari_image_data(in_memory=True)
+        assert data is not None
+        assert data.shape == (3,)
+        assert img.napari_data is not None
+
+def test_get_napari_image_data_mosaic_tile_not_in_memory(resources_dir: Path):
+    import xarray as xr
+    from bioio_base.dimensions import DimensionNames
+
+    with mock.patch.object(nImage, 'reader', create=True) as mock_reader:
+        mock_reader.dims.order = [DimensionNames.MosaicTile]
+        mock_reader.mosaic_xarray_dask_data.squeeze.return_value = xr.DataArray([1, 2, 3])
+        img = nImage(resources_dir / RGB_TIFF)
+        data = img.get_napari_image_data(in_memory=False)
+        assert data is not None
+        assert data.shape == (3,)
+        assert img.napari_data is not None

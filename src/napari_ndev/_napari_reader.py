@@ -1,37 +1,28 @@
 from __future__ import annotations
 
+import importlib
 import logging
 from functools import partial
-from pathlib import Path
 from typing import TYPE_CHECKING, Callable
 
 from bioio_base.exceptions import UnsupportedFileFormatError
-from qtpy.QtWidgets import (
-    QCheckBox,
-    QGroupBox,
-    QListWidget,
-    QListWidgetItem,
-    QVBoxLayout,
-)
+from magicgui.widgets import Container, Select
 
-from napari_ndev import nImage
+from napari_ndev import get_settings, nImage
 
 if TYPE_CHECKING:
-
+    import napari
     from napari.types import LayerData, PathLike, ReaderFunction
 
 logger = logging.getLogger(__name__)
 
-SCENE_LABEL_DELIMITER = " :: "
-BIOIO_CHOICES = "BioIO Scene Management"
-CLEAR_LAYERS_ON_SELECT = "Clear All Layers on New Scene Selection"
-UNPACK_CHANNELS_TO_LAYERS = "Unpack Channels as Layers"
-DONT_MERGE_MOSAICS = "Don't Merge Mosaics"
+DELIMITER = " :: "
 
 def napari_get_reader(
     path: PathLike,
     in_memory: bool | None = None,
-    open_first_scene_only: bool = False,
+    open_first_scene_only: bool | None = None,
+    open_all_scenes: bool | None = None,
 ) -> ReaderFunction | None:
     """
     Get the appropriate reader function for a single given path.
@@ -45,6 +36,9 @@ def napari_get_reader(
     open_first_scene_only : bool, optional
         Whether to ignore multi-scene files and just open the first scene,
         by default False
+    open_all_scenes : bool, optional
+        Whether to open all scenes in a multi-scene file, by default False
+        Ignored if open_first_scene_only is True
 
 
     Returns
@@ -53,6 +47,12 @@ def napari_get_reader(
         The reader function for the given path
 
     """
+    settings = get_settings()
+    if open_first_scene_only is None:
+        open_first_scene_only = settings.SCENE_HANDLING == "View First Scene Only"
+    if open_all_scenes is None:
+        open_all_scenes = settings.SCENE_HANDLING == "View All Scenes"
+
     if isinstance(path, list):
         logger.info("Bioio: Expected a single path, got a list of paths.")
         return None
@@ -61,9 +61,11 @@ def napari_get_reader(
         # TODO: Test this if else functionality.
         from bioio import plugin_feasibility_report as pfr
         fr = pfr(path)
-        if 'bioio-ome-tiff' in fr and fr['bioio-ome-tiff'].supported:
-            import bioio_ome_tiff
-            reader = bioio_ome_tiff.Reader
+        if settings.PREFERRED_READER in fr and fr[settings.PREFERRED_READER].supported:
+            reader_module = importlib.import_module(
+                settings.PREFERRED_READER.replace('-', '_')
+            )
+            reader = reader_module.Reader
         else:
             plugin = nImage.determine_plugin(path)
             reader = plugin.metadata.get_reader()
@@ -72,7 +74,8 @@ def napari_get_reader(
             napari_reader_function,
             reader=reader,
             in_memory=in_memory,
-            open_first_scene_only=open_first_scene_only
+            open_first_scene_only=open_first_scene_only,
+            open_all_scenes=open_all_scenes,
         )
     except UnsupportedFileFormatError:
         logger.warning("Bioio: Unsupported file format")
@@ -87,6 +90,7 @@ def napari_reader_function(
     reader: Callable,
     in_memory: bool | None = None,
     open_first_scene_only: bool = False,
+    open_all_scenes: bool = False,
     layer_type: str = 'image'
 ) -> list[LayerData] | None:
     """
@@ -105,6 +109,9 @@ def napari_reader_function(
     open_first_scene_only : bool, optional
         Whether to ignore multi-scene files and just open the first scene,
         by default False.
+    open_all_scenes : bool, optional
+        Whether to open all scenes in a multi-scene file, by default False.
+        Ignored if open_first_scene_only is True.
 
     Returns
     -------
@@ -118,109 +125,147 @@ def napari_reader_function(
 
     img = nImage(path, reader=reader)
     in_memory = img._determine_in_memory(path) if in_memory is None else in_memory
+    # TODO: Guess layer type here (check channel names for labels?)
     logger.info('Bioio: Reading in-memory: %s', in_memory)
 
-    if len(img.scenes) > 1 and not open_first_scene_only:
-        _get_scenes(path=path, img=img, in_memory=in_memory)
+
+    # open first scene only
+    if len(img.scenes) == 1 or open_first_scene_only:
+        img_data = img.get_napari_image_data(in_memory=in_memory)
+        img_meta = img.get_napari_metadata(path)
+        return [(img_data.data, img_meta, layer_type)]
+
+    # TODO: USE settings for open first or all scenes to set the nubmer of iterations of a for loop
+    # check napari reader settings stuff
+    # open all scenes as layers
+    if len(img.scenes) > 1 and open_all_scenes:
+        layer_list = []
+        for scene in img.scenes:
+            img.set_scene(scene)
+            img_data = img.get_napari_image_data(in_memory=in_memory)
+            img_meta = img.get_napari_metadata(path)
+            layer_list.append((img_data.data, img_meta, layer_type))
+        return layer_list
+
+    # open scene widget
+    if len(img.scenes) > 1 and not open_all_scenes:
+        _open_scene_container(path=path, img=img, in_memory=in_memory)
         return [(None,)]
 
-    # TODO: why should I return the squeezed data and not the full data
-    # is it because napari squeezes it anyway?
-    img_data = img.get_napari_image_data(in_memory=in_memory)
-    img_meta = img.get_napari_metadata(path)
+    logger.warning("Bioio: Error reading file")
+    return [(None,)]
 
-    return [(img_data.data, img_meta, layer_type)]
+def _open_scene_container(path: PathLike, img: nImage, in_memory: bool) -> None:
+    from pathlib import Path
 
-def _widget_is_checked(widget_name: str) -> bool:
     import napari
 
-    # Get napari viewer from current process
     viewer = napari.current_viewer()
-
-    # Get scene management widget
-    scene_manager_choices_widget = viewer.window._dock_widgets[BIOIO_CHOICES]
-    for child in scene_manager_choices_widget.widget().children():
-        if isinstance(child, QCheckBox) and child.text() == widget_name:
-                return child.isChecked()
-
-    return False
-
-
-# Function to handle multi-scene files.
-def _get_scenes(path: PathLike, img: nImage, in_memory: bool) -> None:
-    import napari
-
-    # Get napari viewer from current process
-    viewer = napari.current_viewer()
-
-    # Add a checkbox widget if not present
-    if BIOIO_CHOICES not in viewer.window._dock_widgets:
-        # Create a checkbox widget to set "Clear On Scene Select" or not
-        scene_clear_checkbox = QCheckBox(CLEAR_LAYERS_ON_SELECT)
-        scene_clear_checkbox.setChecked(False)
-
-        # Create a checkbox widget to set "Unpack Channels" or not
-        channel_unpack_checkbox = QCheckBox(UNPACK_CHANNELS_TO_LAYERS)
-        channel_unpack_checkbox.setChecked(True)
-
-        # # Create a checkbox widget to set "Mosaic Merge" or not
-        # dont_merge_mosaics_checkbox = QCheckBox(DONT_MERGE_MOSAICS)
-        # dont_merge_mosaics_checkbox.setChecked(False)
-
-        # Add all scene management state to a single box
-        scene_manager_group = QGroupBox()
-        scene_manager_group_layout = QVBoxLayout()
-        scene_manager_group_layout.addWidget(scene_clear_checkbox)
-        scene_manager_group_layout.addWidget(channel_unpack_checkbox)
-        # scene_manager_group_layout.addWidget(dont_merge_mosaics_checkbox)
-        scene_manager_group.setLayout(scene_manager_group_layout)
-        scene_manager_group.setFixedHeight(100)
-
-        viewer.window.add_dock_widget(
-            scene_manager_group,
-            area="right",
-            name=BIOIO_CHOICES,
-        )
-
-    # Create the list widget and populate with the ids & scenes in the file
-    list_widget = QListWidget()
-    for i, scene in enumerate(img.scenes):
-        list_widget.addItem(f"{i}{SCENE_LABEL_DELIMITER}{scene}")
-
-    # Add this files scenes widget to viewer
     viewer.window.add_dock_widget(
-        list_widget,
-        area="right",
-        name=f"{Path(path).name}{SCENE_LABEL_DELIMITER}Scenes",
+        nImageSceneWidget(viewer, path, img, in_memory),
+        area='right',
+        name=f'{Path(path).stem}{DELIMITER}Scenes',
     )
+class nImageSceneWidget(Container):
+    """
+    Widget to select a scene from a multi-scene file.
 
-    # Function to create image layer from a scene selected in the list widget
-    def open_scene(item: QListWidgetItem) -> None:
-        scene_text = item.text()
+    Parameters
+    ----------
+    viewer : napari.viewer.Viewer
+        The napari viewer instance.
+    path : PathLike
+        Path to the file.
+    img : nImage
+        The nImage instance.
+    in_memory : bool
+        Whether the image should be added in memory.
 
-        # Use scene indexes to cover for duplicate names
-        scene_index = int(scene_text.split(SCENE_LABEL_DELIMITER)[0])
+    Attributes
+    ----------
+    viewer : napari.viewer.Viewer
+        The napari viewer instance.
+    path : PathLike
+        Path to the file.
+    img : nImage
+        The nImage instance.
+    in_memory : bool
+        Whether the image should be added in memory.
+    settings : Settings
+        The settings instance.
+    scenes : list
+        List of scenes in the image.
+    _scene_list_widget : magicgui.widgets.Select
+        Widget to select a scene from a multi-scene file.
 
-        # Update scene on image and get data
-        img.set_scene(scene_index)
-        # check whether to mosaic merge or not
-        # if _widget_is_checked(DONT_MERGE_MOSAICS):
-        #     data = img.get_napari_image_data(in_memory=in_memory, reconstruct_mosaic=False)
-        # else:
-        data = img.get_napari_image_data(in_memory=in_memory)
+    Methods
+    -------
+    open_scene
+        Opens the selected scene(s) in the viewer.
 
-        # Get metadata and add to image
-        meta = img.get_napari_metadata("")
+    """
 
-        # Optionally clear layers
-        if _widget_is_checked(CLEAR_LAYERS_ON_SELECT):
-            viewer.layers.clear()
+    def __init__(
+        self,
+        viewer: napari.viewer.Viewer,
+        path: PathLike,
+        img: nImage,
+        in_memory: bool,
+    ):
+        """
+        Initialize the nImageSceneWidget.
 
-        # Optionally remove channel axis
-        if not _widget_is_checked(UNPACK_CHANNELS_TO_LAYERS):
-            meta["name"] = scene_text
-            meta.pop("channel_axis", None)
+        Parameters
+        ----------
+        viewer : napari.viewer.Viewer
+            The napari viewer instance.
+        path : PathLike
+            Path to the file.
+        img : nImage
+            The nImage instance.
+        in_memory : bool
+            Whether the image should be added in memory.
 
-        viewer.add_image(data.data, **meta)
+        """
+        super().__init__(labels=False)
+        self.max_height = 200
+        self.viewer = viewer
+        self.path = path
+        self.img = img
+        self.in_memory = in_memory
+        self.settings = get_settings()
+        self.scenes = [
+            f'{idx}{DELIMITER}{scene}'
+            for idx, scene in enumerate(self.img.scenes)
+        ]
 
-    list_widget.currentItemChanged.connect(open_scene)  # type: ignore
+        self._init_widgets()
+        self._connect_events()
+
+    def _init_widgets(self):
+
+        self._scene_list_widget = Select(
+            value = None,
+            nullable = True,
+            choices = self.scenes,
+        )
+        self.append(self._scene_list_widget)
+
+    def _connect_events(self):
+        self._scene_list_widget.changed.connect(self.open_scene)
+
+    def open_scene(self) -> None:
+        """Open the selected scene(s) in the viewer."""
+        if self.settings.CLEAR_LAYERS_ON_NEW_SCENE:
+            self.viewer.layers.clear()
+
+        for scene in self._scene_list_widget.value:
+            if scene is None:
+                continue
+            # Use scene indexes to cover for duplicate names
+            scene_index = int(scene.split(DELIMITER)[0])
+            self.img.set_scene(scene_index)
+            img_data = self.img.get_napari_image_data(in_memory=self.in_memory)
+            img_meta = self.img.get_napari_metadata()
+
+            self.viewer.add_image(img_data.data, **img_meta)

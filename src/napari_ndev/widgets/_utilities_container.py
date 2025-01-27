@@ -9,6 +9,7 @@ from typing import TYPE_CHECKING
 import numpy as np
 from magicclass.widgets import (
     CollapsibleContainer,
+    GroupBoxContainer,
     ScrollableContainer,
 )
 from magicgui.widgets import (
@@ -140,7 +141,6 @@ class UtilitiesContainer(ScrollableContainer):
 
         self._init_widgets()
         self._init_save_name_container()
-        self._init_file_options_container()
         self._init_open_image_container()
         self._init_metadata_container()
         self._init_concatenate_files_container()
@@ -150,30 +150,23 @@ class UtilitiesContainer(ScrollableContainer):
         self._init_layout()
         self._connect_events()
 
-    def _init_layout(self):
-        """Initialize the layout of the widget."""
-        self.extend(
-            [
-                self._save_directory,
-                self._save_name_container,
-                self._files,
-                self._open_image_container,
-                self._file_options_container,
-                self._metadata_container,
-                self._concatenate_files_container,
-                self._scene_container,
-                # self._figure_options_container,
-                self._save_layers_container,
-                self._results,
-            ]
-        )
-
     def _init_widgets(self):
         """Initialize widgets."""
+        self._save_directory_prefix = LineEdit(
+            label='Save Dir. Prefix',
+            tooltip='Prefix for the save directories.',
+        )
         self._save_directory = FileEdit(
             mode='d',
-            tooltip='Directory where images will be saved.',
+            tooltip='Directory where images will be saved. \n'
+            'Upon selecting the first file, the save directory will be set \n'
+            'to the grandparent directory of the first file.',
         )
+        self._save_directory_container = Container(
+            widgets=[self._save_directory_prefix, self._save_directory],
+            layout='horizontal',
+        )
+        self._default_save_directory = self._save_directory.value
         self._files = FileEdit(
             mode='rm',
             tooltip='Select file(s) to load.',
@@ -195,35 +188,6 @@ class UtilitiesContainer(ScrollableContainer):
         self._save_name_container.extend([
             self._save_name,
             self._append_scene_button
-        ])
-
-
-    def _init_file_options_container(self):
-        """Initialize the file options collapsible container."""
-        self._file_options_container = CollapsibleContainer(
-            layout='vertical',
-            text='File Options',
-            collapsed=True,
-        )
-        self._update_scale = CheckBox(
-            value=True,
-            label='Update Scale on File Select',
-            tooltip='Update the scale when files are selected.',
-        )
-        self._update_channel_names = CheckBox(
-            value=True,
-            label='Update Channel Names on File Select',
-            tooltip='Update the channel names when files are selected.',
-        )
-        self._save_directory_prefix = LineEdit(
-            label='Save Directory Prefix',
-            tooltip='Prefix for the save directories.',
-        )
-
-        self._file_options_container.extend([
-            self._update_scale,
-            self._update_channel_names,
-            self._save_directory_prefix,
         ])
 
     def _init_open_image_container(self):
@@ -259,21 +223,37 @@ class UtilitiesContainer(ScrollableContainer):
 
 
     def _init_metadata_container(self):
-        self._metadata_container = CollapsibleContainer(
-            layout='vertical',  # label='Update Metadata from',
-            text='Metadata',
-            collapsed=True,
+        self._update_scale = CheckBox(
+            value=True,
+            label='Scale',
+            tooltip='Update the scale when files are selected.',
         )
-        self._layer_metadata_update = PushButton(
-            label='Update Metadata from Selected Layer'
+        self._update_channel_names = CheckBox(
+            value=True,
+            label='Channel Names',
+            tooltip='Update the channel names when files are selected.',
+        )
+        self._file_options_container = GroupBoxContainer(
+            layout='horizontal',
+            name='Update Metadata on File Select',
+            labels=False,
+            label=False,
+            widgets=[self._update_scale, self._update_channel_names]
         )
 
-        self._dim_order = Label(
-            label='Dimension Order: ',
+        self._layer_metadata_update_button = PushButton(
+            label='Update from Selected Layer'
+        )
+        self._num_scenes_label = Label(
+            label='Num. Scenes: ',
+        )
+        self._dim_shape = LineEdit(
+            label='Dims: ',
             tooltip='Sanity check for available dimensions.',
         )
-        self._num_scenes = Label(
-            label='Number of Scenes: ',
+        self._image_info_container = Container(
+            widgets=[self._num_scenes_label, self._dim_shape],
+            layout='horizontal',
         )
 
         self._channel_names = LineEdit(
@@ -289,21 +269,32 @@ class UtilitiesContainer(ScrollableContainer):
             value=(0.0000, 1.0000, 1.0000),
             options={'step': 0.0001},
         )
+        self._channel_scale_container = Container(
+            widgets=[self._channel_names, self._scale_tuple],
+        )
         self._scale_layers_button = PushButton(
             label='Scale Layer(s)',
             tooltip='Scale the selected layer(s) based on the given scale.',
         )
+        self._metadata_button_container = Container(
+            widgets=[
+                self._layer_metadata_update_button,
+                self._scale_layers_button
+            ],
+            layout='horizontal',
+        )
 
-
-        self._metadata_container.extend([
-            # self._file_metadata_update,
-            self._layer_metadata_update,
-            self._dim_order,
-            self._num_scenes,
-            self._channel_names,
-            self._scale_tuple,
-            self._scale_layers_button,
-        ])
+        self._metadata_container = GroupBoxContainer(
+            layout='vertical',  # label='Update Metadata from',
+            name='Metadata',
+            widgets=[
+                self._file_options_container,
+                self._image_info_container,
+                self._channel_scale_container,
+                self._metadata_button_container,
+            ],
+            labels=False,
+        )
 
     def _init_scene_container(self):
         """Initialize the scene container, allowing scene saving."""
@@ -390,14 +381,56 @@ class UtilitiesContainer(ScrollableContainer):
             self._camera_angle,
         ])
 
+    def _init_layout(self):
+        """Initialize the layout of the widget."""
+        from magicclass.widgets import GroupBoxContainer
+        self._file_group = GroupBoxContainer(
+            widgets=[
+                self._files,
+                self._open_image_container,
+            ],
+            name='Opening',
+            labels=False,
+        )
+        self._save_group = GroupBoxContainer(
+            widgets=[
+                self._save_directory_container,
+                self._save_name_container,
+                self._concatenate_files_container,
+                self._scene_container,
+                self._save_layers_container,
+            ],
+            name='Saving',
+            labels=False,
+        )
+
+        self.extend(
+            [
+                self._file_group,
+                self._save_group,
+                self._metadata_container,
+                # self._save_directory_container,
+                # self._save_name_container,
+                # self._files,
+                # self._open_image_container,
+                # self._metadata_container,
+                # self._concatenate_files_container,
+                # self._scene_container,
+                # self._figure_options_container,
+                # self._save_layers_container,
+                self._results,
+            ]
+        )
+
     def _connect_events(self):
         """Connect the events of the widgets to respective methods."""
+        self._files.changed.connect(self.update_save_directory)
         self._files.changed.connect(self.update_metadata_on_file_select)
         self._append_scene_button.clicked.connect(self.append_scene_to_name)
         self._open_image_button.clicked.connect(self.open_images)
         self._select_next_image_button.clicked.connect(self.select_next_images)
 
-        self._layer_metadata_update.clicked.connect(
+        self._layer_metadata_update_button.clicked.connect(
             self.update_metadata_from_layer
         )
         self._scale_layers_button.clicked.connect(self.rescale_by)
@@ -428,6 +461,11 @@ class UtilitiesContainer(ScrollableContainer):
             self._scale_tuple.value[2],
         )
 
+    def update_save_directory(self):
+        """Update the save directory based on the selected files."""
+        if self._save_directory.value == self._default_save_directory:
+            self._save_directory.value = self._files.value[0].parent.parent
+
     # Converted
     def _update_metadata_from_Image(
         self,
@@ -448,8 +486,11 @@ class UtilitiesContainer(ScrollableContainer):
             Update the scale, by default True.
 
         """
-        self._dim_order.value = img.dims.order
-        self._num_scenes.value = str(len(img.scenes))
+        img_dims = str(img.dims)
+        # get the part of the string between the brackets, which is the dim order
+        dims = re.search(r'\[(.*?)\]', img_dims).group(1)
+        self._dim_shape.value = dims
+        self._num_scenes_label.value = str(len(img.scenes))
 
         self._squeezed_dims = helpers.get_squeezed_dim_order(img)
 
