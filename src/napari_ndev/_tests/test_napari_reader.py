@@ -13,7 +13,7 @@ from napari_ndev._napari_reader import napari_get_reader
 
 ###############################################################################
 
-RGB_TIFF = "RGB.tiff" # has two scense
+RGB_TIFF = "RGB.tiff" # has two scenes
 MULTISCENE_CZI = r"0T-4C-0Z-7pos.czi"
 # PNG_FILE = "example.png"
 # GIF_FILE = "example.gif"
@@ -35,7 +35,7 @@ OME_TIFF = "cells3d2ch.tiff"
             RGB_TIFF,
             (1440, 1920, 3),
             {
-                'name': 'Image:0',
+                'name': '0 :: Image:0 :: RGB', # multiscene naming
                 'scale': (264.5833333333333, 264.5833333333333),
                 'rgb': True,
             }
@@ -49,20 +49,22 @@ def test_reader(
     expected_shape: tuple[int, ...],
     expected_dtype,
     expected_meta: dict[str, Any],
+    make_napari_viewer,
     # npe2pm: TestPluginManager,
 ) -> None:
+    make_napari_viewer()
+
     # Resolve filename to filepath
     if isinstance(filename, str):
         path = str(resources_dir / filename)
 
     # Get reader
-    reader = napari_get_reader(path, in_memory=in_memory, open_first_scene_only=True)
-
+    partial_napari_reader_function = napari_get_reader(path, in_memory=in_memory, open_first_scene_only=True)
     # Check callable
-    assert callable(reader)
+    assert callable(partial_napari_reader_function)
 
     # Get data
-    layer_data = reader(path)
+    layer_data = partial_napari_reader_function(path)
 
     # We only return one layer
     if layer_data is not None:
@@ -76,6 +78,13 @@ def test_reader(
         meta.pop('metadata', None)
         assert meta == expected_meta
 
+    # now check open all scenes
+    partial_napari_reader_function = napari_get_reader(path, in_memory=in_memory, open_all_scenes=True)
+    assert callable(partial_napari_reader_function)
+
+    layer_data = partial_napari_reader_function(path)
+    assert len(layer_data) == 2
+
 
 @pytest.mark.parametrize(
     ("in_memory", "expected_dtype"),
@@ -87,7 +96,7 @@ def test_reader(
 @pytest.mark.parametrize(
     ("filename", "expected_shape"),
     [
-        (RGB_TIFF, (120, 160, 3)),
+        (RGB_TIFF, (1440, 1920, 3)),
         (MULTISCENE_CZI, (32, 32)),
     ],
 )
@@ -117,10 +126,19 @@ def test_for_multiscene_widget(
 
         if len(viewer.window._dock_widgets) != 0:
             # Get the second scene
-            viewer.window._dock_widgets[f"{filename} :: Scenes"].widget().setCurrentRow(
-                1
-            )
+            scene_widget = viewer.window._dock_widgets[
+                f"{Path(filename).stem} :: Scenes"
+            ].widget()._magic_widget
+            assert scene_widget is not None
+            assert scene_widget.viewer == viewer
+
+            scenes = scene_widget._scene_list_widget.choices
+
+            # Set to the first scene (0th choice is none)
+            scene_widget._scene_list_widget.value = scenes[1]
+
             data = viewer.layers[0].data
+
             assert isinstance(data, expected_dtype)
             assert data.shape == expected_shape
         else:
@@ -147,7 +165,7 @@ def test_napari_get_reader_ome_override(resources_dir: Path) -> None:
 
 def test_napari_get_reader_unsupported(resources_dir: Path) -> None:
     reader = napari_get_reader(
-        str(resources_dir / "measure_props_Labels.csv"),
+        str(resources_dir / "measure_props_Labels.abcdefg"),
     )
 
     assert reader is None

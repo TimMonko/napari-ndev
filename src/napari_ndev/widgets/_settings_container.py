@@ -75,6 +75,7 @@ class SettingsContainer(Container):
         self._unpack_channels_as_layers_checkbox.changed.connect(self._update_settings)
 
     def _update_settings(self):
+        self._preferred_reader = self._preferred_reader_combo.value
         widget_to_setting = {
             'PREFERRED_READER': self._preferred_reader_combo,
             'SCENE_HANDLING': self._scene_handling_combo,
