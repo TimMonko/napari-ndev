@@ -21,7 +21,8 @@ DELIMITER = " :: "
 def napari_get_reader(
     path: PathLike,
     in_memory: bool | None = None,
-    open_first_scene_only: bool = False,
+    open_first_scene_only: bool | None = None,
+    open_all_scenes: bool | None = None,
 ) -> ReaderFunction | None:
     """
     Get the appropriate reader function for a single given path.
@@ -35,6 +36,9 @@ def napari_get_reader(
     open_first_scene_only : bool, optional
         Whether to ignore multi-scene files and just open the first scene,
         by default False
+    open_all_scenes : bool, optional
+        Whether to open all scenes in a multi-scene file, by default False
+        Ignored if open_first_scene_only is True
 
 
     Returns
@@ -44,8 +48,10 @@ def napari_get_reader(
 
     """
     settings = get_settings()
-    open_first_scene_only = settings.SCENE_HANDLING == "View First Scene Only"
-    open_all_scenes = settings.SCENE_HANDLING == "View All Scenes"
+    if open_first_scene_only is None:
+        open_first_scene_only = settings.SCENE_HANDLING == "View First Scene Only"
+    if open_all_scenes is None:
+        open_all_scenes = settings.SCENE_HANDLING == "View All Scenes"
 
     if isinstance(path, list):
         logger.info("Bioio: Expected a single path, got a list of paths.")
@@ -64,7 +70,6 @@ def napari_get_reader(
             plugin = nImage.determine_plugin(path)
             reader = plugin.metadata.get_reader()
         # return napari_reader_function(path, reader, in_memory)
-
         return partial(
             napari_reader_function,
             reader=reader,
@@ -151,12 +156,15 @@ def napari_reader_function(
     return [(None,)]
 
 def _open_scene_container(path: PathLike, img: nImage, in_memory: bool) -> None:
+    from pathlib import Path
+
     import napari
+
     viewer = napari.current_viewer()
     viewer.window.add_dock_widget(
         nImageSceneWidget(viewer, path, img, in_memory),
         area='right',
-        name=path,
+        name=f'{Path(path).stem}{DELIMITER}Scenes',
     )
 class nImageSceneWidget(Container):
     """
