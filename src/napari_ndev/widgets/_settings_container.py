@@ -1,5 +1,6 @@
-from importlib.metadata import entry_points
-
+from importlib_metadata import (
+    entry_points,  # python >= 3.10: from importlib.metadata import entry_points
+)
 from magicgui.widgets import CheckBox, ComboBox, Container
 
 from napari_ndev._settings import get_settings
