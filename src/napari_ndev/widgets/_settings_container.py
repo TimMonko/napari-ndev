@@ -1,4 +1,9 @@
-from importlib.metadata import entry_points
+import sys
+
+if sys.version_info >= (3, 10):
+    from importlib.metadata import entry_points
+else:
+    from importlib_metadata import entry_points
 
 from magicgui.widgets import CheckBox, ComboBox, Container
 
@@ -10,7 +15,7 @@ class SettingsContainer(Container):
         super().__init__()
         self.settings = get_settings()
         self._available_readers = [
-            reader.name for reader in entry_points().select(group='bioio.readers') # use entry_points(group='bioio.readers') for py >= 3.10
+            reader.name for reader in entry_points(group='bioio.readers') # use entry_points(group='bioio.readers') for py >= 3.10
         ]
         self._preferred_reader = (
             self.settings.PREFERRED_READER
