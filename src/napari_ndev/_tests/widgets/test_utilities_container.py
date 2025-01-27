@@ -253,6 +253,6 @@ def test_open_images(make_napari_viewer, test_rgb_image):
     container._files.value = path
     container.open_images()
 
-    assert container._dim_shape.value == "TCZYXS"
+    assert container._dim_shape.value == "T: 1, C: 1, Z: 1, Y: 1440, X: 1920, S: 3"
     assert container._squeezed_dims == "YX"
-    assert container._channel_names.value == "T: 1, C: 1, Z: 1, Y: 1440, X: 1920, S: 3"
+    assert container._channel_names.value == "['red', 'green', 'blue']"
