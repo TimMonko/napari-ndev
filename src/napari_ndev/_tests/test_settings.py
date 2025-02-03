@@ -56,3 +56,10 @@ def test_get_settings():
     assert settings2.PREFERRED_READER == 'test-reader'
 
     settings1.PREFERRED_READER = 'bioio-ome-tiff' # reset for other tests
+
+    assert settings1.SCENE_HANDLING == 'Open Scene Widget'
+    assert settings1.CLEAR_LAYERS_ON_NEW_SCENE is False
+    assert settings1.UNPACK_CHANNELS_AS_LAYERS is True
+    assert settings1.CANVAS_SCALE == 1.0
+    assert settings1.OVERRIDE_CANVAS_SIZE is False
+    assert settings1.CANVAS_SIZE == [1024, 1024]
