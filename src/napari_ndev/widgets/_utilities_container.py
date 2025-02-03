@@ -8,7 +8,6 @@ from typing import TYPE_CHECKING
 
 import numpy as np
 from magicclass.widgets import (
-    CollapsibleContainer,
     GroupBoxContainer,
     ScrollableContainer,
 )
@@ -19,7 +18,6 @@ from magicgui.widgets import (
     Label,
     LineEdit,
     PushButton,
-    SpinBox,
     TextEdit,
     TupleEdit,
 )
@@ -29,7 +27,7 @@ from napari.layers import (
     Labels as LabelsLayer,
     Shapes as ShapesLayer,
 )
-from napari_ndev import helpers, nImage
+from napari_ndev import get_settings, helpers, nImage
 
 if TYPE_CHECKING:
     from bioio import BioImage
@@ -138,6 +136,7 @@ class UtilitiesContainer(ScrollableContainer):
         self.min_width = 500 # TODO: remove this hardcoded value
         self._viewer = viewer if viewer is not None else None
         self._squeezed_dims = None
+        self._settings = get_settings()
 
         self._init_widgets()
         self._init_save_name_container()
@@ -316,74 +315,43 @@ class UtilitiesContainer(ScrollableContainer):
 
     def _init_save_layers_container(self):
         """Initialize the container to save images, labels, and shapes."""
-        self._save_layers_container = Container(
-            layout='horizontal',
-            label='Save Selected Layers',
-        )
         self._save_layers_button = PushButton(
-            label='Save Selected Layers',
-            tooltip='Concatenate and save all selected layers as OME-TIFF.'
-            'Layers will save to corresponding directories based on the layer'
-            'type, e.g. Images, Labels, ShapesAsLabels. Shapes are saved as'
-            'labels based on the selected image layer dimensions. If multiple'
+            text='Selected Layers (TIFF)',
+            tooltip='Concatenate and save all selected layers as OME-TIFF. '
+            'Layers will save to corresponding directories based on the layer '
+            'type, e.g. Images, Labels, ShapesAsLabels. Shapes are saved as '
+            'labels based on the selected image layer dimensions. If multiple '
             'layer types are selected, then the image will save to Layers.',
         )
-        # self._export_figure_button = PushButton(
-        #     label='Export Figure',
-        #     tooltip='Export the current canvas figure to the save directory. '
-        #     'Saves image as a PNG to Figures directory.',
-        # )
+        self._export_figure_button = PushButton(
+            text='Figure (PNG)',
+            tooltip='Export the current canvas figure as a PNG to the Figure '
+            'directory. Only works in 2D mode. Use Screenshot for 3D figures. '
+            'Crops the figure to the extent of the data, attempting to remove '
+            'margins. Increase or decrease scaling in the settings',
+        )
+        self._export_screenshot_button = PushButton(
+            text='Canvas (PNG)',
+            tooltip='Export the current canvas screenshot as a PNG to the '
+            'Figure directory. Works in 2D and 3D mode. Uses the full canvas '
+            'size, including margins. Increase or decrease scaling in the '
+            'settings, and also it is possible to override the canvas size.',
+        )
+
+        self._save_layers_container = GroupBoxContainer(
+            layout='horizontal',
+            name='Export',
+            labels=None,
+        )
+
         self._save_layers_container.extend([
             self._save_layers_button,
-            # self._export_figure_button,
-        ])
-
-    def _init_figure_options_container(self):
-        """Initialize the container for figure options."""
-        self._figure_options_container = CollapsibleContainer(
-            layout='vertical',
-            text='Figure Options',
-            collapsed=True,
-        )
-        self._figure_scale_factor = SpinBox(
-            label='Scale Factor',
-            min=0,
-            step=1,
-            value=1,
-        )
-        self._use_current_canvas_size = CheckBox(
-            label='Use current canvas dimensions',
-            value=True
-        )
-        self._current_canvas_dims = Label(label='Canvas Dimensions: ')
-        self._canvas_size = TupleEdit(
-            label='Canvas Size',
-            value=(0, 0),
-        )
-        # use this to automatically change the camera parameters
-        self._camera_zoom = SpinBox(
-            label='Camera Zoom',
-            min=0,
-            step=0.1,
-            value=self._viewer.camera.zoom,
-        )
-        self._camera_angle = TupleEdit(
-            label='Camera Angle',
-            value=(0, 0, 90),
-            options={'step': 1},
-        )
-        self._figure_options_container.extend([
-            self._figure_scale_factor,
-            self._use_current_canvas_size,
-            self._current_canvas_dims,
-            self._canvas_size,
-            self._camera_zoom,
-            self._camera_angle,
+            self._export_figure_button,
+            self._export_screenshot_button,
         ])
 
     def _init_layout(self):
         """Initialize the layout of the widget."""
-        from magicclass.widgets import GroupBoxContainer
         self._file_group = GroupBoxContainer(
             widgets=[
                 self._files,
@@ -409,15 +377,6 @@ class UtilitiesContainer(ScrollableContainer):
                 self._file_group,
                 self._save_group,
                 self._metadata_container,
-                # self._save_directory_container,
-                # self._save_name_container,
-                # self._files,
-                # self._open_image_container,
-                # self._metadata_container,
-                # self._concatenate_files_container,
-                # self._scene_container,
-                # self._figure_options_container,
-                # self._save_layers_container,
                 self._results,
             ]
         )
@@ -439,7 +398,8 @@ class UtilitiesContainer(ScrollableContainer):
         self._concatenate_batch_button.clicked.connect(self.batch_concatenate_files)
         self._extract_scenes.clicked.connect(self.save_scenes_ome_tiff)
         self._save_layers_button.clicked.connect(self.save_layers_as_ome_tiff)
-        # self._export_figure_button.clicked.connect(self.export_figure)
+        self._export_figure_button.clicked.connect(self.canvas_export_figure)
+        self._export_screenshot_button.clicked.connect(self.canvas_screenshot)
         self._results._on_value_change()
 
     @property
@@ -949,6 +909,69 @@ class UtilitiesContainer(ScrollableContainer):
 
         self._results.value = (
             f'Saved extracted scenes: {scenes_list}'
+            f'\nAt {time.strftime("%H:%M:%S")}'
+        )
+        return
+
+    def canvas_export_figure(self) -> None:
+        """Export the current canvas figure to the save directory."""
+        if self._viewer.dims.ndisplay != 2:
+            self._results.value = (
+                'Exporting Figure only works in 2D mode.'
+                '\nUse Screenshot for 3D figures.'
+                f'\nAt {time.strftime("%H:%M:%S")}'
+            )
+            return
+
+        save_name = f'{self._save_name.value}_figure.png'
+        save_path = self._get_save_loc(
+            self._save_directory.value,
+            'Figures',
+            save_name,
+        )
+
+        scale = self._settings.CANVAS_SCALE
+
+        self._viewer.export_figure(
+            path=str(save_path),
+            scale_factor=scale,
+        )
+
+        self._results.value = (
+            f'Exported canvas figure to Figures directory.'
+            f'\nSaved as {save_name}'
+            f'\nWith scale factor of {scale}'
+            f'\nAt {time.strftime("%H:%M:%S")}'
+        )
+        return
+
+    def canvas_screenshot(self) -> None:
+        """Export the current canvas screenshot to the save directory."""
+        save_name = f'{self._save_name.value}_screenshot.png'
+        save_path = self._get_save_loc(
+            self._save_directory.value,
+            'Figures',
+            save_name
+        )
+
+        scale = self._settings.CANVAS_SCALE
+        if self._settings.OVERRIDE_CANVAS_SIZE:
+            canvas_size = self._settings.CANVAS_SIZE
+        else:
+            canvas_size = self._viewer.window._qt_viewer.canvas.size
+
+        self._viewer.screenshot(
+            canvas_only=True,
+            size=canvas_size,
+            scale=scale,
+            path=str(save_path),
+        )
+
+        self._results.value = (
+            f'Exporting screenshot of canvas to Figures directory.'
+            f'\nSaved as {save_name}'
+            f'\nWith canvas dimensions of {canvas_size}'
+            f'\nWith scale factor of {scale}'
             f'\nAt {time.strftime("%H:%M:%S")}'
         )
         return

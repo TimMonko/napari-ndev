@@ -28,6 +28,11 @@ class Settings:
             self.UNPACK_CHANNELS_AS_LAYERS = settings.get(
                 'UNPACK_CHANNELS_AS_LAYERS', True
             )
+            self.CANVAS_SCALE = settings.get('CANVAS_SCALE', 1.0)
+            self.OVERRIDE_CANVAS_SIZE = settings.get(
+                'OVERRIDE_CANVAS_SIZE', False
+            )
+            self.CANVAS_SIZE = settings.get('CANVAS_SIZE', (1024, 1024))
 
 
     def save_settings(self):
@@ -37,6 +42,9 @@ class Settings:
             'SCENE_HANDLING': self.SCENE_HANDLING,
             'CLEAR_LAYERS_ON_NEW_SCENE': self.CLEAR_LAYERS_ON_NEW_SCENE,
             'UNPACK_CHANNELS_AS_LAYERS': self.UNPACK_CHANNELS_AS_LAYERS,
+            'CANVAS_SCALE': self.CANVAS_SCALE,
+            'OVERRIDE_CANVAS_SIZE': self.OVERRIDE_CANVAS_SIZE,
+            'CANVAS_SIZE': self.CANVAS_SIZE,
         }
 
         with open(self.settings_file, 'w') as file:
