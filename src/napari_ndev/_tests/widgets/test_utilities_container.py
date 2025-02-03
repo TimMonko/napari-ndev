@@ -256,3 +256,40 @@ def test_open_images(make_napari_viewer, test_rgb_image):
     assert container._dim_shape.value == "T: 1, C: 1, Z: 1, Y: 1440, X: 1920, S: 3"
     assert container._squeezed_dims == "YX"
     assert container._channel_names.value == "['red', 'green', 'blue']"
+
+def test_canvas_export_figure(make_napari_viewer, tmp_path: Path):
+    viewer = make_napari_viewer()
+    viewer.add_image(image_4d)
+    container = UtilitiesContainer(viewer)
+
+    container._save_directory.value = tmp_path
+    container._save_name.value = 'test'
+
+    container.canvas_export_figure()
+
+    expected_save_loc = tmp_path / 'Figures' / 'test_figure.png'
+
+    assert 'Exported canvas' in container._results.value
+    assert expected_save_loc.exists()
+    assert expected_save_loc.stat().st_size > 0
+
+    # make sure properly detects 3D mode doesn't work
+    viewer.dims.ndisplay = 3
+    container.canvas_export_figure()
+    assert 'Exporting Figure only works in 2D mode' in container._results.value
+
+def test_canvas_screenshot(make_napari_viewer, tmp_path: Path):
+    viewer = make_napari_viewer()
+    viewer.add_image(image_4d)
+    container = UtilitiesContainer(viewer)
+
+    container._save_directory.value = tmp_path
+    container._save_name.value = 'test'
+
+    container.canvas_screenshot()
+
+    expected_save_loc = tmp_path / 'Figures' / 'test_canvas.png'
+
+    assert 'Exported screenshot of canvas' in container._results.value
+    assert expected_save_loc.exists()
+    assert expected_save_loc.stat().st_size > 0
