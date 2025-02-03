@@ -947,7 +947,7 @@ class UtilitiesContainer(ScrollableContainer):
 
     def canvas_screenshot(self) -> None:
         """Export the current canvas screenshot to the save directory."""
-        save_name = f'{self._save_name.value}_screenshot.png'
+        save_name = f'{self._save_name.value}_canvas.png'
         save_path = self._get_save_loc(
             self._save_directory.value,
             'Figures',
@@ -968,7 +968,7 @@ class UtilitiesContainer(ScrollableContainer):
         )
 
         self._results.value = (
-            f'Exporting screenshot of canvas to Figures directory.'
+            f'Exported screenshot of canvas to Figures directory.'
             f'\nSaved as {save_name}'
             f'\nWith canvas dimensions of {canvas_size}'
             f'\nWith scale factor of {scale}'
