@@ -49,7 +49,7 @@ dependencies = [
     "natsort",
     "seaborn",
     "stackview",
-    "tifffile>=2023.3.15",
+    "tifffile>=2023.3.15,<2025.2.18", # https://github.com/cgohlke/tifffile/releases/tag/v2025.2.18
     "scikit-image>=0.18.0",
     "ngff-zarr>0.10.0",
     "bioio>=1.1.0",
@@ -59,6 +59,8 @@ dependencies = [
     "bioio-ome-tiff>=1",
     "bioio-ome-zarr>=1",
     "bioio-nd2>=1",
+    "bioio-czi>=1.0.1",
+    "bioio-lif>=1",
     "matplotlib-scalebar>=0.8.1",
 ]
 dynamic = ["version"]
