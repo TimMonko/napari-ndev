@@ -38,7 +38,7 @@ dependencies = [
     "magic-class",
     "pyqt5-qt5==5.15.15 ; platform_system != 'Windows'",
     "pyqt5-qt5==5.15.2 ; platform_system == 'Windows'", # 5.15.2 is latest to build on windows, required for uv compatability 2024.12.09
-    "napari[all]>=0.4.19",
+    "napari>=0.4.19",
     "apoc",
     "pyclesperanto-prototype",
     "pyclesperanto",
@@ -83,7 +83,7 @@ testing = [
     "tox",
     "tox-uv",
     "pytest-qt",
-    "napari",
+    "napari[all]",
     "pyqt5",
     "bioio-czi >= 1.0.1",
     "napari-ndev[extras]",
