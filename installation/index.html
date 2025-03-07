@@ -1318,7 +1318,7 @@
 <p>If you are unfamiliar with python or the command line, instead use the bundled app installer as demonstrated in <a href="../beginner_setup/">Beginner Setup</a>.</p>
 <h2 id="install-with-uv">Install with uv<a class="headerlink" href="#install-with-uv" title="Permanent link">#</a></h2>
 <p>uv is the newest and fastest way to manage python libraries. It is very easy to install, and simplifies environment manage, but requires some minimal input to the command line.  <a href="https://docs.astral.sh/uv/getting-started/installation/#__tabbed_1_1">Install uv from here</a>. Then, the simplest way to install <code>napari-ndev</code>:</p>
-<div class="highlight"><pre><span></span><code>uv<span class="w"> </span>tool<span class="w"> </span>install<span class="w"> </span>napari-ndev
+<div class="highlight"><pre><span></span><code>uv<span class="w"> </span>tool<span class="w"> </span>install<span class="w"> </span>napari-ndev<span class="o">[</span>qtpy-backend<span class="o">]</span>
 </code></pre></div>
 <p>Alternatively, download the full opinionated package, which includes non-BSD3 licensed libraries with:</p>
 <div class="highlight"><pre><span></span><code>uv<span class="w"> </span>tool<span class="w"> </span>install<span class="w"> </span>napari-ndev<span class="o">[</span>all<span class="o">]</span>
@@ -1333,6 +1333,9 @@
 <h2 id="install-with-pip">Install with pip<a class="headerlink" href="#install-with-pip" title="Permanent link">#</a></h2>
 <p><strong>napari-ndev</strong> is a pure Python package, and can be installed with [pip] (and it is recommended to do so in a <a href="https://biapol.github.io/blog/mara_lampert/getting_started_with_mambaforge_and_python/readme.html">managed environment</a>):</p>
 <div class="highlight"><pre><span></span><code>pip<span class="w"> </span>install<span class="w"> </span>napari-ndev
+</code></pre></div>
+<p>If napari is currently not installed in your environment, you will also need to include a QtPy backend:</p>
+<div class="highlight"><pre><span></span><code>pip<span class="w"> </span>install<span class="w"> </span>napari-ndev<span class="o">[</span>qtpy-backend<span class="o">]</span>
 </code></pre></div>
 <p>The easiest way to get started with <strong>napari-ndev</strong> is to install all the optional dependencies (see note below) with:</p>
 <div class="highlight"><pre><span></span><code>pip<span class="w"> </span>install<span class="w"> </span>napari-ndev<span class="o">[</span>all<span class="o">]</span>
