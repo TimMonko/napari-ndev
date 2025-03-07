@@ -34,6 +34,12 @@ A collection of widgets intended to serve any person seeking to process microsco
 pip install napari-ndev
 ```
 
+If napari is currently not installed in your environment, you will also need to include a QtPy backend:
+
+```bash
+pip install napari-ndev[qtpy-backend]
+```
+
 The easiest way to get started with **napari-ndev** is to install all the optional dependencies (see note below) with:
 
 ```bash
