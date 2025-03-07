@@ -36,8 +36,6 @@ dependencies = [
     "siphash24>=1.6",
     "magicgui>=0.8.3",
     "magic-class",
-    "pyqt5-qt5==5.15.15 ; platform_system != 'Windows'",
-    "pyqt5-qt5==5.15.2 ; platform_system == 'Windows'", # 5.15.2 is latest to build on windows, required for uv compatability 2024.12.09
     "napari>=0.4.19",
     "apoc",
     "pyclesperanto-prototype",
