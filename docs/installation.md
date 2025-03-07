@@ -7,7 +7,7 @@ If you are unfamiliar with python or the command line, instead use the bundled a
 uv is the newest and fastest way to manage python libraries. It is very easy to install, and simplifies environment manage, but requires some minimal input to the command line.  [Install uv from here](https://docs.astral.sh/uv/getting-started/installation/#__tabbed_1_1). Then, the simplest way to install `napari-ndev`:
 
 ```bash
-uv tool install napari-ndev
+uv tool install napari-ndev[qtpy-backend]
 ```
 
 Alternatively, download the full opinionated package, which includes non-BSD3 licensed libraries with:
@@ -36,6 +36,12 @@ uv tool upgrade napari-ndev
 
 ```bash
 pip install napari-ndev
+```
+
+If napari is currently not installed in your environment, you will also need to include a QtPy backend:
+
+```bash
+pip install napari-ndev[qtpy-backend]
 ```
 
 The easiest way to get started with **napari-ndev** is to install all the optional dependencies (see note below) with:
