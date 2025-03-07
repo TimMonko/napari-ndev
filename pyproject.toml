@@ -105,6 +105,9 @@ dev = [
     "napari-ndev[testing]",
     "napari-ndev[docs]",
 ]
+qtpy-backend = [
+    "napari-ndev[pyqt]"
+]
 pyqt = [
     "napari[pyqt5]"
 ]
@@ -119,7 +122,7 @@ gpl_extras = [
     "bioio-lif >= 1"
 ]
 all = [
-    "napari-ndev[pyqt]",
+    "napari-ndev[qtpy-backend]",
     "napari-ndev[extras]",
     "napari-ndev[gpl_extras]",
 ]
