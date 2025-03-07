@@ -105,6 +105,12 @@ dev = [
     "napari-ndev[testing]",
     "napari-ndev[docs]",
 ]
+pyqt = [
+    "napari[pyqt5]"
+]
+pyside = [
+    "napari[pyside]"
+]
 extras = [
     "napari-simpleitk-image-processing"
 ]
@@ -113,6 +119,7 @@ gpl_extras = [
     "bioio-lif >= 1"
 ]
 all = [
+    "napari-ndev[pyqt]",
     "napari-ndev[extras]",
     "napari-ndev[gpl_extras]",
 ]
