@@ -21,6 +21,20 @@ OME_TIFF = "cells3d2ch.tiff"
 
 ###############################################################################
 
+def test_napari_viewer_open(resources_dir: Path, make_napari_viewer) -> None:
+    """
+    Test that the napari viewer can open a file with the napari-ndev plugin.
+
+    In zarr>=3.0, the FSStore was removed and replaced with DirectoryStore.
+    This test checks that the napari viewer can open any file because BioImage
+    (nImage) would try to import the wrong FSStore from zarr. Now, the FSStore
+    is shimmed to DirectoryStore with a compatibility patch in nImage.
+    """
+    viewer = make_napari_viewer()
+    viewer.open(str(resources_dir / OME_TIFF), plugin='napari-ndev')
+
+    assert viewer.layers[0].data.shape == (60, 66, 85)
+
 @pytest.mark.parametrize(
     ("in_memory", "expected_dtype"),
     [
