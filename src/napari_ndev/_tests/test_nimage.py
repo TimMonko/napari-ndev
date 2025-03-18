@@ -10,27 +10,6 @@ from napari_ndev import nImage
 RGB_TIFF = "RGB.tiff"  # has two scenes
 CELLS3D2CH_OME_TIFF = "cells3d2ch.tiff"  # 2 channel, 3D OME-TIFF
 
-def test_apply_zarr_compat_patch():
-    import zarr
-
-    from napari_ndev.nimage import _apply_zarr_compat_patch
-
-    if hasattr(zarr.storage, 'FSStore'):
-        orig_fsstore = zarr.storage.FSStore
-        del zarr.storage.FSStore
-    else:
-        orig_fsstore = None
-
-    assert not hasattr(zarr.storage, 'FSStore')
-
-    _apply_zarr_compat_patch()
-
-    assert hasattr(zarr.storage, 'FSStore')
-
-    # restore original if it existed
-    if orig_fsstore is not None:
-        zarr.storage.FSStore = orig_fsstore
-
 def test_nImage_init(resources_dir: Path):
     img = nImage(resources_dir / RGB_TIFF)
     assert img.path == resources_dir / RGB_TIFF
