@@ -27,8 +27,7 @@ def _apply_zarr_compat_patch():
     if zarr_version >= (3, 0) and not hasattr(zarr.storage, 'FSStore'):
         class FSStoreShim:
             def __new__(cls, *args, **kwargs):
-                from zarr.storage.directory import DirectoryStore
-                return DirectoryStore(*args, **kwargs)
+                return zarr.storage.directory.DirectoryStore(*args, **kwargs)
         # patch zarr.storage.FSStore to FFStoreShim
         zarr.storage.FSStore = FSStoreShim
 
