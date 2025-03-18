@@ -21,6 +21,8 @@ def test_apply_zarr_compat_patch():
     else:
         orig_fsstore = None
 
+    assert not hasattr(zarr.storage, 'FSStore')
+
     _apply_zarr_compat_patch()
 
     assert hasattr(zarr.storage, 'FSStore')
