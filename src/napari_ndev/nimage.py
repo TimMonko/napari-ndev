@@ -25,8 +25,6 @@ def _apply_zarr_compat_patch():
     """Apply zarr compatibility patch for zarr>=3.0 with BioIO."""
     zarr_version = tuple(int(x) for x in zarr.__version__.split('.')[:2])
     if zarr_version >= (3, 0) and not hasattr(zarr.storage, 'FSStore'):
-        logger.debug("Applying zarr compatibility patch for zarr>=3.0")
-        # shim FFStore to redirect to DirectoryStore
         class FSStoreShim:
             def __new__(cls, *args, **kwargs):
                 return zarr.storage.directory.DirectoryStore(*args, **kwargs)
