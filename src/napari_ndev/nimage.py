@@ -81,13 +81,7 @@ class nImage(BioImage):
         self.settings = get_settings()
 
         if reader is None:
-            from bioio import plugin_feasibility_report as pfr
-            fr = pfr(image)
-            if self.settings.PREFERRED_READER in fr and fr[self.settings.PREFERRED_READER].supported:
-                reader_module = importlib.import_module(
-                    self.settings.PREFERRED_READER.replace('-', '_')
-                )
-                reader = reader_module.Reader
+            reader = get_preferred_reader(image)
 
         super().__init__(image, reader)
         self.napari_data = None
