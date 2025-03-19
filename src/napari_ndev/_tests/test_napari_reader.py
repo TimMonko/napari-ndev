@@ -2,6 +2,7 @@ from __future__ import annotations
 
 from pathlib import Path
 from typing import Any
+from unittest.mock import patch
 
 import dask.array as da
 
@@ -15,7 +16,7 @@ from napari_ndev._napari_reader import napari_get_reader
 
 RGB_TIFF = "RGB.tiff" # has two scenes
 MULTISCENE_CZI = r"0T-4C-0Z-7pos.czi"
-# PNG_FILE = "example.png"
+PNG_FILE = "nDev-logo-small.png"
 # GIF_FILE = "example.gif"
 OME_TIFF = "cells3d2ch.tiff"
 
@@ -183,3 +184,24 @@ def test_napari_get_reader_unsupported(resources_dir: Path) -> None:
     )
 
     assert reader is None
+
+def test_napari_get_reader_general_exception(caplog):
+    """Test that general exceptions in get_preferred_reader are handled correctly."""
+    test_path = "non_existent_file.xyz"
+
+    # Mock get_preferred_reader to raise an exception
+    with patch('napari_ndev._napari_reader.get_preferred_reader') as mock_reader:
+        mock_reader.side_effect = Exception("Test exception")
+
+        reader = napari_get_reader(test_path)
+        assert reader is None
+
+        assert "Bioio: Error reading file" in caplog.text
+        assert "Test exception" in caplog.text
+
+def test_napari_get_reader_png(resources_dir: Path) -> None:
+    reader = napari_get_reader(
+        str(resources_dir / PNG_FILE),
+    )
+
+    assert callable(reader)

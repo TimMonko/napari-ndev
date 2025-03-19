@@ -33,6 +33,54 @@ def _apply_zarr_compat_patch():
 
 _apply_zarr_compat_patch()
 
+def _patch_png_suffix(image: ImageLike) -> Reader:
+    if isinstance(image, (str, Path)) and str(image).lower().endswith('.png'):
+        return 'bioio-imageio'
+    return None
+
+def get_preferred_reader(
+    image: ImageLike,
+    preferred_reader: str | None = None
+) -> Reader:
+    """
+    Get the preferred reader for a given image based on settings.
+
+    Parameters
+    ----------
+    image : ImageLike
+        Image to be loaded. Can be a path to an image file, a numpy array,
+        or an xarray DataArray.
+    preferred_reader : str, optional
+        Preferred reader to be used to load the image. If not provided,
+        it will fallback to the preference in settings. Finally, if this
+        preferred reader is not suitable, a reader will be attempted to be
+        determined based on the image type.
+
+    Returns
+    -------
+    Reader
+        Reader to be used to load the image.
+
+    """
+    settings = get_settings()
+
+    preferred_reader = (
+        preferred_reader
+        or _patch_png_suffix(image)
+        or settings.PREFERRED_READER
+    )
+
+    from bioio import plugin_feasibility_report as pfr
+    fr = pfr(image)
+
+    if preferred_reader in fr and fr[preferred_reader].supported:
+        reader_module = importlib.import_module(
+            preferred_reader.replace('-', '_')
+        )
+        return reader_module.Reader
+
+    return nImage.determine_plugin(image).metadata.get_reader()
+
 class nImage(BioImage):
     """
     An nImage is a BioImage with additional functionality for napari-ndev.
@@ -81,13 +129,7 @@ class nImage(BioImage):
         self.settings = get_settings()
 
         if reader is None:
-            from bioio import plugin_feasibility_report as pfr
-            fr = pfr(image)
-            if self.settings.PREFERRED_READER in fr and fr[self.settings.PREFERRED_READER].supported:
-                reader_module = importlib.import_module(
-                    self.settings.PREFERRED_READER.replace('-', '_')
-                )
-                reader = reader_module.Reader
+            reader = get_preferred_reader(image)
 
         super().__init__(image, reader)
         self.napari_data = None
