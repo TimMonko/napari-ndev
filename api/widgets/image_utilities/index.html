@@ -2951,12 +2951,7 @@
 <span class="normal">1011</span>
 <span class="normal">1012</span>
 <span class="normal">1013</span>
-<span class="normal">1014</span>
-<span class="normal">1015</span>
-<span class="normal">1016</span>
-<span class="normal">1017</span>
-<span class="normal">1018</span>
-<span class="normal">1019</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span><span class="w"> </span><span class="nc">UtilitiesContainer</span><span class="p">(</span><span class="n">ScrollableContainer</span><span class="p">):</span>
+<span class="normal">1014</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span><span class="w"> </span><span class="nc">UtilitiesContainer</span><span class="p">(</span><span class="n">ScrollableContainer</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    A widget to work with images and labels in the napari viewer.</span>
 
@@ -3055,7 +3050,8 @@
 
         <span class="bp">self</span><span class="o">.</span><span class="n">min_width</span> <span class="o">=</span> <span class="mi">500</span> <span class="c1"># TODO: remove this hardcoded value</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_viewer</span> <span class="o">=</span> <span class="n">viewer</span> <span class="k">if</span> <span class="n">viewer</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="kc">None</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_squeezed_dims</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_squeezed_dims_order</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_squeezed_dims</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="o">...</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_settings</span> <span class="o">=</span> <span class="n">get_settings</span><span class="p">()</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_init_widgets</span><span class="p">()</span>
@@ -3366,13 +3362,14 @@
 <span class="sd">            Update the scale, by default True.</span>
 
 <span class="sd">        """</span>
-        <span class="n">img_dims</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">img</span><span class="o">.</span><span class="n">dims</span><span class="p">)</span>
         <span class="c1"># get the part of the string between the brackets, which is the dim order</span>
-        <span class="n">dims</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="sa">r</span><span class="s1">'\[(.*?)\]'</span><span class="p">,</span> <span class="n">img_dims</span><span class="p">)</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+        <span class="n">dims</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="sa">r</span><span class="s1">'\[(.*?)\]'</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">img</span><span class="o">.</span><span class="n">dims</span><span class="p">))</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_dim_shape</span><span class="o">.</span><span class="n">value</span> <span class="o">=</span> <span class="n">dims</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_num_scenes_label</span><span class="o">.</span><span class="n">value</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">img</span><span class="o">.</span><span class="n">scenes</span><span class="p">))</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">_squeezed_dims</span> <span class="o">=</span> <span class="n">helpers</span><span class="o">.</span><span class="n">get_squeezed_dim_order</span><span class="p">(</span><span class="n">img</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_squeezed_dims_order</span> <span class="o">=</span> <span class="n">helpers</span><span class="o">.</span><span class="n">get_squeezed_dim_order</span><span class="p">(</span><span class="n">img</span><span class="p">)</span>
+        <span class="n">dims_tuple</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">d</span> <span class="k">for</span> <span class="n">d</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_squeezed_dims_order</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_squeezed_dims</span> <span class="o">=</span> <span class="n">img</span><span class="o">.</span><span class="n">dims</span><span class="p">[</span><span class="n">dims_tuple</span><span class="p">]</span>
 
         <span class="k">if</span> <span class="n">update_channel_names</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_channel_names</span><span class="o">.</span><span class="n">value</span> <span class="o">=</span> <span class="n">helpers</span><span class="o">.</span><span class="n">get_channel_names</span><span class="p">(</span><span class="n">img</span><span class="p">)</span>
@@ -3571,37 +3568,30 @@
 
 <span class="sd">        """</span>
         <span class="k">if</span> <span class="nb">any</span><span class="p">(</span><span class="nb">isinstance</span><span class="p">(</span><span class="n">layer</span><span class="p">,</span> <span class="n">ShapesLayer</span><span class="p">)</span> <span class="k">for</span> <span class="n">layer</span> <span class="ow">in</span> <span class="n">layers</span><span class="p">):</span>
-            <span class="n">label_dim</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_dims_for_shape_layer</span><span class="p">(</span><span class="n">layers</span><span class="p">)</span>
+            <span class="n">shape_to_label_dim</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_dims_for_shape_layer</span><span class="p">()</span>
 
         <span class="n">array_list</span> <span class="o">=</span> <span class="p">[]</span>
 
         <span class="k">for</span> <span class="n">layer</span> <span class="ow">in</span> <span class="n">layers</span><span class="p">:</span>
             <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">layer</span><span class="p">,</span> <span class="n">ShapesLayer</span><span class="p">):</span>
-                <span class="n">layer_data</span> <span class="o">=</span> <span class="n">layer</span><span class="o">.</span><span class="n">to_labels</span><span class="p">(</span><span class="n">labels_shape</span><span class="o">=</span><span class="n">label_dim</span><span class="p">)</span>
+                <span class="n">layer_data</span> <span class="o">=</span> <span class="n">layer</span><span class="o">.</span><span class="n">to_labels</span><span class="p">(</span><span class="n">labels_shape</span><span class="o">=</span><span class="n">shape_to_label_dim</span><span class="p">)</span>
                 <span class="n">layer_data</span> <span class="o">=</span> <span class="n">layer_data</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">int16</span><span class="p">)</span>
             <span class="k">else</span><span class="p">:</span>
                 <span class="n">layer_data</span> <span class="o">=</span> <span class="n">layer</span><span class="o">.</span><span class="n">data</span>
 
-            <span class="c1"># convert to 5D array for compatability with image dims</span>
-            <span class="k">while</span> <span class="nb">len</span><span class="p">(</span><span class="n">layer_data</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mi">5</span><span class="p">:</span>
-                <span class="n">layer_data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">expand_dims</span><span class="p">(</span><span class="n">layer_data</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
-            <span class="n">array_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">layer_data</span><span class="p">)</span>
+        <span class="c1"># stack along a new axis, which will be the channel axis for saving</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">stack</span><span class="p">(</span><span class="n">array_list</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
 
-        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">(</span><span class="n">array_list</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_get_dims_for_shape_layer</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="o">...</span><span class="p">]:</span>
+        <span class="c1"># use dimension of the current image file</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_squeezed_dims</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_squeezed_dims</span>
 
-    <span class="k">def</span><span class="w"> </span><span class="nf">_get_dims_for_shape_layer</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">layers</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">]:</span>
-        <span class="c1"># TODO: Fix this not getting the first instance of the image layer</span>
-        <span class="c1"># get first instance of a napari.layers.Image or napari.layers.Labels</span>
+        <span class="c1"># if no dims available, get it from the first instance in the viewer</span>
         <span class="n">dim_layer</span> <span class="o">=</span> <span class="nb">next</span><span class="p">(</span>
-                <span class="p">(</span><span class="n">layer</span> <span class="k">for</span> <span class="n">layer</span> <span class="ow">in</span> <span class="n">layers</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">layer</span><span class="p">,</span> <span class="p">(</span><span class="n">ImageLayer</span><span class="p">,</span> <span class="n">LabelsLayer</span><span class="p">))),</span>
+                <span class="p">(</span><span class="n">layer</span> <span class="k">for</span> <span class="n">layer</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_viewer</span><span class="o">.</span><span class="n">layers</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">layer</span><span class="p">,</span> <span class="p">(</span><span class="n">ImageLayer</span><span class="p">,</span> <span class="n">LabelsLayer</span><span class="p">))),</span>
                 <span class="kc">None</span><span class="p">,</span>
             <span class="p">)</span>
-        <span class="c1"># if none of these layers is selected, get it from the first instance in the viewer</span>
-        <span class="k">if</span> <span class="n">dim_layer</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">dim_layer</span> <span class="o">=</span> <span class="nb">next</span><span class="p">(</span>
-                    <span class="p">(</span><span class="n">layer</span> <span class="k">for</span> <span class="n">layer</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_viewer</span><span class="o">.</span><span class="n">layers</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">layer</span><span class="p">,</span> <span class="p">(</span><span class="n">ImageLayer</span><span class="p">,</span> <span class="n">LabelsLayer</span><span class="p">))),</span>
-                    <span class="kc">None</span><span class="p">,</span>
-                <span class="p">)</span>
         <span class="k">if</span> <span class="n">dim_layer</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">'No image or labels present to convert shapes layer.'</span><span class="p">)</span>
         <span class="n">label_dim</span> <span class="o">=</span> <span class="n">dim_layer</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">shape</span>
@@ -3930,7 +3920,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_common_save_logic</span><span class="p">(</span>
             <span class="n">data</span><span class="o">=</span><span class="n">layer_data</span><span class="p">,</span>
             <span class="n">uri</span><span class="o">=</span><span class="n">layer_save_loc</span><span class="p">,</span>
-            <span class="n">dim_order</span><span class="o">=</span><span class="s1">'TCZYX'</span><span class="p">,</span>
+            <span class="n">dim_order</span><span class="o">=</span><span class="s1">'C'</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">_squeezed_dims_order</span><span class="p">,</span>
             <span class="n">channel_names</span><span class="o">=</span><span class="n">channel_names</span><span class="p">,</span>
             <span class="n">image_name</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_save_name</span><span class="o">.</span><span class="n">value</span><span class="p">,</span>
             <span class="n">result_str</span><span class="o">=</span><span class="n">layer_save_type</span><span class="p">,</span>
@@ -4047,7 +4037,8 @@
 <span class="normal">147</span>
 <span class="normal">148</span>
 <span class="normal">149</span>
-<span class="normal">150</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">viewer</span><span class="p">:</span> <span class="n">napari</span><span class="o">.</span><span class="n">viewer</span><span class="o">.</span><span class="n">Viewer</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+<span class="normal">150</span>
+<span class="normal">151</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">viewer</span><span class="p">:</span> <span class="n">napari</span><span class="o">.</span><span class="n">viewer</span><span class="o">.</span><span class="n">Viewer</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    Initialize the UtilitiesContainer widget.</span>
 
@@ -4061,7 +4052,8 @@
 
     <span class="bp">self</span><span class="o">.</span><span class="n">min_width</span> <span class="o">=</span> <span class="mi">500</span> <span class="c1"># TODO: remove this hardcoded value</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">_viewer</span> <span class="o">=</span> <span class="n">viewer</span> <span class="k">if</span> <span class="n">viewer</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="kc">None</span>
-    <span class="bp">self</span><span class="o">.</span><span class="n">_squeezed_dims</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_squeezed_dims_order</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_squeezed_dims</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="o">...</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">_settings</span> <span class="o">=</span> <span class="n">get_settings</span><span class="p">()</span>
 
     <span class="bp">self</span><span class="o">.</span><span class="n">_init_widgets</span><span class="p">()</span>
@@ -4098,9 +4090,7 @@
 
             <details class="quote">
               <summary>Source code in <code>src/napari_ndev/widgets/_utilities_container.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">480</span>
-<span class="normal">481</span>
-<span class="normal">482</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">482</span>
 <span class="normal">483</span>
 <span class="normal">484</span>
 <span class="normal">485</span>
@@ -4118,7 +4108,9 @@
 <span class="normal">497</span>
 <span class="normal">498</span>
 <span class="normal">499</span>
-<span class="normal">500</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">append_scene_to_name</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="normal">500</span>
+<span class="normal">501</span>
+<span class="normal">502</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">append_scene_to_name</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">"""Append the scene to the save name."""</span>
     <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_viewer</span><span class="o">.</span><span class="n">layers</span><span class="o">.</span><span class="n">selection</span><span class="o">.</span><span class="n">active</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
         <span class="k">try</span><span class="p">:</span>
@@ -4169,7 +4161,12 @@ directory.</p>
 
             <details class="quote">
               <summary>Source code in <code>src/napari_ndev/widgets/_utilities_container.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">822</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">817</span>
+<span class="normal">818</span>
+<span class="normal">819</span>
+<span class="normal">820</span>
+<span class="normal">821</span>
+<span class="normal">822</span>
 <span class="normal">823</span>
 <span class="normal">824</span>
 <span class="normal">825</span>
@@ -4200,12 +4197,7 @@ directory.</p>
 <span class="normal">850</span>
 <span class="normal">851</span>
 <span class="normal">852</span>
-<span class="normal">853</span>
-<span class="normal">854</span>
-<span class="normal">855</span>
-<span class="normal">856</span>
-<span class="normal">857</span>
-<span class="normal">858</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">batch_concatenate_files</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="normal">853</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">batch_concatenate_files</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    Concatenate files in the selected directory.</span>
 
@@ -4266,7 +4258,12 @@ directory.</p>
 
             <details class="quote">
               <summary>Source code in <code>src/napari_ndev/widgets/_utilities_container.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">909</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">904</span>
+<span class="normal">905</span>
+<span class="normal">906</span>
+<span class="normal">907</span>
+<span class="normal">908</span>
+<span class="normal">909</span>
 <span class="normal">910</span>
 <span class="normal">911</span>
 <span class="normal">912</span>
@@ -4291,12 +4288,7 @@ directory.</p>
 <span class="normal">931</span>
 <span class="normal">932</span>
 <span class="normal">933</span>
-<span class="normal">934</span>
-<span class="normal">935</span>
-<span class="normal">936</span>
-<span class="normal">937</span>
-<span class="normal">938</span>
-<span class="normal">939</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">canvas_export_figure</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="normal">934</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">canvas_export_figure</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">"""Export the current canvas figure to the save directory."""</span>
     <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_viewer</span><span class="o">.</span><span class="n">dims</span><span class="o">.</span><span class="n">ndisplay</span> <span class="o">!=</span> <span class="mi">2</span><span class="p">:</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_results</span><span class="o">.</span><span class="n">value</span> <span class="o">=</span> <span class="p">(</span>
@@ -4351,7 +4343,12 @@ directory.</p>
 
             <details class="quote">
               <summary>Source code in <code>src/napari_ndev/widgets/_utilities_container.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">941</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">936</span>
+<span class="normal">937</span>
+<span class="normal">938</span>
+<span class="normal">939</span>
+<span class="normal">940</span>
+<span class="normal">941</span>
 <span class="normal">942</span>
 <span class="normal">943</span>
 <span class="normal">944</span>
@@ -4375,12 +4372,7 @@ directory.</p>
 <span class="normal">962</span>
 <span class="normal">963</span>
 <span class="normal">964</span>
-<span class="normal">965</span>
-<span class="normal">966</span>
-<span class="normal">967</span>
-<span class="normal">968</span>
-<span class="normal">969</span>
-<span class="normal">970</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">canvas_screenshot</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="normal">965</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">canvas_screenshot</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">"""Export the current canvas screenshot to the save directory."""</span>
     <span class="n">save_name</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">'</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_save_name</span><span class="o">.</span><span class="n">value</span><span class="si">}</span><span class="s1">_canvas.png'</span>
     <span class="n">save_path</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_save_loc</span><span class="p">(</span>
@@ -4463,9 +4455,7 @@ and then leave empty channels not represented by the color channels.</p>
 
             <details class="quote">
               <summary>Source code in <code>src/napari_ndev/widgets/_utilities_container.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">590</span>
-<span class="normal">591</span>
-<span class="normal">592</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">592</span>
 <span class="normal">593</span>
 <span class="normal">594</span>
 <span class="normal">595</span>
@@ -4502,7 +4492,9 @@ and then leave empty channels not represented by the color channels.</p>
 <span class="normal">626</span>
 <span class="normal">627</span>
 <span class="normal">628</span>
-<span class="normal">629</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">concatenate_files</span><span class="p">(</span>
+<span class="normal">629</span>
+<span class="normal">630</span>
+<span class="normal">631</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">concatenate_files</span><span class="p">(</span>
     <span class="bp">self</span><span class="p">,</span>
     <span class="n">files</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="n">Path</span> <span class="o">|</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span> <span class="o">|</span> <span class="n">Path</span><span class="p">],</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
@@ -4594,9 +4586,7 @@ layer to get the dimensions for the shapes layer.</p>
 
             <details class="quote">
               <summary>Source code in <code>src/napari_ndev/widgets/_utilities_container.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">631</span>
-<span class="normal">632</span>
-<span class="normal">633</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">633</span>
 <span class="normal">634</span>
 <span class="normal">635</span>
 <span class="normal">636</span>
@@ -4631,9 +4621,7 @@ layer to get the dimensions for the shapes layer.</p>
 <span class="normal">665</span>
 <span class="normal">666</span>
 <span class="normal">667</span>
-<span class="normal">668</span>
-<span class="normal">669</span>
-<span class="normal">670</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">concatenate_layers</span><span class="p">(</span>
+<span class="normal">668</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">concatenate_layers</span><span class="p">(</span>
     <span class="bp">self</span><span class="p">,</span>
     <span class="n">layers</span><span class="p">:</span> <span class="n">Layer</span> <span class="o">|</span> <span class="nb">list</span><span class="p">[</span><span class="n">Layer</span><span class="p">],</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
@@ -4656,23 +4644,19 @@ layer to get the dimensions for the shapes layer.</p>
 
 <span class="sd">    """</span>
     <span class="k">if</span> <span class="nb">any</span><span class="p">(</span><span class="nb">isinstance</span><span class="p">(</span><span class="n">layer</span><span class="p">,</span> <span class="n">ShapesLayer</span><span class="p">)</span> <span class="k">for</span> <span class="n">layer</span> <span class="ow">in</span> <span class="n">layers</span><span class="p">):</span>
-        <span class="n">label_dim</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_dims_for_shape_layer</span><span class="p">(</span><span class="n">layers</span><span class="p">)</span>
+        <span class="n">shape_to_label_dim</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_dims_for_shape_layer</span><span class="p">()</span>
 
     <span class="n">array_list</span> <span class="o">=</span> <span class="p">[]</span>
 
     <span class="k">for</span> <span class="n">layer</span> <span class="ow">in</span> <span class="n">layers</span><span class="p">:</span>
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">layer</span><span class="p">,</span> <span class="n">ShapesLayer</span><span class="p">):</span>
-            <span class="n">layer_data</span> <span class="o">=</span> <span class="n">layer</span><span class="o">.</span><span class="n">to_labels</span><span class="p">(</span><span class="n">labels_shape</span><span class="o">=</span><span class="n">label_dim</span><span class="p">)</span>
+            <span class="n">layer_data</span> <span class="o">=</span> <span class="n">layer</span><span class="o">.</span><span class="n">to_labels</span><span class="p">(</span><span class="n">labels_shape</span><span class="o">=</span><span class="n">shape_to_label_dim</span><span class="p">)</span>
             <span class="n">layer_data</span> <span class="o">=</span> <span class="n">layer_data</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">int16</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="n">layer_data</span> <span class="o">=</span> <span class="n">layer</span><span class="o">.</span><span class="n">data</span>
 
-        <span class="c1"># convert to 5D array for compatability with image dims</span>
-        <span class="k">while</span> <span class="nb">len</span><span class="p">(</span><span class="n">layer_data</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mi">5</span><span class="p">:</span>
-            <span class="n">layer_data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">expand_dims</span><span class="p">(</span><span class="n">layer_data</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
-        <span class="n">array_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">layer_data</span><span class="p">)</span>
-
-    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">(</span><span class="n">array_list</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+    <span class="c1"># stack along a new axis, which will be the channel axis for saving</span>
+    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">stack</span><span class="p">(</span><span class="n">array_list</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
 </code></pre></div></td></tr></table></div>
             </details>
     </div>
@@ -4697,9 +4681,9 @@ layer to get the dimensions for the shapes layer.</p>
 
             <details class="quote">
               <summary>Source code in <code>src/napari_ndev/widgets/_utilities_container.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">538</span>
-<span class="normal">539</span>
-<span class="normal">540</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">open_images</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">540</span>
+<span class="normal">541</span>
+<span class="normal">542</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">open_images</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">"""Open the selected images in the napari viewer with napari-ndev."""</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">_viewer</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_files</span><span class="o">.</span><span class="n">value</span><span class="p">,</span> <span class="n">plugin</span><span class="o">=</span><span class="s1">'napari-ndev'</span><span class="p">)</span>
 </code></pre></div></td></tr></table></div>
@@ -4726,16 +4710,16 @@ layer to get the dimensions for the shapes layer.</p>
 
             <details class="quote">
               <summary>Source code in <code>src/napari_ndev/widgets/_utilities_container.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">579</span>
-<span class="normal">580</span>
-<span class="normal">581</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">581</span>
 <span class="normal">582</span>
 <span class="normal">583</span>
 <span class="normal">584</span>
 <span class="normal">585</span>
 <span class="normal">586</span>
 <span class="normal">587</span>
-<span class="normal">588</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">rescale_by</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="normal">588</span>
+<span class="normal">589</span>
+<span class="normal">590</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">rescale_by</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">"""Rescale the selected layers based on the given scale."""</span>
     <span class="n">layers</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_viewer</span><span class="o">.</span><span class="n">layers</span><span class="o">.</span><span class="n">selection</span>
     <span class="n">scale_tup</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_scale_tuple</span><span class="o">.</span><span class="n">value</span>
@@ -4769,7 +4753,12 @@ layer to get the dimensions for the shapes layer.</p>
 
             <details class="quote">
               <summary>Source code in <code>src/napari_ndev/widgets/_utilities_container.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">797</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">792</span>
+<span class="normal">793</span>
+<span class="normal">794</span>
+<span class="normal">795</span>
+<span class="normal">796</span>
+<span class="normal">797</span>
 <span class="normal">798</span>
 <span class="normal">799</span>
 <span class="normal">800</span>
@@ -4787,12 +4776,7 @@ layer to get the dimensions for the shapes layer.</p>
 <span class="normal">812</span>
 <span class="normal">813</span>
 <span class="normal">814</span>
-<span class="normal">815</span>
-<span class="normal">816</span>
-<span class="normal">817</span>
-<span class="normal">818</span>
-<span class="normal">819</span>
-<span class="normal">820</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">save_files_as_ome_tiff</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+<span class="normal">815</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">save_files_as_ome_tiff</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">"""Save the selected files as OME-TIFF using BioImage."""</span>
     <span class="n">img_data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">concatenate_files</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_files</span><span class="o">.</span><span class="n">value</span><span class="p">)</span>
     <span class="n">save_dir</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_determine_save_directory</span><span class="p">(</span><span class="s1">'ConcatenatedImages'</span><span class="p">)</span>
@@ -4841,7 +4825,12 @@ layer to get the dimensions for the shapes layer.</p>
 
             <details class="quote">
               <summary>Source code in <code>src/napari_ndev/widgets/_utilities_container.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 972</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 967</span>
+<span class="normal"> 968</span>
+<span class="normal"> 969</span>
+<span class="normal"> 970</span>
+<span class="normal"> 971</span>
+<span class="normal"> 972</span>
 <span class="normal"> 973</span>
 <span class="normal"> 974</span>
 <span class="normal"> 975</span>
@@ -4883,12 +4872,7 @@ layer to get the dimensions for the shapes layer.</p>
 <span class="normal">1011</span>
 <span class="normal">1012</span>
 <span class="normal">1013</span>
-<span class="normal">1014</span>
-<span class="normal">1015</span>
-<span class="normal">1016</span>
-<span class="normal">1017</span>
-<span class="normal">1018</span>
-<span class="normal">1019</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">save_layers_as_ome_tiff</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+<span class="normal">1014</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">save_layers_as_ome_tiff</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    Save the selected layers as OME-TIFF.</span>
 
@@ -4929,7 +4913,7 @@ layer to get the dimensions for the shapes layer.</p>
     <span class="bp">self</span><span class="o">.</span><span class="n">_common_save_logic</span><span class="p">(</span>
         <span class="n">data</span><span class="o">=</span><span class="n">layer_data</span><span class="p">,</span>
         <span class="n">uri</span><span class="o">=</span><span class="n">layer_save_loc</span><span class="p">,</span>
-        <span class="n">dim_order</span><span class="o">=</span><span class="s1">'TCZYX'</span><span class="p">,</span>
+        <span class="n">dim_order</span><span class="o">=</span><span class="s1">'C'</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">_squeezed_dims_order</span><span class="p">,</span>
         <span class="n">channel_names</span><span class="o">=</span><span class="n">channel_names</span><span class="p">,</span>
         <span class="n">image_name</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_save_name</span><span class="o">.</span><span class="n">value</span><span class="p">,</span>
         <span class="n">result_str</span><span class="o">=</span><span class="n">layer_save_type</span><span class="p">,</span>
@@ -4964,7 +4948,12 @@ will be extracted.</p>
 
             <details class="quote">
               <summary>Source code in <code>src/napari_ndev/widgets/_utilities_container.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">860</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">855</span>
+<span class="normal">856</span>
+<span class="normal">857</span>
+<span class="normal">858</span>
+<span class="normal">859</span>
+<span class="normal">860</span>
 <span class="normal">861</span>
 <span class="normal">862</span>
 <span class="normal">863</span>
@@ -5006,12 +4995,7 @@ will be extracted.</p>
 <span class="normal">899</span>
 <span class="normal">900</span>
 <span class="normal">901</span>
-<span class="normal">902</span>
-<span class="normal">903</span>
-<span class="normal">904</span>
-<span class="normal">905</span>
-<span class="normal">906</span>
-<span class="normal">907</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">save_scenes_ome_tiff</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="normal">902</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">save_scenes_ome_tiff</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    Save selected scenes as OME-TIFF.</span>
 
@@ -5089,9 +5073,7 @@ will be extracted.</p>
 
             <details class="quote">
               <summary>Source code in <code>src/napari_ndev/widgets/_utilities_container.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">503</span>
-<span class="normal">504</span>
-<span class="normal">505</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">505</span>
 <span class="normal">506</span>
 <span class="normal">507</span>
 <span class="normal">508</span>
@@ -5121,7 +5103,9 @@ will be extracted.</p>
 <span class="normal">532</span>
 <span class="normal">533</span>
 <span class="normal">534</span>
-<span class="normal">535</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">update_metadata_from_layer</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="normal">535</span>
+<span class="normal">536</span>
+<span class="normal">537</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">update_metadata_from_layer</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    Update metadata from the selected layer.</span>
 
@@ -5178,9 +5162,7 @@ will be extracted.</p>
 
             <details class="quote">
               <summary>Source code in <code>src/napari_ndev/widgets/_utilities_container.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">467</span>
-<span class="normal">468</span>
-<span class="normal">469</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">469</span>
 <span class="normal">470</span>
 <span class="normal">471</span>
 <span class="normal">472</span>
@@ -5188,7 +5170,9 @@ will be extracted.</p>
 <span class="normal">474</span>
 <span class="normal">475</span>
 <span class="normal">476</span>
-<span class="normal">477</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">update_metadata_on_file_select</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="normal">477</span>
+<span class="normal">478</span>
+<span class="normal">479</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">update_metadata_on_file_select</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">"""Update self._save_name.value and metadata if selected."""</span>
     <span class="c1"># TODO: get true stem of file, in case .ome.tiff</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">_save_name</span><span class="o">.</span><span class="n">value</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_files</span><span class="o">.</span><span class="n">value</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">stem</span><span class="p">)</span>
@@ -5223,10 +5207,10 @@ will be extracted.</p>
 
             <details class="quote">
               <summary>Source code in <code>src/napari_ndev/widgets/_utilities_container.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">424</span>
-<span class="normal">425</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">425</span>
 <span class="normal">426</span>
-<span class="normal">427</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">update_save_directory</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="normal">427</span>
+<span class="normal">428</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">update_save_directory</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">"""Update the save directory based on the selected files."""</span>
     <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_save_directory</span><span class="o">.</span><span class="n">value</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">_default_save_directory</span><span class="p">:</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_save_directory</span><span class="o">.</span><span class="n">value</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_files</span><span class="o">.</span><span class="n">value</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">parent</span><span class="o">.</span><span class="n">parent</span>
