@@ -1177,48 +1177,6 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#napari_ndev.nimage.nImage._determine_in_memory" class="md-nav__link">
-    <span class="md-ellipsis">
-      <code class="doc-symbol doc-symbol-toc doc-symbol-method"></code>&nbsp;_determine_in_memory
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label=" _determine_in_memory">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#napari_ndev.nimage.nImage._determine_in_memory(path)" class="md-nav__link">
-    <span class="md-ellipsis">
-      <code class="doc-symbol doc-symbol-toc doc-symbol-parameter"></code>&nbsp;path
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#napari_ndev.nimage.nImage._determine_in_memory(max_in_mem_bytes)" class="md-nav__link">
-    <span class="md-ellipsis">
-      <code class="doc-symbol doc-symbol-toc doc-symbol-parameter"></code>&nbsp;max_in_mem_bytes
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#napari_ndev.nimage.nImage._determine_in_memory(max_in_mem_percent)" class="md-nav__link">
-    <span class="md-ellipsis">
-      <code class="doc-symbol doc-symbol-toc doc-symbol-parameter"></code>&nbsp;max_in_mem_percent
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-        
-          <li class="md-nav__item">
   <a href="#napari_ndev.nimage.nImage.get_napari_image_data" class="md-nav__link">
     <span class="md-ellipsis">
       <code class="doc-symbol doc-symbol-toc doc-symbol-method"></code>&nbsp;get_napari_image_data
@@ -1268,15 +1226,6 @@
         
       </ul>
     </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#napari_ndev.nimage._apply_zarr_compat_patch" class="md-nav__link">
-    <span class="md-ellipsis">
-      <code class="doc-symbol doc-symbol-toc doc-symbol-function"></code>&nbsp;_apply_zarr_compat_patch
-    </span>
-  </a>
   
 </li>
       
@@ -1360,48 +1309,6 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#napari_ndev.nimage.nImage._determine_in_memory" class="md-nav__link">
-    <span class="md-ellipsis">
-      <code class="doc-symbol doc-symbol-toc doc-symbol-method"></code>&nbsp;_determine_in_memory
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label=" _determine_in_memory">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#napari_ndev.nimage.nImage._determine_in_memory(path)" class="md-nav__link">
-    <span class="md-ellipsis">
-      <code class="doc-symbol doc-symbol-toc doc-symbol-parameter"></code>&nbsp;path
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#napari_ndev.nimage.nImage._determine_in_memory(max_in_mem_bytes)" class="md-nav__link">
-    <span class="md-ellipsis">
-      <code class="doc-symbol doc-symbol-toc doc-symbol-parameter"></code>&nbsp;max_in_mem_bytes
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#napari_ndev.nimage.nImage._determine_in_memory(max_in_mem_percent)" class="md-nav__link">
-    <span class="md-ellipsis">
-      <code class="doc-symbol doc-symbol-toc doc-symbol-parameter"></code>&nbsp;max_in_mem_percent
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-        
-          <li class="md-nav__item">
   <a href="#napari_ndev.nimage.nImage.get_napari_image_data" class="md-nav__link">
     <span class="md-ellipsis">
       <code class="doc-symbol doc-symbol-toc doc-symbol-method"></code>&nbsp;get_napari_image_data
@@ -1451,15 +1358,6 @@
         
       </ul>
     </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#napari_ndev.nimage._apply_zarr_compat_patch" class="md-nav__link">
-    <span class="md-ellipsis">
-      <code class="doc-symbol doc-symbol-toc doc-symbol-function"></code>&nbsp;_apply_zarr_compat_patch
-    </span>
-  </a>
   
 </li>
       
@@ -2180,169 +2078,6 @@ for napari-ndev).</p>
 <div class="doc doc-object doc-function">
 
 
-<h3 id="napari_ndev.nimage.nImage._determine_in_memory" class="doc doc-heading">
-<code class="doc-symbol doc-symbol-heading doc-symbol-method"></code>            <span class="doc doc-object-name doc-function-name">_determine_in_memory</span>
-
-
-<a href="#napari_ndev.nimage.nImage._determine_in_memory" class="headerlink" title="Permanent link">#</a></h3>
-<div class="doc-signature highlight"><pre><span></span><code><span class="nf">_determine_in_memory</span><span class="p">(</span>
-    <span class="n">path</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">max_in_mem_bytes</span><span class="o">=</span><span class="mf">4000000000.0</span><span class="p">,</span> <span class="n">max_in_mem_percent</span><span class="o">=</span><span class="mf">0.3</span>
-<span class="p">)</span>
-</code></pre></div>
-
-    <div class="doc doc-contents ">
-
-        <p>Determine whether the image should be loaded into memory or not.</p>
-<p>If the image is smaller than the maximum filesize or percentage of the
-available memory, this will determine to load image in memory.
-Otherwise, suggest to load as a dask array.</p>
-
-
-<p><span class="doc-section-title">Parameters:</span></p>
-    <ul>
-        <li class="doc-section-item field-body">
-<h4 id="napari_ndev.nimage.nImage._determine_in_memory(path)" class="doc doc-heading doc-heading-parameter">              <b><code>path</code></b>
-<a href="#napari_ndev.nimage.nImage._determine_in_memory(path)" class="headerlink" title="Permanent link">#</a></h4>              (<code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a> or <a class="autorefs autorefs-external" title="pathlib.Path" href="https://docs.python.org/3/library/pathlib.html#pathlib.Path">Path</a></code>, default:
-                  <code>None</code>
-)
-          –
-          <div class="doc-md-description">
-            <p>Path to the image file.</p>
-          </div>
-        </li>
-        <li class="doc-section-item field-body">
-<h4 id="napari_ndev.nimage.nImage._determine_in_memory(max_in_mem_bytes)" class="doc doc-heading doc-heading-parameter">              <b><code>max_in_mem_bytes</code></b>
-<a href="#napari_ndev.nimage.nImage._determine_in_memory(max_in_mem_bytes)" class="headerlink" title="Permanent link">#</a></h4>              (<code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#int">int</a></code>, default:
-                  <code>4000000000.0</code>
-)
-          –
-          <div class="doc-md-description">
-            <p>Maximum number of bytes that can be loaded into memory.
-Default is 4 GB (4e9 bytes)</p>
-          </div>
-        </li>
-        <li class="doc-section-item field-body">
-<h4 id="napari_ndev.nimage.nImage._determine_in_memory(max_in_mem_percent)" class="doc doc-heading doc-heading-parameter">              <b><code>max_in_mem_percent</code></b>
-<a href="#napari_ndev.nimage.nImage._determine_in_memory(max_in_mem_percent)" class="headerlink" title="Permanent link">#</a></h4>              (<code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#float">float</a></code>, default:
-                  <code>0.3</code>
-)
-          –
-          <div class="doc-md-description">
-            <p>Maximum percentage of memory that can be loaded into memory.
-Default is 30% of available memory (0.3)</p>
-          </div>
-        </li>
-    </ul>
-
-
-<p><span class="doc-section-title">Returns:</span></p>
-    <ul>
-        <li class="doc-section-item field-body">
-              <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#bool">bool</a></code>
-          –
-          <div class="doc-md-description">
-            <p>True if image should be loaded in memory, False otherwise.</p>
-          </div>
-        </li>
-    </ul>
-
-
-            <details class="quote">
-              <summary>Source code in <code>src/napari_ndev/nimage.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 97</span>
-<span class="normal"> 98</span>
-<span class="normal"> 99</span>
-<span class="normal">100</span>
-<span class="normal">101</span>
-<span class="normal">102</span>
-<span class="normal">103</span>
-<span class="normal">104</span>
-<span class="normal">105</span>
-<span class="normal">106</span>
-<span class="normal">107</span>
-<span class="normal">108</span>
-<span class="normal">109</span>
-<span class="normal">110</span>
-<span class="normal">111</span>
-<span class="normal">112</span>
-<span class="normal">113</span>
-<span class="normal">114</span>
-<span class="normal">115</span>
-<span class="normal">116</span>
-<span class="normal">117</span>
-<span class="normal">118</span>
-<span class="normal">119</span>
-<span class="normal">120</span>
-<span class="normal">121</span>
-<span class="normal">122</span>
-<span class="normal">123</span>
-<span class="normal">124</span>
-<span class="normal">125</span>
-<span class="normal">126</span>
-<span class="normal">127</span>
-<span class="normal">128</span>
-<span class="normal">129</span>
-<span class="normal">130</span>
-<span class="normal">131</span>
-<span class="normal">132</span>
-<span class="normal">133</span>
-<span class="normal">134</span>
-<span class="normal">135</span>
-<span class="normal">136</span>
-<span class="normal">137</span>
-<span class="normal">138</span>
-<span class="normal">139</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">_determine_in_memory</span><span class="p">(</span>
-    <span class="bp">self</span><span class="p">,</span>
-    <span class="n">path</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-    <span class="n">max_in_mem_bytes</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mf">4e9</span><span class="p">,</span>
-    <span class="n">max_in_mem_percent</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mf">0.3</span>
-<span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">"""</span>
-<span class="sd">    Determine whether the image should be loaded into memory or not.</span>
-
-<span class="sd">    If the image is smaller than the maximum filesize or percentage of the</span>
-<span class="sd">    available memory, this will determine to load image in memory.</span>
-<span class="sd">    Otherwise, suggest to load as a dask array.</span>
-
-<span class="sd">    Parameters</span>
-<span class="sd">    ----------</span>
-<span class="sd">    path : str or Path</span>
-<span class="sd">        Path to the image file.</span>
-<span class="sd">    max_in_mem_bytes : int</span>
-<span class="sd">        Maximum number of bytes that can be loaded into memory.</span>
-<span class="sd">        Default is 4 GB (4e9 bytes)</span>
-<span class="sd">    max_in_mem_percent : float</span>
-<span class="sd">        Maximum percentage of memory that can be loaded into memory.</span>
-<span class="sd">        Default is 30% of available memory (0.3)</span>
-
-<span class="sd">    Returns</span>
-<span class="sd">    -------</span>
-<span class="sd">    bool</span>
-<span class="sd">        True if image should be loaded in memory, False otherwise.</span>
-
-<span class="sd">    """</span>
-    <span class="kn">from</span><span class="w"> </span><span class="nn">bioio_base.io</span><span class="w"> </span><span class="kn">import</span> <span class="n">pathlike_to_fs</span>
-    <span class="kn">from</span><span class="w"> </span><span class="nn">psutil</span><span class="w"> </span><span class="kn">import</span> <span class="n">virtual_memory</span>
-
-    <span class="k">if</span> <span class="n">path</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="n">path</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">path</span>
-
-    <span class="n">fs</span><span class="p">,</span> <span class="n">path</span> <span class="o">=</span> <span class="n">pathlike_to_fs</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
-    <span class="n">filesize</span> <span class="o">=</span> <span class="n">fs</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
-    <span class="n">available_mem</span> <span class="o">=</span> <span class="n">virtual_memory</span><span class="p">()</span><span class="o">.</span><span class="n">available</span>
-    <span class="k">return</span> <span class="p">(</span>
-        <span class="n">filesize</span> <span class="o">&lt;=</span> <span class="n">max_in_mem_bytes</span>
-        <span class="ow">and</span> <span class="n">filesize</span> <span class="o">&lt;</span> <span class="n">max_in_mem_percent</span> <span class="o">*</span> <span class="n">available_mem</span>
-    <span class="p">)</span>
-</code></pre></div></td></tr></table></div>
-            </details>
-    </div>
-
-</div>
-
-<div class="doc doc-object doc-function">
-
-
 <h3 id="napari_ndev.nimage.nImage.get_napari_image_data" class="doc doc-heading">
 <code class="doc-symbol doc-symbol-heading doc-symbol-method"></code>            <span class="doc doc-object-name doc-function-name">get_napari_image_data</span>
 
@@ -2712,47 +2447,6 @@ If None, will determine whether to load in memory based on the image size.</p>
 
 </div>
 
-
-<div class="doc doc-object doc-function">
-
-
-<h2 id="napari_ndev.nimage._apply_zarr_compat_patch" class="doc doc-heading">
-<code class="doc-symbol doc-symbol-heading doc-symbol-function"></code>            <span class="doc doc-object-name doc-function-name">_apply_zarr_compat_patch</span>
-
-
-<a href="#napari_ndev.nimage._apply_zarr_compat_patch" class="headerlink" title="Permanent link">#</a></h2>
-<div class="doc-signature highlight"><pre><span></span><code><span class="nf">_apply_zarr_compat_patch</span><span class="p">()</span>
-</code></pre></div>
-
-    <div class="doc doc-contents ">
-
-        <p>Apply zarr compatibility patch for zarr&gt;=3.0 with BioIO.</p>
-
-
-            <details class="quote">
-              <summary>Source code in <code>src/napari_ndev/nimage.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">24</span>
-<span class="normal">25</span>
-<span class="normal">26</span>
-<span class="normal">27</span>
-<span class="normal">28</span>
-<span class="normal">29</span>
-<span class="normal">30</span>
-<span class="normal">31</span>
-<span class="normal">32</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">_apply_zarr_compat_patch</span><span class="p">():</span>
-<span class="w">    </span><span class="sd">"""Apply zarr compatibility patch for zarr&gt;=3.0 with BioIO."""</span>
-    <span class="n">zarr_version</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">zarr</span><span class="o">.</span><span class="n">__version__</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">'.'</span><span class="p">)[:</span><span class="mi">2</span><span class="p">])</span>
-    <span class="k">if</span> <span class="n">zarr_version</span> <span class="o">&gt;=</span> <span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span> <span class="ow">and</span> <span class="ow">not</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">zarr</span><span class="o">.</span><span class="n">storage</span><span class="p">,</span> <span class="s1">'FSStore'</span><span class="p">):</span>
-        <span class="k">class</span><span class="w"> </span><span class="nc">FSStoreShim</span><span class="p">:</span>
-            <span class="k">def</span><span class="w"> </span><span class="fm">__new__</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-                <span class="k">return</span> <span class="n">zarr</span><span class="o">.</span><span class="n">storage</span><span class="o">.</span><span class="n">directory</span><span class="o">.</span><span class="n">DirectoryStore</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
-        <span class="c1"># patch zarr.storage.FSStore to FFStoreShim</span>
-        <span class="n">zarr</span><span class="o">.</span><span class="n">storage</span><span class="o">.</span><span class="n">FSStore</span> <span class="o">=</span> <span class="n">FSStoreShim</span>
-</code></pre></div></td></tr></table></div>
-            </details>
-    </div>
-
-</div>
 
 
 
