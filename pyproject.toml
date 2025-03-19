@@ -36,7 +36,7 @@ dependencies = [
     "siphash24>=1.6",
     "magicgui>=0.8.3",
     "magic-class",
-    "napari>=0.4.19",
+    "napari[optional]>=0.4.19",
     "apoc",
     "pyclesperanto-prototype",
     "pyclesperanto",
