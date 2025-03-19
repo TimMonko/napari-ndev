@@ -120,7 +120,7 @@ def get_channel_names(img: nImage | BioImage) -> list[str]:
 
 def get_squeezed_dim_order(
     img: nImage | BioImage,
-    skip_dims: tuple[str, ...] | list[str] | str = ('C', 'S'),
+    skip_dims: list[str] | str | None = None,
 ) -> str:
     """
     Return a string containing the squeezed dimensions of the given BioImage.
@@ -129,8 +129,8 @@ def get_squeezed_dim_order(
     ----------
     img : BioImage
         The BioImage object.
-    skip_dims : tuple of str or list of str or str,
-        Dimensions to skip. Defaults to ("C", "S").
+    skip_dims : list of str or str or None, optional
+        Dimensions to skip. Defaults to ["C", "S"].
 
     Returns
     -------
@@ -138,8 +138,8 @@ def get_squeezed_dim_order(
         A string containing the squeezed dimensions.
 
     """
-    if isinstance(skip_dims, str):
-        skip_dims = (skip_dims,)
+    if skip_dims is None:
+        skip_dims = ['C', 'S']
     return ''.join(
         {k: v for k, v in img.dims.items() if v > 1 and k not in skip_dims}
     )
