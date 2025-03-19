@@ -13,6 +13,8 @@ from magicgui.widgets import (
     PushButton,
 )
 
+from napari_ndev import __version__
+
 if TYPE_CHECKING:
     import napari
 
@@ -48,7 +50,7 @@ class nDevContainer(ScrollableContainer):
             f'<img src="{_logo_path}"/>'
             '</h1>'
         )
-
+        self._version_label = Label(value=f'v{__version__}')
 
         self._docs_link_button = PushButton(
             text='Docs',
@@ -59,7 +61,11 @@ class nDevContainer(ScrollableContainer):
             icon='ic:outline-bug-report',
         )
         self._link_container = Container(
-            widgets=[self._docs_link_button, self._bug_report_link_button],
+            widgets=[
+                self._docs_link_button,
+                self._bug_report_link_button,
+                self._version_label,
+            ],
             layout='vertical',
         )
         self._header_container = Container(
