@@ -51,7 +51,7 @@ def test_data(request: pytest.FixtureRequest):
 def test_save_shapes_as_labels(
     make_napari_viewer, tmp_path: Path, test_data,
 ):
-    test_image, test_shape, _, _ = test_data
+    test_image, test_shape, _, squeezed_dims = test_data
 
     viewer = make_napari_viewer()
     viewer.add_image(test_image)
@@ -66,12 +66,12 @@ def test_save_shapes_as_labels(
 
     expected_save_loc = tmp_path / 'Shapes' / 'test.tiff'
     assert expected_save_loc.exists()
-    assert shapes_layer.shape.__len__() == 5
+    assert shapes_layer.shape.__len__() == squeezed_dims.__len__() + 1
     assert nImage(expected_save_loc).channel_names == ['Shapes']
 
 
 def test_save_labels(make_napari_viewer, tmp_path: Path, test_data):
-    _, _, test_labels, _ = test_data
+    _, _, test_labels, squeezed_dims = test_data
 
     viewer = make_napari_viewer()
     viewer.add_labels(
@@ -89,12 +89,12 @@ def test_save_labels(make_napari_viewer, tmp_path: Path, test_data):
 
     assert isinstance(layer_data, np.ndarray)
     assert expected_save_loc.exists()
-    assert layer_data.shape.__len__() == 5
+    assert layer_data.shape.__len__() == squeezed_dims.__len__() + 1
     assert nImage(expected_save_loc).channel_names == ['Labels']
 
 
 def test_save_image_layer(make_napari_viewer, test_data, tmp_path: Path):
-    test_image, _, _, _ = test_data
+    test_image, _, _, squeezed_dims = test_data
     viewer = make_napari_viewer()
     viewer.add_image(test_image)
     container = UtilitiesContainer(viewer)
@@ -109,12 +109,12 @@ def test_save_image_layer(make_napari_viewer, test_data, tmp_path: Path):
     expected_save_loc = tmp_path / 'Image' / 'test.tiff'
 
     assert isinstance(layer_data, np.ndarray)
-    assert layer_data.shape.__len__() == 5
+    assert layer_data.shape.__len__() == squeezed_dims.__len__() + 1
     assert expected_save_loc.exists()
     assert nImage(expected_save_loc).channel_names == ['0']
 
 def test_save_multi_layer(make_napari_viewer, test_data, tmp_path: Path):
-    test_image, _, test_labels, _ = test_data
+    test_image, _, test_labels, squeezed_dims = test_data
     viewer = make_napari_viewer()
     viewer.add_image(test_image)
     viewer.add_labels(test_labels)
@@ -132,7 +132,7 @@ def test_save_multi_layer(make_napari_viewer, test_data, tmp_path: Path):
     expected_save_loc = tmp_path / 'Layers' / 'test.tiff'
 
     assert isinstance(layer_data, np.ndarray)
-    assert layer_data.shape.__len__() == 5
+    assert layer_data.shape.__len__() == squeezed_dims.__len__() + 1
     assert expected_save_loc.exists()
 
 @pytest.fixture
