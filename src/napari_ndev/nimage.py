@@ -35,7 +35,7 @@ _apply_zarr_compat_patch()
 
 def _patch_png_suffix(image: ImageLike) -> Reader:
     if isinstance(image, (str, Path)) and str(image).lower().endswith('.png'):
-        return importlib.import_module('bioio_imageio').Reader
+        return 'bioio-imageio'
     return None
 
 def get_preferred_reader(
@@ -51,8 +51,10 @@ def get_preferred_reader(
         Image to be loaded. Can be a path to an image file, a numpy array,
         or an xarray DataArray.
     preferred_reader : str, optional
-        Preferred reader to be used to load the image. If not provided, a reader
-        will be determined based on the image type.
+        Preferred reader to be used to load the image. If not provided,
+        it will fallback to the preference in settings. Finally, if this
+        preferred reader is not suitable, a reader will be attempted to be
+        determined based on the image type.
 
     Returns
     -------
@@ -62,8 +64,11 @@ def get_preferred_reader(
     """
     settings = get_settings()
 
-    preferred_reader = _patch_png_suffix(image) or preferred_reader
-    preferred_reader = preferred_reader or settings.PREFERRED_READER
+    preferred_reader = (
+        preferred_reader
+        or _patch_png_suffix(image)
+        or settings.PREFERRED_READER
+    )
 
     from bioio import plugin_feasibility_report as pfr
     fr = pfr(image)
