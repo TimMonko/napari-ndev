@@ -3,7 +3,6 @@
 from __future__ import annotations
 
 import contextlib
-import importlib
 import logging
 from pathlib import Path
 
@@ -81,7 +80,8 @@ class nImage(BioImage):
         self.settings = get_settings()
 
         if reader is None:
-            reader = get_preferred_reader(image)
+            # reader = get_preferred_reader(image)
+            pass
 
         super().__init__(image, reader)
         self.napari_data = None
