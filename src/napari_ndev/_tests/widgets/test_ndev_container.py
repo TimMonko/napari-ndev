@@ -3,13 +3,14 @@ from unittest.mock import patch
 
 import pytest
 
-from napari_ndev import nImage
+from napari_ndev import __version__, nImage
 from napari_ndev.widgets._ndev_container import nDevContainer
 
 
 def test_ndev_container_init_no_viewer():
     ndev = nDevContainer()
 
+    assert ndev._version_label.value == f'v{__version__}'
     assert ndev._viewer is None
     assert ndev._apoc_container is not None
     assert ndev._measure_container is not None
