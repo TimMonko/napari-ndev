@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-import importlib
 import logging
 from functools import partial
 from typing import TYPE_CHECKING, Callable
@@ -9,6 +8,7 @@ from bioio_base.exceptions import UnsupportedFileFormatError
 from magicgui.widgets import Container, Select
 
 from napari_ndev import get_settings, nImage
+from napari_ndev.nimage import get_preferred_reader
 
 if TYPE_CHECKING:
     import napari
@@ -58,18 +58,11 @@ def napari_get_reader(
         return None
 
     try:
-        # TODO: Test this if else functionality.
-        from bioio import plugin_feasibility_report as pfr
-        fr = pfr(path)
-        if settings.PREFERRED_READER in fr and fr[settings.PREFERRED_READER].supported:
-            reader_module = importlib.import_module(
-                settings.PREFERRED_READER.replace('-', '_')
-            )
-            reader = reader_module.Reader
-        else:
-            plugin = nImage.determine_plugin(path)
-            reader = plugin.metadata.get_reader()
-        # return napari_reader_function(path, reader, in_memory)
+        reader = get_preferred_reader(path)
+        if reader is None:
+            logger.warning("Bioio: No suitable reader found for file")
+            return None
+
         return partial(
             napari_reader_function,
             reader=reader,
