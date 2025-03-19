@@ -2399,7 +2399,7 @@ Defaults to ['tif', 'tiff', 'nd2', 'czi', 'lif', 'oib', 'png', 'jpg', 'jpeg', 'b
 
 
 <a href="#napari_ndev.helpers.get_squeezed_dim_order" class="headerlink" title="Permanent link">#</a></h2>
-<div class="doc-signature highlight"><pre><span></span><code><span class="nf">get_squeezed_dim_order</span><span class="p">(</span><span class="n">img</span><span class="p">,</span> <span class="n">skip_dims</span><span class="o">=</span><span class="p">(</span><span class="s1">'C'</span><span class="p">,</span> <span class="s1">'S'</span><span class="p">))</span>
+<div class="doc-signature highlight"><pre><span></span><code><span class="nf">get_squeezed_dim_order</span><span class="p">(</span><span class="n">img</span><span class="p">,</span> <span class="n">skip_dims</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
 </code></pre></div>
 
     <div class="doc doc-contents ">
@@ -2419,12 +2419,12 @@ Defaults to ['tif', 'tiff', 'nd2', 'czi', 'lif', 'oib', 'png', 'jpg', 'jpeg', 'b
         </li>
         <li class="doc-section-item field-body">
 <h3 id="napari_ndev.helpers.get_squeezed_dim_order(skip_dims)" class="doc doc-heading doc-heading-parameter">              <b><code>skip_dims</code></b>
-<a href="#napari_ndev.helpers.get_squeezed_dim_order(skip_dims)" class="headerlink" title="Permanent link">#</a></h3>              (<code>tuple of str or list of str or str,</code>, default:
-                  <code>('C', 'S')</code>
+<a href="#napari_ndev.helpers.get_squeezed_dim_order(skip_dims)" class="headerlink" title="Permanent link">#</a></h3>              (<code>list of str or str or None</code>, default:
+                  <code>None</code>
 )
           –
           <div class="doc-md-description">
-            <p>Dimensions to skip. Defaults to ("C", "S").</p>
+            <p>Dimensions to skip. Defaults to ["C", "S"].</p>
           </div>
         </li>
     </ul>
@@ -2470,7 +2470,7 @@ Defaults to ['tif', 'tiff', 'nd2', 'czi', 'lif', 'oib', 'png', 'jpg', 'jpeg', 'b
 <span class="normal">144</span>
 <span class="normal">145</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">get_squeezed_dim_order</span><span class="p">(</span>
     <span class="n">img</span><span class="p">:</span> <span class="n">nImage</span> <span class="o">|</span> <span class="n">BioImage</span><span class="p">,</span>
-    <span class="n">skip_dims</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="o">...</span><span class="p">]</span> <span class="o">|</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">|</span> <span class="nb">str</span> <span class="o">=</span> <span class="p">(</span><span class="s1">'C'</span><span class="p">,</span> <span class="s1">'S'</span><span class="p">),</span>
+    <span class="n">skip_dims</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">|</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    Return a string containing the squeezed dimensions of the given BioImage.</span>
@@ -2479,8 +2479,8 @@ Defaults to ['tif', 'tiff', 'nd2', 'czi', 'lif', 'oib', 'png', 'jpg', 'jpeg', 'b
 <span class="sd">    ----------</span>
 <span class="sd">    img : BioImage</span>
 <span class="sd">        The BioImage object.</span>
-<span class="sd">    skip_dims : tuple of str or list of str or str,</span>
-<span class="sd">        Dimensions to skip. Defaults to ("C", "S").</span>
+<span class="sd">    skip_dims : list of str or str or None, optional</span>
+<span class="sd">        Dimensions to skip. Defaults to ["C", "S"].</span>
 
 <span class="sd">    Returns</span>
 <span class="sd">    -------</span>
@@ -2488,8 +2488,8 @@ Defaults to ['tif', 'tiff', 'nd2', 'czi', 'lif', 'oib', 'png', 'jpg', 'jpeg', 'b
 <span class="sd">        A string containing the squeezed dimensions.</span>
 
 <span class="sd">    """</span>
-    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">skip_dims</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
-        <span class="n">skip_dims</span> <span class="o">=</span> <span class="p">(</span><span class="n">skip_dims</span><span class="p">,)</span>
+    <span class="k">if</span> <span class="n">skip_dims</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">skip_dims</span> <span class="o">=</span> <span class="p">[</span><span class="s1">'C'</span><span class="p">,</span> <span class="s1">'S'</span><span class="p">]</span>
     <span class="k">return</span> <span class="s1">''</span><span class="o">.</span><span class="n">join</span><span class="p">(</span>
         <span class="p">{</span><span class="n">k</span><span class="p">:</span> <span class="n">v</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">img</span><span class="o">.</span><span class="n">dims</span><span class="o">.</span><span class="n">items</span><span class="p">()</span> <span class="k">if</span> <span class="n">v</span> <span class="o">&gt;</span> <span class="mi">1</span> <span class="ow">and</span> <span class="n">k</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">skip_dims</span><span class="p">}</span>
     <span class="p">)</span>
