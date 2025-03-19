@@ -293,3 +293,33 @@ def test_canvas_screenshot(make_napari_viewer, tmp_path: Path):
     assert 'Exported screenshot of canvas' in container._results.value
     assert expected_save_loc.exists()
     assert expected_save_loc.stat().st_size > 0
+
+def test_rescale_by(make_napari_viewer):
+    viewer = make_napari_viewer()
+    image_2d = np.random.random((10, 10))
+    image_3d = np.random.random((10, 10, 10))
+
+    layer_2d = viewer.add_image(image_2d)
+    layer_3d = viewer.add_image(image_3d)
+
+    container = UtilitiesContainer(viewer)
+    container._scale_tuple.value = (5, 2, 3)
+
+    viewer.layers.selection = [layer_2d, layer_3d]
+
+    container.rescale_by()
+
+    assert layer_2d.scale[0] == 2
+    assert layer_2d.scale[1] == 3
+    assert layer_3d.scale[0] == 5
+    assert layer_3d.scale[1] == 2
+    assert layer_3d.scale[2] == 3
+
+def test_get_dims_for_shape_layer():
+    container = UtilitiesContainer()
+    container._squeezed_dims_order = 'YX'
+    container._squeezed_dims = (20, 30)
+
+    dims = container._get_dims_for_shape_layer()
+
+    assert dims == (20, 30)
