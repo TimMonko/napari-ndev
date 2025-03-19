@@ -427,7 +427,6 @@ class UtilitiesContainer(ScrollableContainer):
         if self._save_directory.value == self._default_save_directory:
             self._save_directory.value = self._files.value[0].parent.parent
 
-    # Converted
     def _update_metadata_from_Image(
         self,
         img: BioImage,
@@ -465,7 +464,6 @@ class UtilitiesContainer(ScrollableContainer):
                 img.physical_pixel_sizes.X or 1,
             )
 
-    # Converted
     def update_metadata_on_file_select(self):
         """Update self._save_name.value and metadata if selected."""
         # TODO: get true stem of file, in case .ome.tiff
@@ -478,7 +476,6 @@ class UtilitiesContainer(ScrollableContainer):
             update_scale=self._update_scale.value,
         )
 
-    # Added
     def append_scene_to_name(self):
         """Append the scene to the save name."""
         if self._viewer.layers.selection.active is not None:
@@ -501,7 +498,6 @@ class UtilitiesContainer(ScrollableContainer):
             scene = re.sub(r'[^\w\s]', '-', img.current_scene)
             self._save_name.value = f'{self._save_name.value}_{scene}'
 
-    # Converted
     def update_metadata_from_layer(self):
         """
         Update metadata from the selected layer.
@@ -536,7 +532,6 @@ class UtilitiesContainer(ScrollableContainer):
                 f'\nAt {time.strftime("%H:%M:%S")}'
             )
 
-    # Converted
     def open_images(self):
         """Open the selected images in the napari viewer with napari-ndev."""
         self._viewer.open(self._files.value, plugin='napari-ndev')
@@ -577,7 +572,6 @@ class UtilitiesContainer(ScrollableContainer):
 
         self.update_metadata_on_file_select()
 
-    # Converted
     def rescale_by(self):
         """Rescale the selected layers based on the given scale."""
         layers = self._viewer.layers.selection
@@ -589,8 +583,8 @@ class UtilitiesContainer(ScrollableContainer):
             # are missing in the new layer
             layer.scale = scale_tup[-scale_len:]
 
+    @staticmethod
     def concatenate_files(
-        self,
         files: str | Path | list[str | Path],
     ) -> np.ndarray:
         """
