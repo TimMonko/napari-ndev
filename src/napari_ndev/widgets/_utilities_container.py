@@ -135,7 +135,8 @@ class UtilitiesContainer(ScrollableContainer):
 
         self.min_width = 500 # TODO: remove this hardcoded value
         self._viewer = viewer if viewer is not None else None
-        self._squeezed_dims = None
+        self._squeezed_dims_order: str | None = None
+        self._squeezed_dims: tuple[int, ...] | None = None
         self._settings = get_settings()
 
         self._init_widgets()
@@ -446,13 +447,14 @@ class UtilitiesContainer(ScrollableContainer):
             Update the scale, by default True.
 
         """
-        img_dims = str(img.dims)
         # get the part of the string between the brackets, which is the dim order
-        dims = re.search(r'\[(.*?)\]', img_dims).group(1)
+        dims = re.search(r'\[(.*?)\]', str(img.dims)).group(1)
         self._dim_shape.value = dims
         self._num_scenes_label.value = str(len(img.scenes))
 
-        self._squeezed_dims = helpers.get_squeezed_dim_order(img)
+        self._squeezed_dims_order = helpers.get_squeezed_dim_order(img)
+        dims_tuple = tuple(d for d in self._squeezed_dims_order)
+        self._squeezed_dims = img.dims[dims_tuple]
 
         if update_channel_names:
             self._channel_names.value = helpers.get_channel_names(img)
@@ -651,37 +653,30 @@ class UtilitiesContainer(ScrollableContainer):
 
         """
         if any(isinstance(layer, ShapesLayer) for layer in layers):
-            label_dim = self._get_dims_for_shape_layer(layers)
+            shape_to_label_dim = self._get_dims_for_shape_layer()
 
         array_list = []
 
         for layer in layers:
             if isinstance(layer, ShapesLayer):
-                layer_data = layer.to_labels(labels_shape=label_dim)
+                layer_data = layer.to_labels(labels_shape=shape_to_label_dim)
                 layer_data = layer_data.astype(np.int16)
             else:
                 layer_data = layer.data
 
-            # convert to 5D array for compatability with image dims
-            while len(layer_data.shape) < 5:
-                layer_data = np.expand_dims(layer_data, axis=0)
-            array_list.append(layer_data)
+        # stack along a new axis, which will be the channel axis for saving
+        return np.stack(array_list, axis=0)
 
-        return np.concatenate(array_list, axis=1)
+    def _get_dims_for_shape_layer(self) -> tuple[int, ...]:
+        # use dimension of the current image file
+        if self._squeezed_dims is not None:
+            return self._squeezed_dims
 
-    def _get_dims_for_shape_layer(self, layers) -> tuple[int]:
-        # TODO: Fix this not getting the first instance of the image layer
-        # get first instance of a napari.layers.Image or napari.layers.Labels
+        # if no dims available, get it from the first instance in the viewer
         dim_layer = next(
-                (layer for layer in layers if isinstance(layer, (ImageLayer, LabelsLayer))),
+                (layer for layer in self._viewer.layers if isinstance(layer, (ImageLayer, LabelsLayer))),
                 None,
             )
-        # if none of these layers is selected, get it from the first instance in the viewer
-        if dim_layer is None:
-            dim_layer = next(
-                    (layer for layer in self._viewer.layers if isinstance(layer, (ImageLayer, LabelsLayer))),
-                    None,
-                )
         if dim_layer is None:
             raise ValueError('No image or labels present to convert shapes layer.')
         label_dim = dim_layer.data.shape
@@ -1010,7 +1005,7 @@ class UtilitiesContainer(ScrollableContainer):
         self._common_save_logic(
             data=layer_data,
             uri=layer_save_loc,
-            dim_order='TCZYX',
+            dim_order='C' + self._squeezed_dims_order,
             channel_names=channel_names,
             image_name=self._save_name.value,
             result_str=layer_save_type,
