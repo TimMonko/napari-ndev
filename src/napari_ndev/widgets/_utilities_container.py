@@ -541,13 +541,6 @@ class UtilitiesContainer(ScrollableContainer):
         """Open the selected images in the napari viewer with napari-ndev."""
         self._viewer.open(self._files.value, plugin='napari-ndev')
 
-    @staticmethod
-    def _natural_sort_key(s):
-        return [
-            int(text) if text.isdigit() else text.lower()
-            for text in re.split(r'(\d+)', s)
-        ]
-
     # Converted
     def select_next_images(self):
         from natsort import os_sorted
