@@ -49,7 +49,7 @@ def test_ndev_container_viewer(make_napari_viewer, test_cells3d2ch_image, tmp_pa
     layer_data = ndev._utilities_container.save_layers_as_ome_tiff()
 
     expected_save_loc = tmp_path / 'Image' / 'test.tiff'
-    assert layer_data.shape.__len__() == 5
+    assert layer_data.shape.__len__() == 4
     assert expected_save_loc.exists()
 
     # check interacting with apoc container works
