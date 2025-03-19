@@ -664,6 +664,8 @@ class UtilitiesContainer(ScrollableContainer):
             else:
                 layer_data = layer.data
 
+            array_list.append(layer_data)
+
         # stack along a new axis, which will be the channel axis for saving
         return np.stack(array_list, axis=0)
 
@@ -682,6 +684,7 @@ class UtilitiesContainer(ScrollableContainer):
         label_dim = dim_layer.data.shape
             # drop last axis if represents RGB image
         label_dim = label_dim[:-1] if label_dim[-1] == 3 else label_dim
+
         return label_dim
 
     def _get_save_loc(
@@ -1002,10 +1005,20 @@ class UtilitiesContainer(ScrollableContainer):
             else:
                 layer_data = layer_data.astype(np.int16)
 
+        if self._squeezed_dims_order:
+            dim_order = 'C' + self._squeezed_dims_order
+        else:
+            # get the dim order from 'C' + whatever other dims are left but from
+            # right to left of layer_data.shape
+            num_dims = len(layer_data.shape)
+            dim_order = 'C' + ''.join(
+                [str(d) for d in 'TZYX'[-(num_dims-1):]]
+            )
+
         self._common_save_logic(
             data=layer_data,
             uri=layer_save_loc,
-            dim_order='C' + self._squeezed_dims_order,
+            dim_order=dim_order,
             channel_names=channel_names,
             image_name=self._save_name.value,
             result_str=layer_save_type,
