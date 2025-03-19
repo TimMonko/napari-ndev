@@ -59,10 +59,6 @@ def napari_get_reader(
 
     try:
         reader = get_preferred_reader(path)
-        if reader is None:
-            logger.warning("Bioio: No suitable reader found for file")
-            return None
-
         return partial(
             napari_reader_function,
             reader=reader,
