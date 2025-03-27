@@ -107,10 +107,14 @@ dev = [
     "napari-ndev[docs]",
 ]
 qtpy-backend = [
-    "napari-ndev[pyqt]"
+    "napari-ndev[pyqt6]"
 ]
-pyqt = [
+pyqt6 = [
+    "napari[pyqt6]"
+]
+pyqt5 = [
     "napari[pyqt5]"
+    "pyqt5-qt5==5.15.2 ; platform_system == 'Windows'", # 5.15.2 is latest to build on windows, required for uv compatability 
 ]
 pyside = [
     "napari[pyside]"
