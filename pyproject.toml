@@ -52,7 +52,7 @@ dependencies = [
     "ngff-zarr>0.10.0",
     "zarr<3",
     "bioio>=1.1.0",
-    "bioio-base>=1.0.4",
+    "bioio-base==1.0.4",
     "bioio-imageio>=1",
     "bioio-tifffile>=1",
     "bioio-ome-tiff>=1",
