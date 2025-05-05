@@ -1,0 +1,59 @@
+name: Base Test Workflow
+
+on:
+  workflow_call:
+    inputs:
+      pre_release:
+        description: 'Run with --pre flag'
+        type: boolean
+        default: false
+    outputs:
+      test_outcome:
+        description: 'The outcome of the test job'
+        value: ${{ jobs.test.outputs.outcome }}
+    
+jobs:
+  test:
+    name: ${{ matrix.platform }} py${{ matrix.python-version }} ${{ inputs.pre_release && '--pre' || '' }}
+    runs-on: ${{ matrix.platform }}
+    timeout-minutes: 30
+    outputs:
+      outcome: ${{ job.status }}
+    strategy:
+      fail-fast: false
+      matrix:
+        platform: [ubuntu-latest, windows-latest]
+        python-version: ['3.9', '3.10', '3.11', '3.12']
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: ${{ matrix.python-version }}
+          cache-dependency-path: pyproject.toml
+
+      - name: Enable Qt on Linux
+        uses: tlambert03/setup-qt-libs@v1
+
+      - name: Install Windows OpenGL
+        if: runner.os == 'Windows'
+        run: |
+          git clone --depth 1 https://github.com/pyvista/gl-ci-helpers.git
+          powershell gl-ci-helpers/appveyor/install_opengl.ps1
+        shell: powershell
+
+      - name: Install dependencies
+        run: |
+          pip install --upgrade pip
+          pip install setuptools tox tox-uv tox-gh-actions codecov
+
+      - name: Run tests
+        uses: aganders3/headless-gui@v2
+        with:
+          run: python -m tox ${{ inputs.pre_release && '-v --pre' || '' }}
+        env:
+          PLATFORM: ${{ matrix.platform }}
+          PYTHON_VERSION: ${{ matrix.python-version }}
