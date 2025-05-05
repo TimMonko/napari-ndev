@@ -1,0 +1,74 @@
+# An "early warning" cron job that will install dependencies
+# with `pip install --pre` periodically to test for breakage
+# (and open an issue if a test fails)
+name: --pre Test
+
+on:
+  schedule:
+    - cron: '0 0 * * *' # Check daily at midnight UTC
+  workflow_dispatch: # Allows triggering manually from Actions tab
+  pull_request:
+    paths:
+        - '.github/workflows/test_prereleases.yml'
+        - 'pyproject.toml'
+
+jobs:
+  test:
+    name: ${{ matrix.platform }} py${{ matrix.python-version }} --pre
+    runs-on: ${{ matrix.platform }}
+    strategy:
+        fail-fast: false
+        matrix:
+            platform: [ubuntu-latest, windows-latest]
+            python-version: ['3.9', '3.10', '3.11', '3.12']
+
+    steps:
+        - name: Checkout
+          uses: actions/checkout@v4
+
+        - name: Set up Conda
+          uses: conda-incubator/setup-miniconda@v3
+          with:
+              miniconda-version: latest
+              channels: conda-forge
+              channel-priority: strict
+              python-version: ${{ matrix.python-version }}
+
+        # these libraries enable testing on Qt on linux
+        - name: Enable Qt on Linux
+          uses: tlambert03/setup-qt-libs@v1
+
+        # strategy borrowed from vispy for installing opengl libs on windows
+        - name: Install Windows OpenGL
+          if: runner.os == 'Windows'
+          run: |
+            git clone --depth 1 https://github.com/pyvista/gl-ci-helpers.git
+            powershell gl-ci-helpers/appveyor/install_opengl.ps1
+
+        - name: Install dependencies
+          run: |
+            python -m pip install --upgrade pip
+            python -m pip install setuptools tox tox-gh-actions codecov
+
+        - name: Test --pre with tox
+          uses: aganders3/headless-gui@v2
+          with:
+            run: python -m tox -v --pre
+          env:
+            PLATFORM: ${{ matrix.platform }}
+            PYTHON_VERSION: ${{ matrix.python-version }}
+        
+        - name: Report Failures
+          if: ${{ failure() && github.event_name == 'schedule' }}
+          uses: JasonEtco/create-an-issue@v2
+          env:
+            GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+            PLATFORM: ${{ matrix.platform }}
+            PYTHON_VERSION: ${{ matrix.python-version }}
+            RUN_ID: ${{ github.run_id }}
+            TITLE: '[test-bot] pip install --pre is failing'
+          with:
+            filename: .github/TEST_FAIL_TEMPLATE.md
+            update_existing: true
+
+
