@@ -58,8 +58,6 @@ dependencies = [
     "bioio-ome-tiff>=1",
     "bioio-ome-zarr>=1",
     "bioio-nd2>=1",
-    "bioio-czi>=1.0.1",
-    "bioio-lif>=1",
     "matplotlib-scalebar>=0.8.1",
 ]
 dynamic = ["version"]
@@ -84,7 +82,7 @@ testing = [
     "pytest-qt",
     "napari[all]",
     "pyqt5",
-    "bioio-czi >= 1.0.1",
+    "bioio-czi>=1.0.1",
     "napari-ndev[extras]",
 ]
 docs = [
@@ -114,7 +112,6 @@ pyqt6 = [
 ]
 pyqt5 = [
     "napari[pyqt5]",
-    "pyqt5-qt5==5.15.2 ; platform_system == 'Windows'", # 5.15.2 is latest to build on windows, required for uv compatability
 ]
 pyside = [
     "napari[pyside]"
@@ -123,8 +120,8 @@ extras = [
     "napari-simpleitk-image-processing"
 ]
 gpl_extras = [
-    "bioio-czi >= 1.0.1",
-    "bioio-lif >= 1"
+    "bioio-czi>=1.0.1",
+    "bioio-lif>=1"
 ]
 all = [
     "napari-ndev[qtpy-backend]",
