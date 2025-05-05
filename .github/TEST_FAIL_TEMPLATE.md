@@ -4,7 +4,7 @@ labels: [bug]
 ---
 The {{ workflow }} workflow failed on {{ date | date("YYYY-MM-DD HH:mm") }} UTC
 
-The most recent failing test was on {{ env.PLATFORM }} py{{ env.PYTHON }} {{ env.BACKEND }}
+The most recent failing test was on {{ env.PLATFORM }} py{{ env.PYTHON_VERSION }}
 with commit: {{ sha }}
 
 Full run: https://github.com/TimMonko/napari-ndev/actions/runs/{{ env.RUN_ID }}
