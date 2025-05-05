@@ -33,13 +33,11 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Set up Conda
-        uses: conda-incubator/setup-miniconda@v3
+      - name: Set up Python
+        uses: actions/setup-python@v4
         with:
-          miniconda-version: latest
-          channels: conda-forge
-          channel-priority: strict
           python-version: ${{ matrix.python-version }}
+          cache-dependency-path: pyproject.toml
 
       # these libraries enable testing on Qt on linux
       - name: Enable Qt on Linux
@@ -58,14 +56,13 @@ jobs:
       # tox-conda: https://github.com/tox-dev/tox-conda
       - name: Install dependencies
         run: |
-          python -m pip install --upgrade pip
-          python -m pip install setuptools tox tox-gh-actions codecov
+          pip install --upgrade pip
+          pip install setuptools tox tox-gh-actions codecov
 
       # this runs the platform-specific tests declared in tox.ini
       - name: Test with tox
         uses: aganders3/headless-gui@v2
         with:
-          shell: bash -el {0}
           run: python -m tox
         env:
           PLATFORM: ${{ matrix.platform }}
