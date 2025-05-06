@@ -9,9 +9,12 @@ on:
         default: false
     outputs:
       test_outcome:
-        description: 'The outcome of the test job'
         value: ${{ jobs.test.outputs.outcome }}
-    
+      test_platform:
+        value: ${{ jobs.test.outputs.platform }}
+      test_python_version:
+        value: ${{ jobs.test.outputs.python-version }}
+
 jobs:
   test:
     name: ${{ matrix.platform }} py${{ matrix.python-version }} ${{ inputs.pre_release && '--pre' || '' }}
@@ -19,6 +22,8 @@ jobs:
     timeout-minutes: 30
     outputs:
       outcome: ${{ job.status }}
+      platform: ${{ matrix.platform }}
+      python-version: ${{ matrix.python-version }}
     strategy:
       fail-fast: false
       matrix:

@@ -17,23 +17,22 @@ jobs:
     uses: ./.github/workflows/reusable_run_tox_test.yml
     with:
       pre_release: true
-    
+
   report-failures:
     needs: [test]
-    if: ${{ failure() && github.event_name == 'schedule' }}
+    if: ${{ needs.test.outputs.test_outcome == 'failure' && github.event_name == 'schedule' }}
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-        
+
       - name: Report Pre-release Failures
-        if: ${{ failure() && github.event_name == 'schedule' }}
         uses: JasonEtco/create-an-issue@v2
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           RUN_ID: ${{ github.run_id }}
+          PLATFORM: ${{ needs.test.outputs.test_platform }}
+          PYTHON_VERSION: ${{ needs.test.outputs.test_python_version }}
           TITLE: '[test-bot] pip install --pre is failing'
         with:
           filename: .github/TEST_FAIL_TEMPLATE.md
           update_existing: true
-
-
