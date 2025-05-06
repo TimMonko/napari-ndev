@@ -1,72 +1,33 @@
 # This workflows will upload a Python Package using Twine when a release is created
 # For more information see: https://help.github.com/en/actions/language-and-framework-guides/using-python-with-github-actions#publishing-to-package-registries
 
-name: tests
+name: Test
 
 on:
   push:
-    branches:
-      - main
-    tags:
-      - "v*" # Push events to matching v*, i.e. v1.0, v20.15.10
+    branches: [main]
+    tags: ["v*"] # Push events to matching v*, i.e. v1.0, v20.15.10
   pull_request:
-    branches:
-      - main
+    branches: [main]
   workflow_dispatch:
 
 jobs:
   test:
-    name: ${{ matrix.platform }} py${{ matrix.python-version }}
-    runs-on: ${{ matrix.platform }}
-    defaults:
-      run:
-        shell: bash -l {0}
-    timeout-minutes: 20
-    strategy:
-      fail-fast: false
-      matrix:
-        # platform: [ubuntu-latest, windows-latest, macos-latest]
-        platform: [ubuntu-latest, windows-latest]
-        python-version: ['3.9', '3.10', '3.11', '3.12']
+    uses: ./.github/workflows/reusable_run_tox_test.yml
 
+  coverage:
+    needs: [test]
+    runs-on: ubuntu-latest
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
       - name: Set up Python
-        uses: actions/setup-python@v4
+        uses: actions/setup-python@v5
         with:
-          python-version: ${{ matrix.python-version }}
-          cache-dependency-path: pyproject.toml
+          python-version: "3.12"
 
-      # these libraries enable testing on Qt on linux
-      - name: Enable Qt on Linux
-        uses: tlambert03/setup-qt-libs@v1
-
-      # strategy borrowed from vispy for installing opengl libs on windows
-      - name: Install Windows OpenGL
-        if: runner.os == 'Windows'
-        run: |
-          git clone --depth 1 https://github.com/pyvista/gl-ci-helpers.git
-          powershell gl-ci-helpers/appveyor/install_opengl.ps1
-
-      # note: if you need dependencies from conda, considering using
-      # setup-miniconda: https://github.com/conda-incubator/setup-miniconda
-      # and
-      # tox-conda: https://github.com/tox-dev/tox-conda
-      - name: Install dependencies
-        run: |
-          pip install --upgrade pip
-          pip install setuptools tox tox-gh-actions codecov
-
-      # this runs the platform-specific tests declared in tox.ini
-      - name: Test with tox
-        uses: aganders3/headless-gui@v2
-        with:
-          run: python -m tox
-        env:
-          PLATFORM: ${{ matrix.platform }}
-          PYTHON_VERSION: ${{ matrix.python-version }}
+      - name: Install coverage dependencies
+        run: pip install codecov
 
       - name: Coverage
         uses: codecov/codecov-action@v5
@@ -82,7 +43,7 @@ jobs:
     # this will run when you have tagged a commit, starting with "v*"
     # and requires that you have put your twine API key in your
     # github secrets (see readme for details)
-    needs: [test]
+    needs: [test, coverage]
     runs-on: ubuntu-latest
     if: contains(github.ref, 'tags')
     steps:

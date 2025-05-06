@@ -14,60 +14,25 @@ on:
 
 jobs:
   test:
-    name: ${{ matrix.platform }} py${{ matrix.python-version }} --pre
-    runs-on: ${{ matrix.platform }}
-    strategy:
-      fail-fast: false
-      matrix:
-        platform: [ubuntu-latest, windows-latest]
-        python-version: ['3.9', '3.10', '3.11', '3.12']
+    uses: ./.github/workflows/reusable_run_tox_test.yml
+    with:
+      pre_release: true
 
+  report-failures:
+    needs: [test]
+    if: ${{ needs.test.outputs.test_outcome == 'failure' && github.event_name == 'schedule' }}
+    runs-on: ubuntu-latest
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
-      - name: Set up Python
-        uses: actions/setup-python@v4
-        with:
-          python-version: ${{ matrix.python-version }}
-          cache-dependency-path: pyproject.toml
-
-      # these libraries enable testing on Qt on linux
-      - name: Enable Qt on Linux
-        uses: tlambert03/setup-qt-libs@v1
-
-      # strategy borrowed from vispy for installing opengl libs on windows
-      - name: Install Windows OpenGL
-        if: runner.os == 'Windows'
-        run: |
-          git clone --depth 1 https://github.com/pyvista/gl-ci-helpers.git
-          powershell gl-ci-helpers/appveyor/install_opengl.ps1
-        shell: powershell
-
-      - name: Install dependencies
-        run: |
-          pip install --upgrade pip
-          pip install setuptools tox tox-gh-actions
-
-      - name: Test --pre with tox
-        uses: aganders3/headless-gui@v2
-        with:
-          run: python -m tox -v --pre
-        env:
-          PLATFORM: ${{ matrix.platform }}
-          PYTHON_VERSION: ${{ matrix.python-version }}
-        
-      - name: Report Failures
-        if: ${{ failure() && github.event_name == 'schedule' }}
+      - name: Report Pre-release Failures
         uses: JasonEtco/create-an-issue@v2
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          PLATFORM: ${{ matrix.platform }}
-          PYTHON_VERSION: ${{ matrix.python-version }}
           RUN_ID: ${{ github.run_id }}
+          PLATFORM: ${{ needs.test.outputs.test_platform }}
+          PYTHON_VERSION: ${{ needs.test.outputs.test_python_version }}
           TITLE: '[test-bot] pip install --pre is failing'
         with:
           filename: .github/TEST_FAIL_TEMPLATE.md
           update_existing: true
-
-
