@@ -3,8 +3,13 @@ name: Base Test Workflow
 on:
   workflow_call:
     inputs:
+      platform:
+        type: string
+        default: '["ubuntu-latest", "windows-latest"]'
+      python-version:
+        type: string
+        default: '["3.9", "3.10", "3.11", "3.12"]'
       pre_release:
-        description: 'Run tests with pip install --pre flag'
         type: boolean
         default: false
     outputs:
@@ -17,18 +22,18 @@ on:
 
 jobs:
   test:
-    name: ${{ matrix.platform }} py${{ matrix.python-version }} ${{ inputs.pre_release && '--pre' || '' }}
-    runs-on: ${{ matrix.platform }}
+    name: ${{ inputs.platform }} py${{ inputs.python-version }} ${{ inputs.pre_release && '--pre' || '' }}
+    runs-on: ${{ inputs.platform }}
     timeout-minutes: 30
     outputs:
       outcome: ${{ job.status }}
-      platform: ${{ matrix.platform }}
-      python-version: ${{ matrix.python-version }}
+      platform: ${{ inputs.platform }}
+      python-version: ${{ inputs.python-version }}
     strategy:
       fail-fast: false
       matrix:
-        platform: [ubuntu-latest, windows-latest]
-        python-version: ['3.9', '3.10', '3.11', '3.12']
+        platform: ${{ fromJson(inputs.platform) }}
+        python-version: ${{ fromJson(inputs.python-version) }}
 
     steps:
       - name: Checkout
@@ -37,7 +42,7 @@ jobs:
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
-          python-version: ${{ matrix.python-version }}
+          python-version: ${{ inputs.python-version }}
           cache-dependency-path: pyproject.toml
 
       - name: Enable Qt on Linux
@@ -60,5 +65,5 @@ jobs:
         with:
           run: python -m tox ${{ inputs.pre_release && '-v --pre' || '' }}
         env:
-          PLATFORM: ${{ matrix.platform }}
-          PYTHON_VERSION: ${{ matrix.python-version }}
+          PLATFORM: ${{ inputs.platform }}
+          PYTHON_VERSION: ${{ inputs.python-version }}

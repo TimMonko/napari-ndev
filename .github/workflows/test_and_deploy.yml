@@ -14,8 +14,6 @@ on:
 jobs:
   test:
     uses: ./.github/workflows/reusable_run_tox_test.yml
-    with:
-      pre_release: false
 
   coverage:
     needs: [test]
