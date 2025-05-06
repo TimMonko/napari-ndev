@@ -1,0 +1,69 @@
+name: Base Test Workflow
+
+on:
+  workflow_call:
+    inputs:
+      platform:
+        type: string
+        default: '["ubuntu-latest", "windows-latest"]'
+      python-version:
+        type: string
+        default: '["3.9", "3.10", "3.11", "3.12"]'
+      pre_release:
+        type: boolean
+        default: false
+    outputs:
+      test_outcome:
+        value: ${{ jobs.test.outputs.outcome }}
+      test_platform:
+        value: ${{ jobs.test.outputs.platform }}
+      test_python_version:
+        value: ${{ jobs.test.outputs.python-version }}
+
+jobs:
+  test:
+    name: ${{ matrix.platform }} py${{ matrix.python-version }} ${{ inputs.pre_release && '--pre' || '' }}
+    runs-on: ${{ matrix.platform }}
+    timeout-minutes: 30
+    outputs:
+      outcome: ${{ job.status }}
+      platform: ${{ matrix.platform }}
+      python-version: ${{ matrix.python-version }}
+    strategy:
+      fail-fast: false
+      matrix:
+        platform: ${{ fromJson(inputs.platform) }}
+        python-version: ${{ fromJson(inputs.python-version) }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+          cache-dependency-path: pyproject.toml
+
+      - name: Enable Qt on Linux
+        uses: tlambert03/setup-qt-libs@v1
+
+      - name: Install Windows OpenGL
+        if: runner.os == 'Windows'
+        run: |
+          git clone --depth 1 https://github.com/pyvista/gl-ci-helpers.git
+          powershell gl-ci-helpers/appveyor/install_opengl.ps1
+        shell: powershell
+
+      - name: Install dependencies
+        run: |
+          pip install --upgrade pip
+          pip install setuptools tox tox-uv tox-gh-actions codecov
+
+      - name: Run tests
+        uses: aganders3/headless-gui@v2
+        with:
+          run: python -m tox ${{ inputs.pre_release && '-v --pre' || '' }}
+        env:
+          PLATFORM: ${{ matrix.platform }}
+          PYTHON_VERSION: ${{ matrix.python-version }}
