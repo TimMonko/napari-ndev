@@ -22,13 +22,13 @@ on:
 
 jobs:
   test:
-    name: ${{ inputs.platform }} py${{ inputs.python-version }} ${{ inputs.pre_release && '--pre' || '' }}
-    runs-on: ${{ inputs.platform }}
+    name: ${{ matrix.platform }} py${{ matrix.python-version }} ${{ inputs.pre_release && '--pre' || '' }}
+    runs-on: ${{ matrix.platform }}
     timeout-minutes: 30
     outputs:
       outcome: ${{ job.status }}
-      platform: ${{ inputs.platform }}
-      python-version: ${{ inputs.python-version }}
+      platform: ${{ matrix.platform }}
+      python-version: ${{ matrix.python-version }}
     strategy:
       fail-fast: false
       matrix:
@@ -42,7 +42,7 @@ jobs:
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
-          python-version: ${{ inputs.python-version }}
+          python-version: ${{ matrix.python-version }}
           cache-dependency-path: pyproject.toml
 
       - name: Enable Qt on Linux
@@ -65,5 +65,5 @@ jobs:
         with:
           run: python -m tox ${{ inputs.pre_release && '-v --pre' || '' }}
         env:
-          PLATFORM: ${{ inputs.platform }}
-          PYTHON_VERSION: ${{ inputs.python-version }}
+          PLATFORM: ${{ matrix.platform }}
+          PYTHON_VERSION: ${{ matrix.python-version }}
