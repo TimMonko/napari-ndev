@@ -14,6 +14,9 @@ on:
 jobs:
   test:
     uses: ./.github/workflows/reusable_run_tox_test.yml
+    with:
+      platform: '["ubuntu-latest"]'
+      python-version: '3.9'
 
   coverage:
     needs: [test]
