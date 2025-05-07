@@ -3,10 +3,10 @@ name: Base Test Workflow
 on:
   workflow_call:
     inputs:
-      platform:
+      platforms:
         type: string
         default: '["ubuntu-latest", "windows-latest"]'
-      python-version:
+      python-versions:
         type: string
         default: '["3.9", "3.10", "3.11", "3.12"]'
       pre_release:
@@ -32,8 +32,8 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        platform: ${{ fromJson(inputs.platform) }}
-        python-version: ${{ fromJson(inputs.python-version) }}
+        platform: ${{ contains(inputs.platforms, '[') && fromJson(inputs.platforms) || inputs.platforms }}
+        python-version: ${{ contains(inputs.python-versions, '[') && fromJson(inputs.python-versions) || inputs.python-versions }}
 
     steps:
       - name: Checkout
