@@ -15,6 +15,10 @@ on:
         description: 'Whether to run tests with --pre flag for pip install'
         type: boolean
         default: false
+      coverage:
+        description: 'Whether to run and upload coverage'
+        type: boolean
+        default: false
     outputs:
       test_outcome:
         value: ${{ jobs.test.outputs.outcome }}
@@ -70,3 +74,13 @@ jobs:
         env:
           PLATFORM: ${{ matrix.platform }}
           PYTHON_VERSION: ${{ matrix.python-version }}
+
+      - name: Coverage
+        if: ${{ inputs.coverage }}
+        uses: codecov/codecov-action@v5
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+          files: ./coverage.xml
+          flags: unittests
+          name: codecov-umbrella
+          fail_ci_if_error: false
