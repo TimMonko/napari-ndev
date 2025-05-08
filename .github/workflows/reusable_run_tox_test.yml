@@ -32,6 +32,7 @@ jobs:
     name: ${{ matrix.platform }} py${{ matrix.python-version }} ${{ inputs.pre_release && '--pre' || '' }}
     permissions:
       id-token: write # Required for OIDC token to upload coverage
+      contents: read # Required for checkout action
     runs-on: ${{ matrix.platform }}
     timeout-minutes: 30
     outputs:
