@@ -1,3 +1,9 @@
+# This workflow is triggered when a commit is tagged with "v*"
+# and when the "Test" workflow completes successfully.
+# It builds the package and uploads it to PyPI using Twine.
+# It requires a Twine API key stored in GitHub secrets.
+# For more information see: https://docs.github.com/en/actions/using-workflows/events-that-trigger-workflows
+
 name: Create Release
 
 on:
@@ -9,11 +15,8 @@ on:
 
 jobs:
   deploy:
-    # this will run when you have tagged a commit, starting with "v*"
-    # and requires that you have put your twine API key in your
-    # github secrets (see readme for details)
     runs-on: ubuntu-latest
-    if: ${{ github.event.workflow_run.conclusion == 'success' && contains(github.event.workflow_run.head_branch, 'v') }}
+    if: ${{ github.event.workflow_run.conclusion == 'success' && startsWith(github.ref, 'refs/tags/v') }}
     steps:
       - name: Checkout
         uses: actions/checkout@v4
