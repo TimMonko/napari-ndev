@@ -79,7 +79,6 @@ jobs:
         if: ${{ inputs.coverage }}
         uses: codecov/codecov-action@v5
         with:
-          token: ${{ secrets.CODECOV_TOKEN }}
           files: ./coverage.xml
           flags: unittests
           name: codecov-umbrella
