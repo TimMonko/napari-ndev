@@ -11,18 +11,8 @@ on:
     tags: ["v*"] # Trigger on tags matching v*, e.g., v1.0, v20.15.10
   pull_request:
     paths: [.github/workflows/make_release.yml]
-  push:
-    tags: ["v*"] # Trigger on tags matching v*, e.g., v1.0, v20.15.10
-  pull_request:
-    paths: [.github/workflows/make_release.yml]
 
 jobs:
-  test:
-    uses: ./.github/workflows/reusable_run_tox_test.yml
-    with:
-      coverage: true
-
-  build:
   test:
     uses: ./.github/workflows/reusable_run_tox_test.yml
     with:
