@@ -34,12 +34,10 @@ jobs:
       id-token: write # Required for OIDC token to upload coverage
     runs-on: ${{ matrix.platform }}
     timeout-minutes: 30
-
     outputs:
       outcome: ${{ job.status }}
       platform: ${{ matrix.platform }}
       python-version: ${{ matrix.python-version }}
-
     strategy:
       fail-fast: false
       matrix:
