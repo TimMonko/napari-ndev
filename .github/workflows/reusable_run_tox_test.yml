@@ -16,6 +16,7 @@ on:
         type: boolean
         default: false
       coverage:
+        description: 'Whether to run and upload coverage'
         type: boolean
         default: false
     outputs:
@@ -75,6 +76,7 @@ jobs:
           PYTHON_VERSION: ${{ matrix.python-version }}
 
       - name: Coverage
+        if: ${{ inputs.coverage }}
         uses: codecov/codecov-action@v5
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
