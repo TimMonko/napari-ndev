@@ -45,8 +45,3 @@ jobs:
 
       - name: Upload to PyPI
         uses: pypa/gh-action-pypi-publish@release/v1
-
-
-      - name: Upload to PyPI
-        uses: pypa/gh-action-pypi-publish@release/v1
-
