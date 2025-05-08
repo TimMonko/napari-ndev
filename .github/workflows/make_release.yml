@@ -18,7 +18,7 @@ jobs:
     with:
       coverage: true
 
-  deploy:
+  build:
     runs-on: ubuntu-latest
     if: |
       success() &&
@@ -45,5 +45,5 @@ jobs:
           python -m build .
 
       - name: Upload to PyPI
-        uses: pypa/gh-actions-pypi-publish@release/v1
+        uses: pypa/gh-action-pypi-publish@release/v1
 
