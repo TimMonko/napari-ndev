@@ -15,3 +15,5 @@ jobs:
     uses: ./.github/workflows/reusable_run_tox_test.yml
     with:
       coverage: true
+    permissions:
+      id-token: write # Required for OIDC token to be used in the build job
