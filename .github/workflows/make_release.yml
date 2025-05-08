@@ -24,6 +24,12 @@ jobs:
       success() &&
       github.event_name == 'push' &&
       startsWith(github.ref, 'refs/tags/v')
+
+    # Add permission for OIDC token
+    permissions:
+      contents: read
+      packages: write
+
     steps:
       - name: Checkout
         uses: actions/checkout@v4
