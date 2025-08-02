@@ -124,7 +124,7 @@ class nDevContainer(ScrollableContainer):
     def _open_docs_link(self):
         """Open the documentation link."""
         import webbrowser
-        webbrowser.open('https://timmonko.github.io/napari-ndev')
+        webbrowser.open('https://ndev-kit.github.io/')
 
     def _open_bug_report_link(self):
         """Open the bug report link."""
