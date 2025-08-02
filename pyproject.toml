@@ -64,7 +64,7 @@ dynamic = ["version"]
 
 [project.urls]
 "Bug Tracker" = "https://github.com/TimMonko/napari-ndev/issues"
-"Documentation" = "https://timmonko.github.io/napari-ndev/"
+"Documentation" = "https://ndev-kit.github.io/"
 "Source Code" = "https://github.com/TimMonko/napari-ndev"
 
 [project.entry-points."napari.manifest"]

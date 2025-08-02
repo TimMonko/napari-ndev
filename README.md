@@ -20,11 +20,11 @@ A collection of widgets intended to serve any person seeking to process microsco
 * Flexible label measurements, parsing of metadata, and summarization for **easily readable datasets**.
 * Designed for ease of use, modification, and reproducibility.
 
-## [Check out the Docs to learn more!](https://timmonko.github.io/napari-ndev/)
+## [Check out the Docs to learn more!](https://ndev-kit.github.io)
 
-### See the [poster presented at BINA 2024](https://timmonko.github.io/napari-ndev/BINA_poster/) for an overview of the plugins in action
+### See the [poster presented at BINA 2024](https://ndev-kit.github.io/BINA_poster/) for an overview of the plugins in action
 
-### Try out the [Virtual I2K 2024 Workshop](https://timmonko.github.io/napari-ndev/tutorial/00_setup/) for an interactive tutorial
+### Try out the [Virtual I2K 2024 Workshop](https://ndev-kit.github.io/tutorial/00_setup/) for an interactive tutorial
 
 ## Installation
 

@@ -19,7 +19,7 @@ def test_ndev_container_init_no_viewer():
 
     with patch('webbrowser.open') as mock_open:
         ndev._open_docs_link()
-        mock_open.assert_called_once_with('https://timmonko.github.io/napari-ndev')
+        mock_open.assert_called_once_with('https://ndev-kit.github.io')
 
     with patch('webbrowser.open') as mock_open:
         ndev._open_bug_report_link()
